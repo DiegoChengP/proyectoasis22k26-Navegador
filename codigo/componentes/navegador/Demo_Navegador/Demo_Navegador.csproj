@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <Reference Include="Capa_Vista_Navegador">
-      <HintPath>..\Nueva carpeta\CapaVista_Navegador\bin\Debug\Capa_Vista_Navegador.dll</HintPath>
+      <HintPath>..\Modelo_MVC\CapaVista_Navegador\bin\Debug\Capa_Vista_Navegador.dll</HintPath>
     </Reference>
   </ItemGroup>
 
