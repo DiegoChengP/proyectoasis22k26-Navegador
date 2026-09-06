@@ -52,15 +52,75 @@ namespace CapaVista_Navegador
         Controlador controlador =
             new Controlador();
 
+
+//Modificación realizada por: Natali Sofía Montenegro Portillo validaciones de permisos del MVC
+
+        private readonly ClsPermisoControlador _PermisoControlador;
+        private readonly string _UsuarioActual;
+        private readonly string _CodigoModulo;
+
         public Frm_Crud()
+            : this(
+                "USUARIO_PRUEBA",
+                "EMPLEADOS")
+        {
+        }
+
+        public Frm_Crud(
+            string UsuarioActual,
+            string CodigoModulo)
         {
             InitializeComponent();
+
+            _UsuarioActual = UsuarioActual;
+            _CodigoModulo = CodigoModulo;
+
+            _PermisoControlador =
+                new ClsPermisoControlador();
 
             Btn_Consultar.Click += Btn_Consultar_Click;
             Btn_ingresar.Click += Btn_ingresar_Click;
             Btn_guardar.Click += Btn_guardar_Click;
             Btn_cancelar.Click += Btn_cancelar_Click;
             Btn_refrescar.Click += Btn_refrescar_Click;
+        }
+
+ // Método que verifica el permiso vigente del usuario antes de ejecutar una acción.
+
+        private bool TieneAcceso()
+        {
+            try
+            {
+                bool TienePermiso =
+                    _PermisoControlador.ValidarAcceso(_UsuarioActual,_CodigoModulo
+                        );
+
+                if (!TienePermiso)
+                {
+                    MessageBox.Show(
+                        "No cuenta con permisos para acceder a este módulo.",
+                        "Acceso denegado",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception Ex)
+            {
+                MessageBox.Show(
+                    "No fue posible validar el permiso de acceso.\n\n" +
+                    Ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+
+                return false;
+            }
         }
 
         public void actualizarDataGridView()
@@ -88,6 +148,10 @@ namespace CapaVista_Navegador
             object sender,
             EventArgs e)
         {
+            if (!TieneAcceso())
+            {
+                return;
+            }
             actualizarDataGridView();
         }
 
@@ -95,6 +159,10 @@ namespace CapaVista_Navegador
             object sender,
             EventArgs e)
         {
+            if (!TieneAcceso())
+            {
+                return;
+            }
             CrearFormularioIngreso();
         }
 
