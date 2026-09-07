@@ -63,5 +63,36 @@ namespace CapaControlador_Navegador
                 datos
             );
         }
+
+
+        //autenticación de usuario Jose Torres
+        public bool AutenticarUsuario(
+            string usuario,
+            string clave,
+            out string mensaje,
+            out DataRow datosUsuario)
+        {
+            mensaje = string.Empty;
+            datosUsuario = null;
+
+            if (string.IsNullOrWhiteSpace(usuario))
+            {
+                mensaje = "Debe ingresar el usuario.";
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(clave))
+            {
+                mensaje = "Debe ingresar la contraseña.";
+                return false;
+            }
+            DataTable dt = sentencias.ValidarUsuario(usuario.Trim(), clave.Trim());
+            if (dt.Rows.Count == 0)
+            {
+                mensaje = "Usuario o contraseña incorrectos.";
+                return false;
+            }
+            datosUsuario = dt.Rows[0];
+            return true;
+        }
     }
 }
