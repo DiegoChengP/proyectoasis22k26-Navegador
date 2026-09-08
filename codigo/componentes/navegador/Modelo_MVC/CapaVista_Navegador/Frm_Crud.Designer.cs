@@ -32,244 +32,224 @@ namespace CapaVista_Navegador
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_Crud));
-            Btn_ingresar = new Button();
-            Imgn_list1 = new ImageList(components);
-            Btn_cancelar = new Button();
-            Btn_modificar = new Button();
-            Btn_imprimir = new Button();
-            Btn_guardar = new Button();
-            Btn_siguiente = new Button();
-            Btn_anterior = new Button();
-            Btn_inicio = new Button();
-            Btn_eliminar = new Button();
-            Btn_Consultar = new Button();
-            Btn_salir = new Button();
-            Btn_fin = new Button();
-            Dgv_datos = new DataGridView();
-            Btn_refrescar = new Button();
-            Btn_ayuda = new Button();
-            ((System.ComponentModel.ISupportInitialize)Dgv_datos).BeginInit();
-            SuspendLayout();
+            this.Btn_ingresar = new System.Windows.Forms.Button();
+            this.Imgn_list1 = new System.Windows.Forms.ImageList(this.components);
+            this.Btn_cancelar = new System.Windows.Forms.Button();
+            this.Btn_modificar = new System.Windows.Forms.Button();
+            this.Btn_imprimir = new System.Windows.Forms.Button();
+            this.Btn_guardar = new System.Windows.Forms.Button();
+            this.Btn_siguiente = new System.Windows.Forms.Button();
+            this.Btn_anterior = new System.Windows.Forms.Button();
+            this.Btn_inicio = new System.Windows.Forms.Button();
+            this.Btn_eliminar = new System.Windows.Forms.Button();
+            this.Btn_Consultar = new System.Windows.Forms.Button();
+            this.Btn_salir = new System.Windows.Forms.Button();
+            this.Btn_fin = new System.Windows.Forms.Button();
+            this.Dgv_datos = new System.Windows.Forms.DataGridView();
+            this.Btn_refrescar = new System.Windows.Forms.Button();
+            this.Btn_ayuda = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.Dgv_datos)).BeginInit();
+            this.SuspendLayout();
             // 
             // Btn_ingresar
             // 
-            Btn_ingresar.ImageIndex = 0;
-            Btn_ingresar.ImageList = Imgn_list1;
-            Btn_ingresar.Location = new Point(12, 30);
-            Btn_ingresar.Margin = new Padding(3, 4, 3, 4);
-            Btn_ingresar.Name = "Btn_ingresar";
-            Btn_ingresar.Size = new Size(101, 101);
-            Btn_ingresar.TabIndex = 0;
-            Btn_ingresar.UseVisualStyleBackColor = true;
+            this.Btn_ingresar.ImageIndex = 0;
+            this.Btn_ingresar.ImageList = this.Imgn_list1;
+            this.Btn_ingresar.Location = new System.Drawing.Point(12, 24);
+            this.Btn_ingresar.Name = "Btn_ingresar";
+            this.Btn_ingresar.Size = new System.Drawing.Size(101, 81);
+            this.Btn_ingresar.TabIndex = 0;
+            this.Btn_ingresar.UseVisualStyleBackColor = true;
+            this.Btn_ingresar.Click += new System.EventHandler(this.Btn_ingresar_Click);
             // 
             // Imgn_list1
             // 
-            Imgn_list1.ColorDepth = ColorDepth.Depth4Bit;
-            Imgn_list1.ImageStream = (ImageListStreamer)resources.GetObject("Imgn_list1.ImageStream");
-            Imgn_list1.TransparentColor = Color.Transparent;
-            Imgn_list1.Images.SetKeyName(0, "ingresar.png");
-            Imgn_list1.Images.SetKeyName(1, "cancelar.png");
-            Imgn_list1.Images.SetKeyName(2, "consultar.png");
-            Imgn_list1.Images.SetKeyName(3, "eliminar.png");
-            Imgn_list1.Images.SetKeyName(4, "Fin.png");
-            Imgn_list1.Images.SetKeyName(5, "Guardar.png");
-            Imgn_list1.Images.SetKeyName(6, "icono aterior.png");
-            Imgn_list1.Images.SetKeyName(7, "imprimir.png");
-            Imgn_list1.Images.SetKeyName(8, "inicio.png");
-            Imgn_list1.Images.SetKeyName(9, "modificar.png");
-            Imgn_list1.Images.SetKeyName(10, "refrescar.png");
-            Imgn_list1.Images.SetKeyName(11, "salir.png");
-            Imgn_list1.Images.SetKeyName(12, "siguiente.png");
-            Imgn_list1.Images.SetKeyName(13, "Fin.png");
-            Imgn_list1.Images.SetKeyName(14, "ayuda.png");
+            this.Imgn_list1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("Imgn_list1.ImageStream")));
+            this.Imgn_list1.TransparentColor = System.Drawing.Color.Transparent;
+            this.Imgn_list1.Images.SetKeyName(0, "ingresar.png");
+            this.Imgn_list1.Images.SetKeyName(1, "cancelar.png");
+            this.Imgn_list1.Images.SetKeyName(2, "consultar.png");
+            this.Imgn_list1.Images.SetKeyName(3, "eliminar.png");
+            this.Imgn_list1.Images.SetKeyName(4, "Fin.png");
+            this.Imgn_list1.Images.SetKeyName(5, "Guardar.png");
+            this.Imgn_list1.Images.SetKeyName(6, "icono aterior.png");
+            this.Imgn_list1.Images.SetKeyName(7, "imprimir.png");
+            this.Imgn_list1.Images.SetKeyName(8, "inicio.png");
+            this.Imgn_list1.Images.SetKeyName(9, "modificar.png");
+            this.Imgn_list1.Images.SetKeyName(10, "refrescar.png");
+            this.Imgn_list1.Images.SetKeyName(11, "salir.png");
+            this.Imgn_list1.Images.SetKeyName(12, "siguiente.png");
+            this.Imgn_list1.Images.SetKeyName(13, "Fin.png");
+            this.Imgn_list1.Images.SetKeyName(14, "ayuda.png");
             // 
             // Btn_cancelar
             // 
-            Btn_cancelar.ImageIndex = 1;
-            Btn_cancelar.ImageList = Imgn_list1;
-            Btn_cancelar.Location = new Point(119, 30);
-            Btn_cancelar.Margin = new Padding(3, 4, 3, 4);
-            Btn_cancelar.Name = "Btn_cancelar";
-            Btn_cancelar.Size = new Size(101, 101);
-            Btn_cancelar.TabIndex = 1;
-            Btn_cancelar.UseVisualStyleBackColor = true;
+            this.Btn_cancelar.ImageIndex = 1;
+            this.Btn_cancelar.ImageList = this.Imgn_list1;
+            this.Btn_cancelar.Location = new System.Drawing.Point(119, 24);
+            this.Btn_cancelar.Name = "Btn_cancelar";
+            this.Btn_cancelar.Size = new System.Drawing.Size(101, 81);
+            this.Btn_cancelar.TabIndex = 1;
+            this.Btn_cancelar.UseVisualStyleBackColor = true;
             // 
             // Btn_modificar
             // 
-            Btn_modificar.ImageIndex = 9;
-            Btn_modificar.ImageList = Imgn_list1;
-            Btn_modificar.Location = new Point(547, 30);
-            Btn_modificar.Margin = new Padding(3, 4, 3, 4);
-            Btn_modificar.Name = "Btn_modificar";
-            Btn_modificar.Size = new Size(101, 101);
-            Btn_modificar.TabIndex = 2;
-            Btn_modificar.UseVisualStyleBackColor = true;
-            Btn_modificar.Click += Btn_modificar_Click;
+            this.Btn_modificar.ImageIndex = 9;
+            this.Btn_modificar.ImageList = this.Imgn_list1;
+            this.Btn_modificar.Location = new System.Drawing.Point(547, 24);
+            this.Btn_modificar.Name = "Btn_modificar";
+            this.Btn_modificar.Size = new System.Drawing.Size(101, 81);
+            this.Btn_modificar.TabIndex = 2;
+            this.Btn_modificar.UseVisualStyleBackColor = true;
             // 
             // Btn_imprimir
             // 
-            Btn_imprimir.ImageIndex = 7;
-            Btn_imprimir.ImageList = Imgn_list1;
-            Btn_imprimir.Location = new Point(333, 139);
-            Btn_imprimir.Margin = new Padding(3, 4, 3, 4);
-            Btn_imprimir.Name = "Btn_imprimir";
-            Btn_imprimir.Size = new Size(101, 101);
-            Btn_imprimir.TabIndex = 3;
-            Btn_imprimir.UseVisualStyleBackColor = true;
+            this.Btn_imprimir.ImageIndex = 7;
+            this.Btn_imprimir.ImageList = this.Imgn_list1;
+            this.Btn_imprimir.Location = new System.Drawing.Point(333, 111);
+            this.Btn_imprimir.Name = "Btn_imprimir";
+            this.Btn_imprimir.Size = new System.Drawing.Size(101, 81);
+            this.Btn_imprimir.TabIndex = 3;
+            this.Btn_imprimir.UseVisualStyleBackColor = true;
             // 
             // Btn_guardar
             // 
-            Btn_guardar.ImageIndex = 5;
-            Btn_guardar.ImageList = Imgn_list1;
-            Btn_guardar.Location = new Point(440, 139);
-            Btn_guardar.Margin = new Padding(3, 4, 3, 4);
-            Btn_guardar.Name = "Btn_guardar";
-            Btn_guardar.Size = new Size(101, 101);
-            Btn_guardar.TabIndex = 4;
-            Btn_guardar.UseVisualStyleBackColor = true;
-            Btn_guardar.Click += Btn_guardar_Click;
+            this.Btn_guardar.ImageIndex = 5;
+            this.Btn_guardar.ImageList = this.Imgn_list1;
+            this.Btn_guardar.Location = new System.Drawing.Point(440, 111);
+            this.Btn_guardar.Name = "Btn_guardar";
+            this.Btn_guardar.Size = new System.Drawing.Size(101, 81);
+            this.Btn_guardar.TabIndex = 4;
+            this.Btn_guardar.UseVisualStyleBackColor = true;
             // 
             // Btn_siguiente
             // 
-            Btn_siguiente.ImageIndex = 13;
-            Btn_siguiente.ImageList = Imgn_list1;
-            Btn_siguiente.Location = new Point(868, 30);
-            Btn_siguiente.Margin = new Padding(3, 4, 3, 4);
-            Btn_siguiente.Name = "Btn_siguiente";
-            Btn_siguiente.Size = new Size(101, 101);
-            Btn_siguiente.TabIndex = 5;
-            Btn_siguiente.UseVisualStyleBackColor = true;
+            this.Btn_siguiente.ImageIndex = 13;
+            this.Btn_siguiente.ImageList = this.Imgn_list1;
+            this.Btn_siguiente.Location = new System.Drawing.Point(868, 24);
+            this.Btn_siguiente.Name = "Btn_siguiente";
+            this.Btn_siguiente.Size = new System.Drawing.Size(101, 81);
+            this.Btn_siguiente.TabIndex = 5;
+            this.Btn_siguiente.UseVisualStyleBackColor = true;
             // 
             // Btn_anterior
             // 
-            Btn_anterior.ImageIndex = 8;
-            Btn_anterior.ImageList = Imgn_list1;
-            Btn_anterior.Location = new Point(761, 30);
-            Btn_anterior.Margin = new Padding(3, 4, 3, 4);
-            Btn_anterior.Name = "Btn_anterior";
-            Btn_anterior.Size = new Size(101, 101);
-            Btn_anterior.TabIndex = 6;
-            Btn_anterior.UseVisualStyleBackColor = true;
+            this.Btn_anterior.ImageIndex = 8;
+            this.Btn_anterior.ImageList = this.Imgn_list1;
+            this.Btn_anterior.Location = new System.Drawing.Point(761, 24);
+            this.Btn_anterior.Name = "Btn_anterior";
+            this.Btn_anterior.Size = new System.Drawing.Size(101, 81);
+            this.Btn_anterior.TabIndex = 6;
+            this.Btn_anterior.UseVisualStyleBackColor = true;
             // 
             // Btn_inicio
             // 
-            Btn_inicio.ImageIndex = 6;
-            Btn_inicio.ImageList = Imgn_list1;
-            Btn_inicio.Location = new Point(654, 30);
-            Btn_inicio.Margin = new Padding(3, 4, 3, 4);
-            Btn_inicio.Name = "Btn_inicio";
-            Btn_inicio.Size = new Size(101, 101);
-            Btn_inicio.TabIndex = 7;
-            Btn_inicio.UseVisualStyleBackColor = true;
+            this.Btn_inicio.ImageIndex = 6;
+            this.Btn_inicio.ImageList = this.Imgn_list1;
+            this.Btn_inicio.Location = new System.Drawing.Point(654, 24);
+            this.Btn_inicio.Name = "Btn_inicio";
+            this.Btn_inicio.Size = new System.Drawing.Size(101, 81);
+            this.Btn_inicio.TabIndex = 7;
+            this.Btn_inicio.UseVisualStyleBackColor = true;
             // 
             // Btn_eliminar
             // 
-            Btn_eliminar.ImageIndex = 3;
-            Btn_eliminar.ImageList = Imgn_list1;
-            Btn_eliminar.Location = new Point(333, 30);
-            Btn_eliminar.Margin = new Padding(3, 4, 3, 4);
-            Btn_eliminar.Name = "Btn_eliminar";
-            Btn_eliminar.Size = new Size(101, 101);
-            Btn_eliminar.TabIndex = 8;
-            Btn_eliminar.UseVisualStyleBackColor = true;
+            this.Btn_eliminar.ImageIndex = 3;
+            this.Btn_eliminar.ImageList = this.Imgn_list1;
+            this.Btn_eliminar.Location = new System.Drawing.Point(333, 24);
+            this.Btn_eliminar.Name = "Btn_eliminar";
+            this.Btn_eliminar.Size = new System.Drawing.Size(101, 81);
+            this.Btn_eliminar.TabIndex = 8;
+            this.Btn_eliminar.UseVisualStyleBackColor = true;
             // 
             // Btn_Consultar
             // 
-            Btn_Consultar.ImageIndex = 2;
-            Btn_Consultar.ImageList = Imgn_list1;
-            Btn_Consultar.Location = new Point(226, 30);
-            Btn_Consultar.Margin = new Padding(3, 4, 3, 4);
-            Btn_Consultar.Name = "Btn_Consultar";
-            Btn_Consultar.Size = new Size(101, 101);
-            Btn_Consultar.TabIndex = 9;
-            Btn_Consultar.UseVisualStyleBackColor = true;
-            Btn_Consultar.Click += Btn_Consultar_Click;
+            this.Btn_Consultar.ImageIndex = 2;
+            this.Btn_Consultar.ImageList = this.Imgn_list1;
+            this.Btn_Consultar.Location = new System.Drawing.Point(226, 24);
+            this.Btn_Consultar.Name = "Btn_Consultar";
+            this.Btn_Consultar.Size = new System.Drawing.Size(101, 81);
+            this.Btn_Consultar.TabIndex = 9;
+            this.Btn_Consultar.UseVisualStyleBackColor = true;
             // 
             // Btn_salir
             // 
-            Btn_salir.ImageIndex = 11;
-            Btn_salir.ImageList = Imgn_list1;
-            Btn_salir.Location = new Point(761, 139);
-            Btn_salir.Margin = new Padding(3, 4, 3, 4);
-            Btn_salir.Name = "Btn_salir";
-            Btn_salir.Size = new Size(101, 101);
-            Btn_salir.TabIndex = 10;
-            Btn_salir.UseVisualStyleBackColor = true;
+            this.Btn_salir.ImageIndex = 11;
+            this.Btn_salir.ImageList = this.Imgn_list1;
+            this.Btn_salir.Location = new System.Drawing.Point(761, 111);
+            this.Btn_salir.Name = "Btn_salir";
+            this.Btn_salir.Size = new System.Drawing.Size(101, 81);
+            this.Btn_salir.TabIndex = 10;
+            this.Btn_salir.UseVisualStyleBackColor = true;
             // 
             // Btn_fin
             // 
-            Btn_fin.ImageIndex = 12;
-            Btn_fin.ImageList = Imgn_list1;
-            Btn_fin.Location = new Point(975, 30);
-            Btn_fin.Margin = new Padding(3, 4, 3, 4);
-            Btn_fin.Name = "Btn_fin";
-            Btn_fin.Size = new Size(101, 101);
-            Btn_fin.TabIndex = 11;
-            Btn_fin.UseVisualStyleBackColor = true;
+            this.Btn_fin.ImageIndex = 12;
+            this.Btn_fin.ImageList = this.Imgn_list1;
+            this.Btn_fin.Location = new System.Drawing.Point(975, 24);
+            this.Btn_fin.Name = "Btn_fin";
+            this.Btn_fin.Size = new System.Drawing.Size(101, 81);
+            this.Btn_fin.TabIndex = 11;
+            this.Btn_fin.UseVisualStyleBackColor = true;
             // 
             // Dgv_datos
             // 
-            Dgv_datos.BackgroundColor = Color.Maroon;
-            Dgv_datos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            Dgv_datos.Location = new Point(105, 361);
-            Dgv_datos.Margin = new Padding(3, 4, 3, 4);
-            Dgv_datos.Name = "Dgv_datos";
-            Dgv_datos.RowHeadersWidth = 51;
-            Dgv_datos.RowTemplate.Height = 24;
-            Dgv_datos.Size = new Size(837, 330);
-            Dgv_datos.TabIndex = 12;
+            this.Dgv_datos.BackgroundColor = System.Drawing.Color.Maroon;
+            this.Dgv_datos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.Dgv_datos.Location = new System.Drawing.Point(105, 289);
+            this.Dgv_datos.Name = "Dgv_datos";
+            this.Dgv_datos.RowHeadersWidth = 51;
+            this.Dgv_datos.RowTemplate.Height = 24;
+            this.Dgv_datos.Size = new System.Drawing.Size(837, 264);
+            this.Dgv_datos.TabIndex = 12;
             // 
             // Btn_refrescar
             // 
-            Btn_refrescar.ImageIndex = 10;
-            Btn_refrescar.ImageList = Imgn_list1;
-            Btn_refrescar.Location = new Point(440, 30);
-            Btn_refrescar.Margin = new Padding(3, 4, 3, 4);
-            Btn_refrescar.Name = "Btn_refrescar";
-            Btn_refrescar.Size = new Size(101, 101);
-            Btn_refrescar.TabIndex = 13;
-            Btn_refrescar.UseVisualStyleBackColor = true;
-            Btn_refrescar.Click += Btn_refrescar_Click;
+            this.Btn_refrescar.ImageIndex = 10;
+            this.Btn_refrescar.ImageList = this.Imgn_list1;
+            this.Btn_refrescar.Location = new System.Drawing.Point(440, 24);
+            this.Btn_refrescar.Name = "Btn_refrescar";
+            this.Btn_refrescar.Size = new System.Drawing.Size(101, 81);
+            this.Btn_refrescar.TabIndex = 13;
+            this.Btn_refrescar.UseVisualStyleBackColor = true;
             // 
             // Btn_ayuda
             // 
-            Btn_ayuda.ImageIndex = 14;
-            Btn_ayuda.ImageList = Imgn_list1;
-            Btn_ayuda.Location = new Point(654, 139);
-            Btn_ayuda.Margin = new Padding(3, 4, 3, 4);
-            Btn_ayuda.Name = "Btn_ayuda";
-            Btn_ayuda.Size = new Size(101, 101);
-            Btn_ayuda.TabIndex = 14;
-            Btn_ayuda.UseVisualStyleBackColor = true;
+            this.Btn_ayuda.ImageIndex = 14;
+            this.Btn_ayuda.ImageList = this.Imgn_list1;
+            this.Btn_ayuda.Location = new System.Drawing.Point(654, 111);
+            this.Btn_ayuda.Name = "Btn_ayuda";
+            this.Btn_ayuda.Size = new System.Drawing.Size(101, 81);
+            this.Btn_ayuda.TabIndex = 14;
+            this.Btn_ayuda.UseVisualStyleBackColor = true;
             // 
             // Frm_Crud
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
-            AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.Beige;
-            ClientSize = new Size(1089, 816);
-            Controls.Add(Btn_ayuda);
-            Controls.Add(Btn_refrescar);
-            Controls.Add(Dgv_datos);
-            Controls.Add(Btn_fin);
-            Controls.Add(Btn_salir);
-            Controls.Add(Btn_Consultar);
-            Controls.Add(Btn_eliminar);
-            Controls.Add(Btn_inicio);
-            Controls.Add(Btn_anterior);
-            Controls.Add(Btn_siguiente);
-            Controls.Add(Btn_guardar);
-            Controls.Add(Btn_imprimir);
-            Controls.Add(Btn_modificar);
-            Controls.Add(Btn_cancelar);
-            Controls.Add(Btn_ingresar);
-            Margin = new Padding(3, 4, 3, 4);
-            Name = "Frm_Crud";
-            Text = "Frm_Crud";
-            ((System.ComponentModel.ISupportInitialize)Dgv_datos).EndInit();
-            ResumeLayout(false);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Beige;
+            this.ClientSize = new System.Drawing.Size(1089, 653);
+            this.Controls.Add(this.Btn_ayuda);
+            this.Controls.Add(this.Btn_refrescar);
+            this.Controls.Add(this.Dgv_datos);
+            this.Controls.Add(this.Btn_fin);
+            this.Controls.Add(this.Btn_salir);
+            this.Controls.Add(this.Btn_Consultar);
+            this.Controls.Add(this.Btn_eliminar);
+            this.Controls.Add(this.Btn_inicio);
+            this.Controls.Add(this.Btn_anterior);
+            this.Controls.Add(this.Btn_siguiente);
+            this.Controls.Add(this.Btn_guardar);
+            this.Controls.Add(this.Btn_imprimir);
+            this.Controls.Add(this.Btn_modificar);
+            this.Controls.Add(this.Btn_cancelar);
+            this.Controls.Add(this.Btn_ingresar);
+            this.Name = "Frm_Crud";
+            this.Text = "Frm_Crud";
+            ((System.ComponentModel.ISupportInitialize)(this.Dgv_datos)).EndInit();
+            this.ResumeLayout(false);
 
         }
 
