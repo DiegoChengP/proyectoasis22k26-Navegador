@@ -238,51 +238,77 @@ namespace CapaModelo_Navegador
             }
         }
         // Validacion de Usario Jose Torres
-        public DataTable ValidarUsuario(
-            string usuario,
-            string clave)
+        public DataTable ValidarUsuario(string usuario, string clave)
         {
+            string sSQL = "SELECT id_usuario, nombre_usuario, id_rol FROM tbl_usuarios " +
+                           "WHERE nombre_usuario = ? AND contrasena = ? AND estado_usuario = 1";
 
-            //////Puede cambiar el nombre de la tabla y los campos de acuerdo a su base de datos
-            string sSQL =
-            "SELECT id_usuario, nombre_usuario, id_rol FROM tbl_usuarios " +
-            "WHERE nombre_usuario = ? AND contrasena = ? AND estado_usuario = 1";
-
-            OdbcConnection conexion =
-                conn.conexion();
-
+            OdbcConnection conexion = conn.conexion();
             DataTable dt = new DataTable();
 
             try
             {
-                using (OdbcCommand comando =
-                    new OdbcCommand(
-                        sSQL,
-                        conexion))
+                using (OdbcCommand comando = new OdbcCommand(sSQL, conexion))
                 {
-                    comando.Parameters.AddWithValue(
-                        "@usuario",
-                        usuario
-                    );
+                    comando.Parameters.AddWithValue("@usuario", usuario);
+                    comando.Parameters.AddWithValue("@clave", clave);
 
-                    comando.Parameters.AddWithValue(
-                        "@clave",
-                        clave
-                    );
-
-                    using (OdbcDataAdapter da =
-                        new OdbcDataAdapter(comando))
+                    using (OdbcDataAdapter da = new OdbcDataAdapter(comando))
                     {
                         da.Fill(dt);
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error en la validación: " + ex.Message);
+            }
             finally
             {
-                conn.desconexion(conexion);
+                conn.desconexion(conexion); // Solo la desconexión dentro del finally
             }
 
-            return dt;
+            return dt; // El return va afuera
+        }
+        public void guardarDatos(string query)
+        {
+            try
+            {
+                using (OdbcConnection conexion = conn.conexion())
+                {
+                    using (OdbcCommand cmd = new OdbcCommand(query, conexion))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al ejecutar la sentencia en la base de datos: " + ex.Message, ex);
+            }
+        }
+
+        public OdbcDataAdapter filtrarTbl(string nombreTabla, string columna, string valor)
+        {
+            string sSQL =
+                "SELECT * FROM " +
+                nombreTabla +
+                " WHERE " +
+                columna +
+                " LIKE ?";
+
+            OdbcConnection conexion =
+                conn.conexion();
+
+            OdbcCommand comando = new OdbcCommand(sSQL, conexion);
+            comando.Parameters.AddWithValue("@valor", "%" + valor + "%");
+
+            OdbcDataAdapter daSentencias =
+                new OdbcDataAdapter(comando);
+
+            return daSentencias;
+
+         
         }
 
 

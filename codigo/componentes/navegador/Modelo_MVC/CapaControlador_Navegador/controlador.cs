@@ -22,7 +22,7 @@ namespace CapaControlador_Navegador
                 {
                     daControlador.Fill(dtControlador);
 
-                    // Cierra la conexión ODBC retenida por el adaptador para liberar el socket
+                    // Cierra la conexi�n ODBC retenida por el adaptador para liberar el socket
                     if (daControlador.SelectCommand != null && daControlador.SelectCommand.Connection != null)
                     {
                         daControlador.SelectCommand.Connection.Close();
@@ -43,17 +43,17 @@ namespace CapaControlador_Navegador
             // Instancia de la clase Sentencias de CapaModelo
             Sentencias modelo = new Sentencias();
 
-            // 1. Validar que existan el ID de aplicación e ID de módulo
+            // 1. Validar que existan el ID de aplicaci�n e ID de m�dulo
             bool existeApp = modelo.ExisteAplicacion(idAplicacion);
             bool existeMod = modelo.ExisteModulo(idModulo);
 
-            // 2. Si ambos existen, procede a guardar la relación
+            // 2. Si ambos existen, procede a guardar la relaci�n
             if (existeApp && existeMod)
             {
                 return modelo.GuardarUsuarioPermisoBD(idUsuario, idAplicacion, idModulo, idPermiso);
             }
 
-            // Si alguno no existe, rechaza la operación
+            // Si alguno no existe, rechaza la operaci�n
             return false;
         }
 
@@ -254,7 +254,26 @@ namespace CapaControlador_Navegador
 
         public void guardarDatos(string query)
         {
-            sentencias.ejecutarSql(query);
+            try
+            {
+                sentencias.guardarDatos(query);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al guardar los datos: " + ex.Message, ex);
+            }
+        }
+
+        public DataTable filtrarDgv(string nombreTabla, string columna, string valor)
+        {
+            OdbcDataAdapter daControlador =
+                sentencias.filtrarTbl(nombreTabla, columna, valor);
+
+            DataTable dtControlador = new DataTable();
+
+            daControlador.Fill(dtControlador);
+
+            return dtControlador;
         }
     }
 }
