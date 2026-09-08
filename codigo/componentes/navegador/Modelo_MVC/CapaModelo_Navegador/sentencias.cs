@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
@@ -262,6 +262,38 @@ namespace CapaModelo_Navegador
             {
                 conn.desconexion(conexion);
             }
+        }
+
+        public DataTable ObtenerEsquemaTabla(string nombreTabla)
+        {
+            string sSQL = @"
+                SELECT 
+                    COLUMN_NAME, 
+                    DATA_TYPE, 
+                    CHARACTER_MAXIMUM_LENGTH, 
+                    IS_NULLABLE 
+                FROM INFORMATION_SCHEMA.COLUMNS 
+                WHERE TABLE_NAME = ? 
+                ORDER BY ORDINAL_POSITION";
+
+            OdbcConnection conexion = conn.conexion();
+            DataTable dtEsquema = new DataTable();
+
+            try
+            {
+                using (OdbcCommand comando = new OdbcCommand(sSQL, conexion))
+                {
+                    comando.Parameters.AddWithValue("?", nombreTabla);
+                    OdbcDataAdapter da = new OdbcDataAdapter(comando);
+                    da.Fill(dtEsquema);
+                }
+            }
+            finally
+            {
+                conn.desconexion(conexion);
+            }
+
+            return dtEsquema;
         }
         public void ejecutarSql(string sql)
         {

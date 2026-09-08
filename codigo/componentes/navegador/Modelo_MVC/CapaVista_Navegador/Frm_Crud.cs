@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -195,5 +195,46 @@ namespace CapaVista_Navegador
         }
 
        
+      
+
+        
+
+        public List<string> ValidarRegistroConEsquema(Dictionary<string, string> datos)
+        {
+            try
+            {
+                return controlador.ValidarRegistro(datos, nombreTabla);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al validar los datos:\n\n" +
+                    ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return new List<string>();
+            }
+        }
+
+        public DataTable ObtenerEsquemaTabla()
+        {
+            try
+            {
+                return controlador.ObtenerEsquemaTabla(nombreTabla);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al obtener el esquema de la tabla:\n\n" +
+                    ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return null;
+            }
+        }
     }
 }
