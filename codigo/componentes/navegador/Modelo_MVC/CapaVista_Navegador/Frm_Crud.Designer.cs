@@ -47,10 +47,8 @@ namespace CapaVista_Navegador
             this.Btn_Consultar = new System.Windows.Forms.Button();
             this.Btn_salir = new System.Windows.Forms.Button();
             this.Btn_fin = new System.Windows.Forms.Button();
-            this.Dgv_datos = new System.Windows.Forms.DataGridView();
             this.Btn_refrescar = new System.Windows.Forms.Button();
             this.Btn_ayuda = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.Dgv_datos)).BeginInit();
             this.SuspendLayout();
             // 
             // Btn_ingresar
@@ -194,17 +192,6 @@ namespace CapaVista_Navegador
             this.Btn_fin.TabIndex = 11;
             this.Btn_fin.UseVisualStyleBackColor = true;
             // 
-            // Dgv_datos
-            // 
-            this.Dgv_datos.BackgroundColor = System.Drawing.Color.Maroon;
-            this.Dgv_datos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.Dgv_datos.Location = new System.Drawing.Point(105, 289);
-            this.Dgv_datos.Name = "Dgv_datos";
-            this.Dgv_datos.RowHeadersWidth = 51;
-            this.Dgv_datos.RowTemplate.Height = 24;
-            this.Dgv_datos.Size = new System.Drawing.Size(837, 264);
-            this.Dgv_datos.TabIndex = 12;
-            // 
             // Btn_refrescar
             // 
             this.Btn_refrescar.ImageIndex = 10;
@@ -233,7 +220,6 @@ namespace CapaVista_Navegador
             this.ClientSize = new System.Drawing.Size(1089, 653);
             this.Controls.Add(this.Btn_ayuda);
             this.Controls.Add(this.Btn_refrescar);
-            this.Controls.Add(this.Dgv_datos);
             this.Controls.Add(this.Btn_fin);
             this.Controls.Add(this.Btn_salir);
             this.Controls.Add(this.Btn_Consultar);
@@ -248,7 +234,6 @@ namespace CapaVista_Navegador
             this.Controls.Add(this.Btn_ingresar);
             this.Name = "Frm_Crud";
             this.Text = "Frm_Crud";
-            ((System.ComponentModel.ISupportInitialize)(this.Dgv_datos)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -268,7 +253,6 @@ namespace CapaVista_Navegador
         private System.Windows.Forms.Button Btn_Consultar;
         private System.Windows.Forms.Button Btn_salir;
         private System.Windows.Forms.Button Btn_fin;
-        private System.Windows.Forms.DataGridView Dgv_datos;
         private System.Windows.Forms.Button Btn_refrescar;
         private System.Windows.Forms.Button Btn_ayuda;
     }

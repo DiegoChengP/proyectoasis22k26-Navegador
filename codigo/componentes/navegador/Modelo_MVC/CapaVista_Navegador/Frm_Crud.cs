@@ -16,7 +16,7 @@ namespace CapaVista_Navegador
     public partial class Frm_Crud : Form
     {
         // cambiar nombre de la tabla a la que se desea hacer el CRUD
-        string nombreTabla = "tbl_empleados";
+        string nombreTabla = "tbl_puestos";
 
         // Campos para el formulario dinámico de ingreso (ventana flotante)
         string[] campos =
@@ -48,8 +48,6 @@ namespace CapaVista_Navegador
         };
 
         Controlador controlador = new Controlador();
-        string modo = ""; // "UPDATE" (se usa solo para edición directa en el grid)
-
 
         //Modificación realizada por: Natali Sofía Montenegro Portillo validaciones de permisos del MVC
 
@@ -76,32 +74,16 @@ namespace CapaVista_Navegador
             _UsuarioActual = UsuarioActual;
             _CodigoModulo = CodigoModulo;
 
-            // FIX: se usa -= antes de += en TODOS los botones para garantizar una sola
-            // suscripción por evento, sin importar si el Designer ya los enganchó.
-            // El bug de la ventana "Ingresar empleado" duplicada venía de que
-            // Btn_ingresar (y Btn_Consultar) se suscribían aquí con += directo,
-            // sin el -= de seguridad, así que quedaban enganchados dos veces.
+            // FIX: se usa -= antes de += para garantizar una sola suscripción
+            // por evento, sin importar si el Designer ya lo enganchó.
             Btn_ingresar.Click -= Btn_ingresar_Click;
             Btn_ingresar.Click += Btn_ingresar_Click;
 
-            Btn_refrescar.Click -= Btn_modificar_Click; // se mantiene tu mapeo original (revisar si es intencional)
-            Btn_refrescar.Click += Btn_modificar_Click;
-
             Btn_cancelar.Click -= Btn_cancelar_Click;
             Btn_cancelar.Click += Btn_cancelar_Click;
-
-            Btn_Consultar.Click -= Btn_Consultar_Click;
-            Btn_Consultar.Click += Btn_Consultar_Click;
-
-            Btn_guardar.Click -= Btn_guardar_Click;
-            Btn_guardar.Click += Btn_guardar_Click;
-
-            Dgv_datos.ReadOnly = true;
         }
 
         // Método que verifica el permiso vigente del usuario antes de ejecutar una acción.
-
-
         private bool TieneAcceso()
         {
             // Garantizar que la instancia exista usando el nombre correcto con guion bajo (_)
@@ -125,113 +107,6 @@ namespace CapaVista_Navegador
                 MessageBox.Show("Error al validar permisos: " + ex.Message, "Error de Seguridad", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
-        }
-
-        public void actualizarDataGridView()
-        {
-            try
-            {
-                DataTable dtVista = controlador.llenarDgv(nombreTabla);
-                Dgv_datos.DataSource = dtVista;
-                Dgv_datos.ReadOnly = true;
-                modo = "";
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al cargar los datos:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-
-        private void Btn_Consultar_Click(object sender, EventArgs e)
-        {
-            if (!TieneAcceso())
-            {
-                return;
-            }
-
-            CrearFormularioBusqueda();
-        }
-
-        private void CrearFormularioBusqueda()
-        {
-            Form formulario = new Form();
-            formulario.Text = "Buscar en " + nombreTabla;
-            formulario.StartPosition = FormStartPosition.CenterParent;
-            formulario.Size = new Size(400, 250);
-            formulario.FormBorderStyle = FormBorderStyle.FixedDialog;
-            formulario.MaximizeBox = false;
-            formulario.MinimizeBox = false;
-
-            Label lblColumna = new Label();
-            lblColumna.Text = "Columna:";
-            lblColumna.Location = new Point(25, 30);
-            lblColumna.AutoSize = true;
-
-            ComboBox cmbColumnas = new ComboBox();
-            cmbColumnas.Location = new Point(120, 27);
-            cmbColumnas.Width = 200;
-            cmbColumnas.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            foreach (string campo in campos)
-            {
-                cmbColumnas.Items.Add(campo);
-            }
-            if (cmbColumnas.Items.Count > 0)
-                cmbColumnas.SelectedIndex = 0;
-
-            Label lblValor = new Label();
-            lblValor.Text = "Valor:";
-            lblValor.Location = new Point(25, 80);
-            lblValor.AutoSize = true;
-
-            TextBox txtValor = new TextBox();
-            txtValor.Location = new Point(120, 77);
-            txtValor.Width = 200;
-
-            Button btnBuscar = new Button();
-            btnBuscar.Text = "Buscar";
-            btnBuscar.Location = new Point(120, 130);
-            btnBuscar.Width = 90;
-            btnBuscar.Height = 35;
-
-            Button btnLimpiar = new Button();
-            btnLimpiar.Text = "Ver Todos";
-            btnLimpiar.Location = new Point(230, 130);
-            btnLimpiar.Width = 90;
-            btnLimpiar.Height = 35;
-
-            formulario.Controls.Add(lblColumna);
-            formulario.Controls.Add(cmbColumnas);
-            formulario.Controls.Add(lblValor);
-            formulario.Controls.Add(txtValor);
-            formulario.Controls.Add(btnBuscar);
-            formulario.Controls.Add(btnLimpiar);
-
-            btnBuscar.Click += (sender, e) =>
-            {
-                if (cmbColumnas.SelectedItem == null) return;
-                string columna = cmbColumnas.SelectedItem.ToString();
-                string valor = txtValor.Text.Trim();
-                try
-                {
-                    DataTable dtVista = controlador.filtrarDgv(nombreTabla, columna, valor);
-                    Dgv_datos.DataSource = dtVista;
-                    formulario.Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error al buscar:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            };
-
-            btnLimpiar.Click += (sender, e) =>
-            {
-                actualizarDataGridView();
-                formulario.Close();
-            };
-
-            formulario.ShowDialog();
         }
 
         private void Btn_ingresar_Click(object sender, EventArgs e)
@@ -424,7 +299,6 @@ namespace CapaVista_Navegador
 
                 MessageBox.Show("Empleado ingresado correctamente.", "Registro guardado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 formulario.Close();
-                actualizarDataGridView();
             }
             catch (Exception ex)
             {
@@ -437,104 +311,9 @@ namespace CapaVista_Navegador
             return Regex.IsMatch(correo, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
         }
 
-        // ---------------- MODIFICAR: se mantiene tu flujo original de edición en el grid ----------------
-
-        private void Btn_modificar_Click(object sender, EventArgs e)
-        {
-            if (Dgv_datos.CurrentRow == null || Dgv_datos.CurrentRow.IsNewRow)
-            {
-                MessageBox.Show("Seleccione un registro válido para modificar.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            modo = "UPDATE";
-            Dgv_datos.ReadOnly = false;
-            MessageBox.Show("Modo Modificar activado. Edite el registro en el grid y presione Guardar.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void Btn_refrescar_Click(object sender, EventArgs e)
-        {
-            actualizarDataGridView();
-        }
-
         private void Btn_cancelar_Click(object sender, EventArgs e)
         {
-            actualizarDataGridView();
             MessageBox.Show("Operación cancelada.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        // ---------------- GUARDAR: ahora solo aplica a UPDATE (el INSERT va por la ventana flotante) ----------------
-
-        private void Btn_guardar_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (modo != "UPDATE")
-                {
-                    MessageBox.Show("Para ingresar utilice el botón Ingresar. Este botón guarda modificaciones.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                if (Dgv_datos.CurrentRow == null)
-                {
-                    MessageBox.Show("No hay ningún registro seleccionado.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                DataGridViewRow row = Dgv_datos.CurrentRow;
-                if (row.IsNewRow)
-                {
-                    MessageBox.Show("Seleccione una fila existente para modificar.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                foreach (DataGridViewCell cell in row.Cells)
-                {
-                    if (cell.Value == null || string.IsNullOrWhiteSpace(cell.Value.ToString()))
-                    {
-                        MessageBox.Show("Existen campos vacíos. Por favor complete todos los datos antes de guardar.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-                }
-
-                DataTable dt = (DataTable)Dgv_datos.DataSource;
-                if (dt == null)
-                {
-                    MessageBox.Show("El origen de datos no está disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                string primaryKeyCol = dt.Columns[0].ColumnName;
-                string primaryKeyValue = row.Cells[0].Value?.ToString() ?? "";
-
-                if (string.IsNullOrEmpty(primaryKeyValue))
-                {
-                    MessageBox.Show("El identificador del registro (clave primaria) no puede estar vacío.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                List<string> setClauses = new List<string>();
-
-                foreach (DataColumn col in dt.Columns)
-                {
-                    int colIndex = dt.Columns.IndexOf(col);
-                    if (colIndex < row.Cells.Count && row.Cells[colIndex].Value != null)
-                    {
-                        string val = FormatearValorParaSql(row.Cells[colIndex].Value, col.DataType);
-                        setClauses.Add($"{col.ColumnName} = '{val}'");
-                    }
-                }
-
-                string sql = $"UPDATE {nombreTabla} SET {string.Join(", ", setClauses)} WHERE {primaryKeyCol} = '{primaryKeyValue}';";
-
-                controlador.guardarDatos(sql);
-                MessageBox.Show("¡Registro guardado exitosamente!", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                actualizarDataGridView();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ObtenerMensajeAmigable(ex), "Error al guardar", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         // ---------------- Manejo genérico de errores de base de datos (cualquier motor) ----------------
@@ -631,21 +410,6 @@ namespace CapaVista_Navegador
             }
 
             return null;
-        }
-
-        private string FormatearValorParaSql(object cellValue, Type columnType)
-        {
-            if (cellValue == null || cellValue == DBNull.Value) return "";
-
-            if (columnType == typeof(DateTime) || DateTime.TryParse(cellValue.ToString(), out _))
-            {
-                if (DateTime.TryParse(cellValue.ToString(), out DateTime fecha))
-                {
-                    return fecha.ToString("yyyy-MM-dd");
-                }
-            }
-
-            return cellValue.ToString().Replace("'", "''");
         }
 
         public List<string> ValidarRegistroConEsquema(Dictionary<string, string> datos)
