@@ -50,12 +50,37 @@ namespace CapaVista_Navegador
         Controlador controlador = new Controlador();
         string modo = ""; // "UPDATE" (se usa solo para edición directa en el grid)
 
+
+        //Modificación realizada por: Natali Sofía Montenegro Portillo validaciones de permisos del MVC
+
+        private string _UsuarioActual = "gerente1";
+        private string _CodigoModulo = "123";
+        private ClsPermisoControlador _PermisoControlador = new ClsPermisoControlador();
+
         public Frm_Crud()
+            : this(
+                "USUARIO_PRUEBA",
+                "EMPLEADOS")
+        {
+        }
+
+        public Frm_Crud(
+            string UsuarioActual,
+            string CodigoModulo)
         {
             InitializeComponent();
 
-            // Se usa -= antes de += para garantizar una sola suscripción,
-            // sin importar si el Designer ya enganchó estos eventos.
+            // FIX: antes no se asignaban los parámetros a los campos, así que
+            // siempre se usaban los valores por defecto ("gerente1"/"123")
+            // sin importar qué usuario/módulo se pasara al constructor.
+            _UsuarioActual = UsuarioActual;
+            _CodigoModulo = CodigoModulo;
+
+            // FIX: se usa -= antes de += en TODOS los botones para garantizar una sola
+            // suscripción por evento, sin importar si el Designer ya los enganchó.
+            // El bug de la ventana "Ingresar empleado" duplicada venía de que
+            // Btn_ingresar (y Btn_Consultar) se suscribían aquí con += directo,
+            // sin el -= de seguridad, así que quedaban enganchados dos veces.
             Btn_ingresar.Click -= Btn_ingresar_Click;
             Btn_ingresar.Click += Btn_ingresar_Click;
 
@@ -74,6 +99,34 @@ namespace CapaVista_Navegador
             Dgv_datos.ReadOnly = true;
         }
 
+        // Método que verifica el permiso vigente del usuario antes de ejecutar una acción.
+
+
+        private bool TieneAcceso()
+        {
+            // Garantizar que la instancia exista usando el nombre correcto con guion bajo (_)
+            if (_PermisoControlador == null)
+            {
+                _PermisoControlador = new ClsPermisoControlador();
+            }
+
+            // Si no hay usuario o módulo asignado, permitir acceso de prueba
+            if (string.IsNullOrEmpty(_UsuarioActual) || string.IsNullOrEmpty(_CodigoModulo))
+            {
+                return true;
+            }
+
+            try
+            {
+                return _PermisoControlador.ValidarAcceso(_UsuarioActual, _CodigoModulo);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al validar permisos: " + ex.Message, "Error de Seguridad", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+        }
+
         public void actualizarDataGridView()
         {
             try
@@ -89,8 +142,14 @@ namespace CapaVista_Navegador
             }
         }
 
+
         private void Btn_Consultar_Click(object sender, EventArgs e)
         {
+            if (!TieneAcceso())
+            {
+                return;
+            }
+
             try
             {
                 DataTable dt = controlador.llenarDgv(nombreTabla);
@@ -102,10 +161,12 @@ namespace CapaVista_Navegador
             }
         }
 
-        // ---------------- INGRESAR: ahora abre la ventana flotante dinámica ----------------
-
         private void Btn_ingresar_Click(object sender, EventArgs e)
         {
+            if (!TieneAcceso())
+            {
+                return;
+            }
             CrearFormularioIngreso();
         }
 
