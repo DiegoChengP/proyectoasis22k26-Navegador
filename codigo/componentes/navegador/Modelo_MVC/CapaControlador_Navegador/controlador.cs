@@ -15,14 +15,38 @@ namespace CapaControlador_Navegador
 
         public DataTable llenarDgv(string nombreTabla)
         {
-            OdbcDataAdapter daControlador =
-                sentencias.llenarTbl(nombreTabla);
-
             DataTable dtControlador = new DataTable();
+            try
+            {
+                using (OdbcDataAdapter daControlador = sentencias.llenarTbl(nombreTabla))
+                {
+                    daControlador.Fill(dtControlador);
 
-            daControlador.Fill(dtControlador);
+                    // Cierra la conexión ODBC retenida por el adaptador para liberar el socket
+                    if (daControlador.SelectCommand != null && daControlador.SelectCommand.Connection != null)
+                    {
+                        daControlador.SelectCommand.Connection.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al cargar la tabla '{nombreTabla}': {ex.Message}", ex);
+            }
 
             return dtControlador;
+        }
+
+        public DataTable ConsultarEmpleados()
+        {
+            try
+            {
+                return sentencias.ConsultarEmpleados();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al consultar la tabla de empleados: " + ex.Message, ex);
+            }
         }
 
         public List<string> ObtenerColumnas(string nombreTabla)
@@ -176,10 +200,10 @@ namespace CapaControlador_Navegador
 
             return errores;
         }
+
         public void guardarDatos(string query)
         {
             sentencias.ejecutarSql(query);
         }
-
     }
 }

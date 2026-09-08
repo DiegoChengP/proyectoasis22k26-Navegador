@@ -38,7 +38,15 @@ namespace CapaVista_Navegador
 
         private void Btn_Consultar_Click(object sender, EventArgs e)
         {
-            actualizarDataGridView();
+            try
+            {
+                DataTable dt = controlador.llenarDgv("tbl_empleados");
+                Dgv_datos.DataSource = dt;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error de Consulta", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void Btn_ingresar_Click(object sender, EventArgs e)
@@ -194,10 +202,10 @@ namespace CapaVista_Navegador
             return cellValue.ToString().Replace("'", "''");
         }
 
-       
       
 
-        
+
+
 
         public List<string> ValidarRegistroConEsquema(Dictionary<string, string> datos)
         {

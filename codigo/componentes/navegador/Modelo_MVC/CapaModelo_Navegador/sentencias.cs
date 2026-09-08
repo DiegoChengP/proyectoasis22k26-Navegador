@@ -14,56 +14,52 @@ namespace CapaModelo_Navegador
 
         public OdbcDataAdapter llenarTbl(string nombreTabla)
         {
-            string sSQL =
-                "SELECT * FROM " + nombreTabla;
-
-            OdbcConnection conexion =
-                conn.conexion();
-
-            OdbcDataAdapter daSentencias =
-                new OdbcDataAdapter(
-                    sSQL,
-                    conexion
-                );
-
+            string sSQL = "SELECT * FROM " + nombreTabla;
+            OdbcConnection conexion = conn.conexion();
+            OdbcDataAdapter daSentencias = new OdbcDataAdapter(sSQL, conexion);
             return daSentencias;
         }
 
-        public List<string> ObtenerColumnas(
-            string nombreTabla)
+        public DataTable ConsultarEmpleados()
         {
-            List<string> columnas =
-                new List<string>();
-
-            OdbcConnection conexion =
-                conn.conexion();
+            string sSQL = "SELECT * FROM tbl_empleados";
+            OdbcConnection conexion = conn.conexion();
+            DataTable dtEmpleados = new DataTable();
 
             try
             {
-                DataTable dtColumnas =
-                    conexion.GetSchema(
-                        "Columns",
-                        new string[]
-                        {
-                            null,
-                            null,
-                            nombreTabla,
-                            null
-                        }
-                    );
-
-                foreach (DataRow fila
-                    in dtColumnas.Rows)
+                using (OdbcDataAdapter da = new OdbcDataAdapter(sSQL, conexion))
                 {
-                    string nombreColumna =
-                        fila["COLUMN_NAME"].ToString();
+                    da.Fill(dtEmpleados);
+                }
+            }
+            finally
+            {
+                conn.desconexion(conexion);
+            }
 
-                    if (!columnas.Contains(
-                        nombreColumna))
+            return dtEmpleados;
+        }
+
+        public List<string> ObtenerColumnas(string nombreTabla)
+        {
+            List<string> columnas = new List<string>();
+            OdbcConnection conexion = conn.conexion();
+
+            try
+            {
+                DataTable dtColumnas = conexion.GetSchema(
+                    "Columns",
+                    new string[] { null, null, nombreTabla, null }
+                );
+
+                foreach (DataRow fila in dtColumnas.Rows)
+                {
+                    string nombreColumna = fila["COLUMN_NAME"].ToString();
+
+                    if (!columnas.Contains(nombreColumna))
                     {
-                        columnas.Add(
-                            nombreColumna
-                        );
+                        columnas.Add(nombreColumna);
                     }
                 }
             }
@@ -75,69 +71,31 @@ namespace CapaModelo_Navegador
             return columnas;
         }
 
-        public bool ExisteLlavePrimaria(
-            string nombreTabla,
-            string[] camposPK,
-            string[] valoresPK)
+        public bool ExisteLlavePrimaria(string nombreTabla, string[] camposPK, string[] valoresPK)
         {
-            if (camposPK == null ||
-                camposPK.Length == 0)
-            {
-                return false;
-            }
-
-            if (valoresPK == null ||
-                valoresPK.Length != camposPK.Length)
-            {
-                return false;
-            }
+            if (camposPK == null || camposPK.Length == 0) return false;
+            if (valoresPK == null || valoresPK.Length != camposPK.Length) return false;
 
             string condiciones = "";
-
-            for (int i = 0;
-                i < camposPK.Length;
-                i++)
+            for (int i = 0; i < camposPK.Length; i++)
             {
-                if (i > 0)
-                {
-                    condiciones += " AND ";
-                }
-
-                condiciones +=
-                    camposPK[i] + " = ?";
+                if (i > 0) condiciones += " AND ";
+                condiciones += camposPK[i] + " = ?";
             }
 
-            string sSQL =
-                "SELECT COUNT(*) FROM " +
-                nombreTabla +
-                " WHERE " +
-                condiciones;
-
-            OdbcConnection conexion =
-                conn.conexion();
+            string sSQL = "SELECT COUNT(*) FROM " + nombreTabla + " WHERE " + condiciones;
+            OdbcConnection conexion = conn.conexion();
 
             try
             {
-                using (OdbcCommand comando =
-                    new OdbcCommand(
-                        sSQL,
-                        conexion))
+                using (OdbcCommand comando = new OdbcCommand(sSQL, conexion))
                 {
-                    for (int i = 0;
-                        i < valoresPK.Length;
-                        i++)
+                    for (int i = 0; i < valoresPK.Length; i++)
                     {
-                        comando.Parameters.AddWithValue(
-                            "@p" + i,
-                            valoresPK[i]
-                        );
+                        comando.Parameters.AddWithValue("@p" + i, valoresPK[i]);
                     }
 
-                    int cantidad =
-                        Convert.ToInt32(
-                            comando.ExecuteScalar()
-                        );
-
+                    int cantidad = Convert.ToInt32(comando.ExecuteScalar());
                     return cantidad > 0;
                 }
             }
@@ -147,38 +105,17 @@ namespace CapaModelo_Navegador
             }
         }
 
-        public bool ExisteValorCampo(
-            string nombreTabla,
-            string nombreCampo,
-            string valor)
+        public bool ExisteValorCampo(string nombreTabla, string nombreCampo, string valor)
         {
-            string sSQL =
-                "SELECT COUNT(*) FROM " +
-                nombreTabla +
-                " WHERE " +
-                nombreCampo +
-                " = ?";
-
-            OdbcConnection conexion =
-                conn.conexion();
+            string sSQL = "SELECT COUNT(*) FROM " + nombreTabla + " WHERE " + nombreCampo + " = ?";
+            OdbcConnection conexion = conn.conexion();
 
             try
             {
-                using (OdbcCommand comando =
-                    new OdbcCommand(
-                        sSQL,
-                        conexion))
+                using (OdbcCommand comando = new OdbcCommand(sSQL, conexion))
                 {
-                    comando.Parameters.AddWithValue(
-                        "@valor",
-                        valor
-                    );
-
-                    int cantidad =
-                        Convert.ToInt32(
-                            comando.ExecuteScalar()
-                        );
-
+                    comando.Parameters.AddWithValue("@valor", valor);
+                    int cantidad = Convert.ToInt32(comando.ExecuteScalar());
                     return cantidad > 0;
                 }
             }
@@ -188,73 +125,41 @@ namespace CapaModelo_Navegador
             }
         }
 
-        public bool InsertarRegistro(
-            string nombreTabla,
-            Dictionary<string, string> datos)
+        public bool InsertarRegistro(string nombreTabla, Dictionary<string, string> datos)
         {
-            if (datos == null ||
-                datos.Count == 0)
-            {
-                return false;
-            }
+            if (datos == null || datos.Count == 0) return false;
 
             string columnas = "";
             string valores = "";
-
             int contador = 0;
 
-            foreach (
-                KeyValuePair<string, string> dato
-                in datos)
+            foreach (KeyValuePair<string, string> dato in datos)
             {
                 if (contador > 0)
                 {
                     columnas += ", ";
                     valores += ", ";
                 }
-
                 columnas += dato.Key;
                 valores += "?";
-
                 contador++;
             }
 
-            string sSQL =
-                "INSERT INTO " +
-                nombreTabla +
-                " (" +
-                columnas +
-                ") VALUES (" +
-                valores +
-                ")";
-
-            OdbcConnection conexion =
-                conn.conexion();
+            string sSQL = "INSERT INTO " + nombreTabla + " (" + columnas + ") VALUES (" + valores + ")";
+            OdbcConnection conexion = conn.conexion();
 
             try
             {
-                using (OdbcCommand comando =
-                    new OdbcCommand(
-                        sSQL,
-                        conexion))
+                using (OdbcCommand comando = new OdbcCommand(sSQL, conexion))
                 {
                     int posicion = 0;
-
-                    foreach (
-                        KeyValuePair<string, string> dato
-                        in datos)
+                    foreach (KeyValuePair<string, string> dato in datos)
                     {
-                        comando.Parameters.AddWithValue(
-                            "@p" + posicion,
-                            dato.Value
-                        );
-
+                        comando.Parameters.AddWithValue("@p" + posicion, dato.Value);
                         posicion++;
                     }
 
-                    int resultado =
-                        comando.ExecuteNonQuery();
-
+                    int resultado = comando.ExecuteNonQuery();
                     return resultado > 0;
                 }
             }
@@ -273,7 +178,7 @@ namespace CapaModelo_Navegador
                     CHARACTER_MAXIMUM_LENGTH, 
                     IS_NULLABLE 
                 FROM INFORMATION_SCHEMA.COLUMNS 
-                WHERE TABLE_NAME = ? 
+                WHERE TABLE_NAME = ? AND TABLE_SCHEMA = DATABASE() 
                 ORDER BY ORDINAL_POSITION";
 
             OdbcConnection conexion = conn.conexion();
@@ -284,8 +189,10 @@ namespace CapaModelo_Navegador
                 using (OdbcCommand comando = new OdbcCommand(sSQL, conexion))
                 {
                     comando.Parameters.AddWithValue("?", nombreTabla);
-                    OdbcDataAdapter da = new OdbcDataAdapter(comando);
-                    da.Fill(dtEsquema);
+                    using (OdbcDataAdapter da = new OdbcDataAdapter(comando))
+                    {
+                        da.Fill(dtEsquema);
+                    }
                 }
             }
             finally
@@ -295,11 +202,20 @@ namespace CapaModelo_Navegador
 
             return dtEsquema;
         }
+
         public void ejecutarSql(string sql)
         {
-            using (OdbcCommand cmd = new OdbcCommand(sql, conn.conexion()))
+            OdbcConnection conexion = conn.conexion();
+            try
             {
-                cmd.ExecuteNonQuery();
+                using (OdbcCommand cmd = new OdbcCommand(sql, conexion))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            finally
+            {
+                conn.desconexion(conexion);
             }
         }
     }
