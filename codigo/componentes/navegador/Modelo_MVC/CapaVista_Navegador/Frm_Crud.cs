@@ -150,15 +150,88 @@ namespace CapaVista_Navegador
                 return;
             }
 
-            try
+            CrearFormularioBusqueda();
+        }
+
+        private void CrearFormularioBusqueda()
+        {
+            Form formulario = new Form();
+            formulario.Text = "Buscar en " + nombreTabla;
+            formulario.StartPosition = FormStartPosition.CenterParent;
+            formulario.Size = new Size(400, 250);
+            formulario.FormBorderStyle = FormBorderStyle.FixedDialog;
+            formulario.MaximizeBox = false;
+            formulario.MinimizeBox = false;
+
+            Label lblColumna = new Label();
+            lblColumna.Text = "Columna:";
+            lblColumna.Location = new Point(25, 30);
+            lblColumna.AutoSize = true;
+
+            ComboBox cmbColumnas = new ComboBox();
+            cmbColumnas.Location = new Point(120, 27);
+            cmbColumnas.Width = 200;
+            cmbColumnas.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            foreach (string campo in campos)
             {
-                DataTable dt = controlador.llenarDgv(nombreTabla);
-                Dgv_datos.DataSource = dt;
+                cmbColumnas.Items.Add(campo);
             }
-            catch (Exception ex)
+            if (cmbColumnas.Items.Count > 0)
+                cmbColumnas.SelectedIndex = 0;
+
+            Label lblValor = new Label();
+            lblValor.Text = "Valor:";
+            lblValor.Location = new Point(25, 80);
+            lblValor.AutoSize = true;
+
+            TextBox txtValor = new TextBox();
+            txtValor.Location = new Point(120, 77);
+            txtValor.Width = 200;
+
+            Button btnBuscar = new Button();
+            btnBuscar.Text = "Buscar";
+            btnBuscar.Location = new Point(120, 130);
+            btnBuscar.Width = 90;
+            btnBuscar.Height = 35;
+
+            Button btnLimpiar = new Button();
+            btnLimpiar.Text = "Ver Todos";
+            btnLimpiar.Location = new Point(230, 130);
+            btnLimpiar.Width = 90;
+            btnLimpiar.Height = 35;
+
+            formulario.Controls.Add(lblColumna);
+            formulario.Controls.Add(cmbColumnas);
+            formulario.Controls.Add(lblValor);
+            formulario.Controls.Add(txtValor);
+            formulario.Controls.Add(btnBuscar);
+            formulario.Controls.Add(btnLimpiar);
+
+            btnBuscar.Click += (sender, e) =>
             {
-                MessageBox.Show(ex.Message, "Error de Consulta", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                if (cmbColumnas.SelectedItem == null) return;
+                string columna = cmbColumnas.SelectedItem.ToString();
+                string valor = txtValor.Text.Trim();
+                try
+                {
+                    DataTable dtVista = controlador.filtrarDgv(nombreTabla, columna, valor);
+                    Dgv_datos.DataSource = dtVista;
+                    formulario.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al buscar:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            };
+
+            btnLimpiar.Click += (sender, e) =>
+            {
+                actualizarDataGridView();
+                formulario.Close();
+            };
+
+            formulario.ShowDialog();
         }
 
         private void Btn_ingresar_Click(object sender, EventArgs e)
@@ -612,6 +685,5 @@ namespace CapaVista_Navegador
                 return null;
             }
         }
-
     }
 }
