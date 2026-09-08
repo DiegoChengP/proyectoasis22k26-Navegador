@@ -11,7 +11,7 @@ namespace CapaModelo_Navegador
     {
         public OdbcConnection conexion()
         {
-            OdbcConnection conn = new OdbcConnection("Dsn=BD_ProyectoNominas");
+            OdbcConnection conn = new OdbcConnection("Dsn=Umg_taller");
 
             try
             {

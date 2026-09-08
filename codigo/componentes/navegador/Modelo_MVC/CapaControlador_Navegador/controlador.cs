@@ -11,35 +11,58 @@ namespace CapaControlador_Navegador
 {
     public class Controlador
     {
-        Sentencias sentencias = new Sentencias();
+        private Sentencias sentencias =
+            new Sentencias();
 
-        public DataTable llenarDgv(string nombreTabla)
+      
+
+        public DataTable llenarDgv(
+            string nombreTabla)
         {
-            DataTable dtControlador = new DataTable();
+            DataTable dtControlador =
+                new DataTable();
+
             try
             {
-                using (OdbcDataAdapter daControlador = sentencias.llenarTbl(nombreTabla))
+                using (
+                    OdbcDataAdapter daControlador =
+                        sentencias.llenarTbl(
+                            nombreTabla))
                 {
-                    daControlador.Fill(dtControlador);
+                    daControlador.Fill(
+                        dtControlador);
 
-                    // Cierra la conexi�n ODBC retenida por el adaptador para liberar el socket
-                    if (daControlador.SelectCommand != null && daControlador.SelectCommand.Connection != null)
+                    if (daControlador.SelectCommand != null &&
+                        daControlador.SelectCommand.Connection != null)
                     {
-                        daControlador.SelectCommand.Connection.Close();
+                        daControlador
+                            .SelectCommand
+                            .Connection
+                            .Close();
                     }
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al cargar la tabla '{nombreTabla}': {ex.Message}", ex);
+                throw new Exception(
+                    "Error al cargar la tabla '" +
+                    nombreTabla +
+                    "': " +
+                    ex.Message,
+                    ex);
             }
 
             return dtControlador;
         }
 
-        // Dentro de la clase Controlador en controlador.cs
-        public bool GuardarRelacionUsuarioPermiso(int idUsuario, int idAplicacion, int idModulo, int idPermiso)
+
+        public bool GuardarRelacionUsuarioPermiso(
+            int idUsuario,
+            int idAplicacion,
+            int idModulo,
+            int idPermiso)
         {
+           
             // Instancia de la clase Sentencias de CapaModelo
             Sentencias modelo = new Sentencias();
 
@@ -48,64 +71,94 @@ namespace CapaControlador_Navegador
             bool existeMod = modelo.ExisteModulo(idModulo);
 
             // 2. Si ambos existen, procede a guardar la relaci�n
-            if (existeApp && existeMod)
+
+            if (existeApp &&
+                existeMod)
             {
-                return modelo.GuardarUsuarioPermisoBD(idUsuario, idAplicacion, idModulo, idPermiso);
+                return modelo
+                    .GuardarUsuarioPermisoBD(
+                        idUsuario,
+                        idAplicacion,
+                        idModulo,
+                        idPermiso);
             }
 
-            // Si alguno no existe, rechaza la operaci�n
             return false;
         }
+
 
         public DataTable ConsultarEmpleados()
         {
             try
             {
-                return sentencias.ConsultarEmpleados();
+                return sentencias
+                    .ConsultarEmpleados();
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al consultar la tabla de empleados: " + ex.Message, ex);
+                throw new Exception(
+                    "Error al consultar la tabla de empleados: " +
+                    ex.Message,
+                    ex);
             }
         }
 
-        public List<string> ObtenerColumnas(string nombreTabla)
+        // =========================================================
+        // OBTENER COLUMNAS
+        // =========================================================
+
+        public List<string> ObtenerColumnas(
+            string nombreTabla)
         {
-            return sentencias.ObtenerColumnas(nombreTabla);
+            return sentencias
+                .ObtenerColumnas(
+                    nombreTabla);
         }
+
+        // =========================================================
+        // EXISTE LLAVE PRIMARIA
+        // =========================================================
 
         public bool ExisteLlavePrimaria(
             string nombreTabla,
             string[] camposPK,
             string[] valoresPK)
         {
-            return sentencias.ExisteLlavePrimaria(
-                nombreTabla,
-                camposPK,
-                valoresPK
-            );
+            return sentencias
+                .ExisteLlavePrimaria(
+                    nombreTabla,
+                    camposPK,
+                    valoresPK);
         }
+
+        // =========================================================
+        // EXISTE VALOR DE CAMPO
+        // =========================================================
 
         public bool ExisteValorCampo(
             string nombreTabla,
             string nombreCampo,
             string valor)
         {
-            return sentencias.ExisteValorCampo(
-                nombreTabla,
-                nombreCampo,
-                valor
-            );
+            return sentencias
+                .ExisteValorCampo(
+                    nombreTabla,
+                    nombreCampo,
+                    valor);
         }
+
+        // =========================================================
+        // INSERTAR REGISTRO
+        // =========================================================
 
         public bool InsertarRegistro(
             string nombreTabla,
             Dictionary<string, string> datos)
         {
-            return sentencias.InsertarRegistro(
-                nombreTabla,
-                datos
-            );
+            return sentencias
+                .InsertarRegistro(
+                    nombreTabla,
+                    datos);
         }
 
 
@@ -116,40 +169,87 @@ namespace CapaControlador_Navegador
             out string mensaje,
             out DataRow datosUsuario)
         {
-            mensaje = string.Empty;
-            datosUsuario = null;
+            mensaje =
+                string.Empty;
 
-            if (string.IsNullOrWhiteSpace(usuario))
+            datosUsuario =
+                null;
+
+            if (string.IsNullOrWhiteSpace(
+                usuario))
             {
-                mensaje = "Debe ingresar el usuario.";
+                mensaje =
+                    "Debe ingresar el usuario.";
+
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(clave))
+
+            if (string.IsNullOrWhiteSpace(
+                clave))
             {
-                mensaje = "Debe ingresar la contraseña.";
+                mensaje =
+                    "Debe ingresar la contraseña.";
+
                 return false;
             }
-            DataTable dt = sentencias.ValidarUsuario(usuario.Trim(), clave.Trim());
+
+            DataTable dt =
+                sentencias.ValidarUsuario(
+                    usuario.Trim(),
+                    clave.Trim());
+
             if (dt.Rows.Count == 0)
             {
-                mensaje = "Usuario o contraseña incorrectos.";
+                mensaje =
+                    "Usuario o contraseña incorrectos.";
+
                 return false;
             }
-            datosUsuario = dt.Rows[0];
+
+            datosUsuario =
+                dt.Rows[0];
+
             return true;
         }
 
-        public DataTable ObtenerEsquemaTabla(string nombreTabla)
+        
+
+        public DataTable ObtenerEsquemaTabla(
+            string nombreTabla)
         {
-            return sentencias.ObtenerEsquemaTabla(nombreTabla);
+            try
+            {
+                return sentencias
+                    .ObtenerEsquemaTabla(
+                        nombreTabla);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Error al obtener el esquema de la tabla '" +
+                    nombreTabla +
+                    "': " +
+                    ex.Message,
+                    ex);
+            }
         }
 
-        private bool ValidarCampo(string valor, string tipoDato, int? longitudMaxima)
+        // =========================================================
+        // VALIDAR CAMPO
+        // =========================================================
+
+        private bool ValidarCampo(
+            string valor,
+            string tipoDato,
+            int? longitudMaxima)
         {
             if (string.IsNullOrEmpty(valor))
+            {
                 return true;
+            }
 
-            switch (tipoDato.ToLower())
+            switch (
+                tipoDato.ToLower())
             {
                 case "varchar":
                 case "char":
@@ -157,10 +257,21 @@ namespace CapaControlador_Navegador
                 case "longtext":
                 case "tinytext":
                 case "mediumtext":
-                    if (!System.Text.RegularExpressions.Regex.IsMatch(valor, @"^[\p{L}\p{N}\s\-_\.]+$"))
+
+                    if (!System.Text.RegularExpressions.Regex.IsMatch(
+                        valor,
+                        @"^[\p{L}\p{N}\s\-_\.]+$"))
+                    {
                         return false;
-                    if (longitudMaxima.HasValue && valor.Length > longitudMaxima.Value)
+                    }
+
+                    if (longitudMaxima.HasValue &&
+                        valor.Length >
+                        longitudMaxima.Value)
+                    {
                         return false;
+                    }
+
                     return true;
 
                 case "int":
@@ -170,108 +281,305 @@ namespace CapaControlador_Navegador
                 case "float":
                 case "double":
                 case "real":
-                    if (!System.Text.RegularExpressions.Regex.IsMatch(valor, @"^[0-9]+(\.[0-9]+)?$"))
+
+                    if (!System.Text.RegularExpressions.Regex.IsMatch(
+                        valor,
+                        @"^[0-9]+(\.[0-9]+)?$"))
+                    {
                         return false;
+                    }
+
                     return true;
 
                 case "datetime":
                 case "date":
                 case "timestamp":
-                    if (!DateTime.TryParse(valor, out _))
+
+                    if (!DateTime.TryParse(
+                        valor,
+                        out _))
+                    {
                         return false;
+                    }
+
                     return true;
 
                 default:
+
                     return true;
             }
         }
 
-        public List<string> ValidarRegistro(Dictionary<string, string> datos, string nombreTabla)
+        
+        public List<string> ValidarRegistro(
+            Dictionary<string, string> datos,
+            string nombreTabla)
         {
-            List<string> errores = new List<string>();
+            List<string> errores =
+                new List<string>();
 
             try
             {
-                DataTable esquema = sentencias.ObtenerEsquemaTabla(nombreTabla);
+                DataTable esquema =
+                    sentencias
+                        .ObtenerEsquemaTabla(
+                            nombreTabla);
 
-                foreach (DataRow columna in esquema.Rows)
+                foreach (
+                    DataRow columna
+                    in esquema.Rows)
                 {
-                    string nombreCampo = columna["COLUMN_NAME"].ToString();
-                    string tipoDato = columna["DATA_TYPE"].ToString();
-                    int? longitudMaxima = columna["CHARACTER_MAXIMUM_LENGTH"] as int?;
-                    string isNullable = columna["IS_NULLABLE"].ToString();
+                    string nombreCampo =
+                        columna["COLUMN_NAME"]
+                        .ToString();
 
-                    if (datos.ContainsKey(nombreCampo))
+                    string tipoDato =
+                        columna["DATA_TYPE"]
+                        .ToString();
+
+                    int? longitudMaxima =
+                        null;
+
+                    if (esquema.Columns.Contains(
+                        "CHARACTER_MAXIMUM_LENGTH") &&
+                        columna["CHARACTER_MAXIMUM_LENGTH"] !=
+                        DBNull.Value)
                     {
-                        string valor = datos[nombreCampo];
-
-                        if (isNullable == "NO" && string.IsNullOrWhiteSpace(valor))
+                        try
                         {
-                            errores.Add($"El campo '{nombreCampo}' es obligatorio.");
-                            continue;
+                            longitudMaxima =
+                                Convert.ToInt32(
+                                    columna[
+                                        "CHARACTER_MAXIMUM_LENGTH"]);
                         }
-
-                        if (!ValidarCampo(valor, tipoDato, longitudMaxima))
+                        catch
                         {
-                            switch (tipoDato.ToLower())
-                            {
-                                case "varchar":
-                                case "char":
-                                case "text":
-                                    if (longitudMaxima.HasValue && valor.Length > longitudMaxima.Value)
-                                        errores.Add($"El campo '{nombreCampo}' excede la longitud máxima permitida ({longitudMaxima.Value} caracteres).");
-                                    else
-                                        errores.Add($"El campo '{nombreCampo}' contiene caracteres no permitidos.");
-                                    break;
+                            longitudMaxima =
+                                null;
+                        }
+                    }
 
-                                case "int":
-                                case "decimal":
-                                case "float":
-                                case "numeric":
-                                    errores.Add($"El campo '{nombreCampo}' debe ser un valor numérico.");
-                                    break;
+                    string isNullable =
+                        columna["IS_NULLABLE"]
+                        .ToString();
 
-                                case "datetime":
-                                case "date":
-                                    errores.Add($"El campo '{nombreCampo}' debe ser una fecha válida.");
-                                    break;
+                    if (!datos.ContainsKey(
+                        nombreCampo))
+                    {
+                        continue;
+                    }
 
-                                default:
-                                    errores.Add($"El campo '{nombreCampo}' no es válido.");
-                                    break;
-                            }
+                    string valor =
+                        datos[nombreCampo];
+
+                    if (isNullable == "NO" &&
+                        string.IsNullOrWhiteSpace(
+                            valor))
+                    {
+                        errores.Add(
+                            "El campo '" +
+                            nombreCampo +
+                            "' es obligatorio.");
+
+                        continue;
+                    }
+
+                    if (!ValidarCampo(
+                        valor,
+                        tipoDato,
+                        longitudMaxima))
+                    {
+                        switch (
+                            tipoDato.ToLower())
+                        {
+                            case "varchar":
+                            case "char":
+                            case "text":
+
+                                if (longitudMaxima.HasValue &&
+                                    valor.Length >
+                                    longitudMaxima.Value)
+                                {
+                                    errores.Add(
+                                        "El campo '" +
+                                        nombreCampo +
+                                        "' excede la longitud máxima permitida (" +
+                                        longitudMaxima.Value +
+                                        " caracteres).");
+                                }
+                                else
+                                {
+                                    errores.Add(
+                                        "El campo '" +
+                                        nombreCampo +
+                                        "' contiene caracteres no permitidos.");
+                                }
+
+                                break;
+
+                            case "int":
+                            case "integer":
+                            case "decimal":
+                            case "float":
+                            case "numeric":
+                            case "double":
+                            case "real":
+
+                                errores.Add(
+                                    "El campo '" +
+                                    nombreCampo +
+                                    "' debe ser un valor numérico.");
+
+                                break;
+
+                            case "datetime":
+                            case "date":
+                            case "timestamp":
+
+                                errores.Add(
+                                    "El campo '" +
+                                    nombreCampo +
+                                    "' debe ser una fecha válida.");
+
+                                break;
+
+                            default:
+
+                                errores.Add(
+                                    "El campo '" +
+                                    nombreCampo +
+                                    "' no es válido.");
+
+                                break;
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al validar los datos: " + ex.Message, ex);
+                throw new Exception(
+                    "Error al validar los datos: " +
+                    ex.Message,
+                    ex);
             }
 
             return errores;
         }
 
-        public void guardarDatos(string query)
+        
+        public bool ActualizarRegistro(
+            string nombreTabla,
+            Dictionary<string, string> valores,
+            Dictionary<string, string> clavesPrimarias)
+        {
+            if (string.IsNullOrWhiteSpace(
+                nombreTabla))
+            {
+                throw new ArgumentException(
+                    "El nombre de la tabla es obligatorio.");
+            }
+
+            if (valores == null ||
+                valores.Count == 0)
+            {
+                throw new ArgumentException(
+                    "No existen datos para actualizar.");
+            }
+
+            if (clavesPrimarias == null ||
+                clavesPrimarias.Count == 0)
+            {
+                throw new ArgumentException(
+                    "No se encontró la llave primaria del registro.");
+            }
+
+            return sentencias
+                .ActualizarRegistro(
+                    nombreTabla,
+                    valores,
+                    clavesPrimarias);
+        }
+
+        
+        public bool EliminarRegistro(
+            string nombreTabla,
+            Dictionary<string, string> clavesPrimarias)
+        {
+            if (string.IsNullOrWhiteSpace(
+                nombreTabla))
+            {
+                throw new ArgumentException(
+                    "El nombre de la tabla es obligatorio.");
+            }
+
+            if (clavesPrimarias == null ||
+                clavesPrimarias.Count == 0)
+            {
+                throw new ArgumentException(
+                    "No se encontró la llave primaria del registro.");
+            }
+
+            return sentencias
+                .EliminarRegistro(
+                    nombreTabla,
+                    clavesPrimarias);
+        }
+
+        
+        public void guardarDatos(
+            string query)
         {
             try
             {
-                sentencias.guardarDatos(query);
+                sentencias.guardarDatos(
+                    query);
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al guardar los datos: " + ex.Message, ex);
+                throw new Exception(
+                    "Error al guardar los datos: " +
+                    ex.Message,
+                    ex);
             }
         }
 
-        public DataTable filtrarDgv(string nombreTabla, string columna, string valor)
+        
+        public DataTable filtrarDgv(
+            string nombreTabla,
+            string columna,
+            string valor)
         {
             OdbcDataAdapter daControlador =
-                sentencias.filtrarTbl(nombreTabla, columna, valor);
+                sentencias.filtrarTbl(
+                    nombreTabla,
+                    columna,
+                    valor);
 
-            DataTable dtControlador = new DataTable();
+            DataTable dtControlador =
+                new DataTable();
 
-            daControlador.Fill(dtControlador);
+            try
+            {
+                daControlador.Fill(
+                    dtControlador);
+            }
+            finally
+            {
+                if (daControlador != null &&
+                    daControlador.SelectCommand != null &&
+                    daControlador.SelectCommand.Connection != null)
+                {
+                    daControlador
+                        .SelectCommand
+                        .Connection
+                        .Close();
+                }
+
+                if (daControlador != null)
+                {
+                    daControlador.Dispose();
+                }
+            }
 
             return dtControlador;
         }
