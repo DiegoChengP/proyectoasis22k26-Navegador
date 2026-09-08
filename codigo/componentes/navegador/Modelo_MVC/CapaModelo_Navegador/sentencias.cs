@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
@@ -262,6 +262,27 @@ namespace CapaModelo_Navegador
             {
                 conn.desconexion(conexion);
             }
+        }
+
+        public OdbcDataAdapter filtrarTbl(string nombreTabla, string columna, string valor)
+        {
+            string sSQL =
+                "SELECT * FROM " +
+                nombreTabla +
+                " WHERE " +
+                columna +
+                " LIKE ?";
+
+            OdbcConnection conexion =
+                conn.conexion();
+
+            OdbcCommand comando = new OdbcCommand(sSQL, conexion);
+            comando.Parameters.AddWithValue("@valor", "%" + valor + "%");
+
+            OdbcDataAdapter daSentencias =
+                new OdbcDataAdapter(comando);
+
+            return daSentencias;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
@@ -62,6 +62,18 @@ namespace CapaControlador_Navegador
                 nombreTabla,
                 datos
             );
+        }
+
+        public DataTable filtrarDgv(string nombreTabla, string columna, string valor)
+        {
+            OdbcDataAdapter daControlador =
+                sentencias.filtrarTbl(nombreTabla, columna, valor);
+
+            DataTable dtControlador = new DataTable();
+
+            daControlador.Fill(dtControlador);
+
+            return dtControlador;
         }
     }
 }
