@@ -40,8 +40,27 @@ namespace CapaModelo_Navegador
 
             return dtEmpleados;
         }
+        // Dentro de la clase Sentencias en sentencias.cs
+        public bool ExisteAplicacion(int idAplicacion)
+        {
+            // TODO: Consulta SQL a la BD cuando esté lista
+            return idAplicacion > 0;
+        }
 
-        public List<string> ObtenerColumnas(string nombreTabla)
+        public bool ExisteModulo(int idModulo)
+        {
+            // TODO: Consulta SQL a la BD cuando esté lista
+            return idModulo > 0;
+        }
+
+        public bool GuardarUsuarioPermisoBD(int idUsuario, int idAplicacion, int idModulo, int idPermiso)
+        {
+            // TODO: INSERT SQL a la BD cuando esté lista
+            return true;
+        }
+
+        public List<string> ObtenerColumnas(
+            string nombreTabla)
         {
             List<string> columnas = new List<string>();
             OdbcConnection conexion = conn.conexion();

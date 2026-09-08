@@ -37,6 +37,26 @@ namespace CapaControlador_Navegador
             return dtControlador;
         }
 
+        // Dentro de la clase Controlador en controlador.cs
+        public bool GuardarRelacionUsuarioPermiso(int idUsuario, int idAplicacion, int idModulo, int idPermiso)
+        {
+            // Instancia de la clase Sentencias de CapaModelo
+            Sentencias modelo = new Sentencias();
+
+            // 1. Validar que existan el ID de aplicación e ID de módulo
+            bool existeApp = modelo.ExisteAplicacion(idAplicacion);
+            bool existeMod = modelo.ExisteModulo(idModulo);
+
+            // 2. Si ambos existen, procede a guardar la relación
+            if (existeApp && existeMod)
+            {
+                return modelo.GuardarUsuarioPermisoBD(idUsuario, idAplicacion, idModulo, idPermiso);
+            }
+
+            // Si alguno no existe, rechaza la operación
+            return false;
+        }
+
         public DataTable ConsultarEmpleados()
         {
             try
