@@ -9,84 +9,34 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaControlador_Navegador;
-using System.Text.RegularExpressions;
 
 namespace CapaVista_Navegador
 {
     public partial class Frm_Crud : Form
     {
-        // CAMBIO PARA LA FUTURA BASE DE DATOS:
-        // modificar los datos de esta sección
-
+        //cambiar nombre de la tabala a la que se desea hacer el CRUD
         string nombreTabla = "tbl_empleados";
-
-        string[] campos =
-        {
-            "id_empleado",
-            "dpi_emp",
-            "nit_emp",
-            "nombre_emp",
-            "apellido_emp",
-            "fecha_nacimiento",
-            "direccion_emp",
-            "fecha_contratacion",
-            "estado_emp",
-            "id_puesto"
-        };
-
-        string[] camposPK =
-        {
-            "id_empleado"
-        };
-
-        string[] camposUnicos =
-        {
-            "dpi_emp",
-            "nit_emp"
-        };
-
-        string[] camposCorreo =
-        {
-        };
-        // FIN DE LA SECCIÓN A MODIFICAR
-        Controlador controlador =
-            new Controlador();
+        Controlador controlador = new Controlador();
+        string modo = ""; // "INSERT" o "UPDATE"
 
         public Frm_Crud()
         {
             InitializeComponent();
-
-            Btn_Consultar.Click += Btn_Consultar_Click;
             Btn_ingresar.Click += Btn_ingresar_Click;
-            Btn_guardar.Click += Btn_guardar_Click;
+            Btn_refrescar.Click += Btn_modificar_Click;
             Btn_cancelar.Click += Btn_cancelar_Click;
-            Btn_refrescar.Click += Btn_refrescar_Click;
+            Dgv_datos.ReadOnly = true;
         }
 
         public void actualizarDataGridView()
         {
-            try
-            {
-                DataTable dtVista =
-                    controlador.llenarDgv(nombreTabla);
-
-                Dgv_datos.DataSource = dtVista;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "Error al cargar los datos:\n\n" +
-                    ex.Message,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
-            }
+            DataTable dtVista = controlador.llenarDgv(nombreTabla);
+            Dgv_datos.DataSource = dtVista;
+            Dgv_datos.ReadOnly = true;
+            modo = "";
         }
 
-        private void Btn_Consultar_Click(
-            object sender,
-            EventArgs e)
+        private void Btn_Consultar_Click(object sender, EventArgs e)
         {
             CrearFormularioBusqueda();
         }
@@ -172,365 +122,159 @@ namespace CapaVista_Navegador
             formulario.ShowDialog();
         }
 
-        private void Btn_ingresar_Click(
-            object sender,
-            EventArgs e)
+        private void Btn_ingresar_Click(object sender, EventArgs e)
         {
-            CrearFormularioIngreso();
+            modo = "INSERT";
+            Dgv_datos.ReadOnly = false;
+            MessageBox.Show("Modo Ingresar activado. Ingrese los datos en la nueva fila del grid y presione Guardar.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
-        private void CrearFormularioIngreso()
+        private void Btn_modificar_Click(object sender, EventArgs e)
         {
-            Form formulario = new Form();
-
-            formulario.Text = "Ingresar empleado";
-            formulario.StartPosition =
-                FormStartPosition.CenterParent;
-            formulario.Size =
-                new Size(520, 680);
-            formulario.FormBorderStyle =
-                FormBorderStyle.FixedDialog;
-            formulario.MaximizeBox = false;
-            formulario.MinimizeBox = false;
-
-            Panel panel = new Panel();
-
-            panel.Dock = DockStyle.Fill;
-            panel.AutoScroll = true;
-
-            formulario.Controls.Add(panel);
-
-            Dictionary<string, Control> controles =
-                new Dictionary<string, Control>();
-
-            int posicionY = 20;
-
-            foreach (string campo in campos)
+            if (Dgv_datos.CurrentRow == null || Dgv_datos.CurrentRow.IsNewRow)
             {
-                Label etiqueta = new Label();
-
-                etiqueta.Text = campo;
-                etiqueta.Location =
-                    new Point(25, posicionY);
-                etiqueta.AutoSize = true;
-
-                Control control;
-
-                if (campo == "fecha_nacimiento" ||
-                    campo == "fecha_contratacion")
-                {
-                    DateTimePicker calendario =
-                        new DateTimePicker();
-
-                    calendario.Name =
-                        "dtp_" + campo;
-
-                    calendario.Location =
-                        new Point(180, posicionY - 3);
-
-                    calendario.Width = 260;
-
-                    calendario.Format =
-                        DateTimePickerFormat.Short;
-
-                    calendario.Value =
-                        DateTime.Today;
-
-                    control = calendario;
-                }
-                else
-                {
-                    TextBox caja =
-                        new TextBox();
-
-                    caja.Name =
-                        "txt_" + campo;
-
-                    caja.Location =
-                        new Point(180, posicionY - 3);
-
-                    caja.Width = 260;
-
-                    control = caja;
-                }
-
-                panel.Controls.Add(etiqueta);
-                panel.Controls.Add(control);
-
-                controles.Add(campo, control);
-
-                posicionY += 45;
+                MessageBox.Show("Seleccione un registro válido para modificar.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
+            modo = "UPDATE";
+            Dgv_datos.ReadOnly = false;
+            MessageBox.Show("Modo Modificar activado. Edite el registro en el grid y presione Guardar.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            Button botonGuardar =
-                new Button();
+        }
+        private void Btn_refrescar_Click(object sender, EventArgs e)
+        {
 
-            botonGuardar.Text = "Guardar";
-            botonGuardar.Width = 100;
-            botonGuardar.Height = 35;
-
-            botonGuardar.Location =
-                new Point(180, posicionY + 10);
-
-            panel.Controls.Add(botonGuardar);
-
-            botonGuardar.Click += (sender, e) =>
-            {
-                GuardarRegistro(
-                    formulario,
-                    controles
-                );
-            };
-
-            formulario.ShowDialog();
+        }
+        private void Btn_cancelar_Click(object sender, EventArgs e)
+        {
+            actualizarDataGridView();
+            MessageBox.Show("Operación cancelada.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void GuardarRegistro(
-            Form formulario,
-            Dictionary<string, Control> controles)
+        private void Btn_guardar_Click(object sender, EventArgs e)
         {
             try
             {
-                Dictionary<string, string> datos =
-                    new Dictionary<string, string>();
-
-                foreach (string campo in campos)
+                if (string.IsNullOrEmpty(modo))
                 {
-                    string valor;
-
-                    if (campo == "fecha_nacimiento" ||
-                        campo == "fecha_contratacion")
-                    {
-                        DateTimePicker calendario =
-                            (DateTimePicker)controles[campo];
-
-                        valor =
-                            calendario.Value.ToString(
-                                "yyyy-MM-dd"
-                            );
-                    }
-                    else
-                    {
-                        TextBox caja =
-                            (TextBox)controles[campo];
-
-                        valor =
-                            caja.Text.Trim();
-                    }
-
-                    if (string.IsNullOrWhiteSpace(valor))
-                    {
-                        MessageBox.Show(
-                            "El campo '" +
-                            campo +
-                            "' es obligatorio.",
-                            "Validación",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning
-                        );
-
-                        controles[campo].Focus();
-
-                        return;
-                    }
-
-                    datos.Add(campo, valor);
+                    MessageBox.Show("No hay ningún modo activo (Ingresar o Modificar).", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
 
-                foreach (string campoCorreo
-                    in camposCorreo)
+                if (Dgv_datos.CurrentRow == null)
                 {
-                    if (datos.ContainsKey(campoCorreo))
+                    MessageBox.Show("No hay ningún registro seleccionado.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                DataGridViewRow row = Dgv_datos.CurrentRow;
+                if (row.IsNewRow && modo == "UPDATE")
+                {
+                    MessageBox.Show("Seleccione una fila existente para modificar.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Validación antes de enviar
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    if (cell.Value == null || string.IsNullOrWhiteSpace(cell.Value.ToString()))
                     {
-                        string correo =
-                            datos[campoCorreo];
-
-                        if (!ValidarCorreo(correo))
+                        if (!row.IsNewRow)
                         {
-                            MessageBox.Show(
-                                "El correo ingresado en '" +
-                                campoCorreo +
-                                "' no tiene un formato válido.",
-                                "Correo inválido",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Warning
-                            );
-
-                            controles[campoCorreo].Focus();
-
+                            MessageBox.Show("Existen campos vacíos. Por favor complete todos los datos antes de guardar.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             return;
                         }
                     }
                 }
 
-                string[] valoresPK =
-                    new string[camposPK.Length];
-
-                for (int i = 0;
-                    i < camposPK.Length;
-                    i++)
+                DataTable dt = (DataTable)Dgv_datos.DataSource;
+                if (dt == null)
                 {
-                    if (!datos.ContainsKey(camposPK[i]))
-                    {
-                        MessageBox.Show(
-                            "El campo de llave primaria '" +
-                            camposPK[i] +
-                            "' no existe.",
-                            "Error",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                        );
-
-                        return;
-                    }
-
-                    valoresPK[i] =
-                        datos[camposPK[i]];
-                }
-
-                bool existePK =
-                    controlador.ExisteLlavePrimaria(
-                        nombreTabla,
-                        camposPK,
-                        valoresPK
-                    );
-
-                if (existePK)
-                {
-                    MessageBox.Show(
-                        "La llave primaria ya existe.\n\n" +
-                        "No se puede insertar un empleado " +
-                        "con el mismo ID.",
-                        "Registro duplicado",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning
-                    );
-
-                    controles[camposPK[0]].Focus();
-
+                    MessageBox.Show("El origen de datos no está disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                foreach (string campoUnico
-                    in camposUnicos)
+                string sql = "";
+
+                if (modo == "INSERT")
                 {
-                    if (!datos.ContainsKey(campoUnico))
+                    List<string> columnas = new List<string>();
+                    List<string> valores = new List<string>();
+
+                    foreach (DataColumn col in dt.Columns)
                     {
-                        continue;
+                        int colIndex = dt.Columns.IndexOf(col);
+
+                        // Omitir el id_empleado (columna 0) para que MySQL lo genere automáticamente
+                        if (colIndex == 0) continue;
+
+                        if (colIndex < row.Cells.Count && row.Cells[colIndex].Value != null)
+                        {
+                            columnas.Add(col.ColumnName);
+                            valores.Add("'" + FormatearValorParaSql(row.Cells[colIndex].Value, col.DataType) + "'");
+                        }
                     }
 
-                    string valor =
-                        datos[campoUnico];
-
-                    bool existe =
-                        controlador.ExisteValorCampo(
-                            nombreTabla,
-                            campoUnico,
-                            valor
-                        );
-
-                    if (existe)
+                    if (columnas.Count == 0)
                     {
-                        MessageBox.Show(
-                            "El valor '" +
-                            valor +
-                            "' ya está registrado " +
-                            "en el campo '" +
-                            campoUnico +
-                            "'.",
-                            "Dato duplicado",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning
-                        );
-
-                        controles[campoUnico].Focus();
-
+                        MessageBox.Show("No hay datos para insertar.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
+
+                    sql = $"INSERT INTO {nombreTabla} ({string.Join(", ", columnas)}) VALUES ({string.Join(", ", valores)});";
                 }
-
-                bool insertado =
-                    controlador.InsertarRegistro(
-                        nombreTabla,
-                        datos
-                    );
-
-                if (insertado)
+                else if (modo == "UPDATE")
                 {
-                    MessageBox.Show(
-                        "Empleado ingresado correctamente.",
-                        "Registro guardado",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
+                    string primaryKeyCol = dt.Columns[0].ColumnName;
+                    string primaryKeyValue = row.Cells[0].Value?.ToString() ?? "";
 
-                    formulario.Close();
+                    if (string.IsNullOrEmpty(primaryKeyValue))
+                    {
+                        MessageBox.Show("El identificador del registro (clave primaria) no puede estar vacío.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
 
-                    actualizarDataGridView();
+                    List<string> setClauses = new List<string>();
+
+                    foreach (DataColumn col in dt.Columns)
+                    {
+                        int colIndex = dt.Columns.IndexOf(col);
+                        if (colIndex < row.Cells.Count && row.Cells[colIndex].Value != null)
+                        {
+                            string val = FormatearValorParaSql(row.Cells[colIndex].Value, col.DataType);
+                            setClauses.Add($"{col.ColumnName} = '{val}'");
+                        }
+                    }
+
+                    sql = $"UPDATE {nombreTabla} SET {string.Join(", ", setClauses)} WHERE {primaryKeyCol} = '{primaryKeyValue}';";
                 }
-                else
-                {
-                    MessageBox.Show(
-                        "No se pudo insertar el empleado.",
-                        "Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                    );
-                }
+
+                // Enviar al controlador
+                controlador.guardarDatos(sql);
+                MessageBox.Show("¡Registro guardado exitosamente!", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Refrescar el grid al terminar
+                actualizarDataGridView();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Ocurrió un error:\n\n" +
-                    ex.Message,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                MessageBox.Show("Error al guardar el registro: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        private bool ValidarCorreo(string correo)
+        private string FormatearValorParaSql(object cellValue, Type columnType)
         {
-            string patron =
-                @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            if (cellValue == null || cellValue == DBNull.Value) return "";
 
-            return Regex.IsMatch(
-                correo,
-                patron
-            );
+            if (columnType == typeof(DateTime) || DateTime.TryParse(cellValue.ToString(), out _))
+            {
+                if (DateTime.TryParse(cellValue.ToString(), out DateTime fecha))
+                {
+                    return fecha.ToString("yyyy-MM-dd");
+                }
+            }
+
+            return cellValue.ToString().Replace("'", "''");
         }
 
-        private void Btn_guardar_Click(
-            object sender,
-            EventArgs e)
-        {
-            MessageBox.Show(
-                "Para ingresar un nuevo empleado " +
-                "utilice el botón Ingresar.",
-                "Información",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
-        }
-
-        private void Btn_cancelar_Click(
-            object sender,
-            EventArgs e)
-        {
-            MessageBox.Show(
-                "Operación cancelada.",
-                "Información",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
-        }
-
-        private void Btn_refrescar_Click(
-            object sender,
-            EventArgs e)
-        {
-            actualizarDataGridView();
-        }
+       
     }
 }
