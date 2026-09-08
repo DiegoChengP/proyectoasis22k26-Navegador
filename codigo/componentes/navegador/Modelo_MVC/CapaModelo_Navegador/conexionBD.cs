@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace CapaModelo_Navegador
 {
-    class conexionBD
+    public class conexionBD
     {
         public OdbcConnection conexion()
         {
-            OdbcConnection conn = new OdbcConnection("Dsn=Umg_taller");
+            OdbcConnection conn = new OdbcConnection("Dsn=BD_ProyectoNominas");
 
             try
             {

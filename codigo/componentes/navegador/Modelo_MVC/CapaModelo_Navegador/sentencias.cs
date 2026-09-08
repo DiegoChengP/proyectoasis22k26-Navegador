@@ -263,5 +263,12 @@ namespace CapaModelo_Navegador
                 conn.desconexion(conexion);
             }
         }
+        public void ejecutarSql(string sql)
+        {
+            using (OdbcCommand cmd = new OdbcCommand(sql, conn.conexion()))
+            {
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }

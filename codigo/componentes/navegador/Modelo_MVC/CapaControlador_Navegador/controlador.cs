@@ -63,5 +63,10 @@ namespace CapaControlador_Navegador
                 datos
             );
         }
+        public void guardarDatos(string query)
+        {
+            sentencias.ejecutarSql(query);
+        }
+
     }
 }
