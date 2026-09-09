@@ -725,14 +725,11 @@ namespace CapaVista_Navegador
                     }
                 }
 
-                DialogResult respuesta =
-                    MessageBox.Show(
-                        "¿Desea eliminar el registro seleccionado?",
-                        "Confirmar eliminación",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question);
-
-                if (respuesta != DialogResult.Yes)
+                if (!ConfirmarAccion(
+                    "Confirmar eliminación",
+                    "¿Desea eliminar el registro seleccionado de la tabla '" +
+                    nombreTabla +
+                    "'?"))
                 {
                     return;
                 }
@@ -1214,37 +1211,105 @@ namespace CapaVista_Navegador
                     }
 
                     // =================================================
-                    // BOOLEANO
+                    // BOOLEANO = RADIO BUTTONS (Sí / No)
                     // =================================================
+                    // MEJORA: antes se usaba un único CheckBox
+                    // (marcado/desmarcado). Ahora se muestran dos
+                    // RadioButton mutuamente excluyentes dentro de un
+                    // Panel, igual de dinámico que el resto del
+                    // formulario: se generan para CUALQUIER columna que
+                    // EsBooleano() detecte, sin importar la tabla.
 
                     else if (EsBooleano(columna))
                     {
-                        CheckBox check =
-                            new CheckBox();
+                        Panel panelBooleano =
+                            new Panel();
 
-                        check.Name =
-                            "chk_" +
+                        panelBooleano.Name =
+                            "pnl_" +
                             campo;
 
-                        check.Location =
+                        panelBooleano.Location =
                             new Point(
                                 190,
                                 posicionY);
 
-                        check.Width =
+                        panelBooleano.Width =
                             250;
 
-                        check.Checked =
+                        panelBooleano.Height =
+                            24;
+
+                        bool valorInicial =
                             ObtenerBooleanoInicial(
                                 filaSeleccionada,
                                 campo);
 
-                        // FIX: mismo problema; solo bloquear al Modificar.
-                        check.Enabled =
+                        RadioButton rbSi =
+                            new RadioButton();
+
+                        rbSi.Name =
+                            "rbSi_" +
+                            campo;
+
+                        rbSi.Text =
+                            "Sí";
+
+                        rbSi.AutoSize =
+                            true;
+
+                        rbSi.Location =
+                            new Point(
+                                0,
+                                3);
+
+                        // Tag guarda el valor booleano real que
+                        // representa este RadioButton, para poder
+                        // leerlo de forma genérica en ObtenerValorControl.
+                        rbSi.Tag =
+                            true;
+
+                        rbSi.Checked =
+                            valorInicial;
+
+                        RadioButton rbNo =
+                            new RadioButton();
+
+                        rbNo.Name =
+                            "rbNo_" +
+                            campo;
+
+                        rbNo.Text =
+                            "No";
+
+                        rbNo.AutoSize =
+                            true;
+
+                        rbNo.Location =
+                            new Point(
+                                90,
+                                3);
+
+                        rbNo.Tag =
+                            false;
+
+                        rbNo.Checked =
+                            !valorInicial;
+
+                        panelBooleano.Controls.Add(
+                            rbSi);
+
+                        panelBooleano.Controls.Add(
+                            rbNo);
+
+                        // FIX: mismo problema; solo bloquear al Modificar
+                        // (nunca al Ingresar). Al deshabilitar el Panel
+                        // se deshabilitan también los dos RadioButton.
+                        panelBooleano.Enabled =
                             !(esPk && modificar);
 
                         control =
-                            check;
+                            panelBooleano;
                     }
 
                     // =================================================
@@ -1435,6 +1500,50 @@ namespace CapaVista_Navegador
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+        // =========================================================
+        // MEJORA: CONFIRMACIÓN ANTES DE EJECUTAR UN CAMBIO
+        // =========================================================
+        // Se usa para Ingresar, Modificar y Eliminar: primero se
+        // muestran las labels/valores del registro en el panel (ya
+        // visibles) y solo cuando el usuario vuelve a dar clic en el
+        // botón de acción y confirma en este cuadro, se ejecuta el
+        // cambio contra la base de datos. Es genérico: funciona para
+        // cualquier tabla/campo, sin importar el esquema conectado.
+
+        private bool ConfirmarAccion(
+            string titulo,
+            string mensaje)
+        {
+            DialogResult respuesta =
+                MessageBox.Show(
+                    mensaje,
+                    titulo,
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+            return respuesta == DialogResult.Yes;
+        }
+
+        // Arma un resumen "campo: valor" con los datos que se van a
+        // guardar, para mostrarlo dentro del cuadro de confirmación.
+
+        private string ConstruirResumenDatos(
+            Dictionary<string, string> datos)
+        {
+            string resumen = "";
+
+            foreach (KeyValuePair<string, string> dato in datos)
+            {
+                resumen +=
+                    dato.Key +
+                    ": " +
+                    dato.Value +
+                    "\n";
+            }
+
+            return resumen;
         }
 
         // =========================================================
@@ -1648,6 +1757,19 @@ namespace CapaVista_Navegador
                         }
                     }
 
+                    // =================================================
+                    // MEJORA: CONFIRMAR ANTES DE INGRESAR
+                    // =================================================
+                    if (!ConfirmarAccion(
+                        "Confirmar ingreso",
+                        "¿Desea ingresar el siguiente registro en la tabla '" +
+                        nombreTabla +
+                        "'?\n\n" +
+                        ConstruirResumenDatos(datos)))
+                    {
+                        return;
+                    }
+
                     if (controlador.InsertarRegistro(
                         nombreTabla,
                         datos))
@@ -1726,6 +1848,20 @@ namespace CapaVista_Navegador
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
 
+                    return;
+                }
+
+                // =====================================================
+                // MEJORA: CONFIRMAR ANTES DE MODIFICAR
+                // =====================================================
+                if (!ConfirmarAccion(
+                    "Confirmar modificación",
+                    "¿Desea guardar los siguientes cambios en el registro " +
+                    "seleccionado de la tabla '" +
+                    nombreTabla +
+                    "'?\n\n" +
+                    ConstruirResumenDatos(valores)))
+                {
                     return;
                 }
 
@@ -2136,6 +2272,34 @@ namespace CapaVista_Navegador
                 return check.Checked
                     ? "1"
                     : "0";
+            }
+
+            // =====================================================
+            // MEJORA: PANEL DE RADIO BUTTONS (BOOLEANO)
+            // =====================================================
+            Panel panelBooleano =
+                control as Panel;
+
+            if (panelBooleano != null)
+            {
+                foreach (Control hijo in panelBooleano.Controls)
+                {
+                    RadioButton radio =
+                        hijo as RadioButton;
+
+                    if (radio != null &&
+                        radio.Checked)
+                    {
+                        return (bool)radio.Tag
+                            ? "1"
+                            : "0";
+                    }
+                }
+
+                // Si por alguna razón ninguno quedó marcado
+                // (no debería pasar, siempre hay uno inicial),
+                // se asume "No" para no bloquear el guardado.
+                return "0";
             }
 
             return control.Text.Trim();
