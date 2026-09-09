@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CapaControlador_Navegador;
@@ -22,9 +23,6 @@ namespace CapaVista_Navegador
         private Panel panelRegistro;
         private Dictionary<string, Control> controlesRegistro;
 
-        private Button btnGuardarRegistro;
-        private Button btnCancelarRegistro;
-
         //Modificación realizada por: Natali Sofía Montenegro Portillo validaciones de permisos del MVC
         private string _UsuarioActual = "gerente1";
         private string _CodigoModulo = "123";
@@ -34,6 +32,16 @@ namespace CapaVista_Navegador
 
         private Dictionary<string, string> clavesPrimariasModificar =
             new Dictionary<string, string>();
+
+        // =========================================================
+        // MEJORA: LLAVES PRIMARIAS DEFINIDAS MANUALMENTE
+        // =========================================================
+        // Cuando ODBC no logra detectar la llave primaria de una tabla
+        // (algunos motores/drivers no exponen esa metadata), se le
+        // pregunta al usuario una sola vez por tabla y se recuerda
+        // aquí durante el resto de la sesión.
+        private Dictionary<string, List<string>> clavesManualesPorTabla =
+            new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
         public string NombreTabla
         {
@@ -120,6 +128,23 @@ namespace CapaVista_Navegador
             Btn_salir.Click -= Btn_salir_Click;
             Btn_salir.Click += Btn_salir_Click;
 
+            // MEJORA: los botones de navegación (Anterior, Inicio, Fin,
+            // Siguiente) ahora mueven la selección dentro del DataGridView.
+            // Así el usuario puede "pasearse" por los registros y, una vez
+            // posicionado en el que le interesa, usar Modificar o Eliminar
+            // sobre esa fila.
+            Btn_anterior.Click -= Btn_anterior_Click;
+            Btn_anterior.Click += Btn_anterior_Click;
+
+            Btn_inicio.Click -= Btn_inicio_Click;
+            Btn_inicio.Click += Btn_inicio_Click;
+
+            Btn_fin.Click -= Btn_fin_Click;
+            Btn_fin.Click += Btn_fin_Click;
+
+            Btn_siguiente.Click -= Btn_siguiente_Click;
+            Btn_siguiente.Click += Btn_siguiente_Click;
+
             Load += Frm_Crud_Load;
             Resize += Frm_Crud_Resize;
         }
@@ -179,6 +204,169 @@ namespace CapaVista_Navegador
         }
 
 
+        // =========================================================
+        // MEJORA: SELECTOR GENÉRICO DE LISTA (para elegir tabla o
+        // definir manualmente las columnas de la llave primaria)
+        // =========================================================
+        private List<string> MostrarSelectorLista(
+            string titulo,
+            string mensaje,
+            List<string> opciones,
+            bool multiSeleccion)
+        {
+            List<string> seleccion = new List<string>();
+
+            using (Form dialogo = new Form())
+            {
+                dialogo.Text = titulo;
+                dialogo.StartPosition = FormStartPosition.CenterParent;
+                dialogo.Width = 380;
+                dialogo.Height = 420;
+                dialogo.MinimizeBox = false;
+                dialogo.MaximizeBox = false;
+                dialogo.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialogo.ShowInTaskbar = false;
+
+                Label lbl = new Label();
+                lbl.Text = mensaje;
+                lbl.Location = new Point(10, 10);
+                lbl.Size = new Size(340, 40);
+                dialogo.Controls.Add(lbl);
+
+                Button btnOk = new Button();
+                btnOk.Text = "Aceptar";
+                btnOk.Location = new Point(190, 325);
+                btnOk.DialogResult = DialogResult.OK;
+
+                Button btnCancel = new Button();
+                btnCancel.Text = "Cancelar";
+                btnCancel.Location = new Point(275, 325);
+                btnCancel.DialogResult = DialogResult.Cancel;
+
+                dialogo.AcceptButton = btnOk;
+                dialogo.CancelButton = btnCancel;
+
+                if (multiSeleccion)
+                {
+                    CheckedListBox clb = new CheckedListBox();
+                    clb.Location = new Point(10, 55);
+                    clb.Size = new Size(340, 260);
+
+                    foreach (string opcion in opciones)
+                    {
+                        clb.Items.Add(opcion);
+                    }
+
+                    dialogo.Controls.Add(clb);
+                    dialogo.Controls.Add(btnOk);
+                    dialogo.Controls.Add(btnCancel);
+
+                    if (dialogo.ShowDialog(this) == DialogResult.OK)
+                    {
+                        foreach (object item in clb.CheckedItems)
+                        {
+                            seleccion.Add(item.ToString());
+                        }
+                    }
+                }
+                else
+                {
+                    ListBox lb = new ListBox();
+                    lb.Location = new Point(10, 55);
+                    lb.Size = new Size(340, 260);
+
+                    foreach (string opcion in opciones)
+                    {
+                        lb.Items.Add(opcion);
+                    }
+
+                    lb.DoubleClick += (s, e) =>
+                    {
+                        dialogo.DialogResult = DialogResult.OK;
+                    };
+
+                    dialogo.Controls.Add(lb);
+                    dialogo.Controls.Add(btnOk);
+                    dialogo.Controls.Add(btnCancel);
+
+                    if (dialogo.ShowDialog(this) == DialogResult.OK &&
+                        lb.SelectedItem != null)
+                    {
+                        seleccion.Add(lb.SelectedItem.ToString());
+                    }
+                }
+
+                return seleccion;
+            }
+        }
+
+        // =========================================================
+        // MEJORA: OBTENER ESQUEMA GARANTIZANDO UNA LLAVE PRIMARIA
+        // =========================================================
+        // Envuelve controlador.ObtenerEsquemaTabla: si ninguna columna
+        // quedó marcada como llave primaria (porque el driver ODBC no
+        // expone esa metadata para esta base de datos), se le pregunta
+        // al usuario una sola vez por tabla y se recuerda la elección
+        // durante la sesión, en vez de bloquear Modificar/Eliminar.
+        private DataTable ObtenerEsquemaConLlaves(string tabla)
+        {
+            DataTable esquema = controlador.ObtenerEsquemaTabla(tabla);
+
+            bool tieneLlave = false;
+
+            foreach (DataRow fila in esquema.Rows)
+            {
+                if (ObtenerBooleanoEsquema(fila, "IS_PRIMARY_KEY"))
+                {
+                    tieneLlave = true;
+                    break;
+                }
+            }
+
+            if (tieneLlave)
+            {
+                return esquema;
+            }
+
+            List<string> columnasElegidas;
+
+            if (!clavesManualesPorTabla.TryGetValue(tabla, out columnasElegidas))
+            {
+                List<string> nombresColumnas = new List<string>();
+
+                foreach (DataRow fila in esquema.Rows)
+                {
+                    nombresColumnas.Add(Convert.ToString(fila["COLUMN_NAME"]));
+                }
+
+                columnasElegidas = MostrarSelectorLista(
+                    "Definir llave primaria",
+                    "No se pudo detectar automáticamente la llave primaria de '" +
+                    tabla +
+                    "'.\nSeleccione la o las columnas que la conforman:",
+                    nombresColumnas,
+                    true);
+
+                clavesManualesPorTabla[tabla] = columnasElegidas;
+            }
+
+            if (columnasElegidas != null && columnasElegidas.Count > 0)
+            {
+                foreach (DataRow fila in esquema.Rows)
+                {
+                    string nombreCol = Convert.ToString(fila["COLUMN_NAME"]);
+
+                    if (columnasElegidas.Contains(nombreCol, StringComparer.OrdinalIgnoreCase))
+                    {
+                        fila["IS_PRIMARY_KEY"] = true;
+                    }
+                }
+            }
+
+            return esquema;
+        }
+
+
         // Ingresar
 
 
@@ -191,12 +379,68 @@ namespace CapaVista_Navegador
                 return;
             }
 
-            if (dgvDatos != null)
+            // =====================================================
+            // MEJORA: mostrar todas las tablas disponibles en la BD
+            // para que el usuario elija en cuál desea ingresar un
+            // nuevo registro (funciona con cualquier tabla/BD).
+            // =====================================================
+            List<string> tablas;
+
+            try
             {
-                dgvDatos.Visible = false;
+                tablas = controlador.ObtenerTablas();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ObtenerMensajeAmigable(ex),
+                    "Error al listar tablas",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return;
             }
 
+            if (tablas == null || tablas.Count == 0)
+            {
+                MessageBox.Show(
+                    "No se encontraron tablas disponibles en la base de datos.",
+                    "Ingresar registro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            List<string> seleccion = MostrarSelectorLista(
+                "Seleccionar tabla",
+                "Seleccione la tabla en la que desea ingresar un nuevo registro:",
+                tablas,
+                false);
+
+            if (seleccion.Count == 0)
+            {
+                // El usuario canceló la selección.
+                return;
+            }
+
+            nombreTabla = seleccion[0];
             modoModificar = false;
+
+            try
+            {
+                ConsultarTabla();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ObtenerMensajeAmigable(ex),
+                    "Error al consultar",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return;
+            }
 
             clavesPrimariasModificar =
                 new Dictionary<string, string>();
@@ -241,6 +485,114 @@ namespace CapaVista_Navegador
             }
         }
 
+
+        // =========================================================
+        // MEJORA: NAVEGACIÓN DEL DATAGRIDVIEW
+        // =========================================================
+        // Estos 4 botones permiten recorrer los registros cargados y
+        // dejar seleccionada la fila que luego se puede Modificar o
+        // Eliminar, sin depender únicamente del clic manual sobre la
+        // grilla.
+
+        private void Btn_inicio_Click(
+            object sender,
+            EventArgs e)
+        {
+            SeleccionarFila(0);
+        }
+
+        private void Btn_anterior_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (dgvDatos == null ||
+                dgvDatos.Rows.Count == 0)
+            {
+                return;
+            }
+
+            int filaActual =
+                ObtenerIndiceFilaActual();
+
+            SeleccionarFila(
+                Math.Max(
+                    0,
+                    filaActual - 1));
+        }
+
+        private void Btn_siguiente_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (dgvDatos == null ||
+                dgvDatos.Rows.Count == 0)
+            {
+                return;
+            }
+
+            int filaActual =
+                ObtenerIndiceFilaActual();
+
+            SeleccionarFila(
+                Math.Min(
+                    dgvDatos.Rows.Count - 1,
+                    filaActual + 1));
+        }
+
+        private void Btn_fin_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (dgvDatos == null ||
+                dgvDatos.Rows.Count == 0)
+            {
+                return;
+            }
+
+            SeleccionarFila(
+                dgvDatos.Rows.Count - 1);
+        }
+
+        private int ObtenerIndiceFilaActual()
+        {
+            if (dgvDatos == null ||
+                dgvDatos.CurrentRow == null)
+            {
+                return 0;
+            }
+
+            return dgvDatos.CurrentRow.Index;
+        }
+
+        private void SeleccionarFila(
+            int indice)
+        {
+            if (dgvDatos == null ||
+                !dgvDatos.Visible ||
+                dgvDatos.Rows.Count == 0 ||
+                indice < 0 ||
+                indice >= dgvDatos.Rows.Count)
+            {
+                return;
+            }
+
+            dgvDatos.ClearSelection();
+
+            dgvDatos.Rows[indice].Selected =
+                true;
+
+            dgvDatos.CurrentCell =
+                dgvDatos.Rows[indice].Cells[0];
+
+            // Asegurar que la fila seleccionada quede visible en pantalla.
+            if (dgvDatos.FirstDisplayedScrollingRowIndex > indice ||
+                dgvDatos.FirstDisplayedScrollingRowIndex +
+                    dgvDatos.DisplayedRowCount(false) <= indice)
+            {
+                dgvDatos.FirstDisplayedScrollingRowIndex =
+                    indice;
+            }
+        }
 
         // Modificar
 
@@ -414,6 +766,10 @@ namespace CapaVista_Navegador
         // =========================================================
         // GUARDAR
         // =========================================================
+        // MEJORA: se eliminaron los botones "Guardar"/"Cancelar" que
+        // se generaban dentro del panel de registro; el toolbar ya
+        // tiene Btn_guardar/Btn_cancelar cumpliendo la misma función,
+        // así que aquí solo delegamos a GuardarFormularioRegistro().
 
         private void Btn_guardar_Click(
             object sender,
@@ -427,7 +783,7 @@ namespace CapaVista_Navegador
             }
 
             MessageBox.Show(
-                "Abra un registro con el botón Modificar antes de guardar.",
+                "Abra un registro con Ingresar o Modificar antes de guardar.",
                 "Guardar registro",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
@@ -457,7 +813,7 @@ namespace CapaVista_Navegador
                         nombreTabla);
 
                 esquemaActual =
-                    controlador.ObtenerEsquemaTabla(
+                    ObtenerEsquemaConLlaves(
                         nombreTabla);
 
                 if (dgvDatos == null)
@@ -604,7 +960,7 @@ namespace CapaVista_Navegador
             try
             {
                 DataTable esquema =
-                    controlador.ObtenerEsquemaTabla(
+                    ObtenerEsquemaConLlaves(
                         nombreTabla);
 
                 esquemaActual =
@@ -631,12 +987,12 @@ namespace CapaVista_Navegador
                     ClientSize.Width - 20;
 
                 int altura =
-                    60 +
+                    50 +
                     esquema.Rows.Count * 42;
 
-                if (altura < 180)
+                if (altura < 150)
                 {
-                    altura = 180;
+                    altura = 150;
                 }
 
                 if (altura > 400)
@@ -667,7 +1023,35 @@ namespace CapaVista_Navegador
                 controlesRegistro =
                     new Dictionary<string, Control>();
 
-                int posicionY = 10;
+                // MEJORA: título claro del formulario según el modo,
+                // para que quede visualmente organizado.
+                Label titulo =
+                    new Label();
+
+                titulo.Text =
+                    (modificar
+                        ? "Modificar registro - "
+                        : "Nuevo registro - ") +
+                    nombreTabla;
+
+                titulo.Font =
+                    new Font(
+                        Font.FontFamily,
+                        10,
+                        FontStyle.Bold);
+
+                titulo.AutoSize =
+                    true;
+
+                titulo.Location =
+                    new Point(
+                        10,
+                        8);
+
+                panelRegistro.Controls.Add(
+                    titulo);
+
+                int posicionY = 34;
 
                 foreach (DataRow columna
                     in esquema.Rows)
@@ -725,6 +1109,31 @@ namespace CapaVista_Navegador
                     etiqueta.AutoSize =
                         true;
 
+                    // MEJORA: distinguir visualmente PK/FK del resto de
+                    // los campos para que el formulario se lea mejor.
+                    if (esPk)
+                    {
+                        etiqueta.Font =
+                            new Font(
+                                Font.FontFamily,
+                                Font.Size,
+                                FontStyle.Bold);
+
+                        etiqueta.ForeColor =
+                            Color.DarkRed;
+                    }
+                    else if (esFk)
+                    {
+                        etiqueta.Font =
+                            new Font(
+                                Font.FontFamily,
+                                Font.Size,
+                                FontStyle.Bold);
+
+                        etiqueta.ForeColor =
+                            Color.DarkBlue;
+                    }
+
                     Control control;
 
                     // =================================================
@@ -752,11 +1161,15 @@ namespace CapaVista_Navegador
                         combo.Width =
                             250;
 
-                        // La FK se selecciona desde las opciones
-                        // existentes en la base de datos.
-                        // No se escribe manualmente.
+                        // FIX: antes se deshabilitaba el combo con solo
+                        // "!esPk", así que una FK que también es PK (caso
+                        // muy común en llaves compuestas, ej. tbl_asistencias)
+                        // quedaba SIEMPRE bloqueada, incluso al Ingresar un
+                        // registro nuevo, donde sí se necesita elegir el
+                        // valor. Ahora solo se bloquea si además se está
+                        // Modificando (donde la PK no debe cambiar).
                         combo.Enabled =
-                            !esPk;
+                            !(esPk && modificar);
 
                         control =
                             combo;
@@ -766,7 +1179,7 @@ namespace CapaVista_Navegador
                     // FECHA
                     // =================================================
 
-                    else if (EsFecha(tipo))
+                    else if (EsFecha(columna))
                     {
                         DateTimePicker fecha =
                             new DateTimePicker();
@@ -791,8 +1204,10 @@ namespace CapaVista_Navegador
                                 filaSeleccionada,
                                 campo);
 
+                        // FIX: mismo problema que con el combo de FK:
+                        // antes "!esPk" bloqueaba también al Ingresar.
                         fecha.Enabled =
-                            !esPk;
+                            !(esPk && modificar);
 
                         control =
                             fecha;
@@ -802,7 +1217,7 @@ namespace CapaVista_Navegador
                     // BOOLEANO
                     // =================================================
 
-                    else if (EsBooleano(tipo))
+                    else if (EsBooleano(columna))
                     {
                         CheckBox check =
                             new CheckBox();
@@ -824,8 +1239,9 @@ namespace CapaVista_Navegador
                                 filaSeleccionada,
                                 campo);
 
+                        // FIX: mismo problema; solo bloquear al Modificar.
                         check.Enabled =
-                            !esPk;
+                            !(esPk && modificar);
 
                         control =
                             check;
@@ -857,20 +1273,89 @@ namespace CapaVista_Navegador
                                 filaSeleccionada,
                                 campo);
 
-                        // Al insertar:
-                        // PK y autoincremento son automáticos.
-                        if (!modificar &&
-                            (esPk || esAuto))
+                        // =============================================
+                        // MEJORA: AUTOGENERACIÓN DE LLAVE PRIMARIA
+                        // =============================================
+                        // Al insertar un registro nuevo:
+                        //  - Si el motor de BD maneja autoincremento
+                        //    real (esAuto), lo dejamos en manos del
+                        //    motor: no mostramos ni enviamos un valor.
+                        //  - Si es PK pero NO es autoincremento nativo
+                        //    (la mayoría de tablas vía ODBC genérico),
+                        //    calculamos automáticamente el siguiente
+                        //    valor (MAX + 1) y lo mostramos ya listo,
+                        //    de forma que si hay 14 registros, el nuevo
+                        //    campo ID aparezca con 15 sin que el usuario
+                        //    tenga que escribirlo. Esto es lo que hacen
+                        //    la mayoría de sistemas: el ID nunca lo
+                        //    escribe el usuario, se calcula solo.
+                        if (!modificar && esAuto)
                         {
-                            caja.Enabled =
-                                false;
-
                             caja.Text =
                                 "(automático)";
+
+                            caja.ReadOnly =
+                                true;
+
+                            caja.BackColor =
+                                Color.LightGray;
+                        }
+                        else if (!modificar && esPk)
+                        {
+                            if (EsTipoNumerico(columna))
+                            {
+                                object siguiente = null;
+
+                                try
+                                {
+                                    siguiente =
+                                        controlador
+                                            .ObtenerSiguienteValorLlave(
+                                                nombreTabla,
+                                                campo);
+                                }
+                                catch (Exception exPk)
+                                {
+                                    MessageBox.Show(
+                                        "No se pudo calcular automáticamente el " +
+                                        "siguiente valor de '" +
+                                        campo +
+                                        "'. Ingréselo manualmente.\n\n" +
+                                        exPk.Message,
+                                        "Llave primaria",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Warning);
+                                }
+
+                                caja.Text =
+                                    siguiente != null
+                                        ? Convert.ToString(siguiente)
+                                        : "";
+
+                                // Se pudo calcular: se muestra de solo
+                                // lectura para que el usuario vea el ID
+                                // que se va a registrar (no lo puede
+                                // cambiar, igual que en un sistema real
+                                // donde el correlativo no se edita).
+                                if (siguiente != null)
+                                {
+                                    caja.ReadOnly =
+                                        true;
+
+                                    caja.BackColor =
+                                        Color.LightGray;
+                                }
+                            }
+
+                            // Si la PK no es numérica (códigos, etc.), o
+                            // forma parte de una llave compuesta con un
+                            // valor de negocio (ej. fecha_asistencia),
+                            // no se puede autogenerar: queda editable
+                            // para que el usuario la escriba/elija.
                         }
 
                         // Al modificar:
-                        // PK no se puede cambiar.
+                        // PK no se puede cambiar, pero sí se muestra.
                         if (modificar &&
                             esPk)
                         {
@@ -886,13 +1371,41 @@ namespace CapaVista_Navegador
                     }
 
                     // =================================================
-                    // BLOQUEAR PK
+                    // BLOQUEAR PK SOLO AL MODIFICAR
                     // =================================================
+                    // FIX: antes este bloque se ejecutaba siempre que
+                    // "esPk" era true, sin importar si se estaba
+                    // Ingresando o Modificando. Eso volvía a bloquear
+                    // (Enabled = false) cualquier control de PK que no
+                    // fuera TextBox (combo de FK+PK, fecha PK, checkbox
+                    // PK) incluso al Ingresar un registro nuevo, que es
+                    // exactamente el bug reportado con
+                    // tbl_asistencias (id_empleado [PK][FK] y
+                    // fecha_asistencia [PK] bloqueados al Ingresar).
+                    //
+                    // Ahora solo se fuerza solo-lectura/deshabilitado
+                    // cuando corresponde: al Modificar siempre, y al
+                    // Ingresar solo si el propio control de texto ya
+                    // quedó en solo lectura porque su valor se
+                    // autogeneró arriba.
 
                     if (esPk)
                     {
-                        control.Enabled =
-                            false;
+                        TextBox cajaPk =
+                            control as TextBox;
+
+                        if (cajaPk != null)
+                        {
+                            if (modificar || cajaPk.ReadOnly)
+                            {
+                                cajaPk.ReadOnly = true;
+                                cajaPk.BackColor = Color.LightGray;
+                            }
+                        }
+                        else if (modificar)
+                        {
+                            control.Enabled = false;
+                        }
                     }
 
                     panelRegistro.Controls.Add(
@@ -906,62 +1419,6 @@ namespace CapaVista_Navegador
 
                     posicionY += 42;
                 }
-
-                // =====================================================
-                // BOTON GUARDAR
-                // =====================================================
-
-                btnGuardarRegistro =
-                    new Button();
-
-                btnGuardarRegistro.Text =
-                    modificar
-                        ? "Guardar cambios"
-                        : "Guardar";
-
-                btnGuardarRegistro.Width =
-                    120;
-
-                btnGuardarRegistro.Height =
-                    32;
-
-                btnGuardarRegistro.Location =
-                    new Point(
-                        190,
-                        posicionY + 5);
-
-                btnGuardarRegistro.Click +=
-                    BtnGuardarRegistro_Click;
-
-                panelRegistro.Controls.Add(
-                    btnGuardarRegistro);
-
-                // =====================================================
-                // BOTON CANCELAR
-                // =====================================================
-
-                btnCancelarRegistro =
-                    new Button();
-
-                btnCancelarRegistro.Text =
-                    "Cancelar";
-
-                btnCancelarRegistro.Width =
-                    100;
-
-                btnCancelarRegistro.Height =
-                    32;
-
-                btnCancelarRegistro.Location =
-                    new Point(
-                        320,
-                        posicionY + 5);
-
-                btnCancelarRegistro.Click +=
-                    BtnCancelarRegistro_Click;
-
-                panelRegistro.Controls.Add(
-                    btnCancelarRegistro);
 
                 panelRegistro.Visible =
                     true;
@@ -983,20 +1440,6 @@ namespace CapaVista_Navegador
         // =========================================================
         // GUARDAR FORMULARIO
         // =========================================================
-
-        private void BtnGuardarRegistro_Click(
-            object sender,
-            EventArgs e)
-        {
-            GuardarFormularioRegistro();
-        }
-
-        private void BtnCancelarRegistro_Click(
-            object sender,
-            EventArgs e)
-        {
-            CerrarFormularioRegistro();
-        }
 
         private void GuardarFormularioRegistro()
         {
@@ -1046,9 +1489,15 @@ namespace CapaVista_Navegador
                     }
 
                     // En INSERTAR:
-                    // PK y autoincremento no se mandan.
+                    // MEJORA: solo se omite el campo si el motor de BD
+                    // maneja autoincremento nativo (esAuto). Si es una
+                    // PK "manual" (la mayoría de tablas por ODBC), su
+                    // valor ya fue calculado automáticamente (MAX + 1)
+                    // al construir el formulario, o fue elegido/escrito
+                    // por el usuario (llave compuesta), y SÍ debe
+                    // enviarse.
                     if (!modoModificar &&
-                        (esPk || esAuto))
+                        esAuto)
                     {
                         continue;
                     }
@@ -1127,6 +1576,78 @@ namespace CapaVista_Navegador
 
                 if (!modoModificar)
                 {
+                    // =================================================
+                    // MEJORA: VALIDAR LLAVE PRIMARIA DUPLICADA ANTES DE
+                    // INSERTAR (mensaje claro, sin esperar al error del
+                    // motor de base de datos)
+                    // =================================================
+                    // Antes, si la llave primaria ya existía, el INSERT
+                    // fallaba en la BD y el usuario solo veía el mensaje
+                    // genérico traducido por ObtenerMensajeAmigable (o el
+                    // mensaje crudo del driver si no calzaba con ningún
+                    // patrón). Ahora se verifica primero con
+                    // ExisteLlavePrimaria, indicando exactamente qué
+                    // campo(s) y valor(es) ya están en uso, sin importar
+                    // si la llave es simple o compuesta, ni de qué motor
+                    // de base de datos se trate.
+                    List<string> pkCampos =
+                        new List<string>();
+
+                    List<string> pkValores =
+                        new List<string>();
+
+                    foreach (DataRow columnaPk
+                        in esquemaActual.Rows)
+                    {
+                        bool esPkCampo =
+                            ObtenerBooleanoEsquema(
+                                columnaPk,
+                                "IS_PRIMARY_KEY");
+
+                        if (!esPkCampo)
+                        {
+                            continue;
+                        }
+
+                        string nombreCampoPk =
+                            Convert.ToString(
+                                columnaPk["COLUMN_NAME"]);
+
+                        string valorPk;
+
+                        if (datos.TryGetValue(
+                            nombreCampoPk,
+                            out valorPk))
+                        {
+                            pkCampos.Add(nombreCampoPk);
+                            pkValores.Add(valorPk);
+                        }
+                    }
+
+                    if (pkCampos.Count > 0)
+                    {
+                        bool yaExiste =
+                            controlador.ExisteLlavePrimaria(
+                                nombreTabla,
+                                pkCampos.ToArray(),
+                                pkValores.ToArray());
+
+                        if (yaExiste)
+                        {
+                            MessageBox.Show(
+                                "Ya existe un registro con esta llave primaria (" +
+                                string.Join(", ", pkCampos) +
+                                " = " +
+                                string.Join(", ", pkValores) +
+                                ").\nCambie el valor e intente nuevamente.",
+                                "Llave primaria duplicada",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+
+                            return;
+                        }
+                    }
+
                     if (controlador.InsertarRegistro(
                         nombreTabla,
                         datos))
@@ -1265,12 +1786,6 @@ namespace CapaVista_Navegador
             }
 
             controlesRegistro =
-                null;
-
-            btnGuardarRegistro =
-                null;
-
-            btnCancelarRegistro =
                 null;
 
             if (dgvDatos != null)
@@ -1708,12 +2223,27 @@ namespace CapaVista_Navegador
         // =========================================================
         // DETECTAR FECHA
         // =========================================================
-
-        private bool EsFecha(
-            string tipo)
+        // FIX: antes solo miraba el texto crudo de DATA_TYPE, que
+        // varía mucho según el driver ODBC y puede no contener
+        // "date"/"time" aunque la columna sí sea una fecha. Ahora se
+        // usa primero NET_TYPE (el tipo .NET real leído directamente
+        // del driver, ver Sentencias.ObtenerTiposNet), y DATA_TYPE
+        // queda como respaldo.
+        private bool EsFecha(DataRow columna)
         {
+            string net =
+                ObtenerTextoEsquema(columna, "NET_TYPE")
+                .ToLowerInvariant();
+
+            if (net == "datetime" ||
+                net == "date" ||
+                net == "timespan")
+            {
+                return true;
+            }
+
             string t =
-                (tipo ?? "")
+                ObtenerTextoEsquema(columna, "DATA_TYPE")
                 .ToLowerInvariant();
 
             return t.Contains("date") ||
@@ -1724,17 +2254,74 @@ namespace CapaVista_Navegador
         // =========================================================
         // DETECTAR BOOLEANO
         // =========================================================
-
-        private bool EsBooleano(
-            string tipo)
+        // FIX: mismo criterio que EsFecha, usando NET_TYPE primero.
+        private bool EsBooleano(DataRow columna)
         {
+            string net =
+                ObtenerTextoEsquema(columna, "NET_TYPE")
+                .ToLowerInvariant();
+
+            if (net == "boolean")
+            {
+                return true;
+            }
+
             string t =
-                (tipo ?? "")
+                ObtenerTextoEsquema(columna, "DATA_TYPE")
                 .ToLowerInvariant();
 
             return t == "bit" ||
                    t == "boolean" ||
                    t == "bool";
+        }
+
+        // =========================================================
+        // MEJORA: DETECTAR TIPO NUMÉRICO (para autogenerar PK)
+        // =========================================================
+        // FIX: mismo criterio, ahora recibe la fila completa del
+        // esquema para poder usar NET_TYPE como primera fuente de
+        // verdad y DATA_TYPE como respaldo.
+        private bool EsTipoNumerico(DataRow columna)
+        {
+            string net =
+                ObtenerTextoEsquema(columna, "NET_TYPE")
+                .ToLowerInvariant();
+
+            string[] tiposNetNumericos =
+            {
+                "int16", "int32", "int64",
+                "byte", "sbyte",
+                "decimal", "double", "single"
+            };
+
+            if (tiposNetNumericos.Contains(net))
+            {
+                return true;
+            }
+
+            string t =
+                ObtenerTextoEsquema(columna, "DATA_TYPE")
+                .ToLowerInvariant();
+
+            switch (t)
+            {
+                case "int":
+                case "integer":
+                case "smallint":
+                case "bigint":
+                case "tinyint":
+                case "decimal":
+                case "numeric":
+                case "float":
+                case "double":
+                case "real":
+                case "counter":
+                case "number":
+                    return true;
+
+                default:
+                    return false;
+            }
         }
 
         // =========================================================

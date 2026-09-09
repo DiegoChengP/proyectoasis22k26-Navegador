@@ -14,7 +14,7 @@ namespace CapaControlador_Navegador
         private Sentencias sentencias =
             new Sentencias();
 
-      
+
 
         public DataTable llenarDgv(
             string nombreTabla)
@@ -62,7 +62,7 @@ namespace CapaControlador_Navegador
             int idModulo,
             int idPermiso)
         {
-           
+
             // Instancia de la clase Sentencias de CapaModelo
             Sentencias modelo = new Sentencias();
 
@@ -86,18 +86,24 @@ namespace CapaControlador_Navegador
             return false;
         }
 
-
-        public DataTable ConsultarEmpleados()
+        // =========================================================
+        // MEJORA: LISTAR TABLAS DISPONIBLES
+        // =========================================================
+        // Reemplaza al antiguo "ConsultarEmpleados" (que estaba
+        // fijado a "tbl_correos" y no se usaba en ningún lado). Esto
+        // permite que la Vista muestre TODAS las tablas de la base de
+        // datos conectada, sin importar el motor, para que el usuario
+        // elija con cuál trabajar.
+        public List<string> ObtenerTablas()
         {
             try
             {
-                return sentencias
-                    .ConsultarEmpleados();
+                return sentencias.ObtenerTablas();
             }
             catch (Exception ex)
             {
                 throw new Exception(
-                    "Error al consultar la tabla de empleados: " +
+                    "Error al obtener la lista de tablas de la base de datos: " +
                     ex.Message,
                     ex);
             }
@@ -212,7 +218,7 @@ namespace CapaControlador_Navegador
             return true;
         }
 
-        
+
 
         public DataTable ObtenerEsquemaTabla(
             string nombreTabla)
@@ -227,6 +233,33 @@ namespace CapaControlador_Navegador
             {
                 throw new Exception(
                     "Error al obtener el esquema de la tabla '" +
+                    nombreTabla +
+                    "': " +
+                    ex.Message,
+                    ex);
+            }
+        }
+
+        // =========================================================
+        // MEJORA: SIGUIENTE VALOR DE LLAVE PRIMARIA
+        // =========================================================
+        // Puente hacia el modelo para calcular automáticamente el
+        // próximo ID de una tabla (MAX + 1), usado al insertar.
+        public object ObtenerSiguienteValorLlave(
+            string nombreTabla,
+            string columnaPK)
+        {
+            try
+            {
+                return sentencias
+                    .ObtenerSiguienteValorLlave(
+                        nombreTabla,
+                        columnaPK);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Error al calcular el siguiente valor de la llave primaria de '" +
                     nombreTabla +
                     "': " +
                     ex.Message,
@@ -310,7 +343,7 @@ namespace CapaControlador_Navegador
             }
         }
 
-        
+
         public List<string> ValidarRegistro(
             Dictionary<string, string> datos,
             string nombreTabla)
@@ -466,7 +499,7 @@ namespace CapaControlador_Navegador
             return errores;
         }
 
-        
+
         public bool ActualizarRegistro(
             string nombreTabla,
             Dictionary<string, string> valores,
@@ -500,7 +533,7 @@ namespace CapaControlador_Navegador
                     clavesPrimarias);
         }
 
-        
+
         public bool EliminarRegistro(
             string nombreTabla,
             Dictionary<string, string> clavesPrimarias)
@@ -525,7 +558,7 @@ namespace CapaControlador_Navegador
                     clavesPrimarias);
         }
 
-        
+
         public void guardarDatos(
             string query)
         {
@@ -543,7 +576,7 @@ namespace CapaControlador_Navegador
             }
         }
 
-        
+
         public DataTable filtrarDgv(
             string nombreTabla,
             string columna,

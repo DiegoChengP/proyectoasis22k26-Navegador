@@ -22,17 +22,46 @@ namespace CapaModelo_Navegador
             return daSentencias;
         }
 
-        public DataTable ConsultarEmpleados()
+        // =========================================================
+        // MEJORA: LISTAR TODAS LAS TABLAS DE LA BASE DE DATOS
+        // =========================================================
+        // Necesario para que "Ingresar" pueda mostrar todas las tablas
+        // disponibles sin importar el motor de base de datos conectado
+        // por ODBC (MySQL, SQL Server, PostgreSQL, Access, etc.).
+        public List<string> ObtenerTablas()
         {
-            string sSQL = "SELECT * FROM tbl_empleados";
+            List<string> tablas = new List<string>();
             OdbcConnection conexion = conn.conexion();
-            DataTable dtEmpleados = new DataTable();
 
             try
             {
-                using (OdbcDataAdapter da = new OdbcDataAdapter(sSQL, conexion))
+                DataTable dtTablas = conexion.GetSchema("Tables");
+
+                foreach (DataRow fila in dtTablas.Rows)
                 {
-                    da.Fill(dtEmpleados);
+                    string tipo = ObtenerValorSchema(fila, "TABLE_TYPE");
+
+                    // Solo tablas de usuario; se descartan vistas y
+                    // tablas de sistema cuando el driver informa el tipo.
+                    if (!string.IsNullOrWhiteSpace(tipo) &&
+                        tipo.IndexOf("TABLE", StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        continue;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(tipo) &&
+                        tipo.IndexOf("SYSTEM", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        continue;
+                    }
+
+                    string nombre = ObtenerValorSchema(fila, "TABLE_NAME");
+
+                    if (!string.IsNullOrWhiteSpace(nombre) &&
+                        !tablas.Contains(nombre, StringComparer.OrdinalIgnoreCase))
+                    {
+                        tablas.Add(nombre);
+                    }
                 }
             }
             finally
@@ -40,8 +69,34 @@ namespace CapaModelo_Navegador
                 conn.desconexion(conexion);
             }
 
-            return dtEmpleados;
+            tablas.Sort(StringComparer.OrdinalIgnoreCase);
+
+            return tablas;
         }
+
+        public DataTable ConsultarTodo(string nombreTabla)
+        {
+            ValidarIdentificador(nombreTabla);
+
+            string sSQL = "SELECT * FROM " + nombreTabla;
+            OdbcConnection conexion = conn.conexion();
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (OdbcDataAdapter da = new OdbcDataAdapter(sSQL, conexion))
+                {
+                    da.Fill(dt);
+                }
+            }
+            finally
+            {
+                conn.desconexion(conexion);
+            }
+
+            return dt;
+        }
+
         // Dentro de la clase Sentencias en sentencias.cs
         public bool ExisteAplicacion(int idAplicacion)
         {
@@ -219,6 +274,269 @@ namespace CapaModelo_Navegador
             }
         }
 
+        // =========================================================
+        // MEJORA: DETECCIÓN ROBUSTA DE LLAVE PRIMARIA
+        // =========================================================
+        // Muchos drivers ODBC no soportan (o exponen de forma distinta)
+        // la colección estándar "Primary_Keys". Antes, si esa colección
+        // fallaba, el catch la ignoraba en silencio y NINGUNA columna
+        // quedaba marcada como PK, rompiendo Modificar/Eliminar y la
+        // autogeneración de IDs. Ahora se intentan varias estrategias
+        // en orden, de la más estándar a la más genérica.
+        private HashSet<string> ObtenerLlavesPrimarias(OdbcConnection conexion, string nombreTabla)
+        {
+            HashSet<string> pk = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            // Estrategia 1: colección ODBC estándar.
+            try
+            {
+                DataTable llaves = conexion.GetSchema(
+                    "Primary_Keys",
+                    new string[] { null, null, nombreTabla }
+                );
+
+                foreach (DataRow fila in llaves.Rows)
+                {
+                    string columnaPK = ObtenerValorSchema(fila, "COLUMN_NAME");
+
+                    if (!string.IsNullOrWhiteSpace(columnaPK))
+                    {
+                        pk.Add(columnaPK);
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            if (pk.Count > 0) return pk;
+
+            // Estrategia 2: algunos drivers solo exponen "Indexes",
+            // marcando ahí cuál es el índice primario.
+            try
+            {
+                DataTable indices = conexion.GetSchema(
+                    "Indexes",
+                    new string[] { null, null, nombreTabla }
+                );
+
+                foreach (DataRow fila in indices.Rows)
+                {
+                    string indicador = ObtenerValorSchema(fila, "PRIMARY_KEY");
+
+                    if (string.IsNullOrWhiteSpace(indicador))
+                    {
+                        indicador = ObtenerValorSchema(fila, "INDEX_NAME");
+                    }
+
+                    bool esPrimaria =
+                        indicador.Equals("YES", StringComparison.OrdinalIgnoreCase) ||
+                        indicador.Equals("TRUE", StringComparison.OrdinalIgnoreCase) ||
+                        indicador == "1" ||
+                        indicador.IndexOf("PRIMARY", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                    if (esPrimaria)
+                    {
+                        string columna = ObtenerValorSchema(fila, "COLUMN_NAME");
+
+                        if (!string.IsNullOrWhiteSpace(columna))
+                        {
+                            pk.Add(columna);
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            if (pk.Count > 0) return pk;
+
+            // Estrategia 3: consulta ANSI a INFORMATION_SCHEMA. Funciona
+            // en MySQL/MariaDB, SQL Server y PostgreSQL, que son los
+            // motores ODBC más comunes.
+            try
+            {
+                string sSQL =
+                    "SELECT kcu.COLUMN_NAME " +
+                    "FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc " +
+                    "JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu " +
+                    "  ON tc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME " +
+                    " AND tc.TABLE_SCHEMA = kcu.TABLE_SCHEMA " +
+                    " AND tc.TABLE_NAME = kcu.TABLE_NAME " +
+                    "WHERE tc.CONSTRAINT_TYPE = 'PRIMARY KEY' " +
+                    "  AND tc.TABLE_NAME = ?";
+
+                using (OdbcCommand comando = new OdbcCommand(sSQL, conexion))
+                {
+                    comando.Parameters.AddWithValue("@tabla", nombreTabla);
+
+                    using (OdbcDataReader lector = comando.ExecuteReader())
+                    {
+                        while (lector.Read())
+                        {
+                            string columna = Convert.ToString(lector["COLUMN_NAME"]);
+
+                            if (!string.IsNullOrWhiteSpace(columna))
+                            {
+                                pk.Add(columna);
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return pk;
+        }
+
+        // =========================================================
+        // MEJORA: DETECCIÓN ROBUSTA DE LLAVES FORÁNEAS
+        // =========================================================
+        // Mismo problema que con la llave primaria: la colección
+        // "ForeignKeys" no está soportada igual en todos los drivers.
+        // Se agrega una estrategia adicional vía INFORMATION_SCHEMA.
+        private Dictionary<string, Tuple<string, string>> ObtenerLlavesForaneas(
+            OdbcConnection conexion,
+            string nombreTabla)
+        {
+            Dictionary<string, Tuple<string, string>> relaciones =
+                new Dictionary<string, Tuple<string, string>>(
+                    StringComparer.OrdinalIgnoreCase
+                );
+
+            DataTable fks = null;
+
+            try
+            {
+                fks = conexion.GetSchema(
+                    "ForeignKeys",
+                    new string[] { null, null, nombreTabla, null, null, null }
+                );
+            }
+            catch
+            {
+                try
+                {
+                    fks = conexion.GetSchema("ForeignKeys");
+                }
+                catch
+                {
+                    fks = null;
+                }
+            }
+
+            if (fks != null)
+            {
+                foreach (DataRow fila in fks.Rows)
+                {
+                    string fkTabla = ObtenerValorSchema(fila, "FK_TABLE_NAME");
+                    string fkColumna = ObtenerValorSchema(fila, "FK_COLUMN_NAME");
+                    string pkTabla = ObtenerValorSchema(fila, "PK_TABLE_NAME");
+                    string pkColumna = ObtenerValorSchema(fila, "PK_COLUMN_NAME");
+
+                    if (string.Equals(fkTabla, nombreTabla, StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrWhiteSpace(fkColumna))
+                    {
+                        relaciones[fkColumna] = Tuple.Create(pkTabla, pkColumna);
+                    }
+                }
+            }
+
+            if (relaciones.Count > 0) return relaciones;
+
+            // Estrategia adicional: INFORMATION_SCHEMA ANSI, uniendo
+            // restricciones referenciales con las columnas involucradas.
+            try
+            {
+                string sSQL =
+                    "SELECT kcu1.COLUMN_NAME AS FK_COLUMN, " +
+                    "       kcu2.TABLE_NAME AS PK_TABLE, " +
+                    "       kcu2.COLUMN_NAME AS PK_COLUMN " +
+                    "FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc " +
+                    "JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu1 " +
+                    "  ON rc.CONSTRAINT_NAME = kcu1.CONSTRAINT_NAME " +
+                    " AND rc.CONSTRAINT_SCHEMA = kcu1.CONSTRAINT_SCHEMA " +
+                    "JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu2 " +
+                    "  ON rc.UNIQUE_CONSTRAINT_NAME = kcu2.CONSTRAINT_NAME " +
+                    " AND rc.UNIQUE_CONSTRAINT_SCHEMA = kcu2.CONSTRAINT_SCHEMA " +
+                    " AND kcu1.ORDINAL_POSITION = kcu2.ORDINAL_POSITION " +
+                    "WHERE kcu1.TABLE_NAME = ?";
+
+                using (OdbcCommand comando = new OdbcCommand(sSQL, conexion))
+                {
+                    comando.Parameters.AddWithValue("@tabla", nombreTabla);
+
+                    using (OdbcDataReader lector = comando.ExecuteReader())
+                    {
+                        while (lector.Read())
+                        {
+                            string fkColumna = Convert.ToString(lector["FK_COLUMN"]);
+                            string pkTabla = Convert.ToString(lector["PK_TABLE"]);
+                            string pkColumna = Convert.ToString(lector["PK_COLUMN"]);
+
+                            if (!string.IsNullOrWhiteSpace(fkColumna))
+                            {
+                                relaciones[fkColumna] = Tuple.Create(pkTabla, pkColumna);
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return relaciones;
+        }
+
+        // =========================================================
+        // MEJORA: TIPO .NET REAL POR COLUMNA
+        // =========================================================
+        // El texto de "DATA_TYPE" que reporta GetSchema("Columns") varía
+        // mucho según el driver ODBC (a veces es un nombre amigable como
+        // "date", a veces es un código numérico del estándar ODBC, a
+        // veces es específico del motor). Eso hacía que la detección de
+        // fechas/booleanos/números fallara silenciosamente con ciertos
+        // drivers (los campos de fecha terminaban como texto plano).
+        //
+        // Para evitarlo, se ejecuta una consulta que no trae filas
+        // ("WHERE 1 = 0") y se lee el tipo .NET que ADO.NET le asigna a
+        // cada columna a partir del propio driver — esto es mucho más
+        // confiable porque no depende de cómo el driver nombra sus tipos.
+        private Dictionary<string, string> ObtenerTiposNet(OdbcConnection conexion, string nombreTabla)
+        {
+            Dictionary<string, string> tipos =
+                new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            try
+            {
+                string sSQL = "SELECT * FROM " + nombreTabla + " WHERE 1 = 0";
+
+                using (OdbcCommand comando = new OdbcCommand(sSQL, conexion))
+                using (OdbcDataAdapter da = new OdbcDataAdapter(comando))
+                {
+                    DataTable vacio = new DataTable();
+                    da.Fill(vacio);
+
+                    foreach (DataColumn col in vacio.Columns)
+                    {
+                        tipos[col.ColumnName] = col.DataType.Name;
+                    }
+                }
+            }
+            catch
+            {
+                // Si el motor no admite ese predicado o falla por
+                // cualquier razón, simplemente no tendremos el tipo
+                // .NET real y se usará el nombre de tipo del driver.
+            }
+
+            return tipos;
+        }
+
         public DataTable ObtenerEsquemaTabla(string nombreTabla)
         {
             ValidarIdentificador(nombreTabla);
@@ -237,6 +555,7 @@ namespace CapaModelo_Navegador
                 // Tabla donde guardaremos la información del esquema
                 dtEsquema.Columns.Add("COLUMN_NAME", typeof(string));
                 dtEsquema.Columns.Add("DATA_TYPE", typeof(string));
+                dtEsquema.Columns.Add("NET_TYPE", typeof(string));
                 dtEsquema.Columns.Add("CHARACTER_MAXIMUM_LENGTH", typeof(long));
                 dtEsquema.Columns.Add("IS_NULLABLE", typeof(string));
                 dtEsquema.Columns.Add("IS_PRIMARY_KEY", typeof(bool));
@@ -245,108 +564,17 @@ namespace CapaModelo_Navegador
                 dtEsquema.Columns.Add("FK_TABLE_NAME", typeof(string));
                 dtEsquema.Columns.Add("FK_COLUMN_NAME", typeof(string));
 
-                HashSet<string> pk = new HashSet<string>(
-                    StringComparer.OrdinalIgnoreCase
-                );
-
-                try
-                {
-                    DataTable llaves = conexion.GetSchema(
-                        "Primary_Keys",
-                        new string[] { null, null, nombreTabla }
-                    );
-
-                    foreach (DataRow fila in llaves.Rows)
-                    {
-                        string columnaPK = ObtenerValorSchema(
-                            fila,
-                            "COLUMN_NAME"
-                        );
-
-                        if (!string.IsNullOrWhiteSpace(columnaPK))
-                        {
-                            pk.Add(columnaPK);
-                        }
-                    }
-                }
-                catch
-                {
-
-                }
-
-
-                DataTable fks = null;
-
-                try
-                {
-                    fks = conexion.GetSchema(
-                        "ForeignKeys",
-                        new string[] {
-                    null,
-                    null,
-                    nombreTabla,
-                    null,
-                    null,
-                    null
-                        }
-                    );
-                }
-                catch
-                {
-                    try
-                    {
-                        fks = conexion.GetSchema("ForeignKeys");
-                    }
-                    catch
-                    {
-                        fks = null;
-                    }
-                }
+                HashSet<string> pk = ObtenerLlavesPrimarias(conexion, nombreTabla);
 
                 Dictionary<string, Tuple<string, string>> relaciones =
-                    new Dictionary<string, Tuple<string, string>>(
-                        StringComparer.OrdinalIgnoreCase
-                    );
+                    ObtenerLlavesForaneas(conexion, nombreTabla);
 
-                if (fks != null)
-                {
-                    foreach (DataRow fila in fks.Rows)
-                    {
-                        string fkTabla = ObtenerValorSchema(
-                            fila,
-                            "FK_TABLE_NAME"
-                        );
-
-                        string fkColumna = ObtenerValorSchema(
-                            fila,
-                            "FK_COLUMN_NAME"
-                        );
-
-                        string pkTabla = ObtenerValorSchema(
-                            fila,
-                            "PK_TABLE_NAME"
-                        );
-
-                        string pkColumna = ObtenerValorSchema(
-                            fila,
-                            "PK_COLUMN_NAME"
-                        );
-
-                        if (
-                            string.Equals(
-                                fkTabla,
-                                nombreTabla,
-                                StringComparison.OrdinalIgnoreCase
-                            )
-                            &&
-                            !string.IsNullOrWhiteSpace(fkColumna)
-                        )
-                        {
-                            relaciones[fkColumna] =
-                                Tuple.Create(pkTabla, pkColumna);
-                        }
-                    }
-                }
+                // MEJORA (fix): antes se calculaba tiposNet pero nunca se
+                // usaba dentro del foreach, así que la columna NET_TYPE
+                // quedaba siempre vacía y la detección de fecha/booleano
+                // dependía 100% del texto crudo de DATA_TYPE del driver.
+                Dictionary<string, string> tiposNet =
+                    ObtenerTiposNet(conexion, nombreTabla);
 
                 // =========================================================
                 // RECORRER COLUMNAS
@@ -423,11 +651,16 @@ namespace CapaModelo_Navegador
                         out relacion
                     );
 
+                    // MEJORA (fix): tipo .NET real de la columna, cuando
+                    // se pudo determinar; se guarda en NET_TYPE.
+                    string tipoNet;
+                    tiposNet.TryGetValue(nombre, out tipoNet);
 
                     DataRow nueva = dtEsquema.NewRow();
 
                     nueva["COLUMN_NAME"] = nombre;
                     nueva["DATA_TYPE"] = tipo;
+                    nueva["NET_TYPE"] = tipoNet ?? "";
                     nueva["CHARACTER_MAXIMUM_LENGTH"] = longitud;
                     nueva["IS_NULLABLE"] = nullable;
                     nueva["IS_PRIMARY_KEY"] = esPK;
@@ -457,6 +690,57 @@ namespace CapaModelo_Navegador
             }
 
             return dtEsquema;
+        }
+
+        // =========================================================
+        // MEJORA: SIGUIENTE VALOR DE LLAVE PRIMARIA (AUTOGENERACIÓN
+        // INDEPENDIENTE DEL MOTOR DE BASE DE DATOS)
+        // =========================================================
+        // Como el CRUD debe funcionar contra cualquier BD por ODBC, no
+        // podemos depender del autoincremento nativo del motor (muchos
+        // drivers ODBC no lo exponen igual, o la tabla simplemente no
+        // lo tiene). En su lugar calculamos MAX(columnaPK) + 1.
+        //
+        // Devuelve:
+        //   - long con el siguiente valor si la columna es numérica.
+        //   - null si la columna no es numérica (no se puede autogenerar,
+        //     el usuario debe ingresarla manualmente).
+        public object ObtenerSiguienteValorLlave(string nombreTabla, string columnaPK)
+        {
+            ValidarIdentificador(nombreTabla);
+            ValidarIdentificador(columnaPK);
+
+            string sSQL = "SELECT MAX(" + columnaPK + ") FROM " + nombreTabla;
+            OdbcConnection conexion = conn.conexion();
+
+            try
+            {
+                using (OdbcCommand comando = new OdbcCommand(sSQL, conexion))
+                {
+                    object resultado = comando.ExecuteScalar();
+
+                    // Tabla vacía o el máximo es nulo: empezamos en 1.
+                    if (resultado == null || resultado == DBNull.Value)
+                    {
+                        return (long)1;
+                    }
+
+                    long maximo;
+
+                    if (long.TryParse(Convert.ToString(resultado), out maximo))
+                    {
+                        return maximo + 1;
+                    }
+
+                    // La llave no es numérica (ej. códigos alfanuméricos):
+                    // no se puede autogenerar de forma segura.
+                    return null;
+                }
+            }
+            finally
+            {
+                conn.desconexion(conexion);
+            }
         }
 
         private string ObtenerValorSchema(DataRow fila, string columna)
