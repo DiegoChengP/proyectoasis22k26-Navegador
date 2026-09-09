@@ -34,33 +34,33 @@ namespace CapaVista_Navegador
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_Crud));
-            this.Btn_ingresar = new System.Windows.Forms.Button();
+            this.btnIngresar = new System.Windows.Forms.Button();
             this.Imgn_list1 = new System.Windows.Forms.ImageList(this.components);
-            this.Btn_cancelar = new System.Windows.Forms.Button();
-            this.Btn_modificar = new System.Windows.Forms.Button();
-            this.Btn_imprimir = new System.Windows.Forms.Button();
-            this.Btn_guardar = new System.Windows.Forms.Button();
-            this.Btn_siguiente = new System.Windows.Forms.Button();
-            this.Btn_anterior = new System.Windows.Forms.Button();
-            this.Btn_inicio = new System.Windows.Forms.Button();
-            this.Btn_eliminar = new System.Windows.Forms.Button();
-            this.Btn_Consultar = new System.Windows.Forms.Button();
-            this.Btn_salir = new System.Windows.Forms.Button();
-            this.Btn_fin = new System.Windows.Forms.Button();
-            this.Btn_refrescar = new System.Windows.Forms.Button();
-            this.Btn_ayuda = new System.Windows.Forms.Button();
+            this.btnCancelar = new System.Windows.Forms.Button();
+            this.btnModificar = new System.Windows.Forms.Button();
+            this.btnImprimir = new System.Windows.Forms.Button();
+            this.btnGuardar = new System.Windows.Forms.Button();
+            this.btnSiguiente = new System.Windows.Forms.Button();
+            this.btnAnterior = new System.Windows.Forms.Button();
+            this.btnInicio = new System.Windows.Forms.Button();
+            this.btnEliminar = new System.Windows.Forms.Button();
+            this.btnConsultar = new System.Windows.Forms.Button();
+            this.btnSalir = new System.Windows.Forms.Button();
+            this.btnFin = new System.Windows.Forms.Button();
+            this.btnRefrescar = new System.Windows.Forms.Button();
+            this.btnAyuda = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // Btn_ingresar
+            // btnIngresar
             // 
-            this.Btn_ingresar.ImageIndex = 0;
-            this.Btn_ingresar.ImageList = this.Imgn_list1;
-            this.Btn_ingresar.Location = new System.Drawing.Point(12, 24);
-            this.Btn_ingresar.Name = "Btn_ingresar";
-            this.Btn_ingresar.Size = new System.Drawing.Size(101, 81);
-            this.Btn_ingresar.TabIndex = 0;
-            this.Btn_ingresar.UseVisualStyleBackColor = true;
-            this.Btn_ingresar.Click += new System.EventHandler(this.Btn_ingresar_Click);
+            this.btnIngresar.ImageIndex = 0;
+            this.btnIngresar.ImageList = this.Imgn_list1;
+            this.btnIngresar.Location = new System.Drawing.Point(12, 24);
+            this.btnIngresar.Name = "btnIngresar";
+            this.btnIngresar.Size = new System.Drawing.Size(101, 81);
+            this.btnIngresar.TabIndex = 0;
+            this.btnIngresar.UseVisualStyleBackColor = true;
+            this.btnIngresar.Click += new System.EventHandler(this.btnIngresar_Click);
             // 
             // Imgn_list1
             // 
@@ -82,135 +82,135 @@ namespace CapaVista_Navegador
             this.Imgn_list1.Images.SetKeyName(13, "Fin.png");
             this.Imgn_list1.Images.SetKeyName(14, "ayuda.png");
             // 
-            // Btn_cancelar
+            // btnCancelar
             // 
-            this.Btn_cancelar.ImageIndex = 1;
-            this.Btn_cancelar.ImageList = this.Imgn_list1;
-            this.Btn_cancelar.Location = new System.Drawing.Point(119, 24);
-            this.Btn_cancelar.Name = "Btn_cancelar";
-            this.Btn_cancelar.Size = new System.Drawing.Size(101, 81);
-            this.Btn_cancelar.TabIndex = 1;
-            this.Btn_cancelar.UseVisualStyleBackColor = true;
+            this.btnCancelar.ImageIndex = 1;
+            this.btnCancelar.ImageList = this.Imgn_list1;
+            this.btnCancelar.Location = new System.Drawing.Point(119, 24);
+            this.btnCancelar.Name = "btnCancelar";
+            this.btnCancelar.Size = new System.Drawing.Size(101, 81);
+            this.btnCancelar.TabIndex = 1;
+            this.btnCancelar.UseVisualStyleBackColor = true;
             // 
-            // Btn_modificar
+            // btnModificar
             // 
-            this.Btn_modificar.ImageIndex = 9;
-            this.Btn_modificar.ImageList = this.Imgn_list1;
-            this.Btn_modificar.Location = new System.Drawing.Point(547, 24);
-            this.Btn_modificar.Name = "Btn_modificar";
-            this.Btn_modificar.Size = new System.Drawing.Size(101, 81);
-            this.Btn_modificar.TabIndex = 2;
-            this.Btn_modificar.UseVisualStyleBackColor = true;
+            this.btnModificar.ImageIndex = 9;
+            this.btnModificar.ImageList = this.Imgn_list1;
+            this.btnModificar.Location = new System.Drawing.Point(547, 24);
+            this.btnModificar.Name = "btnModificar";
+            this.btnModificar.Size = new System.Drawing.Size(101, 81);
+            this.btnModificar.TabIndex = 2;
+            this.btnModificar.UseVisualStyleBackColor = true;
             // 
-            // Btn_imprimir
+            // btnImprimir
             // 
-            this.Btn_imprimir.ImageIndex = 7;
-            this.Btn_imprimir.ImageList = this.Imgn_list1;
-            this.Btn_imprimir.Location = new System.Drawing.Point(333, 111);
-            this.Btn_imprimir.Name = "Btn_imprimir";
-            this.Btn_imprimir.Size = new System.Drawing.Size(101, 81);
-            this.Btn_imprimir.TabIndex = 3;
-            this.Btn_imprimir.UseVisualStyleBackColor = true;
+            this.btnImprimir.ImageIndex = 7;
+            this.btnImprimir.ImageList = this.Imgn_list1;
+            this.btnImprimir.Location = new System.Drawing.Point(333, 111);
+            this.btnImprimir.Name = "btnImprimir";
+            this.btnImprimir.Size = new System.Drawing.Size(101, 81);
+            this.btnImprimir.TabIndex = 3;
+            this.btnImprimir.UseVisualStyleBackColor = true;
             // 
-            // Btn_guardar
+            // btnGuardar
             // 
-            this.Btn_guardar.ImageIndex = 5;
-            this.Btn_guardar.ImageList = this.Imgn_list1;
-            this.Btn_guardar.Location = new System.Drawing.Point(440, 111);
-            this.Btn_guardar.Name = "Btn_guardar";
-            this.Btn_guardar.Size = new System.Drawing.Size(101, 81);
-            this.Btn_guardar.TabIndex = 4;
-            this.Btn_guardar.UseVisualStyleBackColor = true;
+            this.btnGuardar.ImageIndex = 5;
+            this.btnGuardar.ImageList = this.Imgn_list1;
+            this.btnGuardar.Location = new System.Drawing.Point(440, 111);
+            this.btnGuardar.Name = "btnGuardar";
+            this.btnGuardar.Size = new System.Drawing.Size(101, 81);
+            this.btnGuardar.TabIndex = 4;
+            this.btnGuardar.UseVisualStyleBackColor = true;
             // 
-            // Btn_siguiente
+            // btnSiguiente
             // 
-            this.Btn_siguiente.ImageIndex = 13;
-            this.Btn_siguiente.ImageList = this.Imgn_list1;
-            this.Btn_siguiente.Location = new System.Drawing.Point(868, 24);
-            this.Btn_siguiente.Name = "Btn_siguiente";
-            this.Btn_siguiente.Size = new System.Drawing.Size(101, 81);
-            this.Btn_siguiente.TabIndex = 5;
-            this.Btn_siguiente.UseVisualStyleBackColor = true;
+            this.btnSiguiente.ImageIndex = 13;
+            this.btnSiguiente.ImageList = this.Imgn_list1;
+            this.btnSiguiente.Location = new System.Drawing.Point(868, 24);
+            this.btnSiguiente.Name = "btnSiguiente";
+            this.btnSiguiente.Size = new System.Drawing.Size(101, 81);
+            this.btnSiguiente.TabIndex = 5;
+            this.btnSiguiente.UseVisualStyleBackColor = true;
             // 
-            // Btn_anterior
+            // btnAnterior
             // 
-            this.Btn_anterior.ImageIndex = 8;
-            this.Btn_anterior.ImageList = this.Imgn_list1;
-            this.Btn_anterior.Location = new System.Drawing.Point(761, 24);
-            this.Btn_anterior.Name = "Btn_anterior";
-            this.Btn_anterior.Size = new System.Drawing.Size(101, 81);
-            this.Btn_anterior.TabIndex = 6;
-            this.Btn_anterior.UseVisualStyleBackColor = true;
+            this.btnAnterior.ImageIndex = 8;
+            this.btnAnterior.ImageList = this.Imgn_list1;
+            this.btnAnterior.Location = new System.Drawing.Point(761, 24);
+            this.btnAnterior.Name = "btnAnterior";
+            this.btnAnterior.Size = new System.Drawing.Size(101, 81);
+            this.btnAnterior.TabIndex = 6;
+            this.btnAnterior.UseVisualStyleBackColor = true;
             // 
-            // Btn_inicio
+            // btnInicio
             // 
-            this.Btn_inicio.ImageIndex = 6;
-            this.Btn_inicio.ImageList = this.Imgn_list1;
-            this.Btn_inicio.Location = new System.Drawing.Point(654, 24);
-            this.Btn_inicio.Name = "Btn_inicio";
-            this.Btn_inicio.Size = new System.Drawing.Size(101, 81);
-            this.Btn_inicio.TabIndex = 7;
-            this.Btn_inicio.UseVisualStyleBackColor = true;
+            this.btnInicio.ImageIndex = 6;
+            this.btnInicio.ImageList = this.Imgn_list1;
+            this.btnInicio.Location = new System.Drawing.Point(654, 24);
+            this.btnInicio.Name = "btnInicio";
+            this.btnInicio.Size = new System.Drawing.Size(101, 81);
+            this.btnInicio.TabIndex = 7;
+            this.btnInicio.UseVisualStyleBackColor = true;
             // 
-            // Btn_eliminar
+            // btnEliminar
             // 
-            this.Btn_eliminar.ImageIndex = 3;
-            this.Btn_eliminar.ImageList = this.Imgn_list1;
-            this.Btn_eliminar.Location = new System.Drawing.Point(333, 24);
-            this.Btn_eliminar.Name = "Btn_eliminar";
-            this.Btn_eliminar.Size = new System.Drawing.Size(101, 81);
-            this.Btn_eliminar.TabIndex = 8;
-            this.Btn_eliminar.UseVisualStyleBackColor = true;
+            this.btnEliminar.ImageIndex = 3;
+            this.btnEliminar.ImageList = this.Imgn_list1;
+            this.btnEliminar.Location = new System.Drawing.Point(333, 24);
+            this.btnEliminar.Name = "btnEliminar";
+            this.btnEliminar.Size = new System.Drawing.Size(101, 81);
+            this.btnEliminar.TabIndex = 8;
+            this.btnEliminar.UseVisualStyleBackColor = true;
             // 
-            // Btn_Consultar
+            // btnConsultar
             // 
-            this.Btn_Consultar.ImageIndex = 2;
-            this.Btn_Consultar.ImageList = this.Imgn_list1;
-            this.Btn_Consultar.Location = new System.Drawing.Point(226, 24);
-            this.Btn_Consultar.Name = "Btn_Consultar";
-            this.Btn_Consultar.Size = new System.Drawing.Size(101, 81);
-            this.Btn_Consultar.TabIndex = 9;
-            this.Btn_Consultar.UseVisualStyleBackColor = true;
+            this.btnConsultar.ImageIndex = 2;
+            this.btnConsultar.ImageList = this.Imgn_list1;
+            this.btnConsultar.Location = new System.Drawing.Point(226, 24);
+            this.btnConsultar.Name = "btnConsultar";
+            this.btnConsultar.Size = new System.Drawing.Size(101, 81);
+            this.btnConsultar.TabIndex = 9;
+            this.btnConsultar.UseVisualStyleBackColor = true;
             // 
-            // Btn_salir
+            // btnSalir
             // 
-            this.Btn_salir.ImageIndex = 11;
-            this.Btn_salir.ImageList = this.Imgn_list1;
-            this.Btn_salir.Location = new System.Drawing.Point(761, 111);
-            this.Btn_salir.Name = "Btn_salir";
-            this.Btn_salir.Size = new System.Drawing.Size(101, 81);
-            this.Btn_salir.TabIndex = 10;
-            this.Btn_salir.UseVisualStyleBackColor = true;
+            this.btnSalir.ImageIndex = 11;
+            this.btnSalir.ImageList = this.Imgn_list1;
+            this.btnSalir.Location = new System.Drawing.Point(761, 111);
+            this.btnSalir.Name = "btnSalir";
+            this.btnSalir.Size = new System.Drawing.Size(101, 81);
+            this.btnSalir.TabIndex = 10;
+            this.btnSalir.UseVisualStyleBackColor = true;
             // 
-            // Btn_fin
+            // btnFin
             // 
-            this.Btn_fin.ImageIndex = 12;
-            this.Btn_fin.ImageList = this.Imgn_list1;
-            this.Btn_fin.Location = new System.Drawing.Point(975, 24);
-            this.Btn_fin.Name = "Btn_fin";
-            this.Btn_fin.Size = new System.Drawing.Size(101, 81);
-            this.Btn_fin.TabIndex = 11;
-            this.Btn_fin.UseVisualStyleBackColor = true;
+            this.btnFin.ImageIndex = 12;
+            this.btnFin.ImageList = this.Imgn_list1;
+            this.btnFin.Location = new System.Drawing.Point(975, 24);
+            this.btnFin.Name = "btnFin";
+            this.btnFin.Size = new System.Drawing.Size(101, 81);
+            this.btnFin.TabIndex = 11;
+            this.btnFin.UseVisualStyleBackColor = true;
             // 
-            // Btn_refrescar
+            // btnRefrescar
             // 
-            this.Btn_refrescar.ImageIndex = 10;
-            this.Btn_refrescar.ImageList = this.Imgn_list1;
-            this.Btn_refrescar.Location = new System.Drawing.Point(440, 24);
-            this.Btn_refrescar.Name = "Btn_refrescar";
-            this.Btn_refrescar.Size = new System.Drawing.Size(101, 81);
-            this.Btn_refrescar.TabIndex = 13;
-            this.Btn_refrescar.UseVisualStyleBackColor = true;
+            this.btnRefrescar.ImageIndex = 10;
+            this.btnRefrescar.ImageList = this.Imgn_list1;
+            this.btnRefrescar.Location = new System.Drawing.Point(440, 24);
+            this.btnRefrescar.Name = "btnRefrescar";
+            this.btnRefrescar.Size = new System.Drawing.Size(101, 81);
+            this.btnRefrescar.TabIndex = 13;
+            this.btnRefrescar.UseVisualStyleBackColor = true;
             // 
-            // Btn_ayuda
+            // btnAyuda
             // 
-            this.Btn_ayuda.ImageIndex = 14;
-            this.Btn_ayuda.ImageList = this.Imgn_list1;
-            this.Btn_ayuda.Location = new System.Drawing.Point(654, 111);
-            this.Btn_ayuda.Name = "Btn_ayuda";
-            this.Btn_ayuda.Size = new System.Drawing.Size(101, 81);
-            this.Btn_ayuda.TabIndex = 14;
-            this.Btn_ayuda.UseVisualStyleBackColor = true;
+            this.btnAyuda.ImageIndex = 14;
+            this.btnAyuda.ImageList = this.Imgn_list1;
+            this.btnAyuda.Location = new System.Drawing.Point(654, 111);
+            this.btnAyuda.Name = "btnAyuda";
+            this.btnAyuda.Size = new System.Drawing.Size(101, 81);
+            this.btnAyuda.TabIndex = 14;
+            this.btnAyuda.UseVisualStyleBackColor = true;
             // 
             // Frm_Crud
             // 
@@ -218,20 +218,20 @@ namespace CapaVista_Navegador
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Beige;
             this.ClientSize = new System.Drawing.Size(1089, 653);
-            this.Controls.Add(this.Btn_ayuda);
-            this.Controls.Add(this.Btn_refrescar);
-            this.Controls.Add(this.Btn_fin);
-            this.Controls.Add(this.Btn_salir);
-            this.Controls.Add(this.Btn_Consultar);
-            this.Controls.Add(this.Btn_eliminar);
-            this.Controls.Add(this.Btn_inicio);
-            this.Controls.Add(this.Btn_anterior);
-            this.Controls.Add(this.Btn_siguiente);
-            this.Controls.Add(this.Btn_guardar);
-            this.Controls.Add(this.Btn_imprimir);
-            this.Controls.Add(this.Btn_modificar);
-            this.Controls.Add(this.Btn_cancelar);
-            this.Controls.Add(this.Btn_ingresar);
+            this.Controls.Add(this.btnAyuda);
+            this.Controls.Add(this.btnRefrescar);
+            this.Controls.Add(this.btnFin);
+            this.Controls.Add(this.btnSalir);
+            this.Controls.Add(this.btnConsultar);
+            this.Controls.Add(this.btnEliminar);
+            this.Controls.Add(this.btnInicio);
+            this.Controls.Add(this.btnAnterior);
+            this.Controls.Add(this.btnSiguiente);
+            this.Controls.Add(this.btnGuardar);
+            this.Controls.Add(this.btnImprimir);
+            this.Controls.Add(this.btnModificar);
+            this.Controls.Add(this.btnCancelar);
+            this.Controls.Add(this.btnIngresar);
             this.Name = "Frm_Crud";
             this.Text = "Frm_Crud";
             this.ResumeLayout(false);
@@ -240,20 +240,20 @@ namespace CapaVista_Navegador
 
         #endregion
 
-        private System.Windows.Forms.Button Btn_ingresar;
+        private System.Windows.Forms.Button btnIngresar;
         private System.Windows.Forms.ImageList Imgn_list1;
-        private System.Windows.Forms.Button Btn_cancelar;
-        private System.Windows.Forms.Button Btn_modificar;
-        private System.Windows.Forms.Button Btn_imprimir;
-        private System.Windows.Forms.Button Btn_guardar;
-        private System.Windows.Forms.Button Btn_siguiente;
-        private System.Windows.Forms.Button Btn_anterior;
-        private System.Windows.Forms.Button Btn_inicio;
-        private System.Windows.Forms.Button Btn_eliminar;
-        private System.Windows.Forms.Button Btn_Consultar;
-        private System.Windows.Forms.Button Btn_salir;
-        private System.Windows.Forms.Button Btn_fin;
-        private System.Windows.Forms.Button Btn_refrescar;
-        private System.Windows.Forms.Button Btn_ayuda;
+        private System.Windows.Forms.Button btnCancelar;
+        private System.Windows.Forms.Button btnModificar;
+        private System.Windows.Forms.Button btnImprimir;
+        private System.Windows.Forms.Button btnGuardar;
+        private System.Windows.Forms.Button btnSiguiente;
+        private System.Windows.Forms.Button btnAnterior;
+        private System.Windows.Forms.Button btnInicio;
+        private System.Windows.Forms.Button btnEliminar;
+        private System.Windows.Forms.Button btnConsultar;
+        private System.Windows.Forms.Button btnSalir;
+        private System.Windows.Forms.Button btnFin;
+        private System.Windows.Forms.Button btnRefrescar;
+        private System.Windows.Forms.Button btnAyuda;
     }
 }

@@ -11,8 +11,11 @@ namespace CapaVista_Navegador
 {
     public partial class Frm_Crud : Form
     {
-        // cambiar nombre de la tabla a la que se desea hacer el CRUD
-        private string nombreTabla = "tbl_puestos";
+        // =========================================================
+        // CAMBIAR AQUÍ MANUALMENTE LA TABLA A LA QUE SE DESEA HACER
+        // EL CRUD (ya no se elige desde una ventana emergente).
+        // =========================================================
+        private string nombreTabla = "tbl_permisos";
         private Controlador controlador = new Controlador();
 
         private DataGridView dgvDatos;
@@ -64,11 +67,25 @@ namespace CapaVista_Navegador
             }
         }
 
+        // =========================================================
+        // FIX: antes estos dos constructores "de comodidad" pasaban
+        // siempre "tbl_puestos" como tabla, y como el constructor
+        // principal hacía "NombreTabla = tabla;" sin condición, ese
+        // "tbl_puestos" SIEMPRE sobrescribía el valor que se hubiera
+        // puesto manualmente en el campo "nombreTabla" de arriba (por
+        // ejemplo "tbl_seguros"). Por eso al cambiar la tabla arriba
+        // no se notaba ningún efecto.
+        //
+        // Ahora se pasa "null" (sin tabla explícita) y el constructor
+        // principal solo sobrescribe "nombreTabla" cuando SÍ recibe un
+        // valor. Así, el valor que definas manualmente en el campo
+        // "nombreTabla" (arriba, al inicio de la clase) es el que
+        // realmente se usa.
         public Frm_Crud()
             : this(
                 "USUARIO_PRUEBA",
                 "EMPLEADOS",
-                "tbl_puestos")
+                null)
         {
         }
 
@@ -78,7 +95,7 @@ namespace CapaVista_Navegador
             : this(
                 UsuarioActual,
                 CodigoModulo,
-                "tbl_puestos")
+                null)
         {
         }
 
@@ -98,52 +115,67 @@ namespace CapaVista_Navegador
             _UsuarioActual = UsuarioActual;
             _CodigoModulo = CodigoModulo;
 
-            NombreTabla = tabla;
+            // =====================================================
+            // CAMBIAR AQUÍ MANUALMENTE LA TABLA: si quieres fijar la
+            // tabla por código, edita el campo "nombreTabla" declarado
+            // al inicio de la clase (private string nombreTabla = "...").
+            // Ese es el ÚNICO lugar que necesitas tocar.
+            //
+            // Este bloque solo sobrescribe esa tabla si alguien llama
+            // al constructor pasando explícitamente un nombre de tabla
+            // (por ejemplo: new Frm_Crud("gerente1", "123", "tbl_x")).
+            // Si "tabla" viene vacío o null, se respeta el valor
+            // manual definido arriba.
+            // =====================================================
+            if (!string.IsNullOrWhiteSpace(tabla))
+            {
+                NombreTabla = tabla;
+            }
 
             // FIX: se usa -= antes de += para garantizar una sola suscripción
             // por evento, sin importar si el Designer ya lo enganchó.
 
 
-            Btn_ingresar.Click -= Btn_ingresar_Click;
-            Btn_ingresar.Click += Btn_ingresar_Click;
+            btnIngresar.Click -= btnIngresar_Click;
+            btnIngresar.Click += btnIngresar_Click;
 
-            Btn_cancelar.Click -= Btn_cancelar_Click;
-            Btn_cancelar.Click += Btn_cancelar_Click;
+            btnCancelar.Click -= btnCancelar_Click;
+            btnCancelar.Click += btnCancelar_Click;
 
-            Btn_Consultar.Click -= Btn_Consultar_Click;
-            Btn_Consultar.Click += Btn_Consultar_Click;
+            btnConsultar.Click -= btnConsultar_Click;
+            btnConsultar.Click += btnConsultar_Click;
 
-            Btn_refrescar.Click -= Btn_refrescar_Click;
-            Btn_refrescar.Click += Btn_refrescar_Click;
+            btnRefrescar.Click -= btnRefrescar_Click;
+            btnRefrescar.Click += btnRefrescar_Click;
 
-            Btn_modificar.Click -= Btn_modificar_Click;
-            Btn_modificar.Click += Btn_modificar_Click;
+            btnModificar.Click -= btnModificar_Click;
+            btnModificar.Click += btnModificar_Click;
 
-            Btn_eliminar.Click -= Btn_eliminar_Click;
-            Btn_eliminar.Click += Btn_eliminar_Click;
+            btnEliminar.Click -= btnEliminar_Click;
+            btnEliminar.Click += btnEliminar_Click;
 
-            Btn_guardar.Click -= Btn_guardar_Click;
-            Btn_guardar.Click += Btn_guardar_Click;
+            btnGuardar.Click -= btnGuardar_Click;
+            btnGuardar.Click += btnGuardar_Click;
 
-            Btn_salir.Click -= Btn_salir_Click;
-            Btn_salir.Click += Btn_salir_Click;
+            btnSalir.Click -= btnSalir_Click;
+            btnSalir.Click += btnSalir_Click;
 
             // MEJORA: los botones de navegación (Anterior, Inicio, Fin,
             // Siguiente) ahora mueven la selección dentro del DataGridView.
             // Así el usuario puede "pasearse" por los registros y, una vez
             // posicionado en el que le interesa, usar Modificar o Eliminar
             // sobre esa fila.
-            Btn_anterior.Click -= Btn_anterior_Click;
-            Btn_anterior.Click += Btn_anterior_Click;
+            btnAnterior.Click -= btnAnterior_Click;
+            btnAnterior.Click += btnAnterior_Click;
 
-            Btn_inicio.Click -= Btn_inicio_Click;
-            Btn_inicio.Click += Btn_inicio_Click;
+            btnInicio.Click -= btnInicio_Click;
+            btnInicio.Click += btnInicio_Click;
 
-            Btn_fin.Click -= Btn_fin_Click;
-            Btn_fin.Click += Btn_fin_Click;
+            btnFin.Click -= btnFin_Click;
+            btnFin.Click += btnFin_Click;
 
-            Btn_siguiente.Click -= Btn_siguiente_Click;
-            Btn_siguiente.Click += Btn_siguiente_Click;
+            btnSiguiente.Click -= btnSiguiente_Click;
+            btnSiguiente.Click += btnSiguiente_Click;
 
             Load += Frm_Crud_Load;
             Resize += Frm_Crud_Resize;
@@ -205,9 +237,13 @@ namespace CapaVista_Navegador
 
 
         // =========================================================
-        // MEJORA: SELECTOR GENÉRICO DE LISTA (para elegir tabla o
-        // definir manualmente las columnas de la llave primaria)
+        // MEJORA: SELECTOR GENÉRICO DE LISTA
         // =========================================================
+        // Se usa ÚNICAMENTE para definir manualmente las columnas de
+        // la llave primaria cuando el driver ODBC no puede detectarla.
+        // Ya NO se usa para elegir la tabla del CRUD: eso ahora se
+        // fija exclusivamente por código (ver "nombreTabla" / propiedad
+        // NombreTabla / parámetro "tabla" del constructor).
         private List<string> MostrarSelectorLista(
             string titulo,
             string mensaje,
@@ -370,7 +406,16 @@ namespace CapaVista_Navegador
         // Ingresar
 
 
-        private void Btn_ingresar_Click(
+        // =========================================================
+        // CAMBIO SOLICITADO: SE ELIMINÓ LA VENTANA "Seleccionar tabla"
+        // =========================================================
+        // Antes este botón mostraba una ventana con TODAS las tablas
+        // de la base de datos para elegir en cuál insertar. Ahora ya
+        // no se muestra ninguna ventana de selección: siempre se
+        // trabaja sobre "nombreTabla", la tabla fijada manualmente en
+        // el código (ver arriba: campo "nombreTabla", la propiedad
+        // "NombreTabla" o el parámetro "tabla" del constructor).
+        private void btnIngresar_Click(
             object sender,
             EventArgs e)
         {
@@ -379,52 +424,6 @@ namespace CapaVista_Navegador
                 return;
             }
 
-            // =====================================================
-            // MEJORA: mostrar todas las tablas disponibles en la BD
-            // para que el usuario elija en cuál desea ingresar un
-            // nuevo registro (funciona con cualquier tabla/BD).
-            // =====================================================
-            List<string> tablas;
-
-            try
-            {
-                tablas = controlador.ObtenerTablas();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    ObtenerMensajeAmigable(ex),
-                    "Error al listar tablas",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-
-                return;
-            }
-
-            if (tablas == null || tablas.Count == 0)
-            {
-                MessageBox.Show(
-                    "No se encontraron tablas disponibles en la base de datos.",
-                    "Ingresar registro",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
-                return;
-            }
-
-            List<string> seleccion = MostrarSelectorLista(
-                "Seleccionar tabla",
-                "Seleccione la tabla en la que desea ingresar un nuevo registro:",
-                tablas,
-                false);
-
-            if (seleccion.Count == 0)
-            {
-                // El usuario canceló la selección.
-                return;
-            }
-
-            nombreTabla = seleccion[0];
             modoModificar = false;
 
             try
@@ -452,7 +451,7 @@ namespace CapaVista_Navegador
 
         // Consulta
 
-        private void Btn_Consultar_Click(
+        private void btnConsultar_Click(
             object sender,
             EventArgs e)
         {
@@ -468,7 +467,7 @@ namespace CapaVista_Navegador
 
         // Refrescar
 
-        private void Btn_refrescar_Click(
+        private void btnRefrescar_Click(
             object sender,
             EventArgs e)
         {
@@ -494,14 +493,14 @@ namespace CapaVista_Navegador
         // Eliminar, sin depender únicamente del clic manual sobre la
         // grilla.
 
-        private void Btn_inicio_Click(
+        private void btnInicio_Click(
             object sender,
             EventArgs e)
         {
             SeleccionarFila(0);
         }
 
-        private void Btn_anterior_Click(
+        private void btnAnterior_Click(
             object sender,
             EventArgs e)
         {
@@ -520,7 +519,7 @@ namespace CapaVista_Navegador
                     filaActual - 1));
         }
 
-        private void Btn_siguiente_Click(
+        private void btnSiguiente_Click(
             object sender,
             EventArgs e)
         {
@@ -539,7 +538,7 @@ namespace CapaVista_Navegador
                     filaActual + 1));
         }
 
-        private void Btn_fin_Click(
+        private void btnFin_Click(
             object sender,
             EventArgs e)
         {
@@ -596,7 +595,7 @@ namespace CapaVista_Navegador
 
         // Modificar
 
-        private void Btn_modificar_Click(
+        private void btnModificar_Click(
             object sender,
             EventArgs e)
         {
@@ -670,7 +669,7 @@ namespace CapaVista_Navegador
         // Eliminar
 
 
-        private void Btn_eliminar_Click(
+        private void btnEliminar_Click(
             object sender,
             EventArgs e)
         {
@@ -768,7 +767,7 @@ namespace CapaVista_Navegador
         // tiene Btn_guardar/Btn_cancelar cumpliendo la misma función,
         // así que aquí solo delegamos a GuardarFormularioRegistro().
 
-        private void Btn_guardar_Click(
+        private void btnGuardar_Click(
             object sender,
             EventArgs e)
         {
@@ -790,7 +789,7 @@ namespace CapaVista_Navegador
         // SALIR
         // =========================================================
 
-        private void Btn_salir_Click(
+        private void btnSalir_Click(
             object sender,
             EventArgs e)
         {
@@ -930,20 +929,20 @@ namespace CapaVista_Navegador
                 panelRegistro.BringToFront();
             }
 
-            Btn_ingresar.BringToFront();
-            Btn_cancelar.BringToFront();
-            Btn_Consultar.BringToFront();
-            Btn_eliminar.BringToFront();
-            Btn_refrescar.BringToFront();
-            Btn_modificar.BringToFront();
-            Btn_anterior.BringToFront();
-            Btn_inicio.BringToFront();
-            Btn_fin.BringToFront();
-            Btn_siguiente.BringToFront();
-            Btn_imprimir.BringToFront();
-            Btn_guardar.BringToFront();
-            Btn_ayuda.BringToFront();
-            Btn_salir.BringToFront();
+            btnIngresar.BringToFront();
+            btnCancelar.BringToFront();
+            btnConsultar.BringToFront();
+            btnEliminar.BringToFront();
+            btnRefrescar.BringToFront();
+            btnModificar.BringToFront();
+            btnAnterior.BringToFront();
+            btnInicio.BringToFront();
+            btnFin.BringToFront();
+            btnSiguiente.BringToFront();
+            btnImprimir.BringToFront();
+            btnGuardar.BringToFront();
+            btnAyuda.BringToFront();
+            btnSalir.BringToFront();
         }
 
         // =========================================================
@@ -1211,105 +1210,54 @@ namespace CapaVista_Navegador
                     }
 
                     // =================================================
-                    // BOOLEANO = RADIO BUTTONS (Sí / No)
+                    // BOOLEANO = CHECKBOX (marcado = 1, sin marcar = 0)
                     // =================================================
-                    // MEJORA: antes se usaba un único CheckBox
-                    // (marcado/desmarcado). Ahora se muestran dos
-                    // RadioButton mutuamente excluyentes dentro de un
-                    // Panel, igual de dinámico que el resto del
-                    // formulario: se generan para CUALQUIER columna que
-                    // EsBooleano() detecte, sin importar la tabla.
+                    // CAMBIO SOLICITADO: se reemplazó la pareja de
+                    // RadioButton "Sí/No" por un único CheckBox. Se
+                    // genera automáticamente para CUALQUIER columna que
+                    // EsBooleano() detecte (por ejemplo un campo
+                    // "estado_seguro BOOLEAN DEFAULT TRUE"), sin importar
+                    // la tabla: marcado = true/1, sin marcar = false/0.
 
                     else if (EsBooleano(columna))
                     {
-                        Panel panelBooleano =
-                            new Panel();
+                        CheckBox chk =
+                            new CheckBox();
 
-                        panelBooleano.Name =
-                            "pnl_" +
+                        chk.Name =
+                            "chk_" +
                             campo;
 
-                        panelBooleano.Location =
+                        // El propio nombre del campo ya se muestra en la
+                        // etiqueta de la izquierda; el texto del checkbox
+                        // solo aclara el significado de marcado/desmarcado.
+                        chk.Text =
+                            "Sí (marcado) / No (desmarcado)";
+
+                        chk.AutoSize =
+                            true;
+
+                        chk.Location =
                             new Point(
                                 190,
-                                posicionY);
-
-                        panelBooleano.Width =
-                            250;
-
-                        panelBooleano.Height =
-                            24;
+                                posicionY + 3);
 
                         bool valorInicial =
                             ObtenerBooleanoInicial(
                                 filaSeleccionada,
                                 campo);
 
-                        RadioButton rbSi =
-                            new RadioButton();
-
-                        rbSi.Name =
-                            "rbSi_" +
-                            campo;
-
-                        rbSi.Text =
-                            "Sí";
-
-                        rbSi.AutoSize =
-                            true;
-
-                        rbSi.Location =
-                            new Point(
-                                0,
-                                3);
-
-                        // Tag guarda el valor booleano real que
-                        // representa este RadioButton, para poder
-                        // leerlo de forma genérica en ObtenerValorControl.
-                        rbSi.Tag =
-                            true;
-
-                        rbSi.Checked =
+                        chk.Checked =
                             valorInicial;
 
-                        RadioButton rbNo =
-                            new RadioButton();
-
-                        rbNo.Name =
-                            "rbNo_" +
-                            campo;
-
-                        rbNo.Text =
-                            "No";
-
-                        rbNo.AutoSize =
-                            true;
-
-                        rbNo.Location =
-                            new Point(
-                                90,
-                                3);
-
-                        rbNo.Tag =
-                            false;
-
-                        rbNo.Checked =
-                            !valorInicial;
-
-                        panelBooleano.Controls.Add(
-                            rbSi);
-
-                        panelBooleano.Controls.Add(
-                            rbNo);
-
-                        // FIX: mismo problema; solo bloquear al Modificar
-                        // (nunca al Ingresar). Al deshabilitar el Panel
-                        // se deshabilitan también los dos RadioButton.
-                        panelBooleano.Enabled =
+                        // FIX: mismo criterio que combo/fecha; solo se
+                        // bloquea si además se está Modificando (nunca al
+                        // Ingresar un registro nuevo).
+                        chk.Enabled =
                             !(esPk && modificar);
 
                         control =
-                            panelBooleano;
+                            chk;
                     }
 
                     // =================================================
@@ -2235,6 +2183,9 @@ namespace CapaVista_Navegador
         // =========================================================
         // OBTENER VALOR DEL CONTROL
         // =========================================================
+        // CAMBIO SOLICITADO: se retiró el manejo del panel de
+        // RadioButton (ya no se crea); el booleano ahora llega como
+        // CheckBox y se traduce a "1"/"0" según su propiedad Checked.
 
         private string ObtenerValorControl(
             Control control,
@@ -2269,37 +2220,11 @@ namespace CapaVista_Navegador
 
             if (check != null)
             {
+                // marcado (Checked = true)  -> "1"
+                // sin marcar (Checked = false) -> "0"
                 return check.Checked
                     ? "1"
                     : "0";
-            }
-
-            // =====================================================
-            // MEJORA: PANEL DE RADIO BUTTONS (BOOLEANO)
-            // =====================================================
-            Panel panelBooleano =
-                control as Panel;
-
-            if (panelBooleano != null)
-            {
-                foreach (Control hijo in panelBooleano.Controls)
-                {
-                    RadioButton radio =
-                        hijo as RadioButton;
-
-                    if (radio != null &&
-                        radio.Checked)
-                    {
-                        return (bool)radio.Tag
-                            ? "1"
-                            : "0";
-                    }
-                }
-
-                // Si por alguna razón ninguno quedó marcado
-                // (no debería pasar, siempre hay uno inicial),
-                // se asume "No" para no bloquear el guardado.
-                return "0";
             }
 
             return control.Text.Trim();
@@ -2419,6 +2344,37 @@ namespace CapaVista_Navegador
         // DETECTAR BOOLEANO
         // =========================================================
         // FIX: mismo criterio que EsFecha, usando NET_TYPE primero.
+        // Esta detección es la que decide si el campo se dibuja como
+        // CheckBox en el formulario (ver CrearFormularioRegistro).
+        //
+        // MEJORA: se agregó reconocer "tinyint(1)" como booleano.
+        // MySQL NO tiene un tipo BOOLEAN real: cuando en la BD se
+        // declara una columna como "BOOLEAN" o "BOOL" (ej.
+        // "estado_seguro BOOLEAN DEFAULT TRUE"), el motor la guarda
+        // internamente como TINYINT(1), y el driver ODBC la reporta
+        // como "tinyint" a secas, sin ninguna palabra "bool" en
+        // DATA_TYPE ni en NET_TYPE. Por eso antes ese campo caía
+        // siempre en el "else" (TextBox) en vez de mostrarse como
+        // CheckBox.
+        //
+        // FIX (nuevo): la convención universal para distinguir un
+        // tinyint booleano de un tinyint numérico normal es la
+        // longitud/precisión declarada de la columna: tinyint(1) =
+        // booleano, tinyint(3) o más = numérico real. Esa longitud
+        // debería venir en "COLUMN_SIZE" (ver
+        // Sentencias.ObtenerEsquemaTabla), PERO la mayoría de drivers
+        // ODBC de MySQL reportan COLUMN_SIZE = 3 (la precisión del
+        // TIPO tinyint) para CUALQUIER tinyint, sin importar si se
+        // declaró como (1) o no — es decir, no conservan el "display
+        // width" original. Por eso ese chequeo solo, fallaba siempre
+        // para columnas BOOLEAN reales.
+        //
+        // Ahora se usa primero "COLUMN_TYPE_TEXT", que sí trae el
+        // texto real de MySQL (ej. "tinyint(1)") leído directamente de
+        // INFORMATION_SCHEMA.COLUMNS (ver
+        // Sentencias.ObtenerTiposColumnaTexto), y se deja COLUMN_SIZE
+        // como respaldo para motores distintos a MySQL donde esa
+        // información sí sea confiable.
         private bool EsBooleano(DataRow columna)
         {
             string net =
@@ -2430,13 +2386,54 @@ namespace CapaVista_Navegador
                 return true;
             }
 
+            // FIX: texto real de COLUMN_TYPE (MySQL/MariaDB), conserva
+            // el display width que ODBC pierde (ej. "tinyint(1)").
+            string columnTypeTexto =
+                ObtenerTextoEsquema(columna, "COLUMN_TYPE_TEXT")
+                .ToLowerInvariant()
+                .Replace(" ", "");
+
+            if (columnTypeTexto.Contains("tinyint(1)") ||
+                columnTypeTexto == "bool" ||
+                columnTypeTexto == "boolean")
+            {
+                return true;
+            }
+
             string t =
                 ObtenerTextoEsquema(columna, "DATA_TYPE")
                 .ToLowerInvariant();
 
-            return t == "bit" ||
-                   t == "boolean" ||
-                   t == "bool";
+            if (t == "bit" ||
+                t == "boolean" ||
+                t == "bool")
+            {
+                return true;
+            }
+
+            // Respaldo: motores donde COLUMN_SIZE sí refleja el
+            // display width real (no MySQL, donde ese chequeo por sí
+            // solo no es confiable, ver comentario arriba).
+            if (t == "tinyint" ||
+                t.Contains("tinyint"))
+            {
+                string tamanoTexto =
+                    ObtenerTextoEsquema(
+                        columna,
+                        "COLUMN_SIZE");
+
+                int tamano;
+
+                if (int.TryParse(
+                    tamanoTexto,
+                    out tamano) &&
+                    tamano == 1)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // =========================================================
@@ -2504,7 +2501,7 @@ namespace CapaVista_Navegador
         // CANCELAR
         // =========================================================
 
-        private void Btn_cancelar_Click(
+        private void btnCancelar_Click(
             object sender,
             EventArgs e)
         {

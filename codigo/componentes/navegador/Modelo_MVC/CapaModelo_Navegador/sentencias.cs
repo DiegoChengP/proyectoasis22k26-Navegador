@@ -537,6 +537,65 @@ namespace CapaModelo_Navegador
             return tipos;
         }
 
+        // =========================================================
+        // NUEVO: TEXTO REAL DE COLUMN_TYPE (MySQL/MariaDB)
+        // =========================================================
+        // GetSchema("Columns") por ODBC NO conserva el "display width"
+        // que MySQL guarda al declarar una columna (ej. "tinyint(1)"
+        // para BOOLEAN). Casi todos los drivers ODBC devuelven
+        // COLUMN_SIZE = 3 (o la precisión genérica del tipo) para
+        // CUALQUIER tinyint, sin importar si se declaró como (1) o no.
+        // Por eso la detección de booleano basada solo en COLUMN_SIZE
+        // fallaba siempre para columnas BOOLEAN reales de MySQL
+        // (ej. "estado_seguro BOOLEAN DEFAULT TRUE").
+        //
+        // INFORMATION_SCHEMA.COLUMNS sí conserva ese texto tal cual en
+        // la columna COLUMN_TYPE (p. ej. "tinyint(1)", "tinyint(3)",
+        // "varchar(50)"), así que se usa como señal adicional. Si el
+        // motor conectado no es MySQL/MariaDB, la consulta simplemente
+        // falla y se ignora (no rompe nada, EsBooleano usa sus otros
+        // criterios de respaldo).
+        private Dictionary<string, string> ObtenerTiposColumnaTexto(OdbcConnection conexion, string nombreTabla)
+        {
+            Dictionary<string, string> tipos =
+                new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            try
+            {
+                string sSQL =
+                    "SELECT COLUMN_NAME, COLUMN_TYPE " +
+                    "FROM INFORMATION_SCHEMA.COLUMNS " +
+                    "WHERE TABLE_NAME = ?";
+
+                using (OdbcCommand comando = new OdbcCommand(sSQL, conexion))
+                {
+                    comando.Parameters.AddWithValue("@tabla", nombreTabla);
+
+                    using (OdbcDataReader lector = comando.ExecuteReader())
+                    {
+                        while (lector.Read())
+                        {
+                            string nombre = Convert.ToString(lector["COLUMN_NAME"]);
+                            string tipo = Convert.ToString(lector["COLUMN_TYPE"]);
+
+                            if (!string.IsNullOrWhiteSpace(nombre))
+                            {
+                                tipos[nombre] = tipo ?? "";
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Motor sin COLUMN_TYPE en INFORMATION_SCHEMA (no es
+                // MySQL/MariaDB, o la vista no está disponible): se
+                // ignora y simplemente no tendremos este dato adicional.
+            }
+
+            return tipos;
+        }
+
         public DataTable ObtenerEsquemaTabla(string nombreTabla)
         {
             ValidarIdentificador(nombreTabla);
@@ -556,7 +615,24 @@ namespace CapaModelo_Navegador
                 dtEsquema.Columns.Add("COLUMN_NAME", typeof(string));
                 dtEsquema.Columns.Add("DATA_TYPE", typeof(string));
                 dtEsquema.Columns.Add("NET_TYPE", typeof(string));
+
+                // NUEVO: texto real de COLUMN_TYPE (MySQL), conserva el
+                // display width que ODBC pierde (ej. "tinyint(1)").
+                // Usado por Frm_Crud.EsBooleano para detectar columnas
+                // BOOLEAN de MySQL que se guardan como TINYINT(1).
+                dtEsquema.Columns.Add("COLUMN_TYPE_TEXT", typeof(string));
+
                 dtEsquema.Columns.Add("CHARACTER_MAXIMUM_LENGTH", typeof(long));
+                // MEJORA: precisión/longitud numérica de la columna
+                // (COLUMN_SIZE del driver ODBC). Para columnas char/text
+                // suele coincidir con CHARACTER_MAXIMUM_LENGTH, pero
+                // para tipos numéricos (tinyint, smallint, etc.) es la
+                // única forma de saber, por ejemplo, que un "tinyint" es
+                // en realidad "tinyint(1)" (la convención de MySQL para
+                // BOOLEAN), y no un tinyint numérico normal. (Se
+                // mantiene como respaldo para motores distintos a MySQL,
+                // donde COLUMN_TYPE_TEXT no está disponible.)
+                dtEsquema.Columns.Add("COLUMN_SIZE", typeof(long));
                 dtEsquema.Columns.Add("IS_NULLABLE", typeof(string));
                 dtEsquema.Columns.Add("IS_PRIMARY_KEY", typeof(bool));
                 dtEsquema.Columns.Add("IS_FOREIGN_KEY", typeof(bool));
@@ -575,6 +651,10 @@ namespace CapaModelo_Navegador
                 // dependía 100% del texto crudo de DATA_TYPE del driver.
                 Dictionary<string, string> tiposNet =
                     ObtenerTiposNet(conexion, nombreTabla);
+
+                // NUEVO: texto real de COLUMN_TYPE (ver comentario arriba).
+                Dictionary<string, string> tiposColumnaTexto =
+                    ObtenerTiposColumnaTexto(conexion, nombreTabla);
 
                 // =========================================================
                 // RECORRER COLUMNAS
@@ -609,6 +689,22 @@ namespace CapaModelo_Navegador
                     long.TryParse(
                         longitudTexto,
                         out longitud
+                    );
+
+                    // MEJORA: leer COLUMN_SIZE (precisión numérica).
+                    // Si el driver no expone esta columna en el esquema,
+                    // queda en 0 y simplemente no se usa para detectar
+                    // "tinyint(1)".
+                    long tamanoColumna = 0;
+
+                    string tamanoColumnaTexto = ObtenerValorSchema(
+                        fila,
+                        "COLUMN_SIZE"
+                    );
+
+                    long.TryParse(
+                        tamanoColumnaTexto,
+                        out tamanoColumna
                     );
 
 
@@ -656,12 +752,20 @@ namespace CapaModelo_Navegador
                     string tipoNet;
                     tiposNet.TryGetValue(nombre, out tipoNet);
 
+                    // NUEVO: texto real de COLUMN_TYPE, cuando se pudo
+                    // determinar (MySQL/MariaDB); se guarda en
+                    // COLUMN_TYPE_TEXT.
+                    string tipoColumnaTexto;
+                    tiposColumnaTexto.TryGetValue(nombre, out tipoColumnaTexto);
+
                     DataRow nueva = dtEsquema.NewRow();
 
                     nueva["COLUMN_NAME"] = nombre;
                     nueva["DATA_TYPE"] = tipo;
                     nueva["NET_TYPE"] = tipoNet ?? "";
+                    nueva["COLUMN_TYPE_TEXT"] = tipoColumnaTexto ?? "";
                     nueva["CHARACTER_MAXIMUM_LENGTH"] = longitud;
+                    nueva["COLUMN_SIZE"] = tamanoColumna;
                     nueva["IS_NULLABLE"] = nullable;
                     nueva["IS_PRIMARY_KEY"] = esPK;
                     nueva["IS_FOREIGN_KEY"] = esFK;
