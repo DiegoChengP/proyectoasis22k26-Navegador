@@ -106,6 +106,11 @@ namespace CapaVista_Navegador
         {
             InitializeComponent();
 
+            // FIX: evitar que Windows Forms reduzca el tamaño de los
+            // botones y sus imágenes por escalado automático.
+            AutoScaleMode = AutoScaleMode.None;
+
+
 
 
             // FIX: antes no se asignaban los parámetros a los campos, así que
@@ -181,10 +186,19 @@ namespace CapaVista_Navegador
             Resize += Frm_Crud_Resize;
         }
 
+        // =========================================================
+        // FIX: mantener el tamaño de los botones e imágenes al
+        // ejecutar el formulario, evitando que el escalado de Windows
+        // reduzca los cuadros visualmente.
+        // =========================================================
+       
         private void Frm_Crud_Load(
             object sender,
             EventArgs e)
         {
+            // FIX: volver a aplicar el tamaño después de que el
+            // formulario haya terminado de cargar.
+
             if (dgvDatos != null)
             {
                 dgvDatos.Visible = false;
@@ -237,7 +251,7 @@ namespace CapaVista_Navegador
 
 
         // =========================================================
-        // MEJORA: SELECTOR GENÉRICO DE LISTA
+        // SELECTOR GENÉRICO DE LISTA
         // =========================================================
         // Se usa ÚNICAMENTE para definir manualmente las columnas de
         // la llave primaria cuando el driver ODBC no puede detectarla.
@@ -335,6 +349,7 @@ namespace CapaVista_Navegador
                 return seleccion;
             }
         }
+
 
         // =========================================================
         // MEJORA: OBTENER ESQUEMA GARANTIZANDO UNA LLAVE PRIMARIA
@@ -818,7 +833,7 @@ namespace CapaVista_Navegador
                         new DataGridView();
 
                     dgvDatos.Name =
-                        "dgvDatos";
+                        "NavegadorDgvDatos";
 
                     dgvDatos.AllowUserToAddRows =
                         false;
@@ -1561,6 +1576,7 @@ namespace CapaVista_Navegador
 
                     // En MODIFICAR:
                     // La PK jamás se actualiza.
+
                     if (modoModificar &&
                         esPk)
                     {
@@ -1647,6 +1663,7 @@ namespace CapaVista_Navegador
                     // campo(s) y valor(es) ya están en uso, sin importar
                     // si la llave es simple o compuesta, ni de qué motor
                     // de base de datos se trate.
+
                     List<string> pkCampos =
                         new List<string>();
 
@@ -1773,6 +1790,7 @@ namespace CapaVista_Navegador
 
                 // Los datos contienen únicamente campos
                 // que sí pueden modificarse.
+
                 Dictionary<string, string> valores =
                     new Dictionary<string, string>();
 
@@ -1815,6 +1833,7 @@ namespace CapaVista_Navegador
 
                 // ActualizarRegistro utiliza la PK original
                 // para modificar exactamente el registro seleccionado.
+
                 if (controlador.ActualizarRegistro(
                     nombreTabla,
                     valores,
@@ -2222,6 +2241,7 @@ namespace CapaVista_Navegador
             {
                 // marcado (Checked = true)  -> "1"
                 // sin marcar (Checked = false) -> "0"
+
                 return check.Checked
                     ? "1"
                     : "0";
@@ -2388,6 +2408,7 @@ namespace CapaVista_Navegador
 
             // FIX: texto real de COLUMN_TYPE (MySQL/MariaDB), conserva
             // el display width que ODBC pierde (ej. "tinyint(1)").
+
             string columnTypeTexto =
                 ObtenerTextoEsquema(columna, "COLUMN_TYPE_TEXT")
                 .ToLowerInvariant()
@@ -2414,6 +2435,7 @@ namespace CapaVista_Navegador
             // Respaldo: motores donde COLUMN_SIZE sí refleja el
             // display width real (no MySQL, donde ese chequeo por sí
             // solo no es confiable, ver comentario arriba).
+
             if (t == "tinyint" ||
                 t.Contains("tinyint"))
             {
@@ -2660,6 +2682,11 @@ namespace CapaVista_Navegador
             }
 
             return msg;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

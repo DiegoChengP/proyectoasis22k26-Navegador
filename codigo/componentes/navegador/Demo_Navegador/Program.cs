@@ -1,17 +1,16 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
-using CapaVista_Navegador; // Conecta tu biblioteca con la prueba
+using CapaVista_Navegador;
 
-namespace Demo_Navegador
+namespace Ejecucion_Navegador
 {
     internal static class Program
     {
         [STAThread]
         static void Main()
         {
-            ApplicationConfiguration.Initialize(); // Inicializador de WinForms en .NET 8
-
-            // Lanza el formulario de tu prototipo CRUD
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Frm_Crud());
         }
     }

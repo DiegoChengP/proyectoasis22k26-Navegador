@@ -18,7 +18,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\_build\bin\Debug\</OutputPath>
+    <IntermediateOutputPath>..\..\_build\obj\CapaVista_Navegador\Debug\</IntermediateOutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +27,8 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\_build\bin\Release\</OutputPath>
+    <IntermediateOutputPath>..\..\_build\obj\CapaVista_Navegador\Release\</IntermediateOutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -42,7 +44,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Frm_Crud.cs">
@@ -75,6 +76,12 @@
       <Project>{2058e9cd-3040-4ca1-a1c8-6d3b5ad299b5}</Project>
       <Name>CapaControlador_Navegador</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\siguiente.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\siguiente1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
