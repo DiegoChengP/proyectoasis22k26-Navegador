@@ -178,7 +178,7 @@ namespace CapaVista_Navegador
                 (Modificar && Columna.EsPK))
             {
                 if (!Modificar && Columna.EsAutoincremento)
-                    CampoTexto.Text = "(automático)";
+                    CampoTexto.Text = NavegadorFuncSiguienteLlave(Columna);
 
                 CampoTexto.ReadOnly = true;
                 CampoTexto.BackColor = Color.LightGray;
@@ -186,7 +186,39 @@ namespace CapaVista_Navegador
 
             return CampoTexto;
         }
+        //Genera actomaticamente la siguiente llave primaria
+        private string NavegadorFuncSiguienteLlave(ClsColumnaInfo Columna)
+        {
+            try
+            {
+                //Consigue los registros de la tabla
+                DataTable TablaDatos = _CtrlTabla.NavegadorFuncLlenarDgv(_Tabla);
+                long UltimaLlave = 0;
 
+                //Verifica que la tabla y la columna existan
+                if (TablaDatos != null && TablaDatos.Columns.Contains(Columna.Nombre))
+                {
+                    //Busca la llave primaria mas alta en la tabla
+                    foreach (DataRow Fila in TablaDatos.Rows)
+                    {
+                        //La valida como llave primaria
+                        if (Fila[Columna.Nombre] != DBNull.Value &&
+                        long.TryParse(Fila[Columna.Nombre].ToString(), out long Valor) &&
+                        Valor > UltimaLlave)
+                        UltimaLlave = Valor;
+                    }
+                }
+                //Da la siguiente llave primaria
+                return (UltimaLlave + 1).ToString();
+            }
+            catch (Exception Excepcion)
+            {
+                // Muerta error si no la genera
+                MessageBox.Show("No se pudo generar la llave automática: " + Excepcion.Message,
+                "Llave primaria", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return "1";
+            }
+        }
         //Crea el combo con los valores disponibles de una llave foranea
         private Control NavegadorMetCrearCombo(ClsColumnaInfo Columna,
             bool Modificar, DataGridViewRow Fila, ClsCrudGrid Grid, int PosicionVertical)
