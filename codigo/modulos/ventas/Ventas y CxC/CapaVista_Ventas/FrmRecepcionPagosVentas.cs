@@ -7,21 +7,21 @@
  * Matthew Andreé Juárez Xoy | Carné: 0901-23-4250
  * Diego Alejandro Cheng Peña | Carné: 0901-22-8091
  * Encargado: Todos
- * Fecha de actualización: 10/10/2026
- * Propósito: Prototipo visual del formulario, sin lógica de negocio.
+ * Fecha de actualización: 17/10/2026
+ * Propósito: Acceso a recepción de pagos dentro del formulario unificado de CxC.
  */
 using System.Windows.Forms;
 
 namespace CapaVista_Ventas
 {
-    public partial class FrmRecepcionPagosVentas : Form
+    public partial class FrmRecepcionPagosVentas : FrmMovimientosClientesVentas
     {
         public FrmRecepcionPagosVentas()
         {
             InitializeComponent();
-            // Los controles se editan desde el diseñador; no se implementan operaciones de negocio.
+            VentasMetMostrarRecepcionPagos();
         }
     }
 }
 
-// FIN DEL CÓDIGO — Equipo asignado al formulario | Fecha: 14/10/2026
+// FIN DEL CÓDIGO — Equipo asignado al formulario | Fecha: 17/10/2026
