@@ -40,7 +40,7 @@ namespace CapaModelo_Contabilidad.Repositorios
         // Consulta sin parámetros.
         public DataTable ContabilidadFuncEjecutarConsulta(string ComandoTexto, CommandType ComandoTipo)
         {
-            return ContabilidadFuncEjecutarConsulta(ComandoTexto, ComandoTipo, new List<OdbcParameter>());
+            return ContabilidadFuncEjecutarConsulta(ComandoTexto, ComandoTipo );
         }
 
         // Consulta con parámetros que devuelve una tabla.

@@ -48,7 +48,7 @@
     <Compile Include="Contratos\IRepositorioPresupuestosContabilidad.cs" />
     <Compile Include="Contratos\IRepositorioActivosFijosContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioContabilidad.cs" />
-    <Compile Include="Repositorios\clsRepositorioCuentasContabilidad.cs" />
+    <Compile Include="Repositorios\ClsRepositorioCuentasContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioMaestroContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioPolizasContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioPresupuestosContabilidad.cs" />
