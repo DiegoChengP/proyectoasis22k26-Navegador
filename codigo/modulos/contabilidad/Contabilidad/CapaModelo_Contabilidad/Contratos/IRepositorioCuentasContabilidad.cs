@@ -7,15 +7,14 @@ using System.Threading.Tasks;
 
 namespace CapaModelo_Contabilidad.Contratos
 {
-    interface IRepositorioCuentasContabilidad
+    public interface IRepositorioCuentasContabilidad
     {
 
         int ContabilidadFuncAgregar(ClsCuentaContabilidad entidad);
+        int ContabilidadFuncAgregar(ClsCuentaContabilidad entidad, int idModulo);
         int ContabilidadFuncEditar(ClsCuentaContabilidad entidad);
         int ContabilidadFuncEliminar(ClsCuentaContabilidad entidad);
-
         IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerPadres (ClsCuentaContabilidad entidad);
-
         IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerTodos();
         IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerTodos(int idModulo);
     }

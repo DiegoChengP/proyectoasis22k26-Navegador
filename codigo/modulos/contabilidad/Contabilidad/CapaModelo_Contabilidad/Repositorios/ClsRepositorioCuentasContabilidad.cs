@@ -68,15 +68,15 @@ namespace CapaModelo_Contabilidad.Repositorios
             return ContabilidadFuncEjecutarNonQuery(insert, _parametros, CommandType.Text);
         }
 
-        public int ContabilidadFuncAgregar(ClsCuentaContabilidad entidad, int idModulo)
+        // 1 = Guatemala
+        public int ContabilidadFuncAgregar(ClsCuentaContabilidad entidad, int idModulo, int idPais =1)
         {
-            int idPaisPorDefecto = 1; // Guatemala
 
             var _parametros = new List<OdbcParameter>
             {
                 new OdbcParameter("id_cuenta", entidad.IdCuenta),
                 new OdbcParameter("id_modulo", idModulo),
-                new OdbcParameter("id_pais", idPaisPorDefecto)
+                new OdbcParameter("id_pais", idPais)
             };
 
             return ContabilidadFuncEjecutarNonQuery(insertModuloCuenta, _parametros, CommandType.Text);
