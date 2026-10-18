@@ -4,19 +4,11 @@
 :: Compila, en una sola pasada y en el orden correcto de dependencias, todo lo
 :: que necesita el Navegador:
 ::
-::   1. CONSULTAS     : Consultas_Componentes -> Consultas_Mantenimiento -> Consultas
-::   2. SEGURIDAD     : CapaModelo_Seguridad -> CapaControlador_Seguridad
-::   3. NAVEGADOR     : CapaModelo -> CapaControlador -> CapaVista
-::   4. SEGURIDAD VISTA : CapaVista_Seguridad (depende de CapaVista_Navegador)
-::   5. EJECUTABLES   : Ejecucion_Navegador, Ejecucion_Seguridad, Ejecucion_Consultas
-::
-:: Ya no hacen falta varios ciclos: CapaVista_Navegador no referencia a
-:: CapaVista_Seguridad, asi que no hay dependencia circular.
-::
-:: REPORTEADOR queda fuera a proposito (Navegador no lo usa).
-::
-:: Los proyectos de las capas (1 a 4) detienen el proceso al primer error.
-:: Los ejecutables (5) se compilan todos y se reporta cuales fallaron.
+::   1. CONSULTAS      : CapaModelo -> CapaControlador -> CapaVista
+::   2. SEGURIDAD      : CapaModelo_Seguridad -> CapaControlador_Seguridad
+::   3. NAVEGADOR      : Control_Usuarios -> CapaModelo -> CapaControlador -> CapaVista
+::   4. SEGURIDAD VISTA: CapaVista_Seguridad (depende de CapaVista_Navegador)
+::   5. EJECUTABLES    : Ejecucion_Navegador, Ejecucion_Seguridad, Ejecucion_Consultas
 :: ============================================================================
 
 :INICIO
@@ -25,11 +17,14 @@ setlocal enabledelayedexpansion
 color 0A
 
 :: ---------------------------------------------------------------------------
-:: RUTAS FIJAS (cambiar solo si tu Visual Studio o el repositorio cambian)
+:: RUTAS
 :: ---------------------------------------------------------------------------
-:: Si tienes Professional o Enterprise, cambia "Community" por la edicion.
-set "MSBUILD_PATH=C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe"
-set "COMP=C:\proyectoasis22k26\codigo\componentes"
+set "MSBUILD_PATH=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe"
+
+:: Sube un solo nivel desde 'navegador' para situarse en 'codigo\componentes'
+pushd "%~dp0.."
+set "COMP=%CD%"
+popd
 
 set "ROOT_DIR=%~dp0"
 cd /d "%ROOT_DIR%"
@@ -40,6 +35,8 @@ echo ==== Build Navegador %DATE% %TIME% ==== > "%LOG%"
 echo ============================================
 echo COMPILACION NAVEGADOR (CONSULTAS + SEGURIDAD)
 echo ============================================
+echo Componentes en: %COMP%
+echo.
 
 if not exist "%MSBUILD_PATH%" (
     echo [ERROR] No se encontro MSBuild en:
@@ -50,7 +47,6 @@ if not exist "%MSBUILD_PATH%" (
 if not exist "%COMP%" (
     echo [ERROR] No existe la carpeta de componentes:
     echo         %COMP%
-    echo         Ajusta COMP al inicio de este archivo.
     goto FIN_ERROR
 )
 
@@ -63,14 +59,6 @@ set /a fail=0
 :: ==========================================================
 echo.
 echo ===== 1) CONSULTAS =====
-call :Build "%COMP%\consultas\Consultas_Componentes\CapaModelo_Componentes\CapaModelo_Componentes.csproj" || goto RESUMEN
-call :Build "%COMP%\consultas\Consultas_Componentes\CapaControlador_Componentes\CapaControlador_Componentes.csproj" || goto RESUMEN
-call :Build "%COMP%\consultas\Consultas_Componentes\CapaVista_Componentes\CapaVista_Componentes.csproj" || goto RESUMEN
-
-call :Build "%COMP%\consultas\Consultas_Mantenimiento\CapaModelo_Mantenimiento\CapaModelo_Mantenimiento.csproj" || goto RESUMEN
-call :Build "%COMP%\consultas\Consultas_Mantenimiento\CapaControlador_Mantenimiento\CapaControlador_Mantenimiento.csproj" || goto RESUMEN
-call :Build "%COMP%\consultas\Consultas_Mantenimiento\CapaVista_Mantenimiento\CapaVista_Mantenimiento.csproj" || goto RESUMEN
-
 call :Build "%COMP%\consultas\Consultas\CapaModelo_Consultas\CapaModelo_Consultas.csproj" || goto RESUMEN
 call :Build "%COMP%\consultas\Consultas\CapaControlador_Consultas\CapaControlador_Consultas.csproj" || goto RESUMEN
 call :Build "%COMP%\consultas\Consultas\CapaVista_Consultas\CapaVista_Consultas.csproj" || goto RESUMEN
@@ -88,6 +76,9 @@ call :Build "%COMP%\seguridad\Seguridad\CapaControlador_Seguridad\CapaControlado
 :: ==========================================================
 echo.
 echo ===== 3) NAVEGADOR =====
+if exist "%COMP%\navegador\Navegador\Control_Usuarios\Control_Usuarios.csproj" (
+    call :Build "%COMP%\navegador\Navegador\Control_Usuarios\Control_Usuarios.csproj" || goto RESUMEN
+)
 call :Build "%COMP%\navegador\Navegador\CapaModelo_Navegador\CapaModelo_Navegador.csproj" || goto RESUMEN
 call :Build "%COMP%\navegador\Navegador\CapaControlador_Navegador\CapaControlador_Navegador.csproj" || goto RESUMEN
 call :Build "%COMP%\navegador\Navegador\CapaVista_Navegador\CapaVista_Navegador.csproj" || goto RESUMEN
@@ -122,8 +113,6 @@ echo ============================================
 echo.
 echo ===== VERIFICANDO SALIDAS =====
 set "SALIDAS="
-set "SALIDAS=%SALIDAS% consultas\Consultas_Componentes\CapaVista_Componentes\bin\Debug\CapaVista_Componentes.dll"
-set "SALIDAS=%SALIDAS% consultas\Consultas_Mantenimiento\CapaVista_Mantenimiento\bin\Debug\CapaVista_Mantenimiento.dll"
 set "SALIDAS=%SALIDAS% consultas\Consultas\CapaVista_Consultas\bin\Debug\CapaVista_Consultas.dll"
 set "SALIDAS=%SALIDAS% seguridad\Seguridad\CapaModelo_Seguridad\bin\Debug\CapaModelo_Seguridad.dll"
 set "SALIDAS=%SALIDAS% seguridad\Seguridad\CapaControlador_Seguridad\bin\Debug\CapaControlador_Seguridad.dll"

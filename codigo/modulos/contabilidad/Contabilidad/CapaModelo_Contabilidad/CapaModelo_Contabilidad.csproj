@@ -36,8 +36,11 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contratos\IRepositorioCuentasContabilidad.cs" />
+    <Compile Include="Entidades\enumModulo.cs" />
     <Compile Include="Entidades\ClsCuentaContabilidad.cs" />
     <Compile Include="Entidades\ClsPolizaContabilidad.cs" />
+    <Compile Include="Entidades\ClsPolizaDetalleContabilidad.cs" />
     <Compile Include="Entidades\ClsPresupuestoContabilidad.cs" />
     <Compile Include="Entidades\ClsActivoFijoContabilidad.cs" />
     <Compile Include="Contratos\IRepositorioGenericoContabilidad.cs" />
@@ -45,6 +48,7 @@
     <Compile Include="Contratos\IRepositorioPresupuestosContabilidad.cs" />
     <Compile Include="Contratos\IRepositorioActivosFijosContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioContabilidad.cs" />
+    <Compile Include="Repositorios\clsRepositorioCuentasContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioMaestroContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioPolizasContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioPresupuestosContabilidad.cs" />

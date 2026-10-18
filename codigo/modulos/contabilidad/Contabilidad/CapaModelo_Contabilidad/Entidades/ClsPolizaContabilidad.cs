@@ -20,7 +20,12 @@ namespace CapaModelo_Contabilidad.Entidades
     {
         // Número de la póliza.
         public int IdPoliza { get; set; }
+        // Modulo al que hace referencia
+        public int IdModulo { get; set; }
         // Fecha de la póliza.
+
+        //Pais originario de la cuenta.
+        public int IdPais { get; set; }
         public DateTime Fecha { get; set; }
         // BORRADOR, APLICADA o ANULADA.
         public string Estado { get; set; }
@@ -34,17 +39,5 @@ namespace CapaModelo_Contabilidad.Entidades
         public List<ClsPolizaDetalleContabilidad> Detalle { get; set; } = new List<ClsPolizaDetalleContabilidad>();
     }
 
-    public class ClsPolizaDetalleContabilidad
-    {
-        // Cuenta de la línea.
-        public int IdCuenta { get; set; }
-        // Código de la cuenta.
-        public string Codigo { get; set; }
-        // Nombre de la cuenta.
-        public string Cuenta { get; set; }
-        // Importe al debe.
-        public decimal Debe { get; set; }
-        // Importe al haber.
-        public decimal Haber { get; set; }
-    }
+
 }
