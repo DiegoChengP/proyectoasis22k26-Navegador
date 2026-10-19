@@ -26,7 +26,7 @@ namespace Ejecucion_Contabilidad
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new CapaVista_Contabilidad.FrmMDIContabilidad());
+            Application.Run(new CapaVista_Contabilidad.FrmMDIContabilidad(2));
         }
     }
 }
