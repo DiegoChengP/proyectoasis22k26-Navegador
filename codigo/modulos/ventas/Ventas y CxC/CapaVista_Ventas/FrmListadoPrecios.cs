@@ -17,6 +17,11 @@ namespace CapaVista_Ventas
         {
             InitializeComponent();
         }
+
+        private void VentasLblSimboloPorcentaje_Click(object sender, System.EventArgs e)
+        {
+
+        }
     }
 }
 
