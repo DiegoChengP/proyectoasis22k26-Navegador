@@ -6,20 +6,26 @@
  * Propósito: prototipo no funcional de pólizas locales de Embutidos de Calidad,
  * basado en tblCuenta, tblPolizaEncabezado y tblPolizaDetalle de dbContabilidad.
  */
+using CapaControlador_Contabilidad;
+using CapaControlador_Contabilidad.Modelos;
+using CapaVista_Contabilidad.Componentes;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using CapaControlador_Contabilidad;
-using CapaVista_Contabilidad.Componentes;
 
 namespace CapaVista_Contabilidad
 {
     // Ventana de pólizas locales.
     public partial class FrmPolizasLocales : Form
     {
+        // Oskar Cermeño:
+        // Atributo por modulo ERP
+        private readonly int _idModulo;
+
         // Controlador de pólizas.
         private readonly ClsControladorPolizasContabilidad _Controlador = new ClsControladorPolizasContabilidad();
         // Líneas del detalle.
@@ -29,12 +35,16 @@ namespace CapaVista_Contabilidad
         // Errores por campo.
         private readonly ClsValidacionContabilidad _Validacion = new ClsValidacionContabilidad();
 
+
+ 
         // Prepara la ventana y sus eventos.
-        public FrmPolizasLocales()
+        public FrmPolizasLocales(int idModulo)
         {
             InitializeComponent();
+            _idModulo = idModulo;
             ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Pólizas locales", new Size(1180, 688));
             foreach (Control Campo in new Control[] { ContabilidadTxtDescripcion, ContabilidadDtpFecha, ContabilidadCboEstado, ContabilidadCboOrigen, ContabilidadCboCuenta })
+              
                 _Validacion.ContabilidadMetObligatorio(Campo);
             Disposed += (Remitente, Argumentos) => _Validacion.Dispose();
             ContabilidadColDebe.DefaultCellStyle.FormatProvider = _Cultura;
@@ -55,47 +65,61 @@ namespace CapaVista_Contabilidad
             ContabilidadDgvDetalle.SizeChanged += ContabilidadMetAlinearTotales;
             _Lineas.ListChanged += ContabilidadMetCambiarDetalle;
             ContabilidadMetNueva(this, EventArgs.Empty);
+
+        }
+
+        public FrmPolizasLocales() : this(1)
+        {
         }
 
         // Llena cuentas, estados y orígenes.
         private void ContabilidadMetCargarCatalogos()
         {
-            ContabilidadCboCuenta.DisplayMember = "Descripcion";
+            ContabilidadCboCuenta.DisplayMember = "Nombre";
             ContabilidadCboCuenta.ValueMember = "IdCuenta";
-            ContabilidadCboCuenta.DataSource = _Controlador.ContabilidadFuncObtenerCuentas();
+            var controladorCuentas = new ClsModeloCuentaContabilidad();
+            ContabilidadCboCuenta.DataSource = controladorCuentas.ContabilidadFuncObtenerTodos(_idModulo);
+            // ContabilidadCboCuenta.DataSource = _Controlador.ContabilidadFuncObtenerCuentas(_idModulo);
             ContabilidadCboEstado.DataSource = _Controlador.ContabilidadFuncObtenerEstados();
             ContabilidadCboOrigen.DataSource = _Controlador.ContabilidadFuncObtenerOrigenes();
         }
 
-        // Muestra el período de la fecha.
         private void ContabilidadMetActualizarPeriodo(object Remitente, EventArgs Argumentos)
         {
             ContabilidadTxtPeriodo.Text = _Controlador.ContabilidadFuncObtenerPeriodo(ContabilidadDtpFecha.Value);
         }
 
-        // Agrega la cuenta elegida al detalle.
         private void ContabilidadMetAgregarCuenta(object Remitente, EventArgs Argumentos)
         {
             ContabilidadDgvDetalle.EndEdit();
             string Nombre = ContabilidadCboCuenta.Text.Trim();
-            ClsCuentaPolizaContabilidad Cuenta = ContabilidadCboCuenta.Items.Cast<ClsCuentaPolizaContabilidad>().FirstOrDefault(Elemento =>
-                string.Equals(Elemento.Descripcion, Nombre, StringComparison.CurrentCultureIgnoreCase));
+
+            ClsModeloCuentaContabilidad Cuenta = ContabilidadCboCuenta.Items
+                .Cast<ClsModeloCuentaContabilidad>()
+                .FirstOrDefault(Elemento => string.Equals(Elemento.Nombre, Nombre, StringComparison.CurrentCultureIgnoreCase));
+
             if (Cuenta == null)
             {
                 _Validacion.ContabilidadFuncValidar(ContabilidadCboCuenta, "Seleccione una cuenta válida del catálogo.");
                 ContabilidadCboCuenta.Focus();
                 return;
             }
+
             int IdCuenta = Cuenta.IdCuenta;
             if (_Lineas.Any(Linea => Linea.IdCuenta == IdCuenta))
             {
                 _Validacion.ContabilidadFuncValidar(ContabilidadCboCuenta, "La cuenta ya está agregada al detalle.");
                 return;
             }
+
             _Lineas.Add(new ClsLineaPolizaContabilidad
             {
-                IdCuenta = IdCuenta, Cuenta = Cuenta.Descripcion, Debe = 0m, Haber = 0m
+                IdCuenta = IdCuenta,
+                Cuenta = Cuenta.Nombre, // <-- Antes decía Cuenta.Descripcion
+                Debe = 0m,
+                Haber = 0m
             });
+
             int Indice = _Lineas.Count - 1;
             ContabilidadDgvDetalle.CurrentCell = ContabilidadDgvDetalle.Rows[Indice].Cells[ContabilidadColDebe.Index];
             ContabilidadDgvDetalle.Focus();
@@ -264,5 +288,6 @@ namespace CapaVista_Contabilidad
             else
                 ClsDialogosContabilidad.ContabilidadMetError(this, Mensaje);
         }
+
     }
 }

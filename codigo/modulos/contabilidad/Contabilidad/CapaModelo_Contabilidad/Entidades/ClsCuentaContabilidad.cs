@@ -22,6 +22,7 @@ namespace CapaModelo_Contabilidad.Entidades
         // Nombre de la cuenta.
         public string Nombre { get; set; }
 
+        public string Codigo { get; set; }
         //Oskar Cermeño Inicio
         // Cuenta padre a la que vamos a hacer referencia
         public int IdPadre { get; set; }

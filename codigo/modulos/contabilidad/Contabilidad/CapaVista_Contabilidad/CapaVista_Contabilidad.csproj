@@ -116,6 +116,9 @@
     <EmbeddedResource Include="FrmMDIContabilidad.resx">
       <DependentUpon>FrmMDIContabilidad.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FrmPolizasLocales.resx">
+      <DependentUpon>FrmPolizasLocales.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

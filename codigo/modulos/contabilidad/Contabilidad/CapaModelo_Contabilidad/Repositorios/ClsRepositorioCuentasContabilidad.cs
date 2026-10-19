@@ -190,5 +190,6 @@ namespace CapaModelo_Contabilidad.Repositorios
             return lstPadres;
 
         }
+
     }
 }

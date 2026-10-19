@@ -11,7 +11,7 @@ namespace CapaModelo_Contabilidad.Contratos
     {
 
         int ContabilidadFuncAgregar(ClsCuentaContabilidad entidad);
-        int ContabilidadFuncAgregar(ClsCuentaContabilidad entidad, int idModulo);
+        int ContabilidadFuncAgregar(ClsCuentaContabilidad entidad, int idModulo, int idPais);
         int ContabilidadFuncEditar(ClsCuentaContabilidad entidad);
         int ContabilidadFuncEliminar(ClsCuentaContabilidad entidad);
         IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerPadres (ClsCuentaContabilidad entidad);

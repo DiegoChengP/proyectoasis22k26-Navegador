@@ -69,7 +69,7 @@ namespace CapaControlador_Contabilidad.Modelos
                 {
                     case EstadoEntidadContabilidad.Agregar:
                         if (_idModulo > 0)
-                            _repositorioCuentas.ContabilidadFuncAgregar(entidadCuenta, _idModulo);
+                            _repositorioCuentas.ContabilidadFuncAgregar(entidadCuenta, _idModulo, 1);
                         else
                             _repositorioCuentas.ContabilidadFuncAgregar(entidadCuenta);
                         return "Grabacion exitosa";
