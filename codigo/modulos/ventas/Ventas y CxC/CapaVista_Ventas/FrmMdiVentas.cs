@@ -81,8 +81,8 @@ namespace CapaVista_Ventas
             bool Activo = Boton == VentasBtnInicio;
             // Efecto de difuminado (hover): al pasar el cursor se sustituye el fondo por un tono
             // morado más suave. No altera el icono Image ni el texto Text del botón.
-            Boton.BackgroundImage = Activo ? Properties.Resources.BotonMenuActivoVentas :
-                (Sobre ? Properties.Resources.BotonMenuHoverVentas : Properties.Resources.BotonMenuNormalVentas);
+            Boton.BackgroundImage = Activo ? CapaVista_Ventas.Properties.Resources.BotonMenuActivoVentas :
+                (Sobre ? CapaVista_Ventas.Properties.Resources.BotonMenuHoverVentas : CapaVista_Ventas.Properties.Resources.BotonMenuNormalVentas);
             Boton.ForeColor = Activo ? Color.FromArgb(59, 29, 74) : Color.FromArgb(248, 245, 249);
         }
 
@@ -101,127 +101,61 @@ namespace CapaVista_Ventas
         // Abre el listado de precios de escritorio sobre el MDI.
         private void VentasBtnListadoPrecios_Click(object sender, EventArgs e)
         {
-            using (FrmListadoPrecios Formulario = new FrmListadoPrecios())
-            {
-                Formulario.ShowDialog(this);
-            }
+            VentasMetAbrirModulo("CapaVista_ListadoPrecios.dll", "CapaVista_ListadoPrecios.FrmListadoPrecios", "Listado de precios");
         }
 
         // Abre la opción de movimientos de clientes.
         private void VentasBtnMovimientosClientes_Click(object sender, EventArgs e)
         {
-            // Abre la base de trabajo del equipo como ventana modal sobre el MDI.
-            using (FrmMovimientosClientesVentas Formulario = new FrmMovimientosClientesVentas())
-            {
-                Formulario.ShowDialog(this);
-            }
+            VentasMetAbrirModulo("CapaVista_MovimientosClientes.dll", "CapaVista_MovimientosClientes.FrmMovimientosClientesVentas", "Movimientos de clientes");
         }
 
         // Abre la opción de recepción de pagos.
         private void VentasBtnRecepcionPagos_Click(object sender, EventArgs e)
         {
-            // Abre la base de trabajo del equipo como ventana modal sobre el MDI.
-            using (FrmRecepcionPagosVentas Formulario = new FrmRecepcionPagosVentas())
-            {
-                Formulario.ShowDialog(this);
-            }
+            VentasMetAbrirModulo("CapaVista_MovimientosClientes.dll", "CapaVista_MovimientosClientes.FrmRecepcionPagosVentas", "Recepción de pagos");
         }
 
         // Abre la opción de reportes de Ventas.
         private void VentasBtnReportes_Click(object sender, EventArgs e)
         {
-            // Abre la base de trabajo del equipo como ventana modal sobre el MDI.
-            using (FrmReportesVentas Formulario = new FrmReportesVentas())
-            {
-                Formulario.ShowDialog(this);
-            }
+            VentasMetAbrirModulo("CapaVista_Reportes.dll", "CapaVista_Reportes.FrmReportesVentas", "Reportes");
         }
 
         // Abre el formulario independiente de cotizaciones.
         private void VentasBtnCotizaciones_Click(object sender, EventArgs e)
         {
-            using (FrmCotizacionVentas Formulario = new FrmCotizacionVentas())
-            {
-                Formulario.ShowDialog(this);
-            }
+            VentasMetAbrirModulo("CapaVista_Cotizaciones.dll", "CapaVista_Cotizaciones.FrmCotizacionVentas", "Cotizaciones");
         }
 
         // Abre el formulario independiente de pedidos.
         private void VentasBtnPedidos_Click(object sender, EventArgs e)
         {
-            using (CapaVista_Pedidos.FrmPedidoVentas Formulario = new CapaVista_Pedidos.FrmPedidoVentas())
-            {
-                Formulario.ShowDialog(this);
-            }
+            VentasMetAbrirModulo("CapaVista_Pedidos.dll", "CapaVista_Pedidos.FrmPedidoVentas", "Pedidos");
         }
 
         // Abre el formulario independiente de facturas.
         private void VentasBtnFacturas_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string rutaDll = System.IO.Path.Combine(Application.StartupPath, "CapaVista_Facturas.dll");
-                if (System.IO.File.Exists(rutaDll))
-                {
-                    var assembly = System.Reflection.Assembly.LoadFrom(rutaDll);
-
-                    // Verificamos qué tipos contiene la DLL para depurar si el nombre exacto es distinto
-                    var type = assembly.GetType("CapaVista_Facturas.FrmFacturas");
-
-                    if (type == null)
-                    {
-                        // Esto te mostrará exactamente qué clases existen dentro de la DLL si el namespace fuera otro
-                        string tiposDisponibles = string.Join("\n", Array.ConvertAll(assembly.GetTypes(), t => t.FullName));
-                        MessageBox.Show("No se encontró la clase 'CapaVista_Facturas.FrmFacturas'.\nTipos en la DLL:\n" + tiposDisponibles, "Error de Reflection");
-                        return;
-                    }
-
-                    Form Formulario = (Form)Activator.CreateInstance(type);
-
-                    // Si quieres que sea parte del MDI o una ventana independiente:
-                    Formulario.Show(this); // Usar .Show() en lugar de .ShowDialog() para evitar bloqueos del MDI
-                }
-                else
-                {
-                    MessageBox.Show("No se encontró la DLL de Facturas en la ruta: " + rutaDll);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error crítico al cargar el módulo de facturas:\n" + ex.Message +
-                                (ex.InnerException != null ? "\nDetalle: " + ex.InnerException.Message : ""),
-                                "Excepción de Reflection", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            VentasMetAbrirModulo("CapaVista_Facturas.dll", "CapaVista_Facturas.FrmFacturas", "Facturas", false);
         }
 
         // Abre la opción de comisiones de vendedores.
         private void VentasBtnComisionesVendedores_Click(object sender, EventArgs e)
         {
-            // Abre la base de trabajo del equipo como ventana modal sobre el MDI.
-            using (FrmComisionesVendedoresVentas Formulario = new FrmComisionesVendedoresVentas())
-            {
-                Formulario.ShowDialog(this);
-            }
+            VentasMetAbrirModulo("ComisionVendedoresVista.dll", "ComisionVendedoresVista.FrmComisionesVendedoresVentas", "Comisiones de vendedores");
         }
 
         // Abre la opción de mantenimientos del módulo.
         private void VentasBtnMantenimientos_Click(object sender, EventArgs e)
         {
-            // Abre la base de trabajo del equipo como ventana modal sobre el MDI.
-            using (FrmMantenimientosVentas Formulario = new FrmMantenimientosVentas())
-            {
-                Formulario.ShowDialog(this);
-            }
+            VentasMetAbrirModulo("CapaVista_Mantenimientos.dll", "CapaVista_Mantenimientos.FrmMantenimientosVentas", "Mantenimientos");
         }
 
         // Abre la opción de cierre de movimientos.
         private void VentasBtnCierreMovimientos_Click(object sender, EventArgs e)
         {
-            // Abre la base de trabajo del equipo como ventana modal sobre el MDI.
-            using (FrmCierreMovimientosVentas Formulario = new FrmCierreMovimientosVentas())
-            {
-                Formulario.ShowDialog(this);
-            }
+            VentasMetAbrirModulo("CapaVista_CierreMovimientos.dll", "CapaVista_CierreMovimientos.FrmCierreMovimientosVentas", "Cierre de movimientos");
         }
 
         // Confirma la salida del módulo y cierra su ventana principal.

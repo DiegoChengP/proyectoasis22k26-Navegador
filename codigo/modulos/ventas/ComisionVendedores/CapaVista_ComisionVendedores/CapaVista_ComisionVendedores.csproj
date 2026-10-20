@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\ComisionVendedoresVista\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\ComisionVendedoresVista\bin\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -46,19 +46,43 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ComisionVendedoresControlador">
-      <HintPath>..\CapaControlador_ComisionVendedores\bin\$(Configuration)\ComisionVendedoresControlador.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-  </ItemGroup>
+    </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FrmMdiComisionVendedores.resx">
       <DependentUpon>FrmMdiComisionVendedores.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Resources\iconoVentas.ico" />
   </ItemGroup>
-  <Target Name="CopiarDependenciaModelo" AfterTargets="Build">
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\CapaModelo_ComisionVendedores\bin\$(Configuration)\ComisionVendedoresModelo.dll" DestinationFolder="$(MSBuildProjectDirectory)\..\ComisionVendedoresVista\bin\$(Configuration)" SkipUnchangedFiles="true" />
-  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="FrmComisionesVendedoresVentas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmComisionesVendedoresVentas.Designer.cs">
+      <DependentUpon>FrmComisionesVendedoresVentas.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="FrmComisionesVendedoresVentas.resx">
+      <DependentUpon>FrmComisionesVendedoresVentas.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CapaControlador_ComisionVendedores\CapaControlador_ComisionVendedores.csproj">
+      <Project>{82CF6C57-8B4A-49F4-A33A-BFE0F3F3E416}</Project>
+      <Name>CapaControlador_ComisionVendedores</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>ComisionVendedoresVista.Properties</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
