@@ -158,9 +158,39 @@ namespace CapaVista_Ventas
         // Abre el formulario independiente de facturas.
         private void VentasBtnFacturas_Click(object sender, EventArgs e)
         {
-            using (FrmFacturas Formulario = new FrmFacturas())
+            try
             {
-                Formulario.ShowDialog(this);
+                string rutaDll = System.IO.Path.Combine(Application.StartupPath, "CapaVista_Facturas.dll");
+                if (System.IO.File.Exists(rutaDll))
+                {
+                    var assembly = System.Reflection.Assembly.LoadFrom(rutaDll);
+
+                    // Verificamos qué tipos contiene la DLL para depurar si el nombre exacto es distinto
+                    var type = assembly.GetType("CapaVista_Facturas.FrmFacturas");
+
+                    if (type == null)
+                    {
+                        // Esto te mostrará exactamente qué clases existen dentro de la DLL si el namespace fuera otro
+                        string tiposDisponibles = string.Join("\n", Array.ConvertAll(assembly.GetTypes(), t => t.FullName));
+                        MessageBox.Show("No se encontró la clase 'CapaVista_Facturas.FrmFacturas'.\nTipos en la DLL:\n" + tiposDisponibles, "Error de Reflection");
+                        return;
+                    }
+
+                    Form Formulario = (Form)Activator.CreateInstance(type);
+
+                    // Si quieres que sea parte del MDI o una ventana independiente:
+                    Formulario.Show(this); // Usar .Show() en lugar de .ShowDialog() para evitar bloqueos del MDI
+                }
+                else
+                {
+                    MessageBox.Show("No se encontró la DLL de Facturas en la ruta: " + rutaDll);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error crítico al cargar el módulo de facturas:\n" + ex.Message +
+                                (ex.InnerException != null ? "\nDetalle: " + ex.InnerException.Message : ""),
+                                "Excepción de Reflection", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

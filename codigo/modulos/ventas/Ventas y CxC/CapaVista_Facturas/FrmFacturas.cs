@@ -6,7 +6,7 @@
  */
 using System.Windows.Forms;
 
-namespace CapaVista_Ventas
+namespace CapaVista_Facturas
 {
     public partial class FrmFacturas : Form
     {
