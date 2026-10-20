@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -94,7 +94,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -225,15 +225,6 @@
     </Compile>
     <EmbeddedResource Include="FrmReportesVentas.resx">
       <DependentUpon>FrmReportesVentas.cs</DependentUpon>
-    </EmbeddedResource>
-    <Compile Include="FrmFacturas.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmFacturas.Designer.cs">
-      <DependentUpon>FrmFacturas.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="FrmFacturas.resx">
-      <DependentUpon>FrmFacturas.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="FrmComisionesVendedoresVentas.cs">
       <SubType>Form</SubType>
