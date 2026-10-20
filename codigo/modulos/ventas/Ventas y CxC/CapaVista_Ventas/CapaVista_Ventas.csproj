@@ -49,12 +49,6 @@
     <Compile Include="FrmListadoPrecios.Designer.cs">
       <DependentUpon>FrmListadoPrecios.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmPedidoVentas.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmPedidoVentas.Designer.cs">
-      <DependentUpon>FrmPedidoVentas.cs</DependentUpon>
-    </Compile>
     <Compile Include="FrmMdiVentas.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -73,9 +67,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <EmbeddedResource Include="FrmPedidoVentas.resx">
-      <DependentUpon>FrmPedidoVentas.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -144,6 +135,10 @@
     <ProjectReference Include="..\CapaControlador_Ventas\CapaControlador_Ventas.csproj">
       <Project>{A4A82D84-ABF2-4CE9-9CEA-273B6365A352}</Project>
       <Name>CapaControlador_Ventas</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Pedidos\CapaVista_Pedidos\CapaVista_Pedidos.csproj">
+      <Project>{14AE1E47-92A9-4C24-9B97-1EB0ACB85CA2}</Project>
+      <Name>CapaVista_Pedidos</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

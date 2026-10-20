@@ -149,7 +149,7 @@ namespace CapaVista_Ventas
         // Abre el formulario independiente de pedidos.
         private void VentasBtnPedidos_Click(object sender, EventArgs e)
         {
-            using (FrmPedidoVentas Formulario = new FrmPedidoVentas())
+            using (CapaVista_Pedidos.FrmPedidoVentas Formulario = new CapaVista_Pedidos.FrmPedidoVentas())
             {
                 Formulario.ShowDialog(this);
             }
