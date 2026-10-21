@@ -20,12 +20,6 @@ namespace CapaVista_Navegador
     {
         private ClsCtrlRegistro _CtrlRegistro = new ClsCtrlRegistro();
 
-        // Inicio cambio - Mario Alberto Taracena Pérez - 0901-23-9335
-        // Bitácora: deja rastro de Insertar/Modificar/Eliminar. La fachada viene del componente
-        // Navegador y es la que sabe hablar con Seguridad (usuario de la sesión, IP, etc.).
-        private ClsNavegadorBitacora _Bitacora = new ClsNavegadorBitacora();
-        // Fin cambio - Mario Alberto Taracena Pérez - 0901-23-9335
-
         // ====================================================================
         // Función:      NavegadorFuncConfirmarAccion
         // Descripción:  Muestra un cuadro de diálogo modal con opciones Sí/No 
@@ -245,35 +239,12 @@ namespace CapaVista_Navegador
                 NavegadorFuncResumenDatos(Datos)))
                 return false;
 
-            // Inicio cambio - Mario Alberto Taracena Pérez - 0901-23-9335
-            // Primero se inserta el registro tal como ya funcionaba. Si se insertó bien, se calcula
-            // qué id usar para la bitácora (el de la llave primaria si ya se conoce, si no 0 porque
-            // es autoincremento) y se registra la acción "INSERT" con los datos que se guardaron.
-            // Inicio cambio - Gabriel André Guillén Pocón - 0901-23-1998
-            // Transacción: el INSERT y su bitácora (por Seguridad) van en la misma transacción de base
-            // de datos. Si el INSERT no afecta filas o algo lanza una excepción (incluida la bitácora),
-            // al salir del using se hace Rollback y no queda ninguno de los dos; solo con
-            // NavegadorMetConfirmar se guardan ambos. Las excepciones las traduce el coordinador.
-            using (ClsTransaccion TransaccionBD = new ClsTransaccion())
-            {
-                if (!_CtrlRegistro.NavegadorFuncInsertarRegistro(Tabla, Datos, TransaccionBD.Conexion, TransaccionBD.Transaccion))
-                    return false;
-
-                // El id de la bitácora es el de la llave primaria si ya se conoce; si no, 0 (autoincremento).
-                int IdRegistro = 0;
-                if (ValoresPK.Count > 0)
-                    int.TryParse(ValoresPK[0], out IdRegistro);
-
-                _Bitacora.NavegadorMetRegistrarBitacora(
-                    "INSERT", Tabla, IdRegistro,
-                    "Se insertó un registro en " + Tabla + ": " + NavegadorFuncResumenDatos(Datos),
-                    TransaccionBD.Conexion, TransaccionBD.Transaccion);
-
-                TransaccionBD.NavegadorMetConfirmar();
-                return true;
-            }
-            // Fin cambio - Gabriel André Guillén Pocón - 0901-23-1998
-            // Fin cambio - Mario Alberto Taracena Pérez - 0901-23-9335
+            // El Controlador coordina la transacción del INSERT y su bitácora.
+            int IdRegistro = 0;
+            if (ValoresPK.Count > 0) int.TryParse(ValoresPK[0], out IdRegistro);
+            return _CtrlRegistro.NavegadorFuncInsertarConBitacora(Tabla, Datos,
+                ClsNavegadorSesion.NavegadorFuncIdUsuario(), IdRegistro,
+                "Se insertó un registro en " + Tabla + ": " + NavegadorFuncResumenDatos(Datos));
         }
 
         // ====================================================================
@@ -310,30 +281,12 @@ namespace CapaVista_Navegador
                 NavegadorFuncResumenDatos(Datos)))
                 return false;
 
-            // Inicio cambio - Mario Alberto Taracena Pérez - 0901-23-9335
-            // Igual que en Insertar: primero se actualiza el registro, y si salió bien, se registra
-            // la acción "UPDATE" en la bitácora. Aquí sí se conoce el id real porque ya existía.
-            // Inicio cambio - Gabriel André Guillén Pocón - 0901-23-1998
-            // Transacción: UPDATE + bitácora "UPDATE" (por Seguridad) en una sola unidad; ver NavegadorFuncInsertar.
-            using (ClsTransaccion TransaccionBD = new ClsTransaccion())
-            {
-                if (!_CtrlRegistro.NavegadorFuncActualizarRegistro(Tabla, Datos, ClavesPrimarias, TransaccionBD.Conexion, TransaccionBD.Transaccion))
-                    return false;
-
-                // Aquí sí se conoce el id real porque el registro ya existía.
-                int IdRegistro = 0;
-                foreach (string ValorPk in ClavesPrimarias.Values) { int.TryParse(ValorPk, out IdRegistro); break; }
-
-                _Bitacora.NavegadorMetRegistrarBitacora(
-                    "UPDATE", Tabla, IdRegistro,
-                    "Se actualizó un registro en " + Tabla + ": " + NavegadorFuncResumenDatos(Datos),
-                    TransaccionBD.Conexion, TransaccionBD.Transaccion);
-
-                TransaccionBD.NavegadorMetConfirmar();
-                return true;
-            }
-            // Fin cambio - Gabriel André Guillén Pocón - 0901-23-1998
-            // Fin cambio - Mario Alberto Taracena Pérez - 0901-23-9335
+            // El Controlador coordina la transacción del UPDATE y su bitácora.
+            int IdRegistro = 0;
+            foreach (string ValorPk in ClavesPrimarias.Values) { int.TryParse(ValorPk, out IdRegistro); break; }
+            return _CtrlRegistro.NavegadorFuncActualizarConBitacora(Tabla, Datos, ClavesPrimarias,
+                ClsNavegadorSesion.NavegadorFuncIdUsuario(), IdRegistro,
+                "Se actualizó un registro en " + Tabla + ": " + NavegadorFuncResumenDatos(Datos));
         }
 
         // ====================================================================
@@ -370,29 +323,12 @@ namespace CapaVista_Navegador
                 "¿Desea eliminar el registro seleccionado de la tabla '" + Tabla + "'?"))
                 return false;
 
-            // Inicio cambio - Mario Alberto Taracena Pérez - 0901-23-9335
-            // Igual que arriba: se elimina el registro y, si se pudo eliminar, se registra la
-            // acción "DELETE" en la bitácora con el id del registro que se borró.
-            // Inicio cambio - Gabriel André Guillén Pocón - 0901-23-1998
-            // Transacción: DELETE + bitácora "DELETE" (por Seguridad) en una sola unidad; ver NavegadorFuncInsertar.
-            using (ClsTransaccion TransaccionBD = new ClsTransaccion())
-            {
-                if (!_CtrlRegistro.NavegadorFuncEliminarRegistro(Tabla, ClavesPrimarias, TransaccionBD.Conexion, TransaccionBD.Transaccion))
-                    return false;
-
-                int IdRegistro = 0;
-                foreach (string ValorPk in ClavesPrimarias.Values) { int.TryParse(ValorPk, out IdRegistro); break; }
-
-                _Bitacora.NavegadorMetRegistrarBitacora(
-                    "DELETE", Tabla, IdRegistro,
-                    "Se eliminó un registro de " + Tabla + ".",
-                    TransaccionBD.Conexion, TransaccionBD.Transaccion);
-
-                TransaccionBD.NavegadorMetConfirmar();
-                return true;
-            }
-            // Fin cambio - Gabriel André Guillén Pocón - 0901-23-1998
-            // Fin cambio - Mario Alberto Taracena Pérez - 0901-23-9335
+            // El Controlador coordina la transacción del DELETE y su bitácora.
+            int IdRegistro = 0;
+            foreach (string ValorPk in ClavesPrimarias.Values) { int.TryParse(ValorPk, out IdRegistro); break; }
+            return _CtrlRegistro.NavegadorFuncEliminarConBitacora(Tabla, ClavesPrimarias,
+                ClsNavegadorSesion.NavegadorFuncIdUsuario(), IdRegistro,
+                "Se eliminó un registro de " + Tabla + ".");
         }
 
         // ====================================================================

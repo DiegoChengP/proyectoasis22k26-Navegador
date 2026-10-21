@@ -61,6 +61,12 @@ namespace CapaVista_Seguridad
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (SeguridadCmbMDI.SelectedIndex == -1)
+            {
+                MessageBox.Show("Seleccione el MDI al que desea entrar.");
+                return;
+            }
+
             try
             {
                 var modelo = new ClsModeloUsuario();
@@ -75,8 +81,10 @@ namespace CapaVista_Seguridad
                         roles: modelo.Roles
                     );
 
+                    string destino = SeguridadCmbMDI.Text;
+
                     this.Hide();
-                    var frmPrincipal = new FrmSplash();
+                    var frmPrincipal = new FrmSplash(destino);
                     frmPrincipal.ShowDialog();
                     this.Show();
                 }

@@ -31,10 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CapaControlador_Navegador, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="CapaControlador_Seguridad, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\CapaControlador_Seguridad\bin\Debug\CapaControlador_Seguridad.dll</HintPath>
     </Reference>
+    <Reference Include="CapaModelo_Navegador, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="CapaVista_Consultas, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="CapaVista_Navegador">
       <HintPath>..\..\..\navegador\Navegador\CapaVista_Navegador\bin\Debug\CapaVista_Navegador.dll</HintPath>
     </Reference>
@@ -101,6 +104,12 @@
     <Compile Include="FrmMantenimientoAplicacion.Designer.cs">
       <DependentUpon>FrmMantenimientoAplicacion.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmMantenimientoAplicacionNavegador.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMantenimientoAplicacionNavegador.Designer.cs">
+      <DependentUpon>FrmMantenimientoAplicacionNavegador.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmMantenimientoEmpleado.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -119,11 +128,23 @@
     <Compile Include="FrmMantenimientoModulo.Designer.cs">
       <DependentUpon>FrmMantenimientoModulo.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmNavegador.cs">
+    <Compile Include="FrmEmpleadosNavegador.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmNavegador.Designer.cs">
-      <DependentUpon>FrmNavegador.cs</DependentUpon>
+    <Compile Include="FrmEmpleadosNavegador.Designer.cs">
+      <DependentUpon>FrmEmpleadosNavegador.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmModulosNavegador.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmModulosNavegador.Designer.cs">
+      <DependentUpon>FrmModulosNavegador.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmPerfilesNavegador.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmPerfilesNavegador.Designer.cs">
+      <DependentUpon>FrmPerfilesNavegador.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmRecuperacion.cs">
       <SubType>Form</SubType>
@@ -233,6 +254,9 @@
     <EmbeddedResource Include="FrmMantenimientoAplicacion.resx">
       <DependentUpon>FrmMantenimientoAplicacion.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FrmMantenimientoAplicacionNavegador.resx">
+      <DependentUpon>FrmMantenimientoAplicacionNavegador.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmMantenimientoEmpleado.resx">
       <DependentUpon>FrmMantenimientoEmpleado.cs</DependentUpon>
     </EmbeddedResource>
@@ -242,8 +266,14 @@
     <EmbeddedResource Include="FrmMantenimientoModulo.resx">
       <DependentUpon>FrmMantenimientoModulo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmNavegador.resx">
-      <DependentUpon>FrmNavegador.cs</DependentUpon>
+    <EmbeddedResource Include="FrmEmpleadosNavegador.resx">
+      <DependentUpon>FrmEmpleadosNavegador.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmModulosNavegador.resx">
+      <DependentUpon>FrmModulosNavegador.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmPerfilesNavegador.resx">
+      <DependentUpon>FrmPerfilesNavegador.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmRecuperacion.resx">
       <DependentUpon>FrmRecuperacion.cs</DependentUpon>

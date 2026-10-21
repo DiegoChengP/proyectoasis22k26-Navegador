@@ -130,5 +130,16 @@ namespace CapaModelo_Seguridad.Repositorios
         {
             return SeguridadMetEjecucionConsulta("SELECT idAplicacion, nombreAplicacion FROM tblAplicacion", CommandType.Text);
         }
+
+        public DataTable SeguridadMetObtenerAplicacionesPorModulo(int IdModulo)
+        {
+            var Parametros = new List<OdbcParameter>();
+            Parametros.Add(new OdbcParameter("p_idModulo", IdModulo));
+
+            return SeguridadMetEjecucionConsulta(
+                "SELECT idAplicacion, nombreAplicacion FROM tblAplicacion WHERE idModulo = ?",
+                CommandType.Text,
+                Parametros);
+        }
     }
 }

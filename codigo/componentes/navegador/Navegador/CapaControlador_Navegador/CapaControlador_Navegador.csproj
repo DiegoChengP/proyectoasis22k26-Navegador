@@ -37,6 +37,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="CapaControlador_Seguridad">
+      <HintPath>$(SeguridadBin)\CapaControlador_Seguridad\bin\Debug\CapaControlador_Seguridad.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <!-- Necesaria porque las clases del Modelo heredan de ClsConexion (Seguridad). -->
     <Reference Include="CapaModelo_Seguridad">
       <HintPath>$(SeguridadBin)\CapaModelo_Seguridad\bin\Debug\CapaModelo_Seguridad.dll</HintPath>

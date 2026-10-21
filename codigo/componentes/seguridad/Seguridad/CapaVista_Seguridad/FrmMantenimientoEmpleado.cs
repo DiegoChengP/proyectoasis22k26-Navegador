@@ -50,7 +50,8 @@ namespace CapaVista_Seguridad
     {
         { SeguridadBtnGuardar,   TipoPermiso.Insertar },
         { SeguridadBtnModificar, TipoPermiso.Editar },
-        { SeguridadBtnEliminar,  TipoPermiso.Eliminar }
+        { SeguridadBtnEliminar,  TipoPermiso.Eliminar },
+        { SeguridadBtnImprimir,  TipoPermiso.Imprimir }
     };
 
             _MisPermisos = ClsSeguridadFormHelper.SeguridadMetInicializarSeguridad(
