@@ -540,6 +540,7 @@ namespace CapaVista_Seguridad
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmAsignacionAppPerf";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "2010 - Asignacion Aplicacion Perfil";
             this.Load += new System.EventHandler(this.FrmAsignacionAppPerf_Load);
             this.PnlSeguridadPnlDecorativo.ResumeLayout(false);

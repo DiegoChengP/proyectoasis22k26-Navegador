@@ -45,19 +45,21 @@ namespace CapaVista_Seguridad
         private void FrmAsignacionAppPerf_Load(object sender, EventArgs e)
         {
             var MapaBotones = new Dictionary<Control, TipoPermiso>
-            {
-                { BtnSeguridadAgregar,   TipoPermiso.Insertar },
-                { BtnSeguridadModificar, TipoPermiso.Editar   },
-                { BtnSeguridadQuitar,    TipoPermiso.Eliminar }
-            };
+        {
+            { BtnSeguridadAgregar,   TipoPermiso.Insertar },
+            { BtnSeguridadGuardar,   TipoPermiso.Insertar },
+            { BtnSeguridadModificar, TipoPermiso.Editar   },
+            { BtnSeguridadQuitar,    TipoPermiso.Eliminar }
+        };
 
             _MisPermisos = ClsSeguridadFormHelper.SeguridadMetInicializarSeguridad(
              this, ID_MODULO, ID_APLICACION, MapaBotones);
 
             if (!_MisPermisos.TieneAcceso)
-            return;
+                return;
 
             SeguridadMetCargarCombos();
+            CboSeguridadModulos.SelectedIndexChanged += CboSeguridadModulos_SelectedIndexChanged;
             SeguridadMetConfigurarColumnas();
             SeguridadMetListarAsigAppPerf();
         }
@@ -145,7 +147,25 @@ namespace CapaVista_Seguridad
                 DefaultCellStyle = new DataGridViewCellStyle { Format = "dd/MM/yyyy HH:mm" }
             });
         }
+        private void SeguridadMetFiltrarAplicaciones()
+        {
+            int IdModulo;
+            if (CboSeguridadModulos.SelectedIndex < 0 ||
+                !int.TryParse(Convert.ToString(CboSeguridadModulos.SelectedValue), out IdModulo))
+            {
+                CboSeguridadAplicaciones.DataSource = null; // sin módulo, sin aplicaciones
+                return;
+            }
 
+            CboSeguridadAplicaciones.DataSource = _AsigAppPerf.SeguridadMetObtenerAplicacionesPorModulo(IdModulo);
+            CboSeguridadAplicaciones.DisplayMember = "NombreAplicacion";
+            CboSeguridadAplicaciones.ValueMember = "IdAplicacion";
+        }
+
+        private void CboSeguridadModulos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SeguridadMetFiltrarAplicaciones();
+        }
 
         private void SeguridadMetCargarCombos()
         {
@@ -159,9 +179,7 @@ namespace CapaVista_Seguridad
                 CboSeguridadModulos.DisplayMember = "NombreModulo";
                 CboSeguridadModulos.ValueMember = "IdModulo";
 
-                CboSeguridadAplicaciones.DataSource = _AsigAppPerf.SeguridadMetObtenerAplicaciones();
-                CboSeguridadAplicaciones.DisplayMember = "NombreAplicacion";
-                CboSeguridadAplicaciones.ValueMember = "IdAplicacion";
+                SeguridadMetFiltrarAplicaciones();
             }
             catch (Exception ex)
             {

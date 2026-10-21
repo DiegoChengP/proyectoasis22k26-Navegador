@@ -35,7 +35,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-//using CapaVista_Mantenimiento;
+
 
 namespace CapaVista_Seguridad
 {
@@ -211,8 +211,10 @@ namespace CapaVista_Seguridad
                     "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            FrmMantenimientoPerfiles MantenimientoPerfiles = new FrmMantenimientoPerfiles();
-            MantenimientoPerfiles.ShowDialog();
+            //FrmMantenimientoPerfiles MantenimientoPerfiles = new FrmMantenimientoPerfiles();
+            //MantenimientoPerfiles.ShowDialog();
+            FrmPerfilesNavegador MantenimientoPerfilesNavegador = new FrmPerfilesNavegador();
+            MantenimientoPerfilesNavegador.ShowDialog();
         }
 
         private void SeguridadBtnUsuarios_Click(object sender, EventArgs e)
@@ -235,25 +237,28 @@ namespace CapaVista_Seguridad
                     "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            FrmMantenimientoModulo Modulo = new FrmMantenimientoModulo();
-            Modulo.ShowDialog();
+            //FrmMantenimientoModulo Modulo = new FrmMantenimientoModulo();
+            //Modulo.ShowDialog();
+
+            FrmModulosNavegador Modulos = new FrmModulosNavegador();
+            Modulos.ShowDialog();
         }
 
         private void SeguridadBtnEmpleados_Click(object sender, EventArgs e)
         {
-            //   if (!ClsSeguridadFormHelper.SeguridadMetTieneAcceso(IdModulo: 4, IdAplicacion: 4))
-            //   {
-            //      MessageBox.Show("No tienes acceso a este módulo.",
-            //          "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            //     return;
-            //   }
-            FrmMantenimientoModulo Modulo = new FrmMantenimientoModulo();
-            Modulo.ShowDialog();
+            if (!ClsSeguridadFormHelper.SeguridadMetTieneAcceso(IdModulo: 4, IdAplicacion: 4))
+            {
+                MessageBox.Show("No tienes acceso a este módulo.",
+                    "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
+            //FrmMantenimientoEmpleado Empleados = new FrmMantenimientoEmpleado();
+            //Empleados.ShowDialog();
 
+              FrmEmpleadosNavegador Empleados = new FrmEmpleadosNavegador();
+              Empleados.ShowDialog();
         }
-
-
 
         private void SeguridadBtnAplicaciones_Click(object sender, EventArgs e)
         {
@@ -263,7 +268,7 @@ namespace CapaVista_Seguridad
                     "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            FrmMantenimientoAplicacion Aplicaciones = new FrmMantenimientoAplicacion();
+            FrmMantenimientoAplicacionNavegador Aplicaciones = new FrmMantenimientoAplicacionNavegador();
             Aplicaciones.ShowDialog();
         }
         /*

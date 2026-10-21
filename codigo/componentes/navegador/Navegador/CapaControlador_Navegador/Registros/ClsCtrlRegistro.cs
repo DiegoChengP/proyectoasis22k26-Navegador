@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Odbc;
 using CapaModelo_Navegador;
+using CapaControlador_Seguridad;
 
 namespace CapaControlador_Navegador
 {
@@ -11,6 +12,48 @@ namespace CapaControlador_Navegador
     public class ClsCtrlRegistro
     {
         private ClsRegistros _Registros = new ClsRegistros();
+        private readonly ClsModeloBitacora _Bitacora = new ClsModeloBitacora();
+
+        // Inicio cambio - Gabriel André Guillén Pocón - 0901-23-1998 - 16/10/2026
+        // La Vista solo entrega datos: el Controlador coordina CRUD + bitácora,
+        // y ClsTransaccion (Modelo) abre, confirma o revierte la transacción.
+        public bool NavegadorFuncInsertarConBitacora(string NombreTabla, Dictionary<string, string> Datos,
+            int IdUsuario, int IdRegistro, string Detalles)
+        {
+            return NavegadorFuncEjecutarConBitacora("INSERT", NombreTabla, IdUsuario, IdRegistro, Detalles,
+                (Conexion, Transaccion) => NavegadorFuncInsertarRegistro(NombreTabla, Datos, Conexion, Transaccion));
+        }
+
+        public bool NavegadorFuncActualizarConBitacora(string NombreTabla, Dictionary<string, string> Valores,
+            Dictionary<string, string> ClavesPrimarias, int IdUsuario, int IdRegistro, string Detalles)
+        {
+            return NavegadorFuncEjecutarConBitacora("UPDATE", NombreTabla, IdUsuario, IdRegistro, Detalles,
+                (Conexion, Transaccion) => NavegadorFuncActualizarRegistro(NombreTabla, Valores, ClavesPrimarias, Conexion, Transaccion));
+        }
+
+        public bool NavegadorFuncEliminarConBitacora(string NombreTabla, Dictionary<string, string> ClavesPrimarias,
+            int IdUsuario, int IdRegistro, string Detalles)
+        {
+            return NavegadorFuncEjecutarConBitacora("DELETE", NombreTabla, IdUsuario, IdRegistro, Detalles,
+                (Conexion, Transaccion) => NavegadorFuncEliminarRegistro(NombreTabla, ClavesPrimarias, Conexion, Transaccion));
+        }
+
+        private bool NavegadorFuncEjecutarConBitacora(string Accion, string Tabla, int IdUsuario,
+            int IdRegistro, string Detalles, Func<OdbcConnection, OdbcTransaction, bool> Operacion)
+        {
+            using (ClsTransaccion TransaccionBD = new ClsTransaccion())
+            {
+                if (!Operacion(TransaccionBD.Conexion, TransaccionBD.Transaccion)) return false;
+
+                // Misma sobrecarga de Seguridad: una excepción de bitácora se propaga
+                // y Dispose revierte la operación. No se confirma antes de registrarla.
+                _Bitacora.SeguridadMetRegistrarBitacora(IdUsuario, Accion, Tabla, IdRegistro, Detalles,
+                    null, TransaccionBD.Conexion, TransaccionBD.Transaccion);
+                TransaccionBD.NavegadorMetConfirmar();
+                return true;
+            }
+        }
+        // Fin cambio - Gabriel André Guillén Pocón - 0901-23-1998 - 16/10/2026
 
         // Verifica si ya existe un registro con esa llave primaria (evita duplicados).
         public bool NavegadorFuncExisteLlavePrimaria(string NombreTabla, string[] CamposPK, string[] ValoresPK)
