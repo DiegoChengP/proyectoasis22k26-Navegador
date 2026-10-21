@@ -1,4 +1,4 @@
-// Recursos propios de la Vista; archivos originales enlazados mediante Resources.resx.
+﻿// Recursos propios de la Vista; archivos originales enlazados mediante Resources.resx.
 namespace CapaVista_CierreMovimientos.Properties
 {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
@@ -29,5 +29,11 @@ namespace CapaVista_CierreMovimientos.Properties
         { get { return ((global::System.Drawing.Bitmap)(ResourceManager.GetObject("BotonOriginalImprimirVentas", resourceCulture))); } }
         internal static global::System.Drawing.Bitmap BotonOriginalSalirVentas
         { get { return ((global::System.Drawing.Bitmap)(ResourceManager.GetObject("BotonOriginalSalirVentas", resourceCulture))); } }
+        internal static global::System.Drawing.Bitmap BotonOriginalModificarVentas
+        { get { return ((global::System.Drawing.Bitmap)(ResourceManager.GetObject("BotonOriginalModificarVentas", resourceCulture))); } }
+        internal static global::System.Drawing.Bitmap BotonOriginalEliminarVentas
+        { get { return ((global::System.Drawing.Bitmap)(ResourceManager.GetObject("BotonOriginalEliminarVentas", resourceCulture))); } }
+        internal static global::System.Drawing.Bitmap BotonOriginalRefrescarVentas
+        { get { return ((global::System.Drawing.Bitmap)(ResourceManager.GetObject("BotonOriginalRefrescarVentas", resourceCulture))); } }
     }
 }

@@ -10,7 +10,7 @@ namespace CapaModelo_Ventas
 
         public ClsConexion()
         {
-            _ConnectionString = "Dsn=EmbutidosS.A";
+            _ConnectionString = "Dsn=Ventasbd";
         }
 
         protected OdbcConnection SeguridadMetObtenerConexion()

@@ -38,9 +38,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ClsCierreRepositorio.cs" />
-    <Compile Include="..\..\Infraestructura\ClsDatosVentas.cs"><Link>Infraestructura\ClsDatosVentas.cs</Link></Compile>
+    <Compile Include="Repositorios\ClsCierreRepositorio.cs" />
+    <Compile Include="..\..\Infraestructura\Datos\ClsDatosVentas.cs"><Link>Datos\ClsDatosVentas.cs</Link></Compile>
 
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="Consultas\SqlCierre.cs" />
+  </ItemGroup>
 </Project>

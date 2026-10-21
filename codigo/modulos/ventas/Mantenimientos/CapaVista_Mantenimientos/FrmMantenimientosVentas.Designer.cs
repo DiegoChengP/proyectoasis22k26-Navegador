@@ -26,9 +26,16 @@ namespace CapaVista_Mantenimientos
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.VentasTtpAccionesOriginales = new System.Windows.Forms.ToolTip(this.components);
-            System.Windows.Forms.DataGridViewCellStyle VentasDgvCatalogoCabecera = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle VentasDgvCatalogoCeldas = new System.Windows.Forms.DataGridViewCellStyle();
+            this.VentasBtnIngresar = new System.Windows.Forms.Button();
+            this.VentasBtnConsultar = new System.Windows.Forms.Button();
+            this.VentasBtnModificar = new System.Windows.Forms.Button();
+            this.VentasBtnEliminar = new System.Windows.Forms.Button();
+            this.VentasBtnGuardar = new System.Windows.Forms.Button();
+            this.VentasBtnCancelar = new System.Windows.Forms.Button();
+            this.VentasBtnSalir = new System.Windows.Forms.Button();
             this.VentasDgvCatalogoColCodigo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VentasDgvCatalogoColNombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VentasDgvCatalogoColDescripcion = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -52,266 +59,206 @@ namespace CapaVista_Mantenimientos
             this.VentasTxtDescripcion = new System.Windows.Forms.TextBox();
             this.VentasLblRegistros = new System.Windows.Forms.Label();
             this.VentasDgvCatalogo = new System.Windows.Forms.DataGridView();
-            this.VentasBtnIngresar = new System.Windows.Forms.Button();
-            this.VentasBtnConsultar = new System.Windows.Forms.Button();
-            this.VentasBtnModificar = new System.Windows.Forms.Button();
-            this.VentasBtnEliminar = new System.Windows.Forms.Button();
-            this.VentasBtnGuardar = new System.Windows.Forms.Button();
-            this.VentasBtnCancelar = new System.Windows.Forms.Button();
-            this.VentasBtnSalir = new System.Windows.Forms.Button();
+            this.navegador1 = new CapaVista_Navegador.Navegador();
             this.VentasPnlCabecera.SuspendLayout();
             this.VentasPnlDatos.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.VentasDgvCatalogo)).BeginInit();
             this.SuspendLayout();
-            this.VentasPnlCabecera.Name = "VentasPnlCabecera";
-            this.VentasPnlCabecera.Location = new System.Drawing.Point(0, 0);
-            this.VentasPnlCabecera.Size = new System.Drawing.Size(1000, 86);
-            this.VentasPnlCabecera.BackColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasLblTitulo.Name = "VentasLblTitulo";
-            this.VentasLblTitulo.Location = new System.Drawing.Point(24, 16);
-            this.VentasLblTitulo.Size = new System.Drawing.Size(750, 32);
-            this.VentasLblTitulo.Text = "Mantenimientos";
-            this.VentasLblTitulo.Font = new System.Drawing.Font("Lucida Fax", 18F, System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic);
-            this.VentasLblTitulo.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasLblSubtitulo.Name = "VentasLblSubtitulo";
-            this.VentasLblSubtitulo.Location = new System.Drawing.Point(26, 56);
-            this.VentasLblSubtitulo.Size = new System.Drawing.Size(760, 20);
-            this.VentasLblSubtitulo.Text = "Catálogos de Ventas y cuentas por cobrar";
-            this.VentasLblSubtitulo.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.VentasLblSubtitulo.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasLblCodigo.Name = "VentasLblCodigo";
-            this.VentasLblCodigo.Location = new System.Drawing.Point(834, 27);
-            this.VentasLblCodigo.Size = new System.Drawing.Size(140, 28);
-            this.VentasLblCodigo.Text = "7009";
-            this.VentasLblCodigo.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.VentasLblCodigo.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasLblCodigo.BackColor = System.Drawing.Color.FromArgb(201, 162, 74);
-            this.VentasLblCodigo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.VentasPnlDatos.Name = "VentasPnlDatos";
-            this.VentasPnlDatos.Location = new System.Drawing.Point(20, 104);
-            this.VentasPnlDatos.Size = new System.Drawing.Size(960, 210);
-            this.VentasPnlDatos.BackColor = System.Drawing.Color.White;
-            this.VentasCboCatalogoEtiqueta.Name = "VentasCboCatalogoEtiqueta";
-            this.VentasCboCatalogoEtiqueta.Location = new System.Drawing.Point(16, 14);
-            this.VentasCboCatalogoEtiqueta.Size = new System.Drawing.Size(350, 22);
-            this.VentasCboCatalogoEtiqueta.Text = "Catálogo";
-            this.VentasCboCatalogoEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
-            this.VentasCboCatalogoEtiqueta.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasCboCatalogo.Name = "VentasCboCatalogo";
-            this.VentasCboCatalogo.Location = new System.Drawing.Point(16, 38);
-            this.VentasCboCatalogo.Size = new System.Drawing.Size(350, 28);
-            this.VentasCboCatalogo.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.VentasCboCatalogo.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasCboCatalogo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.VentasCboCatalogo.Items.AddRange(new object[] {"Clientes", "Vendedores", "Formas de pago", "Monedas"});
-            this.VentasTxtBuscarEtiqueta.Name = "VentasTxtBuscarEtiqueta";
-            this.VentasTxtBuscarEtiqueta.Location = new System.Drawing.Point(390, 14);
-            this.VentasTxtBuscarEtiqueta.Size = new System.Drawing.Size(550, 22);
-            this.VentasTxtBuscarEtiqueta.Text = "Buscar por código o nombre";
-            this.VentasTxtBuscarEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
-            this.VentasTxtBuscarEtiqueta.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasTxtBuscar.Name = "VentasTxtBuscar";
-            this.VentasTxtBuscar.Location = new System.Drawing.Point(390, 38);
-            this.VentasTxtBuscar.Size = new System.Drawing.Size(550, 28);
-            this.VentasTxtBuscar.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.VentasTxtBuscar.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasTxtCodigoEtiqueta.Name = "VentasTxtCodigoEtiqueta";
-            this.VentasTxtCodigoEtiqueta.Location = new System.Drawing.Point(16, 84);
-            this.VentasTxtCodigoEtiqueta.Size = new System.Drawing.Size(180, 22);
-            this.VentasTxtCodigoEtiqueta.Text = "Código";
-            this.VentasTxtCodigoEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
-            this.VentasTxtCodigoEtiqueta.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasTxtCodigo.Name = "VentasTxtCodigo";
-            this.VentasTxtCodigo.Location = new System.Drawing.Point(16, 108);
-            this.VentasTxtCodigo.Size = new System.Drawing.Size(180, 28);
-            this.VentasTxtCodigo.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.VentasTxtCodigo.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasTxtNombreEtiqueta.Name = "VentasTxtNombreEtiqueta";
-            this.VentasTxtNombreEtiqueta.Location = new System.Drawing.Point(220, 84);
-            this.VentasTxtNombreEtiqueta.Size = new System.Drawing.Size(460, 22);
-            this.VentasTxtNombreEtiqueta.Text = "Nombre";
-            this.VentasTxtNombreEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
-            this.VentasTxtNombreEtiqueta.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasTxtNombre.Name = "VentasTxtNombre";
-            this.VentasTxtNombre.Location = new System.Drawing.Point(220, 108);
-            this.VentasTxtNombre.Size = new System.Drawing.Size(460, 28);
-            this.VentasTxtNombre.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.VentasTxtNombre.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasCboEstadoEtiqueta.Name = "VentasCboEstadoEtiqueta";
-            this.VentasCboEstadoEtiqueta.Location = new System.Drawing.Point(704, 84);
-            this.VentasCboEstadoEtiqueta.Size = new System.Drawing.Size(236, 22);
-            this.VentasCboEstadoEtiqueta.Text = "Estado";
-            this.VentasCboEstadoEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
-            this.VentasCboEstadoEtiqueta.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasCboEstado.Name = "VentasCboEstado";
-            this.VentasCboEstado.Location = new System.Drawing.Point(704, 108);
-            this.VentasCboEstado.Size = new System.Drawing.Size(236, 28);
-            this.VentasCboEstado.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.VentasCboEstado.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasCboEstado.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.VentasCboEstado.Items.AddRange(new object[] {"Activo", "Inactivo"});
-            this.VentasTxtDescripcionEtiqueta.Name = "VentasTxtDescripcionEtiqueta";
-            this.VentasTxtDescripcionEtiqueta.Location = new System.Drawing.Point(16, 148);
-            this.VentasTxtDescripcionEtiqueta.Size = new System.Drawing.Size(924, 22);
-            this.VentasTxtDescripcionEtiqueta.Text = "Descripción";
-            this.VentasTxtDescripcionEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
-            this.VentasTxtDescripcionEtiqueta.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasTxtDescripcion.Name = "VentasTxtDescripcion";
-            this.VentasTxtDescripcion.Location = new System.Drawing.Point(16, 172);
-            this.VentasTxtDescripcion.Size = new System.Drawing.Size(924, 28);
-            this.VentasTxtDescripcion.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.VentasTxtDescripcion.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasLblRegistros.Name = "VentasLblRegistros";
-            this.VentasLblRegistros.Location = new System.Drawing.Point(24, 330);
-            this.VentasLblRegistros.Size = new System.Drawing.Size(900, 22);
-            this.VentasLblRegistros.Text = "Registros del catálogo";
-            this.VentasLblRegistros.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold);
-            this.VentasLblRegistros.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasDgvCatalogo.Name = "VentasDgvCatalogo";
-            this.VentasDgvCatalogo.Location = new System.Drawing.Point(20, 360);
-            this.VentasDgvCatalogo.Size = new System.Drawing.Size(960, 156);
-            this.VentasDgvCatalogo.AllowUserToAddRows = false;
-            this.VentasDgvCatalogo.AllowUserToDeleteRows = false;
-            this.VentasDgvCatalogo.ReadOnly = true;
-            this.VentasDgvCatalogo.RowHeadersVisible = false;
-            this.VentasDgvCatalogo.BackgroundColor = System.Drawing.Color.White;
-            this.VentasDgvCatalogo.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.VentasDgvCatalogo.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.VentasDgvCatalogo.EnableHeadersVisualStyles = false;
-            this.VentasDgvCatalogo.ColumnHeadersHeight = 32;
-            this.VentasDgvCatalogo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.VentasDgvCatalogo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.VentasDgvCatalogo.MultiSelect = false;
-            this.VentasDgvCatalogo.Font = new System.Drawing.Font("Segoe UI", 10F);
-            VentasDgvCatalogoCabecera.BackColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            VentasDgvCatalogoCabecera.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            VentasDgvCatalogoCabecera.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.VentasDgvCatalogo.ColumnHeadersDefaultCellStyle = VentasDgvCatalogoCabecera;
-            VentasDgvCatalogoCeldas.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            VentasDgvCatalogoCeldas.SelectionBackColor = System.Drawing.Color.FromArgb(228, 212, 234);
-            VentasDgvCatalogoCeldas.SelectionForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasDgvCatalogo.DefaultCellStyle = VentasDgvCatalogoCeldas;
-            this.VentasDgvCatalogoColCodigo.Name = "VentasDgvCatalogoColCodigo";
-            this.VentasDgvCatalogoColCodigo.HeaderText = "Código";
-            this.VentasDgvCatalogoColNombre.Name = "VentasDgvCatalogoColNombre";
-            this.VentasDgvCatalogoColNombre.HeaderText = "Nombre";
-            this.VentasDgvCatalogoColDescripcion.Name = "VentasDgvCatalogoColDescripcion";
-            this.VentasDgvCatalogoColDescripcion.HeaderText = "Descripción";
-            this.VentasDgvCatalogoColEstado.Name = "VentasDgvCatalogoColEstado";
-            this.VentasDgvCatalogoColEstado.HeaderText = "Estado";
-            this.VentasDgvCatalogo.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {this.VentasDgvCatalogoColCodigo, this.VentasDgvCatalogoColNombre, this.VentasDgvCatalogoColDescripcion, this.VentasDgvCatalogoColEstado});
-            this.VentasBtnIngresar.Name = "VentasBtnIngresar";
-            this.VentasBtnIngresar.Location = new System.Drawing.Point(24, 536);
-            this.VentasBtnIngresar.Size = new System.Drawing.Size(64, 64);
-            this.VentasBtnIngresar.AccessibleName = "Ingresar";
+            // 
+            // VentasBtnIngresar
+            // 
             this.VentasBtnIngresar.AccessibleDescription = "Ingresar";
-            this.VentasBtnIngresar.Text = string.Empty;
-            this.VentasBtnIngresar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
+            this.VentasBtnIngresar.AccessibleName = "Ingresar";
+            this.VentasBtnIngresar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(123)))), ((int)(((byte)(63)))), ((int)(((byte)(147)))));
             this.VentasBtnIngresar.BackgroundImage = global::CapaVista_Mantenimientos.Properties.Resources.BotonOriginalIngresarVentas;
             this.VentasBtnIngresar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnIngresar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.VentasBtnIngresar.Padding = new System.Windows.Forms.Padding(0);
-            this.VentasBtnIngresar.UseVisualStyleBackColor = false;
             this.VentasBtnIngresar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.VentasBtnIngresar.FlatAppearance.BorderSize = 0;
+            this.VentasBtnIngresar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.VentasBtnIngresar.Location = new System.Drawing.Point(24, 536);
+            this.VentasBtnIngresar.Name = "VentasBtnIngresar";
+            this.VentasBtnIngresar.Size = new System.Drawing.Size(64, 64);
+            this.VentasBtnIngresar.TabIndex = 4;
             this.VentasTtpAccionesOriginales.SetToolTip(this.VentasBtnIngresar, "Ingresar");
-            this.VentasBtnConsultar.Name = "VentasBtnConsultar";
-            this.VentasBtnConsultar.Location = new System.Drawing.Point(106, 536);
-            this.VentasBtnConsultar.Size = new System.Drawing.Size(58, 64);
-            this.VentasBtnConsultar.AccessibleName = "Consultar";
+            this.VentasBtnIngresar.UseVisualStyleBackColor = false;
+            // 
+            // VentasBtnConsultar
+            // 
             this.VentasBtnConsultar.AccessibleDescription = "Consultar";
-            this.VentasBtnConsultar.Text = string.Empty;
-            this.VentasBtnConsultar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
+            this.VentasBtnConsultar.AccessibleName = "Consultar";
+            this.VentasBtnConsultar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(123)))), ((int)(((byte)(63)))), ((int)(((byte)(147)))));
             this.VentasBtnConsultar.BackgroundImage = global::CapaVista_Mantenimientos.Properties.Resources.BotonOriginalConsultarVentas;
             this.VentasBtnConsultar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnConsultar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.VentasBtnConsultar.Padding = new System.Windows.Forms.Padding(0);
-            this.VentasBtnConsultar.UseVisualStyleBackColor = false;
             this.VentasBtnConsultar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.VentasBtnConsultar.FlatAppearance.BorderSize = 0;
+            this.VentasBtnConsultar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.VentasBtnConsultar.Location = new System.Drawing.Point(106, 536);
+            this.VentasBtnConsultar.Name = "VentasBtnConsultar";
+            this.VentasBtnConsultar.Size = new System.Drawing.Size(58, 64);
+            this.VentasBtnConsultar.TabIndex = 5;
             this.VentasTtpAccionesOriginales.SetToolTip(this.VentasBtnConsultar, "Consultar");
-            this.VentasBtnModificar.Name = "VentasBtnModificar";
-            this.VentasBtnModificar.Location = new System.Drawing.Point(188, 536);
-            this.VentasBtnModificar.Size = new System.Drawing.Size(64, 64);
-            this.VentasBtnModificar.AccessibleName = "Modificar";
+            this.VentasBtnConsultar.UseVisualStyleBackColor = false;
+            // 
+            // VentasBtnModificar
+            // 
             this.VentasBtnModificar.AccessibleDescription = "Modificar";
-            this.VentasBtnModificar.Text = string.Empty;
-            this.VentasBtnModificar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
+            this.VentasBtnModificar.AccessibleName = "Modificar";
+            this.VentasBtnModificar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(123)))), ((int)(((byte)(63)))), ((int)(((byte)(147)))));
             this.VentasBtnModificar.BackgroundImage = global::CapaVista_Mantenimientos.Properties.Resources.BotonOriginalModificarVentas;
             this.VentasBtnModificar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnModificar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.VentasBtnModificar.Padding = new System.Windows.Forms.Padding(0);
-            this.VentasBtnModificar.UseVisualStyleBackColor = false;
             this.VentasBtnModificar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.VentasBtnModificar.FlatAppearance.BorderSize = 0;
+            this.VentasBtnModificar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.VentasBtnModificar.Location = new System.Drawing.Point(188, 536);
+            this.VentasBtnModificar.Name = "VentasBtnModificar";
+            this.VentasBtnModificar.Size = new System.Drawing.Size(64, 64);
+            this.VentasBtnModificar.TabIndex = 6;
             this.VentasTtpAccionesOriginales.SetToolTip(this.VentasBtnModificar, "Modificar");
-            this.VentasBtnEliminar.Name = "VentasBtnEliminar";
-            this.VentasBtnEliminar.Location = new System.Drawing.Point(270, 536);
-            this.VentasBtnEliminar.Size = new System.Drawing.Size(55, 64);
-            this.VentasBtnEliminar.AccessibleName = "Eliminar";
+            this.VentasBtnModificar.UseVisualStyleBackColor = false;
+            // 
+            // VentasBtnEliminar
+            // 
             this.VentasBtnEliminar.AccessibleDescription = "Eliminar";
-            this.VentasBtnEliminar.Text = string.Empty;
-            this.VentasBtnEliminar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
+            this.VentasBtnEliminar.AccessibleName = "Eliminar";
+            this.VentasBtnEliminar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(123)))), ((int)(((byte)(63)))), ((int)(((byte)(147)))));
             this.VentasBtnEliminar.BackgroundImage = global::CapaVista_Mantenimientos.Properties.Resources.BotonOriginalEliminarVentas;
             this.VentasBtnEliminar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnEliminar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.VentasBtnEliminar.Padding = new System.Windows.Forms.Padding(0);
-            this.VentasBtnEliminar.UseVisualStyleBackColor = false;
             this.VentasBtnEliminar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.VentasBtnEliminar.FlatAppearance.BorderSize = 0;
+            this.VentasBtnEliminar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.VentasBtnEliminar.Location = new System.Drawing.Point(270, 536);
+            this.VentasBtnEliminar.Name = "VentasBtnEliminar";
+            this.VentasBtnEliminar.Size = new System.Drawing.Size(55, 64);
+            this.VentasBtnEliminar.TabIndex = 7;
             this.VentasTtpAccionesOriginales.SetToolTip(this.VentasBtnEliminar, "Eliminar");
-            this.VentasBtnGuardar.Name = "VentasBtnGuardar";
-            this.VentasBtnGuardar.Location = new System.Drawing.Point(352, 536);
-            this.VentasBtnGuardar.Size = new System.Drawing.Size(63, 64);
-            this.VentasBtnGuardar.AccessibleName = "Guardar";
+            this.VentasBtnEliminar.UseVisualStyleBackColor = false;
+            // 
+            // VentasBtnGuardar
+            // 
             this.VentasBtnGuardar.AccessibleDescription = "Guardar";
-            this.VentasBtnGuardar.Text = string.Empty;
-            this.VentasBtnGuardar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
+            this.VentasBtnGuardar.AccessibleName = "Guardar";
+            this.VentasBtnGuardar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(123)))), ((int)(((byte)(63)))), ((int)(((byte)(147)))));
             this.VentasBtnGuardar.BackgroundImage = global::CapaVista_Mantenimientos.Properties.Resources.BotonOriginalGuardarVentas;
             this.VentasBtnGuardar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnGuardar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.VentasBtnGuardar.Padding = new System.Windows.Forms.Padding(0);
-            this.VentasBtnGuardar.UseVisualStyleBackColor = false;
             this.VentasBtnGuardar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.VentasBtnGuardar.FlatAppearance.BorderSize = 0;
+            this.VentasBtnGuardar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.VentasBtnGuardar.Location = new System.Drawing.Point(352, 536);
+            this.VentasBtnGuardar.Name = "VentasBtnGuardar";
+            this.VentasBtnGuardar.Size = new System.Drawing.Size(63, 64);
+            this.VentasBtnGuardar.TabIndex = 8;
             this.VentasTtpAccionesOriginales.SetToolTip(this.VentasBtnGuardar, "Guardar");
-            this.VentasBtnCancelar.Name = "VentasBtnCancelar";
-            this.VentasBtnCancelar.Location = new System.Drawing.Point(434, 536);
-            this.VentasBtnCancelar.Size = new System.Drawing.Size(64, 64);
-            this.VentasBtnCancelar.AccessibleName = "Cancelar";
+            this.VentasBtnGuardar.UseVisualStyleBackColor = false;
+            // 
+            // VentasBtnCancelar
+            // 
             this.VentasBtnCancelar.AccessibleDescription = "Cancelar";
-            this.VentasBtnCancelar.Text = string.Empty;
-            this.VentasBtnCancelar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
+            this.VentasBtnCancelar.AccessibleName = "Cancelar";
+            this.VentasBtnCancelar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(123)))), ((int)(((byte)(63)))), ((int)(((byte)(147)))));
             this.VentasBtnCancelar.BackgroundImage = global::CapaVista_Mantenimientos.Properties.Resources.BotonOriginalCancelarVentas;
             this.VentasBtnCancelar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnCancelar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.VentasBtnCancelar.Padding = new System.Windows.Forms.Padding(0);
-            this.VentasBtnCancelar.UseVisualStyleBackColor = false;
             this.VentasBtnCancelar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.VentasBtnCancelar.FlatAppearance.BorderSize = 0;
+            this.VentasBtnCancelar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.VentasBtnCancelar.Location = new System.Drawing.Point(434, 536);
+            this.VentasBtnCancelar.Name = "VentasBtnCancelar";
+            this.VentasBtnCancelar.Size = new System.Drawing.Size(64, 64);
+            this.VentasBtnCancelar.TabIndex = 9;
             this.VentasTtpAccionesOriginales.SetToolTip(this.VentasBtnCancelar, "Cancelar");
-            this.VentasBtnSalir.Name = "VentasBtnSalir";
-            this.VentasBtnSalir.Location = new System.Drawing.Point(914, 536);
-            this.VentasBtnSalir.Size = new System.Drawing.Size(64, 64);
-            this.VentasBtnSalir.AccessibleName = "Salir";
+            this.VentasBtnCancelar.UseVisualStyleBackColor = false;
+            // 
+            // VentasBtnSalir
+            // 
             this.VentasBtnSalir.AccessibleDescription = "Salir";
-            this.VentasBtnSalir.Text = string.Empty;
-            this.VentasBtnSalir.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
+            this.VentasBtnSalir.AccessibleName = "Salir";
+            this.VentasBtnSalir.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(123)))), ((int)(((byte)(63)))), ((int)(((byte)(147)))));
             this.VentasBtnSalir.BackgroundImage = global::CapaVista_Mantenimientos.Properties.Resources.BotonOriginalSalirVentas;
             this.VentasBtnSalir.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnSalir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.VentasBtnSalir.Padding = new System.Windows.Forms.Padding(0);
-            this.VentasBtnSalir.UseVisualStyleBackColor = false;
             this.VentasBtnSalir.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.VentasBtnSalir.FlatAppearance.BorderSize = 0;
-            this.VentasTtpAccionesOriginales.SetToolTip(this.VentasBtnSalir, "Salir");
             this.VentasBtnSalir.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelButton = this.VentasBtnSalir;
-            this.Controls.Add(this.VentasPnlCabecera);
+            this.VentasBtnSalir.FlatAppearance.BorderSize = 0;
+            this.VentasBtnSalir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.VentasBtnSalir.Location = new System.Drawing.Point(914, 536);
+            this.VentasBtnSalir.Name = "VentasBtnSalir";
+            this.VentasBtnSalir.Size = new System.Drawing.Size(64, 64);
+            this.VentasBtnSalir.TabIndex = 10;
+            this.VentasTtpAccionesOriginales.SetToolTip(this.VentasBtnSalir, "Salir");
+            this.VentasBtnSalir.UseVisualStyleBackColor = false;
+            // 
+            // VentasDgvCatalogoColCodigo
+            // 
+            this.VentasDgvCatalogoColCodigo.HeaderText = "Código";
+            this.VentasDgvCatalogoColCodigo.MinimumWidth = 6;
+            this.VentasDgvCatalogoColCodigo.Name = "VentasDgvCatalogoColCodigo";
+            this.VentasDgvCatalogoColCodigo.ReadOnly = true;
+            // 
+            // VentasDgvCatalogoColNombre
+            // 
+            this.VentasDgvCatalogoColNombre.HeaderText = "Nombre";
+            this.VentasDgvCatalogoColNombre.MinimumWidth = 6;
+            this.VentasDgvCatalogoColNombre.Name = "VentasDgvCatalogoColNombre";
+            this.VentasDgvCatalogoColNombre.ReadOnly = true;
+            // 
+            // VentasDgvCatalogoColDescripcion
+            // 
+            this.VentasDgvCatalogoColDescripcion.HeaderText = "Descripción";
+            this.VentasDgvCatalogoColDescripcion.MinimumWidth = 6;
+            this.VentasDgvCatalogoColDescripcion.Name = "VentasDgvCatalogoColDescripcion";
+            this.VentasDgvCatalogoColDescripcion.ReadOnly = true;
+            // 
+            // VentasDgvCatalogoColEstado
+            // 
+            this.VentasDgvCatalogoColEstado.HeaderText = "Estado";
+            this.VentasDgvCatalogoColEstado.MinimumWidth = 6;
+            this.VentasDgvCatalogoColEstado.Name = "VentasDgvCatalogoColEstado";
+            this.VentasDgvCatalogoColEstado.ReadOnly = true;
+            // 
+            // VentasPnlCabecera
+            // 
+            this.VentasPnlCabecera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
             this.VentasPnlCabecera.Controls.Add(this.VentasLblTitulo);
             this.VentasPnlCabecera.Controls.Add(this.VentasLblSubtitulo);
             this.VentasPnlCabecera.Controls.Add(this.VentasLblCodigo);
-            this.Controls.Add(this.VentasPnlDatos);
+            this.VentasPnlCabecera.Location = new System.Drawing.Point(0, 0);
+            this.VentasPnlCabecera.Name = "VentasPnlCabecera";
+            this.VentasPnlCabecera.Size = new System.Drawing.Size(1000, 86);
+            this.VentasPnlCabecera.TabIndex = 0;
+            // 
+            // VentasLblTitulo
+            // 
+            this.VentasLblTitulo.Font = new System.Drawing.Font("Lucida Fax", 18F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))));
+            this.VentasLblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.VentasLblTitulo.Location = new System.Drawing.Point(24, 16);
+            this.VentasLblTitulo.Name = "VentasLblTitulo";
+            this.VentasLblTitulo.Size = new System.Drawing.Size(750, 32);
+            this.VentasLblTitulo.TabIndex = 0;
+            this.VentasLblTitulo.Text = "Mantenimientos";
+            // 
+            // VentasLblSubtitulo
+            // 
+            this.VentasLblSubtitulo.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.VentasLblSubtitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.VentasLblSubtitulo.Location = new System.Drawing.Point(26, 56);
+            this.VentasLblSubtitulo.Name = "VentasLblSubtitulo";
+            this.VentasLblSubtitulo.Size = new System.Drawing.Size(760, 20);
+            this.VentasLblSubtitulo.TabIndex = 1;
+            this.VentasLblSubtitulo.Text = "Catálogos de Ventas y cuentas por cobrar";
+            // 
+            // VentasLblCodigo
+            // 
+            this.VentasLblCodigo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(201)))), ((int)(((byte)(162)))), ((int)(((byte)(74)))));
+            this.VentasLblCodigo.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.VentasLblCodigo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasLblCodigo.Location = new System.Drawing.Point(834, 27);
+            this.VentasLblCodigo.Name = "VentasLblCodigo";
+            this.VentasLblCodigo.Size = new System.Drawing.Size(140, 28);
+            this.VentasLblCodigo.TabIndex = 2;
+            this.VentasLblCodigo.Text = "7009";
+            this.VentasLblCodigo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // VentasPnlDatos
+            // 
+            this.VentasPnlDatos.BackColor = System.Drawing.Color.White;
             this.VentasPnlDatos.Controls.Add(this.VentasCboCatalogoEtiqueta);
             this.VentasPnlDatos.Controls.Add(this.VentasCboCatalogo);
             this.VentasPnlDatos.Controls.Add(this.VentasTxtBuscarEtiqueta);
@@ -324,6 +271,200 @@ namespace CapaVista_Mantenimientos
             this.VentasPnlDatos.Controls.Add(this.VentasCboEstado);
             this.VentasPnlDatos.Controls.Add(this.VentasTxtDescripcionEtiqueta);
             this.VentasPnlDatos.Controls.Add(this.VentasTxtDescripcion);
+            this.VentasPnlDatos.Location = new System.Drawing.Point(20, 104);
+            this.VentasPnlDatos.Name = "VentasPnlDatos";
+            this.VentasPnlDatos.Size = new System.Drawing.Size(960, 210);
+            this.VentasPnlDatos.TabIndex = 1;
+            // 
+            // VentasCboCatalogoEtiqueta
+            // 
+            this.VentasCboCatalogoEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.VentasCboCatalogoEtiqueta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasCboCatalogoEtiqueta.Location = new System.Drawing.Point(16, 14);
+            this.VentasCboCatalogoEtiqueta.Name = "VentasCboCatalogoEtiqueta";
+            this.VentasCboCatalogoEtiqueta.Size = new System.Drawing.Size(350, 22);
+            this.VentasCboCatalogoEtiqueta.TabIndex = 0;
+            this.VentasCboCatalogoEtiqueta.Text = "Catálogo";
+            // 
+            // VentasCboCatalogo
+            // 
+            this.VentasCboCatalogo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VentasCboCatalogo.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.VentasCboCatalogo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasCboCatalogo.Items.AddRange(new object[] {
+            "Clientes",
+            "Vendedores",
+            "Formas de pago",
+            "Monedas"});
+            this.VentasCboCatalogo.Location = new System.Drawing.Point(16, 38);
+            this.VentasCboCatalogo.Name = "VentasCboCatalogo";
+            this.VentasCboCatalogo.Size = new System.Drawing.Size(350, 31);
+            this.VentasCboCatalogo.TabIndex = 1;
+            // 
+            // VentasTxtBuscarEtiqueta
+            // 
+            this.VentasTxtBuscarEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.VentasTxtBuscarEtiqueta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasTxtBuscarEtiqueta.Location = new System.Drawing.Point(390, 14);
+            this.VentasTxtBuscarEtiqueta.Name = "VentasTxtBuscarEtiqueta";
+            this.VentasTxtBuscarEtiqueta.Size = new System.Drawing.Size(550, 22);
+            this.VentasTxtBuscarEtiqueta.TabIndex = 2;
+            this.VentasTxtBuscarEtiqueta.Text = "Buscar por código o nombre";
+            // 
+            // VentasTxtBuscar
+            // 
+            this.VentasTxtBuscar.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.VentasTxtBuscar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasTxtBuscar.Location = new System.Drawing.Point(390, 38);
+            this.VentasTxtBuscar.Name = "VentasTxtBuscar";
+            this.VentasTxtBuscar.Size = new System.Drawing.Size(550, 30);
+            this.VentasTxtBuscar.TabIndex = 3;
+            // 
+            // VentasTxtCodigoEtiqueta
+            // 
+            this.VentasTxtCodigoEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.VentasTxtCodigoEtiqueta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasTxtCodigoEtiqueta.Location = new System.Drawing.Point(16, 84);
+            this.VentasTxtCodigoEtiqueta.Name = "VentasTxtCodigoEtiqueta";
+            this.VentasTxtCodigoEtiqueta.Size = new System.Drawing.Size(180, 22);
+            this.VentasTxtCodigoEtiqueta.TabIndex = 4;
+            this.VentasTxtCodigoEtiqueta.Text = "Código";
+            // 
+            // VentasTxtCodigo
+            // 
+            this.VentasTxtCodigo.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.VentasTxtCodigo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasTxtCodigo.Location = new System.Drawing.Point(16, 108);
+            this.VentasTxtCodigo.Name = "VentasTxtCodigo";
+            this.VentasTxtCodigo.Size = new System.Drawing.Size(180, 30);
+            this.VentasTxtCodigo.TabIndex = 5;
+            // 
+            // VentasTxtNombreEtiqueta
+            // 
+            this.VentasTxtNombreEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.VentasTxtNombreEtiqueta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasTxtNombreEtiqueta.Location = new System.Drawing.Point(220, 84);
+            this.VentasTxtNombreEtiqueta.Name = "VentasTxtNombreEtiqueta";
+            this.VentasTxtNombreEtiqueta.Size = new System.Drawing.Size(460, 22);
+            this.VentasTxtNombreEtiqueta.TabIndex = 6;
+            this.VentasTxtNombreEtiqueta.Text = "Nombre";
+            // 
+            // VentasTxtNombre
+            // 
+            this.VentasTxtNombre.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.VentasTxtNombre.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasTxtNombre.Location = new System.Drawing.Point(220, 108);
+            this.VentasTxtNombre.Name = "VentasTxtNombre";
+            this.VentasTxtNombre.Size = new System.Drawing.Size(460, 30);
+            this.VentasTxtNombre.TabIndex = 7;
+            // 
+            // VentasCboEstadoEtiqueta
+            // 
+            this.VentasCboEstadoEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.VentasCboEstadoEtiqueta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasCboEstadoEtiqueta.Location = new System.Drawing.Point(704, 84);
+            this.VentasCboEstadoEtiqueta.Name = "VentasCboEstadoEtiqueta";
+            this.VentasCboEstadoEtiqueta.Size = new System.Drawing.Size(236, 22);
+            this.VentasCboEstadoEtiqueta.TabIndex = 8;
+            this.VentasCboEstadoEtiqueta.Text = "Estado";
+            // 
+            // VentasCboEstado
+            // 
+            this.VentasCboEstado.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VentasCboEstado.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.VentasCboEstado.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasCboEstado.Items.AddRange(new object[] {
+            "Activo",
+            "Inactivo"});
+            this.VentasCboEstado.Location = new System.Drawing.Point(704, 108);
+            this.VentasCboEstado.Name = "VentasCboEstado";
+            this.VentasCboEstado.Size = new System.Drawing.Size(236, 31);
+            this.VentasCboEstado.TabIndex = 9;
+            // 
+            // VentasTxtDescripcionEtiqueta
+            // 
+            this.VentasTxtDescripcionEtiqueta.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.VentasTxtDescripcionEtiqueta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasTxtDescripcionEtiqueta.Location = new System.Drawing.Point(16, 148);
+            this.VentasTxtDescripcionEtiqueta.Name = "VentasTxtDescripcionEtiqueta";
+            this.VentasTxtDescripcionEtiqueta.Size = new System.Drawing.Size(924, 22);
+            this.VentasTxtDescripcionEtiqueta.TabIndex = 10;
+            this.VentasTxtDescripcionEtiqueta.Text = "Descripción";
+            // 
+            // VentasTxtDescripcion
+            // 
+            this.VentasTxtDescripcion.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.VentasTxtDescripcion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasTxtDescripcion.Location = new System.Drawing.Point(16, 172);
+            this.VentasTxtDescripcion.Name = "VentasTxtDescripcion";
+            this.VentasTxtDescripcion.Size = new System.Drawing.Size(924, 30);
+            this.VentasTxtDescripcion.TabIndex = 11;
+            // 
+            // VentasLblRegistros
+            // 
+            this.VentasLblRegistros.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold);
+            this.VentasLblRegistros.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            this.VentasLblRegistros.Location = new System.Drawing.Point(24, 330);
+            this.VentasLblRegistros.Name = "VentasLblRegistros";
+            this.VentasLblRegistros.Size = new System.Drawing.Size(900, 22);
+            this.VentasLblRegistros.TabIndex = 2;
+            this.VentasLblRegistros.Text = "Registros del catálogo";
+            // 
+            // VentasDgvCatalogo
+            // 
+            this.VentasDgvCatalogo.AllowUserToAddRows = false;
+            this.VentasDgvCatalogo.AllowUserToDeleteRows = false;
+            this.VentasDgvCatalogo.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.VentasDgvCatalogo.BackgroundColor = System.Drawing.Color.White;
+            this.VentasDgvCatalogo.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.VentasDgvCatalogo.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.VentasDgvCatalogo.ColumnHeadersHeight = 32;
+            this.VentasDgvCatalogo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.VentasDgvCatalogo.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.VentasDgvCatalogoColCodigo,
+            this.VentasDgvCatalogoColNombre,
+            this.VentasDgvCatalogoColDescripcion,
+            this.VentasDgvCatalogoColEstado});
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(228)))), ((int)(((byte)(212)))), ((int)(((byte)(234)))));
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.VentasDgvCatalogo.DefaultCellStyle = dataGridViewCellStyle2;
+            this.VentasDgvCatalogo.EnableHeadersVisualStyles = false;
+            this.VentasDgvCatalogo.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.VentasDgvCatalogo.Location = new System.Drawing.Point(20, 360);
+            this.VentasDgvCatalogo.MultiSelect = false;
+            this.VentasDgvCatalogo.Name = "VentasDgvCatalogo";
+            this.VentasDgvCatalogo.ReadOnly = true;
+            this.VentasDgvCatalogo.RowHeadersVisible = false;
+            this.VentasDgvCatalogo.RowHeadersWidth = 51;
+            this.VentasDgvCatalogo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.VentasDgvCatalogo.Size = new System.Drawing.Size(960, 156);
+            this.VentasDgvCatalogo.TabIndex = 3;
+            // 
+            // navegador1
+            // 
+            this.navegador1.Location = new System.Drawing.Point(12, 80);
+            this.navegador1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.navegador1.Name = "navegador1";
+            this.navegador1.Size = new System.Drawing.Size(1438, 111);
+            this.navegador1.TabIndex = 11;
+            // 
+            // FrmMantenimientosVentas
+            // 
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.CancelButton = this.VentasBtnSalir;
+            this.ClientSize = new System.Drawing.Size(1362, 620);
+            this.Controls.Add(this.navegador1);
+            this.Controls.Add(this.VentasPnlCabecera);
+            this.Controls.Add(this.VentasPnlDatos);
             this.Controls.Add(this.VentasLblRegistros);
             this.Controls.Add(this.VentasDgvCatalogo);
             this.Controls.Add(this.VentasBtnIngresar);
@@ -333,23 +474,21 @@ namespace CapaVista_Mantenimientos
             this.Controls.Add(this.VentasBtnGuardar);
             this.Controls.Add(this.VentasBtnCancelar);
             this.Controls.Add(this.VentasBtnSalir);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(1000, 620);
-            this.BackColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
             this.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::CapaVista_Mantenimientos.Properties.Resources.IconoVentas;
             this.MaximizeBox = false;
+            this.Name = "FrmMantenimientosVentas";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Name = "FrmMantenimientosVentas";
             this.Text = "7009 – Mantenimientos";
             this.VentasPnlCabecera.ResumeLayout(false);
             this.VentasPnlDatos.ResumeLayout(false);
+            this.VentasPnlDatos.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.VentasDgvCatalogo)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
+
         }
         #endregion
         private System.Windows.Forms.ToolTip VentasTtpAccionesOriginales;
@@ -383,6 +522,7 @@ namespace CapaVista_Mantenimientos
         private System.Windows.Forms.DataGridViewTextBoxColumn VentasDgvCatalogoColNombre;
         private System.Windows.Forms.DataGridViewTextBoxColumn VentasDgvCatalogoColDescripcion;
         private System.Windows.Forms.DataGridViewTextBoxColumn VentasDgvCatalogoColEstado;
+        private CapaVista_Navegador.Navegador navegador1;
     }
 }
 // FIN DEL CÓDIGO — Equipo asignado al formulario | Fecha: 14/10/2026

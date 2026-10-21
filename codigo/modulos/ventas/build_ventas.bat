@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions DisableDelayedExpansion
-:: Ventas: compilacion incremental y paralela, basada en build_navegador.bat.
+:: Ventas y componentes: compilacion incremental y paralela por dependencias.
 :: Uso: build_ventas.bat [Debug|Release] [/sinpausa]
 :: Las rutas se calculan desde este archivo; no dependen de la carpeta del equipo.
 
@@ -48,12 +48,14 @@ set "VENTAS_RESET=%VENTAS_ESC%[0m"
 set "VENTAS_RESULT=2"
 set "VENTAS_DURACION=No iniciada"
 set "VENTAS_LOG=%VENTAS_ROOT%logs\build_ventas_%VENTAS_CONFIG%.log"
-set "VENTAS_SALIDA=%VENTAS_ROOT%Ejecutable_Ventas\Ejecutable_Ventas\bin\%VENTAS_CONFIG%"
-set "VENTAS_EJECUTABLE=%VENTAS_SALIDA%\Ejecutable_Ventas.exe"
+set "VENTAS_SALIDA=%VENTAS_ROOT%..\..\componentes\seguridad\Ejecucion_Seguridad\Ejecucion_Seguridad\bin\%VENTAS_CONFIG%"
+set "VENTAS_EJECUTABLE=%VENTAS_SALIDA%\Ejecucion_Seguridad.exe"
 call :ENCABEZADO
 echo   %VENTAS_DORADO%PERFIL%VENTAS_RESET%  %VENTAS_CONFIG%       %VENTAS_DORADO%MODO%VENTAS_RESET%  Paralelo + incremental
 echo.
-echo   %VENTAS_GRIS%Facturas                 Listado de precios        Cotizaciones
+echo   %VENTAS_GRIS%Consultas / Navegador / Seguridad / Reporteador + sus 8 botones
+echo.
+echo   Facturas                 Listado de precios        Cotizaciones
 echo   Movimientos y pagos      Cierre de movimientos     Reportes
 echo   Mantenimientos           Comisiones                Pedidos%VENTAS_RESET%
 echo.
@@ -61,6 +63,8 @@ echo   %VENTAS_MORADO%[1/2]%VENTAS_RESET% Verificando herramientas...
 call :BUSCAR_MSBUILD
 if errorlevel 1 goto SIN_MSBUILD
 if not exist "%VENTAS_ROOT%build_ventas.proj" goto SIN_PROYECTO
+if not exist "%VENTAS_ROOT%build_componentes_ventas.proj" goto SIN_PROYECTO
+if not exist "%VENTAS_ROOT%build_componentes_ventas.targets" goto SIN_PROYECTO
 if not exist "%VENTAS_ROOT%logs" mkdir "%VENTAS_ROOT%logs"
 if not exist "%VENTAS_ROOT%logs" goto SIN_LOGS
 echo         MSBuild disponible.
@@ -70,7 +74,7 @@ echo.
 set "VENTAS_INICIO=%TIME: =0%"
 pushd "%VENTAS_ROOT%"
 if errorlevel 1 goto SIN_DIRECTORIO
-"%VENTAS_MSBUILD%" "%VENTAS_ROOT%build_ventas.proj" /m /t:Compilar /p:Configuration=%VENTAS_CONFIG% /nologo /v:quiet /clp:Summary /fl "/flp:logfile=%VENTAS_LOG%;verbosity=normal"
+"%VENTAS_MSBUILD%" "%VENTAS_ROOT%build_ventas.proj" /m /t:Compilar /p:Configuration=%VENTAS_CONFIG% /nologo /v:minimal /clp:Summary /fl "/flp:logfile=%VENTAS_LOG%;verbosity=normal"
 set "VENTAS_RESULT=%ERRORLEVEL%"
 popd
 call :CALCULAR_DURACION
@@ -85,7 +89,7 @@ goto RESUMEN
 
 :SIN_PROYECTO
 echo.
-echo   %VENTAS_ROJO%[!] Falta build_ventas.proj junto a este BAT.%VENTAS_RESET%
+echo   %VENTAS_ROJO%[!] Falta un archivo build_ventas.proj o build_componentes_ventas.*.%VENTAS_RESET%
 goto RESUMEN
 
 :SIN_LOGS
@@ -103,7 +107,7 @@ echo.
 echo   %VENTAS_MORADO%------------------------------------------------------------------------%VENTAS_RESET%
 if "%VENTAS_RESULT%"=="0" (
     echo   %VENTAS_VERDE%[OK] COMPILACION COMPLETADA%VENTAS_RESET%
-    echo        Soluciones listas y DLL actualizadas para el MDI.
+    echo        Ventas y componentes listos. DLL actualizadas para el MDI.
 ) else (
     echo   %VENTAS_ROJO%[!] COMPILACION DETENIDA%VENTAS_RESET%
     echo        Revise el mensaje anterior. Codigo de salida: %VENTAS_RESULT%
@@ -112,7 +116,7 @@ echo.
 echo   Perfil:  %VENTAS_CONFIG%        Tiempo: %VENTAS_DURACION%
 echo.
 echo   %VENTAS_DORADO%APLICACION%VENTAS_RESET%
-echo   Ejecutable_Ventas\Ejecutable_Ventas\bin\%VENTAS_CONFIG%\Ejecutable_Ventas.exe
+echo   ..\..\componentes\seguridad\Ejecucion_Seguridad\Ejecucion_Seguridad\bin\%VENTAS_CONFIG%\Ejecucion_Seguridad.exe
 echo.
 echo   %VENTAS_DORADO%LOG DE COMPILACION%VENTAS_RESET%
 echo   logs\build_ventas_%VENTAS_CONFIG%.log
@@ -122,7 +126,7 @@ if "%VENTAS_SINPAUSA%"=="1" goto SALIR
 :MENU
 echo.
 echo   %VENTAS_DORADO%[R]%VENTAS_RESET% Repetir compilacion     %VENTAS_DORADO%[C]%VENTAS_RESET% Cambiar Debug / Release
-if "%VENTAS_RESULT%"=="0" echo   %VENTAS_DORADO%[A]%VENTAS_RESET% Abrir aplicacion
+if "%VENTAS_RESULT%"=="0" echo   %VENTAS_DORADO%[A]%VENTAS_RESET% Abrir Seguridad
 echo   %VENTAS_DORADO%[L]%VENTAS_RESET% Ver log                 %VENTAS_DORADO%[S]%VENTAS_RESET% Salir
 echo.
 choice /c RCALS /n /m "  Elige una opcion: "
@@ -155,7 +159,7 @@ if not "%VENTAS_RESULT%"=="0" (
 )
 if not exist "%VENTAS_EJECUTABLE%" (
     echo.
-    echo   %VENTAS_ROJO%No se encontro el ejecutable. Vuelva a compilar.%VENTAS_RESET%
+    echo   %VENTAS_ROJO%No se encontro Ejecucion_Seguridad.exe. Vuelva a compilar.%VENTAS_RESET%
     goto MENU
 )
 start "" /d "%VENTAS_SALIDA%" "%VENTAS_EJECUTABLE%"

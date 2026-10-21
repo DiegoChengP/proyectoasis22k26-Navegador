@@ -116,8 +116,41 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FrmMdiVentas.Modulos.cs">
-      <DependentUpon>FrmMdiVentas.cs</DependentUpon>
-    </Compile>
+    <Reference Include="CapaVista_ListadoPrecios">
+      <HintPath>..\..\ListadoPrecios\CapaVista_ListadoPrecios\bin\$(Configuration)\CapaVista_ListadoPrecios.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CapaVista_MovimientosClientes">
+      <HintPath>..\..\MovimientosClientes\CapaVista_MovimientosClientes\bin\$(Configuration)\CapaVista_MovimientosClientes.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CapaVista_Reportes">
+      <HintPath>..\..\Reportes\CapaVista_Reportes\bin\$(Configuration)\CapaVista_Reportes.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CapaVista_Cotizaciones">
+      <HintPath>..\..\Cotizaciones\CapaVista_Cotizaciones\bin\$(Configuration)\CapaVista_Cotizaciones.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CapaVista_Pedidos">
+      <HintPath>..\..\Pedidos\CapaVista_Pedidos\bin\$(Configuration)\CapaVista_Pedidos.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CapaVista_Facturas">
+      <HintPath>..\..\Facturas\CapaVista_Facturas\bin\$(Configuration)\CapaVista_Facturas.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ComisionVendedoresVista">
+      <HintPath>..\..\ComisionVendedores\CapaVista_ComisionVendedores\bin\$(Configuration)\ComisionVendedoresVista.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CapaVista_Mantenimientos">
+      <HintPath>..\..\Mantenimientos\CapaVista_Mantenimientos\bin\$(Configuration)\CapaVista_Mantenimientos.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CapaVista_CierreMovimientos">
+      <HintPath>..\..\CierreMovimientos\CapaVista_CierreMovimientos\bin\$(Configuration)\CapaVista_CierreMovimientos.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
 </Project>

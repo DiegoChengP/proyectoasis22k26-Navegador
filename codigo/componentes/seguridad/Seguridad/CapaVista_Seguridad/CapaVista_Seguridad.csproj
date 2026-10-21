@@ -498,5 +498,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CapaVista_Ventas">
+      <HintPath>..\..\..\..\modulos\ventas\Ventas y CxC\CapaVista_Ventas\bin\$(Configuration)\CapaVista_Ventas.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

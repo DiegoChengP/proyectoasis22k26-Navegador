@@ -11,16 +11,27 @@
  * Fecha de actualización: 10/10/2026
  * Propósito: Prototipo visual del formulario, sin lógica de negocio.
  */
+
+using System.Collections.Generic;
 using System.Windows.Forms;
+using CapaControlador_Seguridad;
+using CapaControlador_Seguridad.Modelos_de_controladores;
 
 namespace CapaVista_Mantenimientos
 {
     public partial class FrmMantenimientosVentas : Form
     {
+        ClsModeloEmpleado datos = new ClsModeloEmpleado();
+        ClsModeloMantenimientoApp datos2 = new ClsModeloMantenimientoApp();
+
         public FrmMantenimientosVentas()
         {
             InitializeComponent();
             // Los controles se editan desde el diseñador; no se implementan operaciones de negocio.
+            Dictionary<string, object> fuentes = new Dictionary<string, object>();
+            fuentes.Add("DsMantenimientoEmpleado", datos.SeguridadMetObtenerTodos());
+            fuentes.Add("RpReporteMantenimientoAplicacion", datos2.SeguridadMetObtenerTodos());
+            navegador1.NavegadorMetConfigurar("tblempleado", 4, 5, fuentes);
         }
     }
 }

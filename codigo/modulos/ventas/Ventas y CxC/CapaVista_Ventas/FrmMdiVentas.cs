@@ -13,6 +13,8 @@ namespace CapaVista_Ventas
 {
     public partial class FrmMdiVentas : Form
     {
+        private readonly int _IdUsuario;
+
         // WM_SETREDRAW agrupa los cambios de tamaño para evitar imágenes superpuestas al contraer el menú.
         private const int WmSetRedraw = 0x000B;
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -27,8 +29,13 @@ namespace CapaVista_Ventas
                 ControlStyles.ResizeRedraw, true);
         }
 
-        public FrmMdiVentas(string NombreUsuario, string RolUsuario) : this()
-        { VentasMetActualizarSesion(NombreUsuario, RolUsuario); }
+        public FrmMdiVentas(string NombreUsuario, string RolUsuario) : this(NombreUsuario, RolUsuario, 0) { }
+
+        public FrmMdiVentas(string NombreUsuario, string RolUsuario, int IdUsuario) : this()
+        {
+            _IdUsuario = IdUsuario;
+            VentasMetActualizarSesion(NombreUsuario, RolUsuario);
+        }
 
         // Presenta el usuario y el rol cuando otro módulo proporciona esa información.
         public void VentasMetActualizarSesion(string NombreUsuario, string RolUsuario)
@@ -101,61 +108,70 @@ namespace CapaVista_Ventas
         // Abre el listado de precios de escritorio sobre el MDI.
         private void VentasBtnListadoPrecios_Click(object sender, EventArgs e)
         {
-            VentasMetAbrirModulo("CapaVista_ListadoPrecios.dll", "CapaVista_ListadoPrecios.FrmListadoPrecios", "Listado de precios");
+            using (var Formulario = new CapaVista_ListadoPrecios.FrmListadoPrecios())
+                Formulario.ShowDialog(this);
         }
 
         // Abre la opción de movimientos de clientes.
         private void VentasBtnMovimientosClientes_Click(object sender, EventArgs e)
         {
-            VentasMetAbrirModulo("CapaVista_MovimientosClientes.dll", "CapaVista_MovimientosClientes.FrmMovimientosClientesVentas", "Movimientos de clientes");
+            using (var Formulario = new CapaVista_MovimientosClientes.FrmMovimientosClientesVentas() { VentasIdUsuario = _IdUsuario })
+                Formulario.ShowDialog(this);
         }
 
         // Abre la opción de recepción de pagos.
         private void VentasBtnRecepcionPagos_Click(object sender, EventArgs e)
         {
-            VentasMetAbrirModulo("CapaVista_MovimientosClientes.dll", "CapaVista_MovimientosClientes.FrmRecepcionPagosVentas", "Recepción de pagos");
+            using (var Formulario = new CapaVista_MovimientosClientes.FrmRecepcionPagosVentas() { VentasIdUsuario = _IdUsuario })
+                Formulario.ShowDialog(this);
         }
 
         // Abre la opción de reportes de Ventas.
         private void VentasBtnReportes_Click(object sender, EventArgs e)
         {
-            VentasMetAbrirModulo("CapaVista_Reportes.dll", "CapaVista_Reportes.FrmReportesVentas", "Reportes");
+            using (var Formulario = new CapaVista_Reportes.FrmReportesVentas())
+                Formulario.ShowDialog(this);
         }
 
         // Abre el formulario independiente de cotizaciones.
         private void VentasBtnCotizaciones_Click(object sender, EventArgs e)
         {
-            VentasMetAbrirModulo("CapaVista_Cotizaciones.dll", "CapaVista_Cotizaciones.FrmCotizacionVentas", "Cotizaciones");
+            using (var Formulario = new CapaVista_Cotizaciones.FrmCotizacionVentas() { VentasIdUsuario = _IdUsuario })
+                Formulario.ShowDialog(this);
         }
 
         // Abre el formulario independiente de pedidos.
         private void VentasBtnPedidos_Click(object sender, EventArgs e)
         {
-            VentasMetAbrirModulo("CapaVista_Pedidos.dll", "CapaVista_Pedidos.FrmPedidoVentas", "Pedidos");
+            using (var Formulario = new CapaVista_Pedidos.FrmPedidoVentas())
+                Formulario.ShowDialog(this);
         }
 
         // Abre el formulario independiente de facturas.
         private void VentasBtnFacturas_Click(object sender, EventArgs e)
         {
-            VentasMetAbrirModulo("CapaVista_Facturas.dll", "CapaVista_Facturas.FrmFacturas", "Facturas", false);
+            new CapaVista_Facturas.FrmFacturas().Show(this);
         }
 
         // Abre la opción de comisiones de vendedores.
         private void VentasBtnComisionesVendedores_Click(object sender, EventArgs e)
         {
-            VentasMetAbrirModulo("ComisionVendedoresVista.dll", "ComisionVendedoresVista.FrmComisionesVendedoresVentas", "Comisiones de vendedores");
+            using (var Formulario = new ComisionVendedoresVista.FrmComisionesVendedoresVentas())
+                Formulario.ShowDialog(this);
         }
 
         // Abre la opción de mantenimientos del módulo.
         private void VentasBtnMantenimientos_Click(object sender, EventArgs e)
         {
-            VentasMetAbrirModulo("CapaVista_Mantenimientos.dll", "CapaVista_Mantenimientos.FrmMantenimientosVentas", "Mantenimientos");
+            using (var Formulario = new CapaVista_Mantenimientos.FrmMantenimientosVentas())
+                Formulario.ShowDialog(this);
         }
 
         // Abre la opción de cierre de movimientos.
         private void VentasBtnCierreMovimientos_Click(object sender, EventArgs e)
         {
-            VentasMetAbrirModulo("CapaVista_CierreMovimientos.dll", "CapaVista_CierreMovimientos.FrmCierreMovimientosVentas", "Cierre de movimientos");
+            using (var Formulario = new CapaVista_CierreMovimientos.FrmCierreMovimientosVentas() { VentasIdUsuario = _IdUsuario })
+                Formulario.ShowDialog(this);
         }
 
         // Confirma la salida del módulo y cierra su ventana principal.

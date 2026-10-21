@@ -82,4 +82,10 @@
   <data name="BotonOriginalConsultarVentas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\..\..\..\..\recursos\modulos\ventas\botones\referencias\ConsultarVentas.png;System.Drawing.Bitmap, System.Drawing</value>
   </data>
+  <data name="BotonOriginalModificarVentas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\..\..\..\..\recursos\modulos\ventas\botones\referencias\ModificarVentas.png;System.Drawing.Bitmap, System.Drawing</value>
+  </data>
+  <data name="BotonOriginalRefrescarVentas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\..\..\..\..\recursos\modulos\ventas\botones\referencias\RefrescarVentas.png;System.Drawing.Bitmap, System.Drawing</value>
+  </data>
 </root>

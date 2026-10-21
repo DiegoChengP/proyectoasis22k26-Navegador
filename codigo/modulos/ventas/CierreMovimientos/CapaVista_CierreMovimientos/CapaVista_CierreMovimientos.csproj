@@ -39,16 +39,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FrmCierreMovimientosVentas.Operaciones.cs"><DependentUpon>FrmCierreMovimientosVentas.cs</DependentUpon></Compile>
-    <Compile Include="..\..\Infraestructura\ClsVistaVentas.cs"><Link>Infraestructura\ClsVistaVentas.cs</Link></Compile>
+    <Compile Include="..\..\Infraestructura\ClsVistaVentas.cs"><Link>Presentacion\ClsVistaVentas.cs</Link></Compile>
 
-    <Compile Include="FrmCierreMovimientosVentas.cs">
+    <Compile Include="Formularios\FrmCierreMovimientosVentas.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmCierreMovimientosVentas.Designer.cs">
+    <Compile Include="Formularios\FrmCierreMovimientosVentas.Designer.cs">
       <DependentUpon>FrmCierreMovimientosVentas.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="FrmCierreMovimientosVentas.resx">
+    <EmbeddedResource Include="Formularios\FrmCierreMovimientosVentas.resx">
       <DependentUpon>FrmCierreMovimientosVentas.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
@@ -60,8 +59,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    </ItemGroup>
-  <ItemGroup>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -72,5 +69,11 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <CustomToolNamespace>CapaVista_CierreMovimientos.Properties</CustomToolNamespace>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Presentacion\ClsCierrePresentador.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Presentacion\ClsCierrePresentador.Acciones.cs" />
   </ItemGroup>
 </Project>

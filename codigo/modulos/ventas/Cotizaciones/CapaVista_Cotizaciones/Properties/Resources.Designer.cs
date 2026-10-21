@@ -31,5 +31,9 @@ namespace CapaVista_Cotizaciones.Properties
         { get { return ((global::System.Drawing.Bitmap)(ResourceManager.GetObject("BotonOriginalImprimirVentas", resourceCulture))); } }
         internal static global::System.Drawing.Bitmap BotonOriginalSalirVentas
         { get { return ((global::System.Drawing.Bitmap)(ResourceManager.GetObject("BotonOriginalSalirVentas", resourceCulture))); } }
+        internal static global::System.Drawing.Bitmap BotonOriginalModificarVentas
+        { get { return ((global::System.Drawing.Bitmap)(ResourceManager.GetObject("BotonOriginalModificarVentas", resourceCulture))); } }
+        internal static global::System.Drawing.Bitmap BotonOriginalRefrescarVentas
+        { get { return ((global::System.Drawing.Bitmap)(ResourceManager.GetObject("BotonOriginalRefrescarVentas", resourceCulture))); } }
     }
 }

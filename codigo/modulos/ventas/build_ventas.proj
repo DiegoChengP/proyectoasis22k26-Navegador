@@ -3,6 +3,7 @@
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <SalidaVentas>$(MSBuildThisFileDirectory)Ejecutable_Ventas\Ejecutable_Ventas\bin\$(Configuration)\</SalidaVentas>
+    <OpcionesReferenciasVentas>PlatformTarget=AnyCPU;CustomBeforeMicrosoftCommonTargets=$(MSBuildThisFileDirectory)build_componentes_ventas.targets</OpcionesReferenciasVentas>
   </PropertyGroup>
   <ItemGroup>
     <SolucionVentas Include="Facturas\Facturas.sln" />
@@ -75,12 +76,18 @@
     <SimboloVentas Include="Ventas y CxC\CapaModelo_Ventas\bin\$(Configuration)\CapaModelo_Ventas.pdb" />
     <SimboloVentas Include="Ventas y CxC\CapaVista_Ventas\bin\$(Configuration)\CapaVista_Ventas.pdb" />
   </ItemGroup>
-  <Target Name="Compilar">
-    <Error Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'Release'" Text="Configuración no válida. Use Debug o Release." />
-    <Message Text="Compilando soluciones MVC de Ventas en paralelo ($(Configuration))..." Importance="high" />
-    <MSBuild Projects="@(SolucionVentas)" Targets="Build" Properties="Configuration=$(Configuration);Platform=Any CPU" BuildInParallel="true" StopOnFirstFailure="true" />
-    <MSBuild Projects="Ejecutable_Ventas\Ejecutable_Ventas\Ejecutable_Ventas.csproj;ComisionVendedores\Ejecucion_ComisionVendedores\ComisionVendedores.csproj" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU" BuildInParallel="true" StopOnFirstFailure="true" />
+  <Import Project="build_componentes_ventas.proj" />
+  <Target Name="Compilar" DependsOnTargets="ValidarConfiguracion;CompilarComponentesVentas">
+    <Message Text="[7/7] Compilando soluciones MVC de Ventas en paralelo ($(Configuration))..." Importance="high" />
+    <MSBuild Projects="Ejecutable_Ventas\Ejecutable_Ventas\Ejecutable_Ventas.csproj;ComisionVendedores\Ejecucion_ComisionVendedores\ComisionVendedores.csproj" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />
     <CallTarget Targets="ReunirBibliotecas" />
+  </Target>
+  <Target Name="CompilarFormulariosVentas">
+    <Message Text="Compilando formularios MVC de Ventas antes de enlazar el MDI..." Importance="high" />
+    <MSBuild Projects="@(SolucionVentas)" Targets="Build" Properties="Configuration=$(Configuration);Platform=Any CPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />
+  </Target>
+  <Target Name="ValidarConfiguracion">
+    <Error Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'Release'" Text="Configuración no válida. Use Debug o Release." />
   </Target>
   <Target Name="ReunirBibliotecas">
     <MakeDir Directories="$(SalidaVentas)" />
@@ -119,7 +126,22 @@
       <Nativox86 Include="Reportes\CapaVista_Reportes\bin\$(Configuration)\x86\*.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(Nativox86)" DestinationFolder="$(SalidaVentas)x86\" SkipUnchangedFiles="true" />
+    <ItemGroup>
+      <BibliotecaComponenteVentas Include="@(ComponenteVentas->'%(RootDir)%(Directory)bin\$(Configuration)\%(Biblioteca)')" Condition="'%(ComponenteVentas.Extension)' == '.csproj' and $([System.String]::Copy('%(ComponenteVentas.Filename)').StartsWith('Ejecucion_')) != 'true'" />
+      <DependenciaComponenteVentas Include="..\..\componentes\seguridad\Seguridad\CapaVista_Seguridad\bin\$(Configuration)\*.dll;..\..\componentes\reporteador\Reporteador\CapaVista_Reporteador\bin\$(Configuration)\*.dll;..\..\componentes\reporteador\BtnVerReporte_Reporteador\CapaVista_BtnVerReporte_Reporteador\bin\$(Configuration)\*.dll" />
+      <NativoComponenteX64 Include="..\..\componentes\reporteador\Reporteador\CapaVista_Reporteador\bin\$(Configuration)\x64\*.dll;..\..\componentes\seguridad\Seguridad\CapaVista_Seguridad\bin\$(Configuration)\x64\*.dll" />
+      <NativoComponenteX86 Include="..\..\componentes\reporteador\Reporteador\CapaVista_Reporteador\bin\$(Configuration)\x86\*.dll;..\..\componentes\seguridad\Seguridad\CapaVista_Seguridad\bin\$(Configuration)\x86\*.dll" />
+    </ItemGroup>
+    <Error Condition="!Exists('%(BibliotecaComponenteVentas.Identity)')" Text="Falta la biblioteca del componente: %(BibliotecaComponenteVentas.Identity)" />
+    <Copy SourceFiles="@(DependenciaComponenteVentas)" DestinationFolder="$(SalidaVentas)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(BibliotecaComponenteVentas)" DestinationFolder="$(SalidaVentas)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(NativoComponenteX64)" DestinationFolder="$(SalidaVentas)x64\" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(NativoComponenteX86)" DestinationFolder="$(SalidaVentas)x86\" SkipUnchangedFiles="true" />
     <Delete Files="$(SalidaVentas)CapaRecursos_Ventas.dll;$(SalidaVentas)CapaRecursos_Ventas.pdb" />
+    <ItemGroup>
+      <DllVentasParaSeguridad Include="$(SalidaVentas)**\*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DllVentasParaSeguridad)" DestinationFiles="@(DllVentasParaSeguridad->'$(MSBuildThisFileDirectory)..\..\componentes\seguridad\Ejecucion_Seguridad\Ejecucion_Seguridad\bin\$(Configuration)\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
     <Message Text="Ventas listo. DLL de los módulos reunidas en $(SalidaVentas)" Importance="high" />
   </Target>
 </Project>
