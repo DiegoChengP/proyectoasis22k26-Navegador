@@ -14,7 +14,7 @@ namespace CapaModelo_ListadoPrecios
     // si el DSN o el esquema del equipo aún no está disponible, usa datos de demostración.
     public class ClsModeloListadoPrecios : IRepositorioListadoPrecios
     {
-        private const string CadenaConexion = "Dsn=EmbutidosS.A";
+        private static string CadenaConexion { get { return CapaModelo_Ventas.ClsConexion.CadenaConexion; } }
         private static readonly List<ClsPrecioCliente> DatosDemostracion = new List<ClsPrecioCliente>
         {
             new ClsPrecioCliente { TipoCliente = "Mayorista", TipoProducto = "Producto A", PorcentajeDescuento = 12m, PrecioBase = 100m, PrecioFinal = 88m },
@@ -51,7 +51,7 @@ namespace CapaModelo_ListadoPrecios
             }
             catch (Exception ex)
             {
-                MensajeEstado = "Modo demostración: no fue posible consultar el DSN EmbutidosS.A (" + ex.Message + ").";
+                MensajeEstado = "Modo demostración: no fue posible consultar la conexión configurada en Ventas (" + ex.Message + ").";
             }
             UsaBaseDeDatos = false;
             lock (Bloqueo) return DatosDemostracion.Select(Clonar).ToList();

@@ -304,7 +304,7 @@ namespace CapaVista_MovimientosClientes
             this.VentasTbpCuenta.Text = "Estado de cuenta";
             this.VentasTbpCuenta.BackColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasTbpDocumento.Name = "VentasTbpDocumento";
-            this.VentasTbpDocumento.Text = "Recibo";
+            this.VentasTbpDocumento.Text = "Cargos y ajustes";
             this.VentasTbpDocumento.BackColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasTbpRecibos.Name = "VentasTbpRecibos";
             this.VentasTbpRecibos.Text = "Recepción de pagos";
@@ -531,7 +531,7 @@ namespace CapaVista_MovimientosClientes
             this.VentasCboTipoDocumento.Size = new System.Drawing.Size(300, 28);
             this.VentasCboTipoDocumento.Name = "VentasCboTipoDocumento";
             this.VentasCboTipoDocumento.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.VentasCboTipoDocumento.Items.AddRange(new object[] { "Factura sin detalle de productos", "Nota de crédito", "Nota de débito", "Ajuste positivo", "Ajuste negativo" });
+            this.VentasCboTipoDocumento.Items.AddRange(new object[] { "Cargo inicial / cuenta por cobrar", "Nota de credito (reduce deuda)", "Nota de debito (aumenta deuda)", "Ajuste de cargo (aumenta deuda)", "Ajuste de abono (reduce deuda)" });
             this.VentasLblNumeroDocumentoEtiqueta.Location = new System.Drawing.Point(332, 12);
             this.VentasLblNumeroDocumentoEtiqueta.Size = new System.Drawing.Size(230, 21);
             this.VentasLblNumeroDocumentoEtiqueta.Name = "VentasLblNumeroDocumentoEtiqueta";
@@ -629,7 +629,7 @@ namespace CapaVista_MovimientosClientes
             this.VentasLblDocumentoSinDetalle.Location = new System.Drawing.Point(12, 314);
             this.VentasLblDocumentoSinDetalle.Size = new System.Drawing.Size(1042, 34);
             this.VentasLblDocumentoSinDetalle.Name = "VentasLblDocumentoSinDetalle";
-            this.VentasLblDocumentoSinDetalle.Text = "En CxC se registra el encabezado y su importe. El detalle de productos corresponde a Ventas.";
+            this.VentasLblDocumentoSinDetalle.Text = "Para crear una deuda seleccione Cargo inicial. Para aumentar una deuda existente use Nota de debito o Ajuste de cargo.";
             this.VentasLblDocumentoSinDetalle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular);
             this.VentasLblDocumentoSinDetalle.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
             this.VentasLblDocumentoRecibo.Location = new System.Drawing.Point(12, 350);

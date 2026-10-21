@@ -163,8 +163,9 @@ namespace CapaVista_MovimientosClientes
             foreach (Control C in new Control[] { _Vista.VentasCboTipoDocumento, _Vista.VentasTxtNumeroDocumento, _Vista.VentasDtpFechaDocumento, _Vista.VentasNudImporteDocumento }) C.Enabled = !Documento;
             _Vista.VentasCboEstablecimientoDocumento.Enabled = !Documento && _Vista.VentasCboTipoDocumento.SelectedIndex == 0;
             _Vista.VentasTxtFacturaReferencia.Enabled = !Documento && _Vista.VentasCboTipoDocumento.SelectedIndex > 0;
+            _SeleccionarFactura.Enabled = _Vista.VentasTxtFacturaReferencia.Enabled;
             _Vista.VentasTxtDescripcionDocumento.ReadOnly = Documento && !_EditandoDocumento;
-            _Vista.VentasDtpVencimientoDocumento.Enabled = !Documento || _EditandoDocumento && Convert.ToString(_DocumentoActual["Clase"]) == "FACTURA";
+            _Vista.VentasDtpVencimientoDocumento.Enabled = !Documento && _Vista.VentasCboTipoDocumento.SelectedIndex == 0 || _EditandoDocumento && Convert.ToString(_DocumentoActual["Clase"]) == "FACTURA";
             foreach (Control C in new Control[] { _Vista.VentasTxtRecibo, _Vista.VentasDtpFechaPago, _Vista.VentasNudMontoPago, _Vista.VentasNudTipoCambioPago, _Vista.VentasCboFormaPago, _Vista.VentasTxtReferenciaPago }) C.Enabled = !Recibo;
             _Vista.VentasDgvRecibosDeposito.ReadOnly = _Guardados[3];
             _Vista.VentasDgvDocumentos.ReadOnly = Recibo; _Vista.VentasTxtObservacionesPago.ReadOnly = Recibo && !_EditandoRecibo;

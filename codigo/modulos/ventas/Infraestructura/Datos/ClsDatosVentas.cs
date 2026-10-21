@@ -3,7 +3,6 @@
 using System;
 using System.Data;
 using System.Data.Odbc;
-using System.Configuration;
 using System.Globalization;
 
 namespace VentasDatos
@@ -14,9 +13,7 @@ namespace VentasDatos
         internal OdbcTransaction Transaccion;
         internal ClsDatosVentas()
         {
-            string Cadena = Environment.GetEnvironmentVariable("VENTAS_ODBC");
-            if (string.IsNullOrWhiteSpace(Cadena)) Cadena = ConfigurationManager.AppSettings["VentasConexion"];
-            Conexion = new OdbcConnection(string.IsNullOrWhiteSpace(Cadena) ? "DSN=EmbutidosS.A;Connection Timeout=5" : Cadena);
+            Conexion = new OdbcConnection(CapaModelo_Ventas.ClsConexion.CadenaConexion);
             try { Conexion.Open(); } catch { Conexion.Dispose(); throw; }
         }
         internal void Iniciar() { Transaccion = Conexion.BeginTransaction(IsolationLevel.ReadCommitted); }

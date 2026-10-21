@@ -8,7 +8,7 @@ namespace CapaModelo_Pedidos
 
         public ClsConexion()
         {
-            _ConnectionString = "Dsn=EmbutidosS.A";
+            _ConnectionString = CapaModelo_Ventas.ClsConexion.CadenaConexion;
         }
 
         protected OdbcConnection VentasMetObtenerConexion()

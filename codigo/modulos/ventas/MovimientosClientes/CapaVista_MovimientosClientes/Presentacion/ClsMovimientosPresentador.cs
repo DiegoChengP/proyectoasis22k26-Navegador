@@ -17,6 +17,7 @@ namespace CapaVista_MovimientosClientes
         }
 
         private readonly ClsMovimientosControlador _Controlador = new ClsMovimientosControlador();
+        private readonly Button _SeleccionarFactura = new Button();
         private bool _Cargando = true;
         private bool _Inicializado;
         private readonly bool[] _Guardados = new bool[5];
@@ -37,6 +38,19 @@ namespace CapaVista_MovimientosClientes
         private string CodigoMoneda { get { var F = V.Fila(_Vista.VentasCboMoneda); return F == null ? "" : Convert.ToString(F["codigoMoneda"]); } }
         private void VentasMetConectarEventos()
         {
+            int AnchoSelector = Math.Max(120, TextRenderer.MeasureText("Elegir factura", _Vista.VentasTxtFacturaReferencia.Font).Width + 24);
+            _Vista.VentasTxtFacturaReferencia.Width -= AnchoSelector + 8;
+            _SeleccionarFactura.Name = "VentasBtnSeleccionarFactura";
+            _SeleccionarFactura.Text = "Elegir factura";
+            _SeleccionarFactura.SetBounds(_Vista.VentasTxtFacturaReferencia.Right + 8, _Vista.VentasTxtFacturaReferencia.Top, AnchoSelector, _Vista.VentasTxtFacturaReferencia.Height);
+            _SeleccionarFactura.Font = _Vista.VentasTxtFacturaReferencia.Font;
+            _SeleccionarFactura.Anchor = _Vista.VentasTxtFacturaReferencia.Anchor;
+            _SeleccionarFactura.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
+            _SeleccionarFactura.ForeColor = System.Drawing.Color.White;
+            _SeleccionarFactura.FlatStyle = FlatStyle.Flat;
+            _Vista.VentasTxtFacturaReferencia.Parent.Controls.Add(_SeleccionarFactura);
+            _SeleccionarFactura.Click += (s, e) => V.Ejecutar(_Vista, VentasMetSeleccionarFactura);
+            _Vista.VentasDtpFechaDocumento.ValueChanged += (s, e) => { if (!_Cargando && _DocumentoActual == null && _Vista.VentasCboTipoDocumento.SelectedIndex == 0) VentasMetVencimientoCargo(); };
             foreach (var Grid in new[] { _Vista.VentasDgvMovimientos, _Vista.VentasDgvDocumentos, _Vista.VentasDgvConsultaRecibos, _Vista.VentasDgvConsultaAplicaciones }) V.Fechas(Grid);
             _Vista.Load += (s, e) => V.Ejecutar(_Vista, VentasMetCargar);
             _Vista.VentasBtnConsultar.Click += (s, e) => V.Ejecutar(_Vista, () => { if (!_Inicializado) VentasMetCargar(); else VentasMetConsultarCaptura(); });
@@ -70,7 +84,7 @@ namespace CapaVista_MovimientosClientes
             _Vista.VentasDgvDocumentos.CellValueChanged += VentasMetAplicacionCambio;
             _Vista.VentasDgvRecibosDeposito.CellValueChanged += VentasMetDepositoCambio;
             _Vista.VentasDgvConsultaRecibos.SelectionChanged += (s, e) => { if (!_Cargando) V.Ejecutar(_Vista, VentasMetAplicacionesConsulta); };
-            _Vista.VentasCboEstadoDocumento.Items.Clear(); _Vista.VentasCboEstadoDocumento.Items.Add("Aplicado"); _Vista.VentasCboEstadoDocumento.SelectedIndex = 0; _Vista.VentasCboEstadoDocumento.Enabled = false;
+            VentasMetEstadoNuevoDocumento();
             _Vista.VentasCboEstadoDeposito.Items.Clear(); _Vista.VentasCboEstadoDeposito.Items.Add("Preparacion local"); _Vista.VentasCboEstadoDeposito.SelectedIndex = 0; _Vista.VentasCboEstadoDeposito.Enabled = false;
             _Vista.VentasTxtEstadoEnvio.Text = "Pendiente de enlace con Bancos"; _Vista.VentasTxtModoActualizacion.Text = "Lo define Bancos; sin afectar saldos bancarios";
             _Vista.VentasDtpDesde.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
@@ -78,7 +92,10 @@ namespace CapaVista_MovimientosClientes
             _Vista.VentasNudTipoCambioPago.Value = 1;
             _Vista.VentasTtpAcciones.SetToolTip(_Vista.VentasTxtNumeroDocumento, "Numero interno. Si se deja vacio, se genera un correlativo. No emite DTE.");
             _Vista.VentasTtpAcciones.SetToolTip(_Vista.VentasTxtRecibo, "Dejar vacio para generar el numero del recibo al guardar.");
-            _Vista.VentasLblDocumentoRecibo.Text = "Para emitir y aplicar un recibo utilice Recepcion de pagos. La pestana Recibo registra documentos y ajustes internos de CxC.";
+            _Vista.VentasLblDocumentoRecibo.Text = "Para registrar dinero recibido y reducir la deuda use Recepcion de pagos; al guardar se genera el recibo.";
+            _Vista.VentasTtpAcciones.SetToolTip(_Vista.VentasTxtFacturaReferencia, "Seleccione una factura del cliente y moneda actuales con Elegir factura.");
+            _Vista.VentasCboTipoDocumento.SelectedIndex = 0;
+            VentasMetTipoDocumentoCambio();
         }
         private void VentasMetCargar()
         {
@@ -107,6 +124,9 @@ namespace CapaVista_MovimientosClientes
             DataRow C = V.Fila(_Vista.VentasCboCliente);
             _Vista.VentasTxtCondicion.Text = C == null ? "" : C["diasCredito"] + " dias; limite " + Convert.ToDecimal(C["limiteCredito"]).ToString("N2", V.Cultura);
             if (C != null) _Vista.VentasCboMoneda.SelectedValue = Convert.ToInt32(C["idMonedaCredito"]);
+            _Vista.VentasTxtFacturaReferencia.Clear();
+            VentasMetEstadoNuevoDocumento();
+            VentasMetVencimientoCargo();
             VentasMetLimpiarResultados();
             if (Cliente > 0 && Moneda > 0) VentasMetConsultarActual();
         }
@@ -200,7 +220,8 @@ namespace CapaVista_MovimientosClientes
             {
                 Numero = _Controlador.RegistrarDocumento(Cliente, Moneda, VentasIdUsuario, V.Id(_Vista.VentasCboEstablecimientoDocumento), _Vista.VentasTxtNumeroDocumento.Text, _Vista.VentasCboTipoDocumento.SelectedIndex, _Vista.VentasDtpFechaDocumento.Value, _Vista.VentasDtpVencimientoDocumento.Value, _Vista.VentasNudImporteDocumento.Value, _Vista.VentasTxtFacturaReferencia.Text, _Vista.VentasTxtDescripcionDocumento.Text);
                 _Vista.VentasTxtNumeroDocumento.Text = Numero;
-                V.Informar(_Vista, "Documento interno de CxC registrado: " + Numero);
+                bool Abono = _Vista.VentasCboTipoDocumento.SelectedIndex == 1 || _Vista.VentasCboTipoDocumento.SelectedIndex == 4;
+                V.Informar(_Vista, (Abono ? "Abono registrado; disminuye la deuda: " : "Cargo registrado; aumenta la deuda: ") + Numero);
             }
             else if (Tab == 2)
             {
@@ -236,6 +257,7 @@ namespace CapaVista_MovimientosClientes
             if(Tab == 2) { _ReciboActual=null; _EditandoRecibo=false; }
             if (Tab == 1)
             {
+                VentasMetEstadoNuevoDocumento();
                 _Vista.VentasTxtNumeroDocumento.Clear(); _Vista.VentasTxtFacturaReferencia.Clear(); _Vista.VentasTxtDescripcionDocumento.Clear(); _Vista.VentasNudImporteDocumento.Value = 0;
                 _Vista.VentasCboTipoDocumento.SelectedIndex = 0; _Vista.VentasDtpFechaDocumento.Value = DateTime.Today;
                 DataRow C = V.Fila(_Vista.VentasCboCliente);
@@ -244,6 +266,7 @@ namespace CapaVista_MovimientosClientes
             if (Tab == 2) { _Vista.VentasTxtRecibo.Clear(); _Vista.VentasTxtReferenciaPago.Clear(); _Vista.VentasTxtObservacionesPago.Clear(); _Vista.VentasNudMontoPago.Value = 0; _Vista.VentasNudTipoCambioPago.Value = 1; _Vista.VentasDtpFechaPago.Value = DateTime.Today; _Vista.VentasCboFormaPago.SelectedIndex = 0; VentasMetPendientes(); }
             if (Tab == 3) { _Vista.VentasTxtCodigoDeposito.Clear(); _Vista.VentasTxtReferenciaDeposito.Clear(); _Vista.VentasDtpFechaDeposito.Value = DateTime.Today; VentasMetDisponibles(); }
             VentasMetRefrescarBotones();
+            if (Tab == 1) _Vista.VentasLblEtapaBancos.Text = "Nuevo cargo: seleccione cliente, moneda y emisor; ingrese importe y motivo, y presione Guardar.";
             if (Tab < 3 && Cliente <= 0) _Vista.VentasCboCliente.Focus();
             else if (Tab == 1) _Vista.VentasNudImporteDocumento.Focus();
             else if (Tab == 2) _Vista.VentasNudMontoPago.Focus();
@@ -343,10 +366,38 @@ namespace CapaVista_MovimientosClientes
         internal void VentasMetTipoDocumentoCambio() {
             // Presenta el efecto y los campos requeridos del documento.
             int Tipo = _Vista.VentasCboTipoDocumento.SelectedIndex;
-            _Vista.VentasCboEstablecimientoDocumento.Enabled = Tipo == 0;
-            _Vista.VentasTxtFacturaReferencia.Enabled = Tipo > 0;
             _Vista.VentasTxtNaturalezaDocumento.Text = Tipo < 0 ? string.Empty :
                 (Tipo == 1 || Tipo == 4 ? "Abono - disminuye la deuda" : "Cargo - aumenta la deuda");
+            if (_DocumentoActual == null && !_Cargando)
+            {
+                _Vista.VentasTxtFacturaReferencia.Clear();
+                if (Tipo == 0) VentasMetVencimientoCargo();
+            }
+            VentasMetActualizarAcciones();
+        }
+        private void VentasMetEstadoNuevoDocumento()
+        {
+            _Vista.VentasCboEstadoDocumento.Items.Clear();
+            _Vista.VentasCboEstadoDocumento.Items.Add("Pendiente de guardar");
+            _Vista.VentasCboEstadoDocumento.SelectedIndex = 0;
+            _Vista.VentasCboEstadoDocumento.Enabled = false;
+        }
+        private void VentasMetVencimientoCargo()
+        {
+            if (_DocumentoActual != null || _Vista.VentasCboTipoDocumento.SelectedIndex != 0) return;
+            DataRow C = V.Fila(_Vista.VentasCboCliente);
+            _Vista.VentasDtpVencimientoDocumento.Value = _Vista.VentasDtpFechaDocumento.Value.Date.AddDays(C == null ? 0 : Convert.ToInt32(C["diasCredito"]));
+        }
+        private void VentasMetSeleccionarFactura()
+        {
+            _Controlador.ValidarCaptura(Cliente > 0 && Moneda > 0, "Seleccione primero el cliente y la moneda.");
+            DataTable Datos = _Controlador.ListarDocumentos(Cliente, Moneda);
+            DataTable Facturas = Datos.Clone();
+            foreach (DataRow F in Datos.Rows)
+                if (Convert.ToString(F["Clase"]) == "FACTURA" && Convert.ToString(F["Estado"]) == "EMITIDA") Facturas.ImportRow(F);
+            _Controlador.ValidarCaptura(Facturas.Rows.Count > 0, "El cliente no tiene documentos emitidos en esta moneda. Registre primero un Cargo inicial.");
+            DataRow Seleccion = V.Seleccionar(_Vista, "Factura a la que se aplica la nota o ajuste", Facturas);
+            if (Seleccion != null) _Vista.VentasTxtFacturaReferencia.Text = Convert.ToString(Seleccion["Documento"]);
         }
     }
 }

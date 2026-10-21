@@ -8,7 +8,7 @@ namespace CapaModelo_ComisionVendedores.Repositorios
 
         protected ClsConexion()
         {
-            _ConnectionString = "Dsn=EmbutidosS.A";
+            _ConnectionString = CapaModelo_Ventas.ClsConexion.CadenaConexion;
         }
 
         protected OdbcConnection ComisionVendedoresMetObtenerConexion()
