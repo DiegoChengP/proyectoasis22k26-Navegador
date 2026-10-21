@@ -57,6 +57,10 @@
     <Reference Include="CapaVista_Mantenimiento">
       <HintPath>..\..\..\consultas\Consultas_Mantenimiento\CapaVista_Mantenimiento\bin\Debug\CapaVista_Mantenimiento.dll</HintPath>
     </Reference>
+    <Reference Include="CapaVista_Reporteador">
+      <HintPath>..\..\..\reporteador\Reporteador\CapaVista_Reporteador\bin\Debug\CapaVista_Reporteador.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <!-- Fin cambio - Gabriel André Guillén Pocón - 0901-23-1998 -->
     <!-- Componente Seguridad: permisos (ClsSeguridadFormHelper), sesión y bitácora, encapsulados dentro del navegador.
          El control Navegador y su bitácora ya no viven en una solución aparte: se unificaron aquí mismo

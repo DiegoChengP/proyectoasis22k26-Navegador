@@ -601,6 +601,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmMDISeguridad";
             this.Text = "2003 - MDI Principal de Seguridad";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.SeguridadPnlFondo.ResumeLayout(false);
             this.SeguridadPnlFondo.PerformLayout();
             this.SeguridadPnlNavegador.ResumeLayout(false);

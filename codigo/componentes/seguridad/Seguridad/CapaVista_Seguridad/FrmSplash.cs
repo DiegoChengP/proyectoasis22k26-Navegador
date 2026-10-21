@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CapaControlador_Seguridad.Objetos_de_valor;
+//using CapaVista_Bancos.Formularios;
+//using CapaVista_Rrhh.Formularios;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -31,10 +34,12 @@ namespace CapaVista_Seguridad
         static extern int SetWindowTheme(IntPtr hwnd, string pszSubAppName, string pszSubIdList);
 
         private int _Progreso;
+        private readonly string _Destino;
 
-        public FrmSplash()
+        public FrmSplash(string destino)
         {
             InitializeComponent();
+            _Destino = destino;
             SeguridadMetAplicarColorBarra();
             SeguridadMetIniciarCarga();
         }
@@ -62,8 +67,68 @@ namespace CapaVista_Seguridad
             {
                 _TimerCarga.Stop();
                 this.Hide();
-                FrmMDISeguridad Principal = new FrmMDISeguridad();
-                Principal.ShowDialog();
+
+                Form principal = null;
+                switch (_Destino)
+                {
+                    case "Seguridad":
+                        principal = new FrmMDISeguridad();
+                        break;
+                    
+                    //case "Logistica":
+                        //var MDILogistica = new FrmMDILogistica();
+                        //MDILogistica.LogisticaMetActualizarInfoUsuario(
+                        //ClsSesionSeguridad.NombreEmpleado,
+                        //ClsSesionSeguridad.SeguridadMetRolesComoTexto());
+                        //principal = MDILogistica;
+                        //break;
+
+                    //case "Compras":
+                        //var MDICompras = new FrmMDICompras();
+                        //MDICompras.ComprasMetActualizarInfoUsuario(
+                        //ClsSesionSeguridad.NombreEmpleado,
+                        //ClsSesionSeguridad.SeguridadMetRolesComoTexto());
+                        //principal = MDICompras;
+                        //break;
+
+                    //case "Ventas":
+                        //var MDIVentas = new FrmMDIVentas();
+                        //MDIVentas.VentasMetActualizarInfoUsuario(
+                        //ClsSesionSeguridad.NombreEmpleado,
+                        //ClsSesionSeguridad.SeguridadMetRolesComoTexto());
+                        //principal = MDIVentas;
+                        //break;
+
+                    //case "Bancos":
+                        //var MdiBancos = new FrmMDIBancos();
+                        //MdiBancos.BancosMetActualizarInfoUsuario(
+                        //ClsSesionSeguridad.NombreEmpleado,
+                        //ClsSesionSeguridad.SeguridadMetRolesComoTexto());
+                        //principal = MdiBancos;
+                        //break;
+
+                    //case "Contabilidad":
+                        //var MDIContabilidad = new FrmMDIContabilidad();
+                        //MDIContabilidad.ContabilidadMetActualizarInfoUsuario(
+                        //ClsSesionSeguridad.NombreEmpleado,
+                        //ClsSesionSeguridad.SeguridadMetRolesComoTexto());
+                        //principal = MDIContabilidad;
+                        //break;
+
+                    //case "RRHH":
+                        //var MdiRrhh = now FrmMDIRrhh();
+                        //MdiRrhh.RrhhMetActualizarInfoUsuario(
+                        //ClsSesionSeguridad.NombreEmpleado,
+                        //ClsSesionSeguridad.SeguridadMetRolesComoTexto());
+                        //principal = MdiRrhh;
+                        //break;
+
+                    default:
+                        principal = new FrmMDISeguridad();
+                        break;
+                }
+
+                principal.ShowDialog();
                 this.Close();
             }
         }

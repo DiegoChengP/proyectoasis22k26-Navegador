@@ -83,6 +83,9 @@ namespace CapaControlador_Seguridad
                 ModeloDatos.DerEliminarRolModuloAplicacion = _DerEliminar;
                 ModeloDatos.DerImprimirRolModuloAplicacion = _DerImprimir;
 
+                // El perfil está activo si es uno de los roles del usuario en sesión
+                bool PerfilEnSesion = ClsSesionSeguridad.IdsRoles.Contains(_IdRol);
+
                 switch (Estado)
                 {
                     case EstadoEntidad.Added:
@@ -90,12 +93,36 @@ namespace CapaControlador_Seguridad
                         ClsModeloBitacora.SeguridadMetRegistrarAccion("INSERT", "tblAsigAppPerf", ModeloDatos.IdRol, "Se asignó aplicación " + _IdAplicacion + " al rol " + _IdRol);
                         Mensaje = "Grabacion exitosa";
                         break;
+
                     case EstadoEntidad.Modified:
+                        if (PerfilEnSesion)
+                        {
+                            var Actual = SeguridadMetObtenerPermisos(_IdRol, _IdModulo, _IdAplicacion);
+                            bool QuitaPermiso =
+                                (Actual.PuedeInsertar && !_DerInsertar) ||
+                                (Actual.PuedeEditar && !_DerEditar) ||
+                                (Actual.PuedeEliminar && !_DerEliminar) ||
+                                (Actual.PuedeImprimir && !_DerImprimir);
+
+                            if (QuitaPermiso)
+                            {
+                                Mensaje = "No puede quitar permisos al perfil con el que tiene la sesión iniciada.";
+                                break;
+                            }
+                        }
+
                         _RepositorioAsigAppPerf.SeguridadMetEditar(ModeloDatos);
                         ClsModeloBitacora.SeguridadMetRegistrarAccion("UPDATE", "tblAsigAppPerf", ModeloDatos.IdRol, "Se actualizaron permisos de aplicación " + _IdAplicacion + " al rol " + _IdRol);
                         Mensaje = "Actualizacion exitosa";
                         break;
+
                     case EstadoEntidad.Deleted:
+                        if (PerfilEnSesion)
+                        {
+                            Mensaje = "No puede quitar permisos al perfil con el que tiene la sesión iniciada.";
+                            break;
+                        }
+
                         _RepositorioAsigAppPerf.SeguridadMetRemover(ModeloDatos);
                         ClsModeloBitacora.SeguridadMetRegistrarAccion("DELETE", "tblAsigAppPerf", ModeloDatos.IdRol, "Se eliminó asignación de aplicación " + _IdAplicacion + " al rol " + _IdRol);
                         Mensaje = "Eliminacion exitosa";
@@ -115,7 +142,6 @@ namespace CapaControlador_Seguridad
             }
             return Mensaje;
         }
-
         public List<ClsModeloAsigAppPerf> SeguridadMetObtenerTodos()
         {
             var ResultadoConsulta = _RepositorioAsigAppPerf.SeguridadMetObtenerTodos();
@@ -220,6 +246,10 @@ namespace CapaControlador_Seguridad
             }
 
             return PermisoCombinado;
+        }
+        public DataTable SeguridadMetObtenerAplicacionesPorModulo(int IdModulo)
+        {
+            return _RepositorioAsigAppPerf.SeguridadMetObtenerAplicacionesPorModulo(IdModulo);
         }
     }
 }

@@ -28,7 +28,7 @@ color 0A
 :: RUTAS FIJAS (cambiar solo si tu Visual Studio o el repositorio cambian)
 :: ---------------------------------------------------------------------------
 :: Si tienes Professional o Enterprise, cambia "Community" por la edicion.
-set "MSBUILD_PATH=C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe"
+set "MSBUILD_PATH=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe"
 set "COMP=C:\proyectoasis22k26\codigo\componentes"
 
 set "ROOT_DIR=%~dp0"

@@ -23,6 +23,7 @@ namespace CapaVista_Navegador
         private string _Tabla;
         private int _IdModulo;
         private int _IdAplicacion;
+        private Dictionary<string, object> _FuentesDeDatosReporteador = new Dictionary<string, object>();
         private bool _Cargado;
         private ClsNavegadorAcciones _Acciones;
         private int _AltoBase;
@@ -40,6 +41,16 @@ namespace CapaVista_Navegador
         internal Panel NavegadorPnlDetalle
         {
             get { return _PnlDetalle; }
+        }
+
+        internal int NavegadorIdAplicacion
+        {
+            get { return _IdAplicacion; }
+        }
+
+        internal Dictionary<string, object> NavegadorFuentesDeDatosReporteador
+        {
+            get { return _FuentesDeDatosReporteador; }
         }
 
         private void NavegadorMetCrearDetalle()
@@ -74,11 +85,12 @@ namespace CapaVista_Navegador
         // CONFIGURAR NAVEGADOR (con seguridad)
         // Único método de configuración: la tabla del CRUD y el Módulo y la Aplicación de Seguridad
         // con los que se buscan los permisos del usuario (tblrolmoduloaplicacion).
-        public void NavegadorMetConfigurar(string Tabla, int IdModulo, int IdAplicacion)
+        public void NavegadorMetConfigurar(string Tabla, int IdModulo, int IdAplicacion, Dictionary<string, object> FuentesDeDatosReporteador = null)
         {
             _Tabla = Tabla;
             _IdModulo = IdModulo;
             _IdAplicacion = IdAplicacion;
+            _FuentesDeDatosReporteador = FuentesDeDatosReporteador ?? new Dictionary<string, object>();
 
             // Si el formulario ya está abierto se aplica de una vez; si no, en OnLoad.
             if (_Cargado)

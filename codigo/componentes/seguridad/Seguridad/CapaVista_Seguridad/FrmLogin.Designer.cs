@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLogin));
             this.SeguridadPnlInterfazLogin = new System.Windows.Forms.Panel();
+            this.SeguridadChkMostrarContra = new System.Windows.Forms.CheckBox();
             this.SeguridadPbMascota = new System.Windows.Forms.PictureBox();
             this.SeguridadLnkOlvidarContrasena = new System.Windows.Forms.LinkLabel();
             this.SeguridadBtnLogin = new System.Windows.Forms.Button();
@@ -42,11 +43,14 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.SeguridadPbLogin = new System.Windows.Forms.PictureBox();
             this.SeguridadPbLogo = new System.Windows.Forms.PictureBox();
-            this.SeguridadChkMostrarContra = new System.Windows.Forms.CheckBox();
+            this.SeguridadPnlFormulario = new System.Windows.Forms.Panel();
+            this.SeguridadLbIMDI = new System.Windows.Forms.Label();
+            this.SeguridadCmbMDI = new System.Windows.Forms.ComboBox();
             this.SeguridadPnlInterfazLogin.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SeguridadPbMascota)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SeguridadPbLogin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SeguridadPbLogo)).BeginInit();
+            this.SeguridadPnlFormulario.SuspendLayout();
             this.SuspendLayout();
             // 
             // SeguridadPnlInterfazLogin
@@ -62,20 +66,35 @@
             this.SeguridadPnlInterfazLogin.Controls.Add(this.SeguridadTxtUsuario);
             this.SeguridadPnlInterfazLogin.Controls.Add(this.SeguridadLbIdentificadorInicioSesion);
             this.SeguridadPnlInterfazLogin.Controls.Add(this.panel2);
-            this.SeguridadPnlInterfazLogin.Location = new System.Drawing.Point(525, 96);
-            this.SeguridadPnlInterfazLogin.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.SeguridadPnlInterfazLogin.Location = new System.Drawing.Point(394, 78);
+            this.SeguridadPnlInterfazLogin.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SeguridadPnlInterfazLogin.Name = "SeguridadPnlInterfazLogin";
-            this.SeguridadPnlInterfazLogin.Size = new System.Drawing.Size(351, 455);
+            this.SeguridadPnlInterfazLogin.Size = new System.Drawing.Size(263, 370);
             this.SeguridadPnlInterfazLogin.TabIndex = 5;
             this.SeguridadPnlInterfazLogin.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // SeguridadChkMostrarContra
+            // 
+            this.SeguridadChkMostrarContra.AutoSize = true;
+            this.SeguridadChkMostrarContra.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SeguridadChkMostrarContra.ForeColor = System.Drawing.Color.DarkCyan;
+            this.SeguridadChkMostrarContra.Location = new System.Drawing.Point(188, 264);
+            this.SeguridadChkMostrarContra.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SeguridadChkMostrarContra.Name = "SeguridadChkMostrarContra";
+            this.SeguridadChkMostrarContra.Size = new System.Drawing.Size(47, 21);
+            this.SeguridadChkMostrarContra.TabIndex = 16;
+            this.SeguridadChkMostrarContra.Text = "👁 ";
+            this.SeguridadChkMostrarContra.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.SeguridadChkMostrarContra.UseVisualStyleBackColor = true;
+            this.SeguridadChkMostrarContra.CheckedChanged += new System.EventHandler(this.SeguridadChkMostrarContra_CheckedChanged);
             // 
             // SeguridadPbMascota
             // 
             this.SeguridadPbMascota.Image = global::CapaVista_Seguridad.Properties.Resources._5;
-            this.SeguridadPbMascota.Location = new System.Drawing.Point(121, 34);
-            this.SeguridadPbMascota.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.SeguridadPbMascota.Location = new System.Drawing.Point(91, 28);
+            this.SeguridadPbMascota.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SeguridadPbMascota.Name = "SeguridadPbMascota";
-            this.SeguridadPbMascota.Size = new System.Drawing.Size(116, 129);
+            this.SeguridadPbMascota.Size = new System.Drawing.Size(87, 105);
             this.SeguridadPbMascota.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.SeguridadPbMascota.TabIndex = 8;
             this.SeguridadPbMascota.TabStop = false;
@@ -84,9 +103,10 @@
             // 
             this.SeguridadLnkOlvidarContrasena.AutoSize = true;
             this.SeguridadLnkOlvidarContrasena.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(119)))));
-            this.SeguridadLnkOlvidarContrasena.Location = new System.Drawing.Point(99, 422);
+            this.SeguridadLnkOlvidarContrasena.Location = new System.Drawing.Point(74, 343);
+            this.SeguridadLnkOlvidarContrasena.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.SeguridadLnkOlvidarContrasena.Name = "SeguridadLnkOlvidarContrasena";
-            this.SeguridadLnkOlvidarContrasena.Size = new System.Drawing.Size(161, 16);
+            this.SeguridadLnkOlvidarContrasena.Size = new System.Drawing.Size(131, 13);
             this.SeguridadLnkOlvidarContrasena.TabIndex = 7;
             this.SeguridadLnkOlvidarContrasena.TabStop = true;
             this.SeguridadLnkOlvidarContrasena.Text = "¿Olvidaste tu contraseña?";
@@ -97,10 +117,10 @@
             this.SeguridadBtnLogin.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(119)))));
             this.SeguridadBtnLogin.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.SeguridadBtnLogin.ForeColor = System.Drawing.Color.White;
-            this.SeguridadBtnLogin.Location = new System.Drawing.Point(120, 368);
-            this.SeguridadBtnLogin.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.SeguridadBtnLogin.Location = new System.Drawing.Point(90, 299);
+            this.SeguridadBtnLogin.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SeguridadBtnLogin.Name = "SeguridadBtnLogin";
-            this.SeguridadBtnLogin.Size = new System.Drawing.Size(117, 36);
+            this.SeguridadBtnLogin.Size = new System.Drawing.Size(88, 29);
             this.SeguridadBtnLogin.TabIndex = 0;
             this.SeguridadBtnLogin.Text = "LOGIN";
             this.SeguridadBtnLogin.UseVisualStyleBackColor = false;
@@ -111,9 +131,10 @@
             this.SeguridadLblContraseña.AutoSize = true;
             this.SeguridadLblContraseña.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SeguridadLblContraseña.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(119)))));
-            this.SeguridadLblContraseña.Location = new System.Drawing.Point(136, 327);
+            this.SeguridadLblContraseña.Location = new System.Drawing.Point(102, 266);
+            this.SeguridadLblContraseña.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.SeguridadLblContraseña.Name = "SeguridadLblContraseña";
-            this.SeguridadLblContraseña.Size = new System.Drawing.Size(96, 17);
+            this.SeguridadLblContraseña.Size = new System.Drawing.Size(81, 13);
             this.SeguridadLblContraseña.TabIndex = 5;
             this.SeguridadLblContraseña.Text = "🔐 Contraseña";
             // 
@@ -121,21 +142,21 @@
             // 
             this.SeguridadTxtContraseña.Cursor = System.Windows.Forms.Cursors.Default;
             this.SeguridadTxtContraseña.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(119)))));
-            this.SeguridadTxtContraseña.Location = new System.Drawing.Point(48, 295);
-            this.SeguridadTxtContraseña.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.SeguridadTxtContraseña.Location = new System.Drawing.Point(36, 240);
+            this.SeguridadTxtContraseña.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SeguridadTxtContraseña.Name = "SeguridadTxtContraseña";
             this.SeguridadTxtContraseña.PasswordChar = '*';
-            this.SeguridadTxtContraseña.Size = new System.Drawing.Size(264, 22);
+            this.SeguridadTxtContraseña.Size = new System.Drawing.Size(199, 20);
             this.SeguridadTxtContraseña.TabIndex = 4;
             this.SeguridadTxtContraseña.Tag = "";
             // 
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(131)))), ((int)(((byte)(197)))), ((int)(((byte)(190)))));
-            this.panel3.Location = new System.Drawing.Point(43, 290);
-            this.panel3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.panel3.Location = new System.Drawing.Point(32, 236);
+            this.panel3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(275, 32);
+            this.panel3.Size = new System.Drawing.Size(206, 26);
             this.panel3.TabIndex = 6;
             // 
             // SeguridadLblUsuario
@@ -143,9 +164,10 @@
             this.SeguridadLblUsuario.AutoSize = true;
             this.SeguridadLblUsuario.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SeguridadLblUsuario.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(119)))));
-            this.SeguridadLblUsuario.Location = new System.Drawing.Point(136, 262);
+            this.SeguridadLblUsuario.Location = new System.Drawing.Point(102, 213);
+            this.SeguridadLblUsuario.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.SeguridadLblUsuario.Name = "SeguridadLblUsuario";
-            this.SeguridadLblUsuario.Size = new System.Drawing.Size(75, 17);
+            this.SeguridadLblUsuario.Size = new System.Drawing.Size(62, 13);
             this.SeguridadLblUsuario.TabIndex = 2;
             this.SeguridadLblUsuario.Text = "👤 Usuario";
             // 
@@ -153,10 +175,10 @@
             // 
             this.SeguridadTxtUsuario.Cursor = System.Windows.Forms.Cursors.Default;
             this.SeguridadTxtUsuario.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(119)))));
-            this.SeguridadTxtUsuario.Location = new System.Drawing.Point(48, 229);
-            this.SeguridadTxtUsuario.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.SeguridadTxtUsuario.Location = new System.Drawing.Point(36, 186);
+            this.SeguridadTxtUsuario.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SeguridadTxtUsuario.Name = "SeguridadTxtUsuario";
-            this.SeguridadTxtUsuario.Size = new System.Drawing.Size(264, 22);
+            this.SeguridadTxtUsuario.Size = new System.Drawing.Size(199, 20);
             this.SeguridadTxtUsuario.TabIndex = 1;
             this.SeguridadTxtUsuario.Tag = "";
             // 
@@ -165,28 +187,29 @@
             this.SeguridadLbIdentificadorInicioSesion.AutoSize = true;
             this.SeguridadLbIdentificadorInicioSesion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SeguridadLbIdentificadorInicioSesion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(119)))));
-            this.SeguridadLbIdentificadorInicioSesion.Location = new System.Drawing.Point(120, 188);
+            this.SeguridadLbIdentificadorInicioSesion.Location = new System.Drawing.Point(90, 153);
+            this.SeguridadLbIdentificadorInicioSesion.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.SeguridadLbIdentificadorInicioSesion.Name = "SeguridadLbIdentificadorInicioSesion";
-            this.SeguridadLbIdentificadorInicioSesion.Size = new System.Drawing.Size(122, 20);
+            this.SeguridadLbIdentificadorInicioSesion.Size = new System.Drawing.Size(96, 15);
             this.SeguridadLbIdentificadorInicioSesion.TabIndex = 1;
             this.SeguridadLbIdentificadorInicioSesion.Text = "INICIAR SESIÓN";
             // 
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(131)))), ((int)(((byte)(197)))), ((int)(((byte)(190)))));
-            this.panel2.Location = new System.Drawing.Point(43, 224);
-            this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.panel2.Location = new System.Drawing.Point(32, 182);
+            this.panel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(275, 32);
+            this.panel2.Size = new System.Drawing.Size(206, 26);
             this.panel2.TabIndex = 3;
             // 
             // SeguridadPbLogin
             // 
             this.SeguridadPbLogin.Image = global::CapaVista_Seguridad.Properties.Resources.fondo2;
-            this.SeguridadPbLogin.Location = new System.Drawing.Point(-4, -10);
-            this.SeguridadPbLogin.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.SeguridadPbLogin.Location = new System.Drawing.Point(-3, -8);
+            this.SeguridadPbLogin.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SeguridadPbLogin.Name = "SeguridadPbLogin";
-            this.SeguridadPbLogin.Size = new System.Drawing.Size(947, 619);
+            this.SeguridadPbLogin.Size = new System.Drawing.Size(710, 503);
             this.SeguridadPbLogin.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.SeguridadPbLogin.TabIndex = 6;
             this.SeguridadPbLogin.TabStop = false;
@@ -195,38 +218,62 @@
             // 
             this.SeguridadPbLogo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(235)))), ((int)(((byte)(220)))));
             this.SeguridadPbLogo.Image = global::CapaVista_Seguridad.Properties.Resources.logo;
-            this.SeguridadPbLogo.Location = new System.Drawing.Point(77, 82);
-            this.SeguridadPbLogo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.SeguridadPbLogo.Location = new System.Drawing.Point(58, 67);
+            this.SeguridadPbLogo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SeguridadPbLogo.Name = "SeguridadPbLogo";
-            this.SeguridadPbLogo.Size = new System.Drawing.Size(225, 222);
+            this.SeguridadPbLogo.Size = new System.Drawing.Size(169, 180);
             this.SeguridadPbLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.SeguridadPbLogo.TabIndex = 7;
             this.SeguridadPbLogo.TabStop = false;
             // 
-            // SeguridadChkMostrarContra
+            // SeguridadPnlFormulario
             // 
-            this.SeguridadChkMostrarContra.AutoSize = true;
-            this.SeguridadChkMostrarContra.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SeguridadChkMostrarContra.ForeColor = System.Drawing.Color.DarkCyan;
-            this.SeguridadChkMostrarContra.Location = new System.Drawing.Point(250, 325);
-            this.SeguridadChkMostrarContra.Name = "SeguridadChkMostrarContra";
-            this.SeguridadChkMostrarContra.Size = new System.Drawing.Size(52, 24);
-            this.SeguridadChkMostrarContra.TabIndex = 16;
-            this.SeguridadChkMostrarContra.Text = "👁 ";
-            this.SeguridadChkMostrarContra.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.SeguridadChkMostrarContra.UseVisualStyleBackColor = true;
-            this.SeguridadChkMostrarContra.CheckedChanged += new System.EventHandler(this.SeguridadChkMostrarContra_CheckedChanged);
+            this.SeguridadPnlFormulario.Controls.Add(this.SeguridadCmbMDI);
+            this.SeguridadPnlFormulario.Controls.Add(this.SeguridadLbIMDI);
+            this.SeguridadPnlFormulario.Location = new System.Drawing.Point(183, 264);
+            this.SeguridadPnlFormulario.Name = "SeguridadPnlFormulario";
+            this.SeguridadPnlFormulario.Size = new System.Drawing.Size(195, 183);
+            this.SeguridadPnlFormulario.TabIndex = 8;
+            // 
+            // SeguridadLbIMDI
+            // 
+            this.SeguridadLbIMDI.AutoSize = true;
+            this.SeguridadLbIMDI.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SeguridadLbIMDI.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(119)))));
+            this.SeguridadLbIMDI.Location = new System.Drawing.Point(32, 10);
+            this.SeguridadLbIMDI.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.SeguridadLbIMDI.Name = "SeguridadLbIMDI";
+            this.SeguridadLbIMDI.Size = new System.Drawing.Size(136, 30);
+            this.SeguridadLbIMDI.TabIndex = 17;
+            this.SeguridadLbIMDI.Text = "  SELECCIONE EL MDI\r\nAL QUE DESEA ENTRAR";
+            // 
+            // SeguridadCmbMDI
+            // 
+            this.SeguridadCmbMDI.FormattingEnabled = true;
+            this.SeguridadCmbMDI.Items.AddRange(new object[] {
+            "Seguridad",
+            "Logistica",
+            "Compras",
+            "Ventas",
+            "Bancos",
+            "Contabilidad",
+            "RRHH"});
+            this.SeguridadCmbMDI.Location = new System.Drawing.Point(15, 53);
+            this.SeguridadCmbMDI.Name = "SeguridadCmbMDI";
+            this.SeguridadCmbMDI.Size = new System.Drawing.Size(164, 21);
+            this.SeguridadCmbMDI.TabIndex = 18;
             // 
             // FrmLogin
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(931, 599);
+            this.ClientSize = new System.Drawing.Size(698, 487);
+            this.Controls.Add(this.SeguridadPnlFormulario);
             this.Controls.Add(this.SeguridadPbLogo);
             this.Controls.Add(this.SeguridadPnlInterfazLogin);
             this.Controls.Add(this.SeguridadPbLogin);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmLogin";
@@ -238,6 +285,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.SeguridadPbMascota)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SeguridadPbLogin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SeguridadPbLogo)).EndInit();
+            this.SeguridadPnlFormulario.ResumeLayout(false);
+            this.SeguridadPnlFormulario.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -258,5 +307,8 @@
         private System.Windows.Forms.PictureBox SeguridadPbMascota;
         private System.Windows.Forms.PictureBox SeguridadPbLogo;
         private System.Windows.Forms.CheckBox SeguridadChkMostrarContra;
+        private System.Windows.Forms.Panel SeguridadPnlFormulario;
+        private System.Windows.Forms.ComboBox SeguridadCmbMDI;
+        private System.Windows.Forms.Label SeguridadLbIMDI;
     }
 }

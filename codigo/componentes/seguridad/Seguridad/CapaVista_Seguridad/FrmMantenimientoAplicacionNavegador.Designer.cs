@@ -1,6 +1,6 @@
 ﻿namespace CapaVista_Seguridad
 {
-    partial class FrmNavegador
+    partial class FrmMantenimientoAplicacionNavegador
     {
         /// <summary>
         /// Required designer variable.
@@ -28,24 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMantenimientoAplicacionNavegador));
             this.navegador1 = new CapaVista_Navegador.Navegador();
             this.SuspendLayout();
             // 
             // navegador1
             // 
-            this.navegador1.Location = new System.Drawing.Point(2, 26);
+            this.navegador1.Location = new System.Drawing.Point(10, 11);
+            this.navegador1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.navegador1.Name = "navegador1";
-            this.navegador1.Size = new System.Drawing.Size(1438, 111);
+            this.navegador1.Size = new System.Drawing.Size(1078, 90);
             this.navegador1.TabIndex = 0;
             // 
-            // FrmNavegador
+            // FrmMantenimientoAplicacionNavegador
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1386, 448);
+            this.ClientSize = new System.Drawing.Size(1093, 566);
             this.Controls.Add(this.navegador1);
-            this.Name = "FrmNavegador";
-            this.Text = "2001 - FrmNavegador";
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "FrmMantenimientoAplicacionNavegador";
+            this.Text = "2007 - Mantenimiento Aplicacion";
             this.ResumeLayout(false);
 
         }
