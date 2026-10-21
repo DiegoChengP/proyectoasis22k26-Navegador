@@ -1,4 +1,4 @@
-// Recursos propios de la Vista; archivos originales enlazados mediante Resources.resx.
+﻿// Recursos propios de la Vista; archivos originales enlazados mediante Resources.resx.
 namespace CapaVista_Cotizaciones.Properties
 {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
@@ -8,6 +8,8 @@ namespace CapaVista_Cotizaciones.Properties
     {
         private static global::System.Resources.ResourceManager resourceMan;
         private static global::System.Globalization.CultureInfo resourceCulture;
+        internal static global::System.Drawing.Bitmap BotonOriginalConsultarVentas
+        { get { return ((global::System.Drawing.Bitmap)(ResourceManager.GetObject("BotonOriginalConsultarVentas", resourceCulture))); } }
         internal Resources() { }
         internal static global::System.Resources.ResourceManager ResourceManager
         {

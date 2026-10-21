@@ -1,4 +1,4 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — Ventas y cuentas por cobrar
  * Jose Javier Torres Martínez | Carné: 0901-23-1091
  * Asignación: Matthew, Jose y Natali | Encargado: Matthew Andreé Juárez Xoy
@@ -97,18 +97,27 @@ namespace CapaVista_Cotizaciones
             this.VentasBtnCotEliminar = new System.Windows.Forms.Button();
             this.VentasBtnCotCerrar = new System.Windows.Forms.Button();
             this.SuspendLayout();
+            this.VentasLblCotTipoCambio = new System.Windows.Forms.Label();
+            this.VentasNudCotTipoCambio = new System.Windows.Forms.NumericUpDown();
+            this.VentasLblCotEstablecimiento = new System.Windows.Forms.Label();
+            this.VentasCboCotEstablecimiento = new System.Windows.Forms.ComboBox();
+            this.VentasBtnCotConsultar = new System.Windows.Forms.Button();
+
+            this.VentasLblUsuarioRegistro = new System.Windows.Forms.Label();
+            this.VentasCboUsuarioRegistro = new System.Windows.Forms.ComboBox();
+
             this.VentasPnlEncabezado.Location = new System.Drawing.Point(0, 0);
             this.VentasPnlEncabezado.Size = new System.Drawing.Size(1120, 74);
             this.VentasPnlEncabezado.Name = "VentasPnlEncabezado";
             this.VentasPnlEncabezado.BackColor = System.Drawing.Color.FromArgb(59, 29, 74);
             this.VentasLblTitulo.Location = new System.Drawing.Point(20, 9);
-            this.VentasLblTitulo.Size = new System.Drawing.Size(900, 34);
+            this.VentasLblTitulo.Size = new System.Drawing.Size(710, 34);
             this.VentasLblTitulo.Name = "VentasLblTitulo";
             this.VentasLblTitulo.Text = "Cotizaciones";
             this.VentasLblTitulo.Font = new System.Drawing.Font("Lucida Fax", 18F, System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic);
             this.VentasLblTitulo.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasLblSubtitulo.Location = new System.Drawing.Point(22, 47);
-            this.VentasLblSubtitulo.Size = new System.Drawing.Size(920, 22);
+            this.VentasLblSubtitulo.Size = new System.Drawing.Size(710, 22);
             this.VentasLblSubtitulo.Name = "VentasLblSubtitulo";
             this.VentasLblSubtitulo.Text = "";
             this.VentasLblSubtitulo.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
@@ -231,13 +240,13 @@ namespace CapaVista_Cotizaciones
             this.VentasTxtCotListaPrecios.ReadOnly = true;
             this.VentasTxtCotListaPrecios.BackColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasLblCotDireccionEtiqueta.Location = new System.Drawing.Point(440, 68);
-            this.VentasLblCotDireccionEtiqueta.Size = new System.Drawing.Size(628, 21);
+            this.VentasLblCotDireccionEtiqueta.Size = new System.Drawing.Size(180, 21);
             this.VentasLblCotDireccionEtiqueta.Name = "VentasLblCotDireccionEtiqueta";
             this.VentasLblCotDireccionEtiqueta.Text = "Dirección";
             this.VentasLblCotDireccionEtiqueta.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Regular);
             this.VentasLblCotDireccionEtiqueta.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
             this.VentasTxtCotDireccion.Location = new System.Drawing.Point(440, 91);
-            this.VentasTxtCotDireccion.Size = new System.Drawing.Size(628, 28);
+            this.VentasTxtCotDireccion.Size = new System.Drawing.Size(180, 28);
             this.VentasTxtCotDireccion.Name = "VentasTxtCotDireccion";
             this.VentasTtpAcciones.SetToolTip(this.VentasTxtCotListaPrecios, "El cliente determina la lista; sus precios se conservan en la cotización durante su vigencia.");
             this.VentasPnlCotProducto.Location = new System.Drawing.Point(16, 313);
@@ -556,6 +565,53 @@ namespace CapaVista_Cotizaciones
             this.VentasDtpCotFecha.ValueChanged += new System.EventHandler(this.VentasCotVigencia_Changed);
             this.VentasDtpCotVigencia.ValueChanged += new System.EventHandler(this.VentasCotVigencia_Changed);
             this.VentasCboCotEstado.SelectedIndexChanged += new System.EventHandler(this.VentasCotVigencia_Changed);
+            this.VentasLblUsuarioRegistro.Text = "Responsable del registro";
+            this.VentasLblUsuarioRegistro.Name = "VentasLblUsuarioRegistro";
+            this.VentasLblUsuarioRegistro.Location = new System.Drawing.Point(744, 8);
+            this.VentasLblUsuarioRegistro.Size = new System.Drawing.Size(220, 20);
+            this.VentasLblUsuarioRegistro.ForeColor = System.Drawing.Color.White;
+            this.VentasLblUsuarioRegistro.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.VentasCboUsuarioRegistro.Name = "VentasCboUsuarioRegistro";
+            this.VentasCboUsuarioRegistro.Location = new System.Drawing.Point(744, 31);
+            this.VentasCboUsuarioRegistro.Size = new System.Drawing.Size(220, 28);
+            this.VentasCboUsuarioRegistro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VentasCboUsuarioRegistro.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.VentasPnlEncabezado.Controls.Add(this.VentasLblUsuarioRegistro);
+            this.VentasPnlEncabezado.Controls.Add(this.VentasCboUsuarioRegistro);
+            this.VentasLblCotTipoCambio.Text = "Tipo de cambio";
+            this.VentasLblCotTipoCambio.Location = new System.Drawing.Point(638, 68);
+            this.VentasLblCotTipoCambio.Size = new System.Drawing.Size(238, 21);
+            this.VentasLblCotTipoCambio.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
+            this.VentasNudCotTipoCambio.Name = "VentasNudCotTipoCambio";
+            this.VentasNudCotTipoCambio.Location = new System.Drawing.Point(638, 91);
+            this.VentasNudCotTipoCambio.Size = new System.Drawing.Size(238, 28);
+            this.VentasNudCotTipoCambio.DecimalPlaces = 6;
+            this.VentasNudCotTipoCambio.Maximum = 1000000M;
+            this.VentasNudCotTipoCambio.Minimum = 0.000001M;
+            this.VentasNudCotTipoCambio.Value = 1M;
+            this.VentasLblCotEstablecimiento.Text = "Emisor de factura";
+            this.VentasLblCotEstablecimiento.Location = new System.Drawing.Point(894, 68);
+            this.VentasLblCotEstablecimiento.Size = new System.Drawing.Size(174, 21);
+            this.VentasLblCotEstablecimiento.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
+            this.VentasCboCotEstablecimiento.Name = "VentasCboCotEstablecimiento";
+            this.VentasCboCotEstablecimiento.Location = new System.Drawing.Point(894, 91);
+            this.VentasCboCotEstablecimiento.Size = new System.Drawing.Size(174, 28);
+            this.VentasCboCotEstablecimiento.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VentasPnlCotCliente.Controls.Add(this.VentasLblCotTipoCambio);
+            this.VentasPnlCotCliente.Controls.Add(this.VentasNudCotTipoCambio);
+            this.VentasPnlCotCliente.Controls.Add(this.VentasLblCotEstablecimiento);
+            this.VentasPnlCotCliente.Controls.Add(this.VentasCboCotEstablecimiento);
+            this.VentasBtnCotConsultar.Name = "VentasBtnCotConsultar";
+            this.VentasBtnCotConsultar.Location = new System.Drawing.Point(598, 582);
+            this.VentasBtnCotConsultar.Size = new System.Drawing.Size(58, 64);
+            this.VentasBtnCotConsultar.BackgroundImage = global::CapaVista_Cotizaciones.Properties.Resources.BotonOriginalConsultarVentas;
+            this.VentasBtnCotConsultar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.VentasBtnCotConsultar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.VentasBtnCotConsultar.FlatAppearance.BorderSize = 0;
+            this.VentasBtnCotConsultar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
+            this.VentasBtnCotConsultar.AccessibleName = "Consultar cotizacion por numero";
+            this.VentasTtpAcciones.SetToolTip(this.VentasBtnCotConsultar, "Consultar por numero; tambien puede presionar Enter en el numero");
+            this.Controls.Add(this.VentasBtnCotConsultar);
             this.Controls.Add(this.VentasPnlEncabezado);
             this.VentasPnlEncabezado.Controls.Add(this.VentasLblTitulo);
             this.VentasPnlEncabezado.Controls.Add(this.VentasLblSubtitulo);
@@ -633,6 +689,13 @@ namespace CapaVista_Cotizaciones
         }
         #endregion
         private System.Windows.Forms.ToolTip VentasTtpAcciones;
+        private System.Windows.Forms.Label VentasLblUsuarioRegistro;
+        private System.Windows.Forms.ComboBox VentasCboUsuarioRegistro;
+        private System.Windows.Forms.Label VentasLblCotTipoCambio;
+        private System.Windows.Forms.NumericUpDown VentasNudCotTipoCambio;
+        private System.Windows.Forms.Label VentasLblCotEstablecimiento;
+        private System.Windows.Forms.ComboBox VentasCboCotEstablecimiento;
+        private System.Windows.Forms.Button VentasBtnCotConsultar;
         private System.Windows.Forms.Panel VentasPnlEncabezado;
         private System.Windows.Forms.Label VentasLblTitulo;
         private System.Windows.Forms.Label VentasLblSubtitulo;

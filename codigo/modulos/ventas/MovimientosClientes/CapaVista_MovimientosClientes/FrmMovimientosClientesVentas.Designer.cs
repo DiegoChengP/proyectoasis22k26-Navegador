@@ -1,4 +1,4 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — Ventas y cuentas por cobrar
  * Jose Javier Torres Martínez | Carné: 0901-23-1091
  * Fecha de actualización: 17/10/2026
@@ -117,7 +117,7 @@ namespace CapaVista_MovimientosClientes
             this.VentasLblEstadoDocumentoEtiqueta = new System.Windows.Forms.Label();
             this.VentasCboEstadoDocumento = new System.Windows.Forms.ComboBox();
             this.VentasLblOrigenDocumentoEtiqueta = new System.Windows.Forms.Label();
-            this.VentasTxtOrigenDocumento = new System.Windows.Forms.TextBox();
+            this.VentasCboEstablecimientoDocumento = new System.Windows.Forms.ComboBox();
             this.VentasLblDescripcionDocumentoEtiqueta = new System.Windows.Forms.Label();
             this.VentasTxtDescripcionDocumento = new System.Windows.Forms.TextBox();
             this.VentasLblDocumentoSinDetalle = new System.Windows.Forms.Label();
@@ -230,18 +230,21 @@ namespace CapaVista_MovimientosClientes
             this.VentasBtnCerrar = new System.Windows.Forms.Button();
             this.VentasLblEtapaBancos = new System.Windows.Forms.Label();
             this.SuspendLayout();
+            this.VentasLblUsuarioRegistro = new System.Windows.Forms.Label();
+            this.VentasCboUsuarioRegistro = new System.Windows.Forms.ComboBox();
+
             this.VentasPnlEncabezado.Location = new System.Drawing.Point(0, 0);
             this.VentasPnlEncabezado.Size = new System.Drawing.Size(1120, 74);
             this.VentasPnlEncabezado.Name = "VentasPnlEncabezado";
             this.VentasPnlEncabezado.BackColor = System.Drawing.Color.FromArgb(59, 29, 74);
             this.VentasLblTitulo.Location = new System.Drawing.Point(20, 9);
-            this.VentasLblTitulo.Size = new System.Drawing.Size(900, 34);
+            this.VentasLblTitulo.Size = new System.Drawing.Size(710, 34);
             this.VentasLblTitulo.Name = "VentasLblTitulo";
             this.VentasLblTitulo.Text = "Movimientos de clientes y pagos";
             this.VentasLblTitulo.Font = new System.Drawing.Font("Lucida Fax", 18F, System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic);
             this.VentasLblTitulo.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasLblSubtitulo.Location = new System.Drawing.Point(22, 47);
-            this.VentasLblSubtitulo.Size = new System.Drawing.Size(920, 22);
+            this.VentasLblSubtitulo.Size = new System.Drawing.Size(710, 22);
             this.VentasLblSubtitulo.Name = "VentasLblSubtitulo";
             this.VentasLblSubtitulo.Text = "";
             this.VentasLblSubtitulo.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
@@ -602,15 +605,15 @@ namespace CapaVista_MovimientosClientes
             this.VentasLblOrigenDocumentoEtiqueta.Location = new System.Drawing.Point(332, 162);
             this.VentasLblOrigenDocumentoEtiqueta.Size = new System.Drawing.Size(230, 21);
             this.VentasLblOrigenDocumentoEtiqueta.Name = "VentasLblOrigenDocumentoEtiqueta";
-            this.VentasLblOrigenDocumentoEtiqueta.Text = "Origen";
+            this.VentasLblOrigenDocumentoEtiqueta.Text = "Establecimiento emisor";
             this.VentasLblOrigenDocumentoEtiqueta.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Regular);
             this.VentasLblOrigenDocumentoEtiqueta.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasTxtOrigenDocumento.Location = new System.Drawing.Point(332, 185);
-            this.VentasTxtOrigenDocumento.Size = new System.Drawing.Size(230, 28);
-            this.VentasTxtOrigenDocumento.Name = "VentasTxtOrigenDocumento";
-            this.VentasTxtOrigenDocumento.ReadOnly = true;
-            this.VentasTxtOrigenDocumento.BackColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasTxtOrigenDocumento.Text = "Cuentas por cobrar";
+            this.VentasCboEstablecimientoDocumento.Location = new System.Drawing.Point(332, 185);
+            this.VentasCboEstablecimientoDocumento.Size = new System.Drawing.Size(230, 28);
+            this.VentasCboEstablecimientoDocumento.Name = "VentasCboEstablecimientoDocumento";
+            this.VentasCboEstablecimientoDocumento.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VentasCboEstablecimientoDocumento.BackColor = System.Drawing.Color.FromArgb(248, 245, 249);
+
             this.VentasLblDescripcionDocumentoEtiqueta.Location = new System.Drawing.Point(12, 237);
             this.VentasLblDescripcionDocumentoEtiqueta.Size = new System.Drawing.Size(1042, 21);
             this.VentasLblDescripcionDocumentoEtiqueta.Name = "VentasLblDescripcionDocumentoEtiqueta";
@@ -662,7 +665,7 @@ namespace CapaVista_MovimientosClientes
             this.VentasCboFormaPago.Name = "VentasCboFormaPago";
             this.VentasCboFormaPago.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.VentasCboFormaPago.Items.AddRange(new object[] { "Efectivo", "Transferencia", "Depósito", "Cheque", "Tarjeta" });
-            this.VentasTtpAcciones.SetToolTip(this.VentasCboFormaPago, "Catálogo compartido proporcionado por Bancos; opciones ilustrativas del prototipo.");
+            this.VentasTtpAcciones.SetToolTip(this.VentasCboFormaPago, "Forma de pago del recibo. Para medios distintos de efectivo se requiere referencia.");
             this.VentasLblReferenciaPagoEtiqueta.Location = new System.Drawing.Point(706, 10);
             this.VentasLblReferenciaPagoEtiqueta.Size = new System.Drawing.Size(348, 21);
             this.VentasLblReferenciaPagoEtiqueta.Name = "VentasLblReferenciaPagoEtiqueta";
@@ -1317,6 +1320,19 @@ namespace CapaVista_MovimientosClientes
             this.VentasLblEtapaBancos.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
             this.VentasTbcMovimientos.SelectedIndexChanged += new System.EventHandler(this.VentasTbcMovimientos_SelectedIndexChanged);
             this.VentasCboTipoDocumento.SelectedIndexChanged += new System.EventHandler(this.VentasCboTipoDocumento_SelectedIndexChanged);
+            this.VentasLblUsuarioRegistro.Text = "Responsable del registro";
+            this.VentasLblUsuarioRegistro.Name = "VentasLblUsuarioRegistro";
+            this.VentasLblUsuarioRegistro.Location = new System.Drawing.Point(744, 8);
+            this.VentasLblUsuarioRegistro.Size = new System.Drawing.Size(220, 20);
+            this.VentasLblUsuarioRegistro.ForeColor = System.Drawing.Color.White;
+            this.VentasLblUsuarioRegistro.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.VentasCboUsuarioRegistro.Name = "VentasCboUsuarioRegistro";
+            this.VentasCboUsuarioRegistro.Location = new System.Drawing.Point(744, 31);
+            this.VentasCboUsuarioRegistro.Size = new System.Drawing.Size(220, 28);
+            this.VentasCboUsuarioRegistro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VentasCboUsuarioRegistro.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.VentasPnlEncabezado.Controls.Add(this.VentasLblUsuarioRegistro);
+            this.VentasPnlEncabezado.Controls.Add(this.VentasCboUsuarioRegistro);
             this.Controls.Add(this.VentasPnlEncabezado);
             this.VentasPnlEncabezado.Controls.Add(this.VentasLblTitulo);
             this.VentasPnlEncabezado.Controls.Add(this.VentasLblSubtitulo);
@@ -1378,7 +1394,7 @@ namespace CapaVista_MovimientosClientes
             this.VentasTbpDocumento.Controls.Add(this.VentasLblEstadoDocumentoEtiqueta);
             this.VentasTbpDocumento.Controls.Add(this.VentasCboEstadoDocumento);
             this.VentasTbpDocumento.Controls.Add(this.VentasLblOrigenDocumentoEtiqueta);
-            this.VentasTbpDocumento.Controls.Add(this.VentasTxtOrigenDocumento);
+            this.VentasTbpDocumento.Controls.Add(this.VentasCboEstablecimientoDocumento);
             this.VentasTbpDocumento.Controls.Add(this.VentasLblDescripcionDocumentoEtiqueta);
             this.VentasTbpDocumento.Controls.Add(this.VentasTxtDescripcionDocumento);
             this.VentasTbpDocumento.Controls.Add(this.VentasLblDocumentoSinDetalle);
@@ -1481,6 +1497,8 @@ namespace CapaVista_MovimientosClientes
         }
         #endregion
         private System.Windows.Forms.ToolTip VentasTtpAcciones;
+        private System.Windows.Forms.Label VentasLblUsuarioRegistro;
+        private System.Windows.Forms.ComboBox VentasCboUsuarioRegistro;
         private System.Windows.Forms.Panel VentasPnlEncabezado;
         private System.Windows.Forms.Label VentasLblTitulo;
         private System.Windows.Forms.Label VentasLblSubtitulo;
@@ -1550,7 +1568,7 @@ namespace CapaVista_MovimientosClientes
         private System.Windows.Forms.Label VentasLblEstadoDocumentoEtiqueta;
         private System.Windows.Forms.ComboBox VentasCboEstadoDocumento;
         private System.Windows.Forms.Label VentasLblOrigenDocumentoEtiqueta;
-        private System.Windows.Forms.TextBox VentasTxtOrigenDocumento;
+        private System.Windows.Forms.ComboBox VentasCboEstablecimientoDocumento;
         private System.Windows.Forms.Label VentasLblDescripcionDocumentoEtiqueta;
         private System.Windows.Forms.TextBox VentasTxtDescripcionDocumento;
         private System.Windows.Forms.Label VentasLblDocumentoSinDetalle;

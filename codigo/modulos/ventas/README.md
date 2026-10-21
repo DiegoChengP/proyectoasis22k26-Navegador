@@ -15,7 +15,9 @@ Cada componente tiene una carpeta, tres proyectos MVC y una solución de Visual 
 | Pedidos | `Pedidos/Pedidos.sln` | Las tres capas existentes de Pedidos |
 | Ventas y CxC | `Ventas y CxC/Ventas y CxC.sln` | MDI y capas comunes de Ventas |
 
-En cada componente, Vista referencia Controlador y Controlador referencia Modelo. Las capas nuevas de los formularios que eran prototipos quedan preparadas para implementar su lógica posteriormente; esta reorganización no agrega operaciones de negocio.
+En cada componente, Vista referencia Controlador y Controlador referencia Modelo. Movimientos de clientes/Pagos, Cotizaciones y Cierre ya tienen consultas, validaciones y persistencia transaccional. Los demás componentes conservan su implementación actual.
+
+La instalación de base de datos, los requisitos de catálogos y los puntos de conexión con Bancos y Contabilidad se describen en **`FUNCIONALIDAD_VENTAS.md`**.
 
 ## Ejecutar el sistema
 

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — Ventas y cuentas por cobrar
  * Jose Javier Torres Martínez | Carné: 0901-23-1091
  * Asignación: Todos | Roger Herrera 0901-23-2429; Natali Montenegro 0901-23-10017; Matthew Juárez 0901-23-4250; Julio Rosales 0901-23-1426; Diego Cheng 0901-22-8091
@@ -56,7 +56,7 @@ namespace CapaVista_CierreMovimientos
             this.VentasNudAnioCierre = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.VentasNudAnioCierre)).BeginInit();
             this.VentasLblResponsableCierreEtiqueta = new System.Windows.Forms.Label();
-            this.VentasTxtResponsableCierre = new System.Windows.Forms.TextBox();
+            this.VentasCboMonedaCierre = new System.Windows.Forms.ComboBox();
             this.VentasLblEstadoCierreEtiqueta = new System.Windows.Forms.Label();
             this.VentasTxtEstadoCierre = new System.Windows.Forms.TextBox();
             this.VentasLblDesdeCierreEtiqueta = new System.Windows.Forms.Label();
@@ -146,18 +146,21 @@ namespace CapaVista_CierreMovimientos
             this.VentasBtnCerrar = new System.Windows.Forms.Button();
             this.VentasLblCierreHistorico = new System.Windows.Forms.Label();
             this.SuspendLayout();
+            this.VentasLblUsuarioRegistro = new System.Windows.Forms.Label();
+            this.VentasCboUsuarioRegistro = new System.Windows.Forms.ComboBox();
+
             this.VentasPnlEncabezado.Location = new System.Drawing.Point(0, 0);
             this.VentasPnlEncabezado.Size = new System.Drawing.Size(1120, 74);
             this.VentasPnlEncabezado.Name = "VentasPnlEncabezado";
             this.VentasPnlEncabezado.BackColor = System.Drawing.Color.FromArgb(59, 29, 74);
             this.VentasLblTitulo.Location = new System.Drawing.Point(20, 9);
-            this.VentasLblTitulo.Size = new System.Drawing.Size(900, 34);
+            this.VentasLblTitulo.Size = new System.Drawing.Size(710, 34);
             this.VentasLblTitulo.Name = "VentasLblTitulo";
             this.VentasLblTitulo.Text = "Cierre de movimientos";
             this.VentasLblTitulo.Font = new System.Drawing.Font("Lucida Fax", 18F, System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic);
             this.VentasLblTitulo.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasLblSubtitulo.Location = new System.Drawing.Point(22, 47);
-            this.VentasLblSubtitulo.Size = new System.Drawing.Size(920, 22);
+            this.VentasLblSubtitulo.Size = new System.Drawing.Size(710, 22);
             this.VentasLblSubtitulo.Name = "VentasLblSubtitulo";
             this.VentasLblSubtitulo.Text = "";
             this.VentasLblSubtitulo.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
@@ -218,14 +221,14 @@ namespace CapaVista_CierreMovimientos
             this.VentasLblResponsableCierreEtiqueta.Location = new System.Drawing.Point(576, 7);
             this.VentasLblResponsableCierreEtiqueta.Size = new System.Drawing.Size(284, 21);
             this.VentasLblResponsableCierreEtiqueta.Name = "VentasLblResponsableCierreEtiqueta";
-            this.VentasLblResponsableCierreEtiqueta.Text = "Responsable";
+            this.VentasLblResponsableCierreEtiqueta.Text = "Moneda del cierre";
             this.VentasLblResponsableCierreEtiqueta.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Regular);
             this.VentasLblResponsableCierreEtiqueta.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasTxtResponsableCierre.Location = new System.Drawing.Point(576, 30);
-            this.VentasTxtResponsableCierre.Size = new System.Drawing.Size(284, 28);
-            this.VentasTxtResponsableCierre.Name = "VentasTxtResponsableCierre";
-            this.VentasTxtResponsableCierre.ReadOnly = true;
-            this.VentasTxtResponsableCierre.BackColor = System.Drawing.Color.FromArgb(248, 245, 249);
+            this.VentasCboMonedaCierre.Location = new System.Drawing.Point(576, 30);
+            this.VentasCboMonedaCierre.Size = new System.Drawing.Size(284, 28);
+            this.VentasCboMonedaCierre.Name = "VentasCboMonedaCierre";
+            this.VentasCboMonedaCierre.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VentasCboMonedaCierre.BackColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasLblEstadoCierreEtiqueta.Location = new System.Drawing.Point(878, 7);
             this.VentasLblEstadoCierreEtiqueta.Size = new System.Drawing.Size(190, 21);
             this.VentasLblEstadoCierreEtiqueta.Name = "VentasLblEstadoCierreEtiqueta";
@@ -812,6 +815,19 @@ namespace CapaVista_CierreMovimientos
             this.VentasCboTipoCierre.SelectedIndexChanged += new System.EventHandler(this.VentasPeriodoCierre_Changed);
             this.VentasCboMesCierre.SelectedIndexChanged += new System.EventHandler(this.VentasPeriodoCierre_Changed);
             this.VentasNudAnioCierre.ValueChanged += new System.EventHandler(this.VentasPeriodoCierre_Changed);
+            this.VentasLblUsuarioRegistro.Text = "Responsable del registro";
+            this.VentasLblUsuarioRegistro.Name = "VentasLblUsuarioRegistro";
+            this.VentasLblUsuarioRegistro.Location = new System.Drawing.Point(744, 8);
+            this.VentasLblUsuarioRegistro.Size = new System.Drawing.Size(220, 20);
+            this.VentasLblUsuarioRegistro.ForeColor = System.Drawing.Color.White;
+            this.VentasLblUsuarioRegistro.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.VentasCboUsuarioRegistro.Name = "VentasCboUsuarioRegistro";
+            this.VentasCboUsuarioRegistro.Location = new System.Drawing.Point(744, 31);
+            this.VentasCboUsuarioRegistro.Size = new System.Drawing.Size(220, 28);
+            this.VentasCboUsuarioRegistro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VentasCboUsuarioRegistro.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.VentasPnlEncabezado.Controls.Add(this.VentasLblUsuarioRegistro);
+            this.VentasPnlEncabezado.Controls.Add(this.VentasCboUsuarioRegistro);
             this.Controls.Add(this.VentasPnlEncabezado);
             this.VentasPnlEncabezado.Controls.Add(this.VentasLblTitulo);
             this.VentasPnlEncabezado.Controls.Add(this.VentasLblSubtitulo);
@@ -824,7 +840,7 @@ namespace CapaVista_CierreMovimientos
             this.VentasPnlPeriodo.Controls.Add(this.VentasLblAnioCierreEtiqueta);
             this.VentasPnlPeriodo.Controls.Add(this.VentasNudAnioCierre);
             this.VentasPnlPeriodo.Controls.Add(this.VentasLblResponsableCierreEtiqueta);
-            this.VentasPnlPeriodo.Controls.Add(this.VentasTxtResponsableCierre);
+            this.VentasPnlPeriodo.Controls.Add(this.VentasCboMonedaCierre);
             this.VentasPnlPeriodo.Controls.Add(this.VentasLblEstadoCierreEtiqueta);
             this.VentasPnlPeriodo.Controls.Add(this.VentasTxtEstadoCierre);
             this.VentasPnlPeriodo.Controls.Add(this.VentasLblDesdeCierreEtiqueta);
@@ -908,6 +924,8 @@ namespace CapaVista_CierreMovimientos
         }
         #endregion
         private System.Windows.Forms.ToolTip VentasTtpAcciones;
+        private System.Windows.Forms.Label VentasLblUsuarioRegistro;
+        private System.Windows.Forms.ComboBox VentasCboUsuarioRegistro;
         private System.Windows.Forms.Panel VentasPnlEncabezado;
         private System.Windows.Forms.Label VentasLblTitulo;
         private System.Windows.Forms.Label VentasLblSubtitulo;
@@ -920,7 +938,7 @@ namespace CapaVista_CierreMovimientos
         private System.Windows.Forms.Label VentasLblAnioCierreEtiqueta;
         private System.Windows.Forms.NumericUpDown VentasNudAnioCierre;
         private System.Windows.Forms.Label VentasLblResponsableCierreEtiqueta;
-        private System.Windows.Forms.TextBox VentasTxtResponsableCierre;
+        private System.Windows.Forms.ComboBox VentasCboMonedaCierre;
         private System.Windows.Forms.Label VentasLblEstadoCierreEtiqueta;
         private System.Windows.Forms.TextBox VentasTxtEstadoCierre;
         private System.Windows.Forms.Label VentasLblDesdeCierreEtiqueta;

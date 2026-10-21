@@ -1,8 +1,8 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — Ventas y cuentas por cobrar
  * Jose Javier Torres Martínez | Carné: 0901-23-1091
  * Fecha de actualización: 17/10/2026
- * Propósito: Unificar el prototipo visual de CxC, recepción de pagos y preparación de depósitos.
+ * Propósito: Operar CxC, registrar documentos y recibos y preparar depósitos con persistencia transaccional.
  */
 using System;
 using System.Windows.Forms;
@@ -14,6 +14,7 @@ namespace CapaVista_MovimientosClientes
         public FrmMovimientosClientesVentas()
         {
             InitializeComponent();
+            VentasMetConectarEventos();
         }
 
         // Los dos accesos del MDI comparten los mismos controles y el mismo diseño.
@@ -26,28 +27,27 @@ namespace CapaVista_MovimientosClientes
         private void VentasTbcMovimientos_SelectedIndexChanged(object sender, EventArgs e)
         {
             VentasMetActualizarContexto();
+            if (!_Cargando && _Inicializado) VentasPresentacion.ClsVistaVentas.Ejecutar(this, VentasMetConsultarActual);
         }
 
         private void VentasMetActualizarContexto()
         {
             // Un depósito agrupa recibos de distintos clientes; no hereda el filtro individual.
-            bool EsConsulta = VentasTbcMovimientos.SelectedTab == VentasTbpConsultaRecibos;
             VentasPnlCliente.Enabled = VentasTbcMovimientos.SelectedIndex < 3;
-            VentasBtnIngresar.Enabled = !EsConsulta;
-            VentasBtnGuardar.Enabled = !EsConsulta;
-            VentasBtnCancelar.Enabled = !EsConsulta;
+            VentasMetRefrescarBotones();
         }
 
         private void VentasCboTipoDocumento_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Presenta el efecto del tipo elegido; no registra ni calcula movimientos.
+            // Presenta el efecto y los campos requeridos del documento.
             int Tipo = VentasCboTipoDocumento.SelectedIndex;
+            VentasCboEstablecimientoDocumento.Enabled = Tipo == 0;
+            VentasTxtFacturaReferencia.Enabled = Tipo > 0;
             VentasTxtNaturalezaDocumento.Text = Tipo < 0 ? string.Empty :
                 (Tipo == 1 || Tipo == 4 ? "Abono - disminuye la deuda" : "Cargo - aumenta la deuda");
         }
 
-        // Punto de entrada visual para la consulta integrada solicitada por Bancos.
-        // Recibe referencias para la pantalla; no consulta ni confirma operaciones bancarias.
+        // Entrada de consulta de recibos y depósitos para la integración con Bancos.
         public void VentasMetMostrarConsultaRecibos(string ReferenciaRecibo, string CodigoDeposito)
         {
             VentasTxtConsultaRecibo.Text = ReferenciaRecibo ?? string.Empty;

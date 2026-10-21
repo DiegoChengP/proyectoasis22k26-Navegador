@@ -1,9 +1,9 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — Ventas y cuentas por cobrar
 
  * Jose Javier Torres Martínez | Carné: 0901-23-1091
  * Fecha de actualización: 17/10/2026
- * Propósito: Prototipo visual estandarizado de cotizaciones, sin lógica de negocio.
+ * Propósito: Cotizaciones con precios históricos, validaciones y conversión documental.
  */
 using System;
 using System.Windows.Forms;
@@ -15,6 +15,7 @@ namespace CapaVista_Cotizaciones
         public FrmCotizacionVentas()
         {
             InitializeComponent();
+            VentasMetConectarEventos();
             VentasCboCotEstado.SelectedIndex = 0;
             VentasMetMostrarVigencia();
         }
@@ -26,7 +27,7 @@ namespace CapaVista_Cotizaciones
 
         private void VentasMetMostrarVigencia()
         {
-            // Estado de la vista: no convierte documentos ni modifica precios o inventarios.
+            // La autorización definitiva también se verifica en Modelo al guardar o convertir.
             bool FechaValida = VentasDtpCotVigencia.Value.Date >= DateTime.Today &&
                 VentasDtpCotVigencia.Value.Date >= VentasDtpCotFecha.Value.Date;
             bool Vigente = FechaValida && VentasCboCotEstado.Text == "Vigente";
@@ -35,6 +36,7 @@ namespace CapaVista_Cotizaciones
             VentasLblCotVigencia.Text = !FechaValida || VentasCboCotEstado.Text == "Vencida"
                 ? "Cotización vencida o fechas no válidas: genere una nueva con los precios actuales."
                 : "Una cotización vigente conserva sus precios. Si vence, se genera una nueva con los precios actuales.";
+            VentasMetActualizarEdicion();
         }
     }
 }
