@@ -124,8 +124,6 @@ namespace CapaModelo_Contabilidad.Repositorios
             return MapearPolizasDesdeTabla(tabla);
         }
 
-
-
         private List<ClsPolizaContabilidad> MapearPolizasDesdeTabla(DataTable tabla)
         {
             var diccionarioPolizas = new Dictionary<int, ClsPolizaContabilidad>();

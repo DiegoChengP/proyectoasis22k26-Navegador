@@ -44,17 +44,17 @@ namespace CapaControlador_Contabilidad
         /// <summary>
         /// Retorna el DataTable consolidado listo para enlazar directamente a un DataGridView.
         /// </summary>
-        public DataTable ContabilidadFuncObtenerTodasLasPolizasTabla()
-        {
-            try
-            {
-                return _repositorioPolizas.ContabilidadFuncObtenerPolizasComoTabla();
-            }
-            catch (Exception)
-            {
-                return new DataTable();
-            }
-        }
+        //public DataTable ContabilidadFuncObtenerTodasLasPolizasTabla()
+        //{
+        //    try
+        //    {
+        //        return _repositorioPolizas.ContabilidadFuncObtenerPolizasComoTabla();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return new DataTable();
+        //    }
+        //}
 
         // =========================================================================
         // 2. INSERT ALL (Cabecera + N Líneas en Transacción)
