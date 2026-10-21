@@ -2,11 +2,13 @@
 :: BUILD CONTABILIDAD - VISUAL STUDIO 2022
 :: ============================================================================
 :: Compila Modelo -> Controlador -> Vista -> Ejecucion, con referencias DLL.
-:: Contabilidad abre directamente en el MDI (sin login ni splash).
+:: Contabilidad usa el login y la pantalla de carga de Seguridad.
 ::
-:: REQUISITO: CapaVista_Contabilidad referencia CapaVista_Navegador.dll por
-:: HintPath (igual que CapaVista_Seguridad), por lo que primero hay que haber
-:: ejecutado codigo\componentes\navegador\build_navegador.bat al menos una vez.
+:: REQUISITO: CapaControlador_Contabilidad referencia CapaControlador_Seguridad.dll y el
+:: ejecutable usa CapaVista_Seguridad.dll (login y MDI), por lo que primero hay que
+:: haber ejecutado codigo\componentes\seguridad\build_Seguridad_GLOBAL.bat, que
+:: tambien compila las tres capas de Contabilidad (Seguridad referencia su Vista).
+:: Este .bat sirve para recompilar solo Contabilidad y su ejecutable.
 ::
 :: Salida: Ejecucion_Contabilidad\Ejecucion_Contabilidad\bin\Debug\Ejecucion_Contabilidad.exe
 :: ============================================================================
@@ -23,9 +25,14 @@ if not exist "%MSBUILD_PATH%" (
     echo         Ajusta MSBUILD_PATH al inicio de este archivo.
     goto FIN_ERROR
 )
-if not exist "%COMP%\navegador\Navegador\CapaVista_Navegador\bin\Debug\CapaVista_Navegador.dll" (
-    echo [ERROR] Falta CapaVista_Navegador.dll. Ejecuta primero:
-    echo         %COMP%\navegador\build_navegador.bat
+if not exist "%COMP%\seguridad\Seguridad\CapaControlador_Seguridad\bin\Debug\CapaControlador_Seguridad.dll" (
+    echo [ERROR] Falta CapaControlador_Seguridad.dll. Ejecuta primero:
+    echo         %COMP%\seguridad\build_Seguridad_GLOBAL.bat
+    goto FIN_ERROR
+)
+if not exist "%COMP%\seguridad\Seguridad\CapaVista_Seguridad\bin\Debug\CapaVista_Seguridad.dll" (
+    echo [ERROR] Falta CapaVista_Seguridad.dll. Ejecuta primero:
+    echo         %COMP%\seguridad\build_Seguridad_GLOBAL.bat
     goto FIN_ERROR
 )
 

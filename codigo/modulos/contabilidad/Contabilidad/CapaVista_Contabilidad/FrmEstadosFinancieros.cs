@@ -22,10 +22,16 @@ namespace CapaVista_Contabilidad
         // Errores por campo.
         private readonly ClsValidacionContabilidad _Validacion = new ClsValidacionContabilidad();
 
-        // Prepara la ventana y sus eventos.
-        public FrmEstadosFinancieros()
+        // Constructor para el diseñador y las pruebas: todos los permisos.
+        public FrmEstadosFinancieros() : this(ClsPermisosPantallaContabilidad.Total)
+        {
+        }
+
+        // Abre la ventana con los permisos que dio Seguridad.
+        public FrmEstadosFinancieros(ClsPermisosPantallaContabilidad Permisos)
         {
             InitializeComponent();
+            ContabilidadMetAplicarPermisos(Permisos);
             ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Estados financieros", new Size(1180, 688));
             _Paginacion = new ClsPaginacionContabilidad(ContabilidadDgvResultado);
             _Validacion.ContabilidadMetObligatorio(ContabilidadDtpDesde);
@@ -37,6 +43,12 @@ namespace CapaVista_Contabilidad
             ContabilidadDtpDesde.ValueChanged += (Remitente, Argumentos) => ContabilidadMetInvalidar();
             ContabilidadDtpHasta.ValueChanged += (Remitente, Argumentos) => ContabilidadMetInvalidar();
             ContabilidadMetConsultar();
+        }
+
+        // Deshabilita los botones que el usuario no puede usar.
+        private void ContabilidadMetAplicarPermisos(ClsPermisosPantallaContabilidad Permisos)
+        {
+            // Solo consulta: el acceso ya lo valida el MDI.
         }
 
         // Retira el informe cuando cambian los filtros.

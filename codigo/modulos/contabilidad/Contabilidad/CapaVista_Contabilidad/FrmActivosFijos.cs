@@ -24,10 +24,16 @@ namespace CapaVista_Contabilidad
         // Evita marcar cambios mientras se carga.
         private bool _CargandoDatos;
 
-        // Prepara la ventana y sus eventos.
-        public FrmActivosFijos()
+        // Constructor para el diseñador y las pruebas: todos los permisos.
+        public FrmActivosFijos() : this(ClsPermisosPantallaContabilidad.Total)
+        {
+        }
+
+        // Abre la ventana con los permisos que dio Seguridad.
+        public FrmActivosFijos(ClsPermisosPantallaContabilidad Permisos)
         {
             InitializeComponent();
+            ContabilidadMetAplicarPermisos(Permisos);
             ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Activos fijos", new Size(1180, 688));
             _Paginacion = new ClsPaginacionContabilidad(ContabilidadDgvCatalogo);
             foreach (Control Campo in new Control[] { ContabilidadTxtDescripcion, ContabilidadTxtCentro, ContabilidadCboModulo,
@@ -56,6 +62,14 @@ namespace CapaVista_Contabilidad
                 else Campo.TextChanged += ContabilidadMetCambiarFicha;
             }
             ContabilidadMetCargar(true);
+        }
+
+        // Deshabilita los botones que el usuario no puede usar.
+        private void ContabilidadMetAplicarPermisos(ClsPermisosPantallaContabilidad Permisos)
+        {
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnNueva, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnEjemplo, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnGuardar, Permisos.PuedeInsertar);
         }
 
         // Habilita Guardar al cambiar la ficha.

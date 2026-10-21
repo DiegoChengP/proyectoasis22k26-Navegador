@@ -26,10 +26,16 @@ namespace CapaVista_Contabilidad
         // Indica si hay cambios sin guardar.
         private bool _HayCambios;
 
-        // Prepara la ventana y sus eventos.
-        public FrmPresupuestos()
+        // Constructor para el diseñador y las pruebas: todos los permisos.
+        public FrmPresupuestos() : this(ClsPermisosPantallaContabilidad.Total)
+        {
+        }
+
+        // Abre la ventana con los permisos que dio Seguridad.
+        public FrmPresupuestos(ClsPermisosPantallaContabilidad Permisos)
         {
             InitializeComponent();
+            ContabilidadMetAplicarPermisos(Permisos);
             ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Presupuestos", new Size(1180, 688));
             _Paginacion = new ClsPaginacionContabilidad(ContabilidadDgvDetalle);
             foreach (Control Campo in new Control[] { ContabilidadDtpInicio, ContabilidadTxtNombre, ContabilidadCboModulo, ContabilidadNudCantidad })
@@ -62,6 +68,16 @@ namespace CapaVista_Contabilidad
                 Diseno.ContabilidadMetAviso(this, Grabado ? string.Empty : Mensaje, Mensaje);
             };
             ContabilidadMetCargar(true);
+        }
+
+        // Deshabilita los botones que el usuario no puede usar.
+        private void ContabilidadMetAplicarPermisos(ClsPermisosPantallaContabilidad Permisos)
+        {
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnNueva, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnEjemplo, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnAgregar, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnGuardar, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnQuitar, Permisos.PuedeEliminar);
         }
 
         // Carga un presupuesto nuevo o de ejemplo.

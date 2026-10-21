@@ -12,7 +12,7 @@
  *  ayuda, resumen del sistema con 6 KPIs, información relevante y nota
  *  de integración) con la paleta de Contabilidad.
  * Reglas especificas:
- *  El MDI no tiene login ni permisos: abre directamente las cinco pantallas.
+ *  El MDI lee la sesión y los permisos mediante el Controlador; no toca el Modelo.
  *  Las cinco pantallas son ventanas modales con su propio controlador.
  *  Los indicadores son valores de presentación.
  *  Los procesos contables reales y el Reporteador todavía no se implementan.
@@ -44,12 +44,27 @@ namespace CapaVista_Contabilidad
         private Button _BotonActivo;
         // Botón bajo el mouse.
         private Button _BotonSobre;
+        // Último estado de sesión y permisos.
+        private ClsEstadoSeguridadContabilidad _Estado;
+        // Maneja el acceso del menú.
+        private readonly ClsPermisosMenuContabilidad _PermisosMenu = new ClsPermisosMenuContabilidad();
+        // Botón de cada código de ventana.
+        private readonly Dictionary<int, Button> _BotonesMenu;
 
         // Prepara el menú, los paneles y los eventos.
         public FrmMDIContabilidad()
         {
             InitializeComponent();
             ClsPresentacionContabilidad.ContabilidadMetAplicarTipografia(this);
+            _BotonesMenu = new Dictionary<int, Button>
+            {
+                { 10001, ContabilidadBtnPolizasLocales }, { 10002, ContabilidadBtnPresupuestos },
+                { 10003, ContabilidadBtnActivosFijos }, { 10004, ContabilidadBtnCierreContable },
+                { 10005, ContabilidadBtnEstadosFinancieros }
+            };
+            foreach (Button Boton in _BotonesMenu.Values) _PermisosMenu.ContabilidadMetAplicar(Boton, false);
+            Disposed += (Remitente, Evento) => _PermisosMenu.Dispose();
+            ContabilidadPnlPrincipal.Resize += (Remitente, Evento) => ContabilidadMetAcomodarEncabezado();
             this.WindowState = FormWindowState.Maximized;
 
             ContabilidadMetDobleBuffer(ContabilidadPnlFondo);
@@ -67,7 +82,46 @@ namespace CapaVista_Contabilidad
         // Carga la seguridad y acomoda el dashboard.
         private void ContabilidadMetCargarFormulario(object Remitente, EventArgs Evento)
         {
+            ContabilidadMetActualizarSeguridad(true);
             ContabilidadMetAcomodarDashboard();
+        }
+
+        // Seguridad lo llama al abrir el MDI con el empleado y los roles de la sesión.
+        public void ContabilidadMetActualizarInfoUsuario(string NombreEmpleado, string Roles)
+        {
+            ContabilidadLblUsuario.Text = "Usuario: " + NombreEmpleado;
+            ContabilidadLblUsuarioRol.Text = "Rol: " + Roles;
+            ContabilidadMetAcomodarEncabezado();
+        }
+
+        // Vuelve a consultar la sesión y los permisos de Seguridad.
+        public void ContabilidadMetActualizarSeguridad(bool MostrarAviso = false)
+        {
+            ClsEstadoSeguridadContabilidad Estado = new ClsControladorSeguridadContabilidad().ContabilidadFuncObtenerEstado();
+            _Estado = Estado;
+            ContabilidadLblUsuario.Text = "Usuario: " + Estado.NombreUsuario;
+            ContabilidadLblUsuarioRol.Text = "Rol: " + Estado.Roles;
+            foreach (KeyValuePair<int, Button> Boton in _BotonesMenu)
+                _PermisosMenu.ContabilidadMetAplicar(Boton.Value, Estado.Permisos[Boton.Key].TieneAcceso);
+            if (_BotonActivo != null && !_BotonActivo.Enabled) _BotonActivo = null;
+            _BotonSobre = null;
+            ContabilidadMetAcomodarEncabezado();
+            if (MostrarAviso && !string.IsNullOrWhiteSpace(Estado.Mensaje))
+                MessageBox.Show(this, Estado.Mensaje, "Seguridad de Contabilidad", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        // Reparte el ancho del encabezado.
+        private void ContabilidadMetAcomodarEncabezado()
+        {
+            int AnchoDisponible = Math.Max(0, ContabilidadPnlPrincipal.ClientSize.Width - ContabilidadLblUsuario.Left - 24);
+            int AnchoUsuario = Math.Max(0, (AnchoDisponible - 24) / 2);
+            ContabilidadLblUsuario.AutoSize = false;
+            ContabilidadLblUsuario.AutoEllipsis = true;
+            ContabilidadLblUsuario.Width = AnchoUsuario;
+            ContabilidadLblUsuarioRol.AutoSize = false;
+            ContabilidadLblUsuarioRol.AutoEllipsis = true;
+            ContabilidadLblUsuarioRol.Left = ContabilidadLblUsuario.Right + 24;
+            ContabilidadLblUsuarioRol.Width = Math.Max(0, AnchoDisponible - AnchoUsuario - 24);
         }
 
         // Reacomoda el contenido del dashboard cuando cambia el tamaño de la ventana: Don Buti, el
@@ -192,46 +246,31 @@ namespace CapaVista_Contabilidad
         // Abre Pólizas locales.
         private void ContabilidadMetAbrirPolizasLocales(object Remitente, EventArgs Evento)
         {
-            using (FrmPolizasLocales Formulario = new FrmPolizasLocales())
-            {
-                ContabilidadMetAbrirFormulario(Formulario, (Button)Remitente);
-            }
+            ContabilidadMetAbrirPantalla(10001, (Button)Remitente, Permisos => new FrmPolizasLocales(Permisos));
         }
 
         // Abre Presupuestos.
         private void ContabilidadMetAbrirPresupuestos(object Remitente, EventArgs Evento)
         {
-            using (FrmPresupuestos Formulario = new FrmPresupuestos())
-            {
-                ContabilidadMetAbrirFormulario(Formulario, (Button)Remitente);
-            }
+            ContabilidadMetAbrirPantalla(10002, (Button)Remitente, Permisos => new FrmPresupuestos(Permisos));
         }
 
         // Abre Activos fijos.
         private void ContabilidadMetAbrirActivosFijos(object Remitente, EventArgs Evento)
         {
-            using (FrmActivosFijos Formulario = new FrmActivosFijos())
-            {
-                ContabilidadMetAbrirFormulario(Formulario, (Button)Remitente);
-            }
+            ContabilidadMetAbrirPantalla(10003, (Button)Remitente, Permisos => new FrmActivosFijos(Permisos));
         }
 
         // Abre Cierre contable.
         private void ContabilidadMetAbrirCierreContable(object Remitente, EventArgs Evento)
         {
-            using (FrmCierreContable Formulario = new FrmCierreContable())
-            {
-                ContabilidadMetAbrirFormulario(Formulario, (Button)Remitente);
-            }
+            ContabilidadMetAbrirPantalla(10004, (Button)Remitente, Permisos => new FrmCierreContable(Permisos));
         }
 
         // Abre Estados financieros.
         private void ContabilidadMetAbrirEstadosFinancieros(object Remitente, EventArgs Evento)
         {
-            using (FrmEstadosFinancieros Formulario = new FrmEstadosFinancieros())
-            {
-                ContabilidadMetAbrirFormulario(Formulario, (Button)Remitente);
-            }
+            ContabilidadMetAbrirPantalla(10005, (Button)Remitente, Permisos => new FrmEstadosFinancieros(Permisos));
         }
 
 
@@ -285,14 +324,20 @@ namespace CapaVista_Contabilidad
                 Etiqueta, Texto, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
         }
 
-        // Abre la ventana y marca su botón como activo.
-        private void ContabilidadMetAbrirFormulario(Form Formulario, Button Boton)
+        // Consulta los permisos y abre la pantalla si el usuario tiene acceso.
+        private void ContabilidadMetAbrirPantalla(int Codigo, Button Boton, Func<ClsPermisosPantallaContabilidad, Form> Crear)
         {
+            // Volver a consultar evita usar un acceso anterior si cambió la sesión.
+            ContabilidadMetActualizarSeguridad(true);
+            if (!Boton.Enabled) return;
             Button Anterior = _BotonActivo;
             _BotonActivo = Boton;
             Anterior?.Invalidate();
             Boton.Invalidate();
-            Formulario.ShowDialog(this);
+            using (Form Formulario = Crear(_Estado.Permisos[Codigo]))
+            {
+                Formulario.ShowDialog(this);
+            }
         }
 
         // Avisa que la ayuda aún no está disponible.

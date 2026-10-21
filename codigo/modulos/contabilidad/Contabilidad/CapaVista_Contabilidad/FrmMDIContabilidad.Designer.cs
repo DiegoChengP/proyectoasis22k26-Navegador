@@ -53,6 +53,8 @@ namespace CapaVista_Contabilidad
             this.ContabilidadPnlKPI4 = new System.Windows.Forms.Panel();
             this.ContabilidadPnlKPI5 = new System.Windows.Forms.Panel();
             this.ContabilidadPnlKPI6 = new System.Windows.Forms.Panel();
+            this.ContabilidadLblUsuario = new System.Windows.Forms.Label();
+            this.ContabilidadLblUsuarioRol = new System.Windows.Forms.Label();
             this.ContabilidadLblBienvenido = new System.Windows.Forms.Label();
             this.ContabilidadLblModulo = new System.Windows.Forms.Label();
             this.ContabilidadLblParrafo = new System.Windows.Forms.Label();
@@ -114,13 +116,27 @@ namespace CapaVista_Contabilidad
             // ContabilidadPnlPrincipal
             // 
             this.ContabilidadPnlPrincipal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(247)))), ((int)(((byte)(248)))));
+            this.ContabilidadPnlPrincipal.Controls.Add(this.ContabilidadLblUsuarioRol);
             this.ContabilidadPnlPrincipal.Controls.Add(this.ContabilidadBtnBurger);
+            this.ContabilidadPnlPrincipal.Controls.Add(this.ContabilidadLblUsuario);
             this.ContabilidadPnlPrincipal.Controls.Add(this.ContabilidadPnlDashboard);
             this.ContabilidadPnlPrincipal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ContabilidadPnlPrincipal.Location = new System.Drawing.Point(302, 0);
             this.ContabilidadPnlPrincipal.Name = "ContabilidadPnlPrincipal";
             this.ContabilidadPnlPrincipal.Size = new System.Drawing.Size(1236, 1022);
             this.ContabilidadPnlPrincipal.TabIndex = 1;
+            // 
+            // ContabilidadLblUsuarioRol
+            // 
+            this.ContabilidadLblUsuarioRol.AutoSize = true;
+            this.ContabilidadLblUsuarioRol.BackColor = System.Drawing.Color.Transparent;
+            this.ContabilidadLblUsuarioRol.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ContabilidadLblUsuarioRol.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(50)))), ((int)(((byte)(61)))));
+            this.ContabilidadLblUsuarioRol.Location = new System.Drawing.Point(400, 15);
+            this.ContabilidadLblUsuarioRol.Name = "ContabilidadLblUsuarioRol";
+            this.ContabilidadLblUsuarioRol.Size = new System.Drawing.Size(194, 20);
+            this.ContabilidadLblUsuarioRol.TabIndex = 3;
+            this.ContabilidadLblUsuarioRol.Text = "Rol: Sin sesión";
             // 
             // ContabilidadBtnBurger
             // 
@@ -138,6 +154,18 @@ namespace CapaVista_Contabilidad
             this.ContabilidadBtnBurger.TabIndex = 0;
             this.ContabilidadBtnBurger.UseVisualStyleBackColor = false;
             this.ContabilidadBtnBurger.Click += new System.EventHandler(this.ContabilidadMetAlternarMenu);
+            // 
+            // ContabilidadLblUsuario
+            // 
+            this.ContabilidadLblUsuario.AutoSize = true;
+            this.ContabilidadLblUsuario.BackColor = System.Drawing.Color.Transparent;
+            this.ContabilidadLblUsuario.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ContabilidadLblUsuario.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(50)))), ((int)(((byte)(61)))));
+            this.ContabilidadLblUsuario.Location = new System.Drawing.Point(64, 15);
+            this.ContabilidadLblUsuario.Name = "ContabilidadLblUsuario";
+            this.ContabilidadLblUsuario.Size = new System.Drawing.Size(305, 20);
+            this.ContabilidadLblUsuario.TabIndex = 2;
+            this.ContabilidadLblUsuario.Text = "Usuario: Sin sesión";
             // 
             // ContabilidadPnlLateral
             // 
@@ -724,6 +752,8 @@ namespace CapaVista_Contabilidad
         private System.Windows.Forms.Panel ContabilidadPnlKPI4;
         private System.Windows.Forms.Panel ContabilidadPnlKPI5;
         private System.Windows.Forms.Panel ContabilidadPnlKPI6;
+        private System.Windows.Forms.Label ContabilidadLblUsuario;
+        private System.Windows.Forms.Label ContabilidadLblUsuarioRol;
         private System.Windows.Forms.Label ContabilidadLblBienvenido;
         private System.Windows.Forms.Label ContabilidadLblModulo;
         private System.Windows.Forms.Label ContabilidadLblParrafo;

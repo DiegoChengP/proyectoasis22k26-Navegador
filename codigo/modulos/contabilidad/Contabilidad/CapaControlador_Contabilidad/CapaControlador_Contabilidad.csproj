@@ -35,18 +35,25 @@
       <HintPath>..\CapaModelo_Contabilidad\bin\$(Configuration)\CapaModelo_Contabilidad.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="CapaControlador_Seguridad">
+      <HintPath>..\..\..\..\componentes\seguridad\Seguridad\CapaControlador_Seguridad\bin\Debug\CapaControlador_Seguridad.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClsEstadoSeguridadContabilidad.cs" />
+    <Compile Include="ClsControladorSeguridadContabilidad.cs" />
     <Compile Include="ClsControladorPolizasContabilidad.cs" />
     <Compile Include="ClsControladorPresupuestosContabilidad.cs" />
     <Compile Include="ClsControladorActivosFijosContabilidad.cs" />
     <Compile Include="ClsControladorCierreContabilidad.cs" />
     <Compile Include="ClsControladorEstadosFinancierosContabilidad.cs" />
     <Compile Include="ClsCodigoCuentaContabilidad.cs" />
+    <Compile Include="Modelos\ClsPermisosPantallaContabilidad.cs" />
     <Compile Include="Modelos\ClsCuentaPolizaContabilidad.cs" />
     <Compile Include="Modelos\ClsLineaPolizaContabilidad.cs" />
     <Compile Include="Modelos\ClsModeloPolizaContabilidad.cs" />

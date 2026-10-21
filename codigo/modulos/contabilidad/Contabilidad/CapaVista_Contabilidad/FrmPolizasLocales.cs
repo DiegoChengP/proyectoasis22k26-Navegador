@@ -20,6 +20,8 @@ namespace CapaVista_Contabilidad
     // Ventana de pólizas locales.
     public partial class FrmPolizasLocales : Form
     {
+        // Permisos del usuario en esta pantalla.
+        private ClsPermisosPantallaContabilidad _Permisos;
         // Controlador de pólizas.
         private readonly ClsControladorPolizasContabilidad _Controlador = new ClsControladorPolizasContabilidad();
         // Líneas del detalle.
@@ -29,10 +31,17 @@ namespace CapaVista_Contabilidad
         // Errores por campo.
         private readonly ClsValidacionContabilidad _Validacion = new ClsValidacionContabilidad();
 
-        // Prepara la ventana y sus eventos.
-        public FrmPolizasLocales()
+        // Constructor para el diseñador y las pruebas: todos los permisos.
+        public FrmPolizasLocales() : this(ClsPermisosPantallaContabilidad.Total)
+        {
+        }
+
+        // Abre la ventana con los permisos que dio Seguridad.
+        public FrmPolizasLocales(ClsPermisosPantallaContabilidad Permisos)
         {
             InitializeComponent();
+            _Permisos = Permisos;
+            ContabilidadMetAplicarPermisos(Permisos);
             ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Pólizas locales", new Size(1180, 688));
             foreach (Control Campo in new Control[] { ContabilidadTxtDescripcion, ContabilidadDtpFecha, ContabilidadCboEstado, ContabilidadCboOrigen, ContabilidadCboCuenta })
                 _Validacion.ContabilidadMetObligatorio(Campo);
@@ -55,6 +64,16 @@ namespace CapaVista_Contabilidad
             ContabilidadDgvDetalle.SizeChanged += ContabilidadMetAlinearTotales;
             _Lineas.ListChanged += ContabilidadMetCambiarDetalle;
             ContabilidadMetNueva(this, EventArgs.Empty);
+        }
+
+        // Deshabilita los botones que el usuario no puede usar.
+        private void ContabilidadMetAplicarPermisos(ClsPermisosPantallaContabilidad Permisos)
+        {
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnNueva, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnAgregar, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnGuardar, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnAplicar, Permisos.PuedeEditar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnLimpiarDetalle, Permisos.PuedeEliminar);
         }
 
         // Llena cuentas, estados y orígenes.
@@ -108,6 +127,8 @@ namespace CapaVista_Contabilidad
         private void ContabilidadMetQuitarCuenta(object Remitente, DataGridViewCellEventArgs Argumentos)
         {
             if (Argumentos.RowIndex < 0 || Argumentos.ColumnIndex != ContabilidadColQuitar.Index) return;
+            // Quitar una cuenta es eliminar: requiere ese permiso.
+            if (!_Permisos.PuedeEliminar) return;
             ContabilidadDgvDetalle.EndEdit();
             ClsLineaPolizaContabilidad Linea = ContabilidadDgvDetalle.Rows[Argumentos.RowIndex].DataBoundItem as ClsLineaPolizaContabilidad;
             if (Linea != null) _Lineas.Remove(Linea);

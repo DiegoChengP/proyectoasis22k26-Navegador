@@ -20,10 +20,16 @@ namespace CapaVista_Contabilidad
         // Paginación de las pólizas.
         private readonly ClsPaginacionContabilidad _Paginacion;
 
-        // Prepara la ventana y sus eventos.
-        public FrmCierreContable()
+        // Constructor para el diseñador y las pruebas: todos los permisos.
+        public FrmCierreContable() : this(ClsPermisosPantallaContabilidad.Total)
+        {
+        }
+
+        // Abre la ventana con los permisos que dio Seguridad.
+        public FrmCierreContable(ClsPermisosPantallaContabilidad Permisos)
         {
             InitializeComponent();
+            ContabilidadMetAplicarPermisos(Permisos);
             ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Cierre contable", new Size(1180, 688));
             ContabilidadDgvPolizas.RowTemplate.Height = 28;
             ContabilidadDgvPolizas.ColumnHeadersHeight = 34;
@@ -38,6 +44,12 @@ namespace CapaVista_Contabilidad
                     Diseno.ContabilidadMetAviso(this, _Controlador.ContabilidadFuncValidarCierre(_Polizas), "Período validado para cierre.");
             };
             ContabilidadMetRevisar();
+        }
+
+        // Deshabilita los botones que el usuario no puede usar.
+        private void ContabilidadMetAplicarPermisos(ClsPermisosPantallaContabilidad Permisos)
+        {
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnSimular, Permisos.PuedeEditar);
         }
 
         // Revisa el período y muestra el diagnóstico.

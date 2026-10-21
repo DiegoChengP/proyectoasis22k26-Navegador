@@ -5,7 +5,7 @@
  * Carné : 0901-23-1998
  * Fecha : 17/10/2026
  * ==================================================================
- * Propósito : arranca el módulo directamente en el MDI.
+ * Propósito : arranca con el login de Seguridad, que abre el MDI de Contabilidad al elegirlo.
  * ===================================================================
 */
 
@@ -18,7 +18,7 @@ namespace Ejecucion_Contabilidad
     internal static class ClsPrograma
     {
         /// <summary>
-        /// Inicia Contabilidad directamente en el MDI.
+        /// Inicia con el login de Seguridad (Login, pantalla de carga y MDI del módulo elegido).
         /// </summary>
         [STAThread]
         // Main conserva su nombre porque es el punto de entrada reconocido por C#.
@@ -26,7 +26,7 @@ namespace Ejecucion_Contabilidad
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new CapaVista_Contabilidad.FrmMDIContabilidad());
+            Application.Run(new CapaVista_Seguridad.FrmLogin());
         }
     }
 }
