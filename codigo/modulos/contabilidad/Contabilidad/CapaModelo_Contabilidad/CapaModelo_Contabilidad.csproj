@@ -50,6 +50,7 @@
     <Compile Include="Repositorios\ClsRepositorioContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioCuentasContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioMaestroContabilidad.cs" />
+    <None Include="Repositorios\ClsRepositorioPolizasContabilidad.cs.bak" />
     <Compile Include="Repositorios\ClsRepositorioPolizasContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioPresupuestosContabilidad.cs" />
     <Compile Include="Repositorios\ClsRepositorioActivosFijosContabilidad.cs" />

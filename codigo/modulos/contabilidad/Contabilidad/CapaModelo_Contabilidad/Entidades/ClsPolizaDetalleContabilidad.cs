@@ -1,22 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using System;
+
+// Oskar Cermeño
 
 namespace CapaModelo_Contabilidad.Entidades
 {
     public class ClsPolizaDetalleContabilidad
     {
-        // Cuenta de la línea.
+        // id_poliza_detalle INT AUTO_INCREMENT PRIMARY KEY
+        public int IdPolizaDetalle { get; set; }
+
+        // id_poliza INT NOT NULL (FK -> poliza_encabezado)
+        public int IdPoliza { get; set; }
+
+        // id_cuenta INT NOT NULL (FK -> cuenta)
         public int IdCuenta { get; set; }
-        // Código de la cuenta.
+
+        // debe DECIMAL(15,2) NOT NULL DEFAULT 0
+        public decimal Debe { get; set; } = 0m;
+
+        // haber DECIMAL(15,2) NOT NULL DEFAULT 0
+        public decimal Haber { get; set; } = 0m;
+
+        // --- Propiedades auxiliares para vistas / JOINs con la tabla 'cuenta' ---
         public string Codigo { get; set; }
-        // Nombre de la cuenta.
         public string Cuenta { get; set; }
-        // Importe al debe.
-        public decimal Debe { get; set; }
-        // Importe al haber.
-        public decimal Haber { get; set; }
     }
 }
