@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <SalidaVentas>$(MSBuildThisFileDirectory)Ejecutable_Ventas\Ejecutable_Ventas\bin\$(Configuration)\</SalidaVentas>
-    <OpcionesReferenciasVentas>PlatformTarget=AnyCPU;CustomBeforeMicrosoftCommonTargets=$(MSBuildThisFileDirectory)build_componentes_ventas.targets</OpcionesReferenciasVentas>
+    <OpcionesReferenciasVentas>PlatformTarget=AnyCPU;BuildProjectReferences=false;CustomBeforeMicrosoftCommonTargets=$(MSBuildThisFileDirectory)build_componentes_ventas.targets</OpcionesReferenciasVentas>
   </PropertyGroup>
   <ItemGroup>
     <SolucionVentas Include="Facturas\Facturas.sln" />
@@ -84,7 +84,10 @@
   </Target>
   <Target Name="CompilarFormulariosVentas">
     <Message Text="Compilando formularios MVC de Ventas antes de enlazar el MDI..." Importance="high" />
-    <MSBuild Projects="@(SolucionVentas)" Targets="Build" Properties="Configuration=$(Configuration);Platform=Any CPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />
+    <MSBuild Projects="Ventas y CxC\CapaModelo_Ventas\CapaModelo_Ventas.csproj;Ventas y CxC\CapaControlador_Ventas\CapaControlador_Ventas.csproj" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="false" StopOnFirstFailure="true" />
+    <MSBuild Projects="@(SolucionVentas->'%(RelativeDir)CapaModelo_%(Filename)\CapaModelo_%(Filename).csproj')" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />
+    <MSBuild Projects="@(SolucionVentas->'%(RelativeDir)CapaControlador_%(Filename)\CapaControlador_%(Filename).csproj')" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />
+    <MSBuild Projects="@(SolucionVentas->'%(RelativeDir)CapaVista_%(Filename)\CapaVista_%(Filename).csproj')" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />
   </Target>
   <Target Name="ValidarConfiguracion">
     <Error Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'Release'" Text="Configuración no válida. Use Debug o Release." />

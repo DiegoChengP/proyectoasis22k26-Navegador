@@ -70,6 +70,7 @@ if not exist "%VENTAS_ROOT%logs" goto SIN_LOGS
 echo         MSBuild disponible.
 echo   %VENTAS_MORADO%[2/2]%VENTAS_RESET% Compilando soluciones y reuniendo las DLL...
 echo         %VENTAS_GRIS%Solo se recompilan los proyectos que cambiaron.%VENTAS_RESET%
+echo         %VENTAS_GRIS%Paquetes incluidos en el repositorio. Sin descargas de NuGet.%VENTAS_RESET%
 echo.
 set "VENTAS_INICIO=%TIME: =0%"
 pushd "%VENTAS_ROOT%"
@@ -89,7 +90,7 @@ goto RESUMEN
 
 :SIN_PROYECTO
 echo.
-echo   %VENTAS_ROJO%[!] Falta un archivo build_ventas.proj o build_componentes_ventas.*.%VENTAS_RESET%
+echo   %VENTAS_ROJO%[!] Falta un archivo del compilador de Ventas. Copie el repositorio completo.%VENTAS_RESET%
 goto RESUMEN
 
 :SIN_LOGS
