@@ -60,7 +60,8 @@ namespace CapaVista_Contabilidad
             {
                 { 10001, ContabilidadBtnPolizasLocales }, { 10002, ContabilidadBtnPresupuestos },
                 { 10003, ContabilidadBtnActivosFijos }, { 10004, ContabilidadBtnCierreContable },
-                { 10005, ContabilidadBtnEstadosFinancieros }
+                { 10005, ContabilidadBtnEstadosFinancieros },
+                { 10011, ContabilidadBtnPaises }
             };
             foreach (Button Boton in _BotonesMenu.Values) _PermisosMenu.ContabilidadMetAplicar(Boton, false);
             Disposed += (Remitente, Evento) => _PermisosMenu.Dispose();
@@ -243,6 +244,12 @@ namespace CapaVista_Contabilidad
             ContabilidadPnlLateral.Width = NuevoAncho + _MargenMenu;
         }
 
+        // Abre Mantenimiento de países.
+        private void ContabilidadMetAbrirPaises(object Remitente, EventArgs Evento)
+        {
+            ContabilidadMetAbrirPantalla(10011, (Button)Remitente, Permisos => new FrmMantenimientoPais(Permisos));
+        }
+
         // Abre Pólizas locales.
         private void ContabilidadMetAbrirPolizasLocales(object Remitente, EventArgs Evento)
         {
@@ -278,9 +285,10 @@ namespace CapaVista_Contabilidad
         private void ContabilidadMetConfigurarEstadosMenu()
         {
             Button[] Botones = { ContabilidadBtnPolizasLocales, ContabilidadBtnPresupuestos,
-                ContabilidadBtnActivosFijos, ContabilidadBtnCierreContable, ContabilidadBtnEstadosFinancieros };
+                ContabilidadBtnActivosFijos, ContabilidadBtnCierreContable, ContabilidadBtnEstadosFinancieros,
+                ContabilidadBtnPaises };
             string[] Titulos = { "Pólizas locales", "Presupuestos", "Activos fijos",
-                "Cierre contable", "Estados financieros" };
+                "Cierre contable", "Estados financieros", "Países" };
             for (int Indice = 0; Indice < Botones.Length; Indice++)
             {
                 Button Boton = Botones[Indice];
@@ -329,7 +337,7 @@ namespace CapaVista_Contabilidad
         {
             // Volver a consultar evita usar un acceso anterior si cambió la sesión.
             ContabilidadMetActualizarSeguridad(true);
-            if (!Boton.Enabled) return;
+            if (!_Estado.Permisos[Codigo].TieneAcceso) return;
             Button Anterior = _BotonActivo;
             _BotonActivo = Boton;
             Anterior?.Invalidate();

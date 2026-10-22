@@ -18,14 +18,21 @@ namespace CapaVista_Contabilidad
         private static readonly Icon _IconoContabilidad = (Icon)new ComponentResourceManager(
             typeof(FrmMDIContabilidad)).GetObject("$this.Icon");
 
+        // Código de aplicación de cada ventana (EST-10: 10000 a 10999).
+        private static readonly System.Collections.Generic.Dictionary<string, int> _Codigos = new System.Collections.Generic.Dictionary<string, int>
+        {
+            { "FrmPolizasLocales", 10001 }, { "FrmPresupuestos", 10002 }, { "FrmActivosFijos", 10003 },
+            { "FrmCierreContable", 10004 }, { "FrmEstadosFinancieros", 10005 },
+            { "FrmMantenimientoPais", 10011 }
+        };
+
         // Ventana hija de tamaño fijo, centrada sobre el MDI y con el ícono del módulo.
         internal static void ContabilidadMetPrepararVentana(Form Formulario, string Titulo, Size AreaCliente)
         {
             Formulario.AutoScaleMode = AutoScaleMode.None;
             Formulario.ClientSize = AreaCliente;
             string NombreVentana = Formulario.GetType().Name.Substring(3);
-            int Codigo = Formulario is FrmPolizasLocales ? 10001 : Formulario is FrmPresupuestos ? 10002
-                : Formulario is FrmActivosFijos ? 10003 : Formulario is FrmCierreContable ? 10004 : 10005;
+            int Codigo = _Codigos[Formulario.GetType().Name];
             Formulario.Text = Codigo + " - " + NombreVentana;
             Formulario.Icon = _IconoContabilidad;
             Formulario.MaximizeBox = false;

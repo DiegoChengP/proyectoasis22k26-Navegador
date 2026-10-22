@@ -82,6 +82,7 @@ namespace CapaVista_Contabilidad
             this.ContabilidadBtnActivosFijos = new System.Windows.Forms.Button();
             this.ContabilidadBtnCierreContable = new System.Windows.Forms.Button();
             this.ContabilidadBtnEstadosFinancieros = new System.Windows.Forms.Button();
+            this.ContabilidadBtnPaises = new System.Windows.Forms.Button();
             this.ContabilidadPbLogo = new System.Windows.Forms.PictureBox();
             this.ContabilidadPbButti = new System.Windows.Forms.PictureBox();
             this.ContabilidadPbInfo = new System.Windows.Forms.PictureBox();
@@ -189,6 +190,7 @@ namespace CapaVista_Contabilidad
             this.ContabilidadPnlNavegador.Controls.Add(this.ContabilidadBtnActivosFijos);
             this.ContabilidadPnlNavegador.Controls.Add(this.ContabilidadBtnCierreContable);
             this.ContabilidadPnlNavegador.Controls.Add(this.ContabilidadBtnEstadosFinancieros);
+            this.ContabilidadPnlNavegador.Controls.Add(this.ContabilidadBtnPaises);
             this.ContabilidadPnlNavegador.Controls.Add(this.ContabilidadPbLogo);
             this.ContabilidadPnlNavegador.Location = new System.Drawing.Point(16, 14);
             this.ContabilidadPnlNavegador.Name = "ContabilidadPnlNavegador";
@@ -284,6 +286,24 @@ namespace CapaVista_Contabilidad
             this.ContabilidadBtnEstadosFinancieros.TabIndex = 5;
             this.ContabilidadBtnEstadosFinancieros.UseVisualStyleBackColor = false;
             this.ContabilidadBtnEstadosFinancieros.Click += new System.EventHandler(this.ContabilidadMetAbrirEstadosFinancieros);
+            // 
+            // ContabilidadBtnPaises
+            // 
+            this.ContabilidadBtnPaises.BackColor = System.Drawing.Color.Transparent;
+            this.ContabilidadBtnPaises.BackgroundImage = global::CapaVista_Contabilidad.Properties.Resources.botonmdi6;
+            this.ContabilidadBtnPaises.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ContabilidadBtnPaises.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ContabilidadBtnPaises.FlatAppearance.BorderSize = 0;
+            this.ContabilidadBtnPaises.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.ContabilidadBtnPaises.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.ContabilidadBtnPaises.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular);
+            this.ContabilidadBtnPaises.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ContabilidadBtnPaises.Location = new System.Drawing.Point(3, 445);
+            this.ContabilidadBtnPaises.Name = "ContabilidadBtnPaises";
+            this.ContabilidadBtnPaises.Size = new System.Drawing.Size(264, 53);
+            this.ContabilidadBtnPaises.TabIndex = 6;
+            this.ContabilidadBtnPaises.UseVisualStyleBackColor = false;
+            this.ContabilidadBtnPaises.Click += new System.EventHandler(this.ContabilidadMetAbrirPaises);
             // 
             // ContabilidadPbLogo
             // 
@@ -705,7 +725,7 @@ namespace CapaVista_Contabilidad
             this.ClientSize = new System.Drawing.Size(1538, 1022);
             this.Controls.Add(this.ContabilidadPnlFondo);
             this.Icon = ((System.Drawing.Icon)(Recursos.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(1000, 650);
+            this.MinimumSize = new System.Drawing.Size(1000, 800);
             this.Name = "FrmMDIContabilidad";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "10000 - PrincipalContabilidad";
@@ -781,6 +801,7 @@ namespace CapaVista_Contabilidad
         private System.Windows.Forms.Button ContabilidadBtnActivosFijos;
         private System.Windows.Forms.Button ContabilidadBtnCierreContable;
         private System.Windows.Forms.Button ContabilidadBtnEstadosFinancieros;
+        private System.Windows.Forms.Button ContabilidadBtnPaises;
         private System.Windows.Forms.PictureBox ContabilidadPbLogo;
         private System.Windows.Forms.PictureBox ContabilidadPbButti;
         private System.Windows.Forms.PictureBox ContabilidadPbInfo;

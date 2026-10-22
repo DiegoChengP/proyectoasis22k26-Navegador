@@ -24,6 +24,10 @@ namespace CapaControlador_Contabilidad
 
     public sealed class ClsPermisosPantallaContabilidad
     {
+        // Id del módulo en Seguridad (tblmodulo); 0 si no está registrado.
+        public int IdModulo { get; set; }
+        // Id de la aplicación en Seguridad (tblaplicacion); 0 si no está registrada.
+        public int IdAplicacion { get; set; }
         // Puede abrir la pantalla.
         public bool TieneAcceso { get; set; }
         // Puede insertar.

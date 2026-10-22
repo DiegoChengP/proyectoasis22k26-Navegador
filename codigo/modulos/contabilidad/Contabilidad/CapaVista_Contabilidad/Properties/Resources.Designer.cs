@@ -103,6 +103,13 @@ namespace CapaVista_Contabilidad.Properties {
             }
         }
 
+        internal static System.Drawing.Bitmap botonmdi6 {
+            get {
+                object obj = ResourceManager.GetObject("botonmdi6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
         internal static System.Drawing.Bitmap kpi1 {
             get {
                 object obj = ResourceManager.GetObject("kpi1", resourceCulture);

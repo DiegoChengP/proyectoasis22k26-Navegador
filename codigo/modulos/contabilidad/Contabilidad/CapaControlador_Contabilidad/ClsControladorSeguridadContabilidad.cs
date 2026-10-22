@@ -37,7 +37,9 @@ namespace CapaControlador_Contabilidad
         {
             { 10001, "Pólizas locales" }, { 10002, "Presupuestos" },
             { 10003, "Activos fijos" }, { 10004, "Cierre contable" },
-            { 10005, "Estados financieros" }
+            { 10005, "Estados financieros" },
+            // Mantenimientos (usan el control Navegador).
+            { 10011, "Mantenimiento de países" }
         };
 
         // Arma el estado de la sesión y los permisos de cada pantalla.
@@ -80,6 +82,7 @@ namespace CapaControlador_Contabilidad
                     ClsPermisoAplicacion Permiso = Permisos.SeguridadMetObtenerPermisosSesion(Coincidencias[0].IdModulo, Coincidencias[0].IdAplicacion);
                     Estado.Permisos[Aplicacion.Key] = new ClsPermisosPantallaContabilidad
                     {
+                        IdModulo = Coincidencias[0].IdModulo, IdAplicacion = Coincidencias[0].IdAplicacion,
                         TieneAcceso = Permiso.TieneAcceso, PuedeInsertar = Permiso.PuedeInsertar,
                         PuedeEditar = Permiso.PuedeEditar, PuedeEliminar = Permiso.PuedeEliminar, PuedeImprimir = Permiso.PuedeImprimir
                     };

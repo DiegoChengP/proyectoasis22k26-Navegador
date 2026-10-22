@@ -40,6 +40,9 @@
       <HintPath>..\CapaControlador_Contabilidad\bin\$(Configuration)\CapaControlador_Contabilidad.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="CapaVista_Navegador">
+      <HintPath>..\..\..\..\componentes\navegador\Navegador\CapaVista_Navegador\bin\Debug\CapaVista_Navegador.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -87,6 +90,12 @@
     </Compile>
     <Compile Include="FrmPresupuestos.Designer.cs">
       <DependentUpon>FrmPresupuestos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmMantenimientoPais.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMantenimientoPais.Designer.cs">
+      <DependentUpon>FrmMantenimientoPais.cs</DependentUpon>
     </Compile>
     <Compile Include="ClsPresentacionContabilidad.cs" />
     <Compile Include="Componentes\ClsBotonContabilidad.cs">
