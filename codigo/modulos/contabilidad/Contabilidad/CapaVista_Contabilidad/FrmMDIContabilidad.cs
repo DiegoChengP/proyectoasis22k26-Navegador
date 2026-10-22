@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ==================================================================
  * Área : Contabilidad
  * Autor : Gabriel André Guillén Pocón
@@ -64,6 +64,7 @@ namespace CapaVista_Contabilidad
                 { 10011, ContabilidadBtnPaises },
                 { 10012, ContabilidadBtnModulosContables },
                 { 10013, ContabilidadBtnVidaUtil },
+                { 10014, ContabilidadBtnCuentas },
                 { 10015, ContabilidadBtnCuentasModulo }
             };
             foreach (Button Boton in _BotonesMenu.Values) _PermisosMenu.ContabilidadMetAplicar(Boton, false);
@@ -265,6 +266,12 @@ namespace CapaVista_Contabilidad
             ContabilidadMetAbrirPantalla(10013, (Button)Remitente, Permisos => new FrmMantenimientoVidaUtil(Permisos));
         }
 
+        // Abre Mantenimiento de cuentas.
+        private void ContabilidadMetAbrirCuentas(object Remitente, EventArgs Evento)
+        {
+            ContabilidadMetAbrirPantalla(10014, (Button)Remitente, Permisos => new FrmMantenimientoCuenta(Permisos));
+        }
+
         // Abre Asignación de cuentas por módulo.
         private void ContabilidadMetAbrirCuentasModulo(object Remitente, EventArgs Evento)
         {
@@ -310,9 +317,10 @@ namespace CapaVista_Contabilidad
                 ContabilidadBtnPaises,
                 ContabilidadBtnModulosContables,
                 ContabilidadBtnVidaUtil,
+                ContabilidadBtnCuentas,
                 ContabilidadBtnCuentasModulo };
             string[] Titulos = { "Pólizas locales", "Presupuestos", "Activos fijos",
-                "Cierre contable", "Estados financieros", "Países", "Módulos contables", "Vida útil", "Cuentas por módulo" };
+                "Cierre contable", "Estados financieros", "Países", "Módulos contables", "Vida útil", "Cuentas contables", "Cuentas por módulo" };
             for (int Indice = 0; Indice < Botones.Length; Indice++)
             {
                 Button Boton = Botones[Indice];

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Área: Contabilidad
  * Autor: Gabriel André Guillén Pocón. Carné: 0901-23-1998.
  * Fecha: 14/10/2026
@@ -26,6 +26,7 @@ namespace CapaVista_Contabilidad
             { "FrmMantenimientoPais", 10011 },
             { "FrmMantenimientoModuloContable", 10012 },
             { "FrmMantenimientoVidaUtil", 10013 },
+            { "FrmMantenimientoCuenta", 10014 },
             { "FrmAsignacionCuentaModulo", 10015 }
         };
 
