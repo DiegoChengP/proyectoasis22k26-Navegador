@@ -34,7 +34,8 @@ namespace CapaControlador_Contabilidad
             { 10011, ClsPermisosPantallaContabilidad.Ninguno },
             { 10012, ClsPermisosPantallaContabilidad.Ninguno },
             { 10013, ClsPermisosPantallaContabilidad.Ninguno },
-            { 10015, ClsPermisosPantallaContabilidad.Ninguno }
+            { 10015, ClsPermisosPantallaContabilidad.Ninguno },
+            { 10014, ClsPermisosPantallaContabilidad.Ninguno }
         };
     }
 }
