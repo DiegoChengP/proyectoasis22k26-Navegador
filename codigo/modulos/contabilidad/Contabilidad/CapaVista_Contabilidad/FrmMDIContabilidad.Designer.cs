@@ -676,7 +676,6 @@ namespace CapaVista_Contabilidad
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1538, 1022);
             this.Controls.Add(this.ContabilidadPnlFondo);
-            this.Icon = ((System.Drawing.Icon)(Recursos.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(1000, 650);
             this.Name = "FrmMDIContabilidad";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

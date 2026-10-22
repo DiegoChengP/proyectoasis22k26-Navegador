@@ -26,6 +26,13 @@ namespace CapaControlador_Contabilidad
         // Número de la póliza, 0 si es nueva.
         public int IdPoliza { get; set; }
 
+        // Código de la póliza; si llega vacío el Controlador lo genera.
+        [MaxLength(40, ErrorMessage = "El código de la póliza admite hasta 40 caracteres.")]
+        public string CodigoPoliza { get; set; }
+
+        // Período yyyy-MM; lo llena el Controlador a partir de la fecha.
+        public string Periodo { get; set; }
+
         // Descripción de la póliza.
         [Required(ErrorMessage = "Escriba la descripción de la póliza.")]
         [MaxLength(255, ErrorMessage = "La descripción admite hasta 255 caracteres.")]
@@ -53,6 +60,11 @@ namespace CapaControlador_Contabilidad
             }
             foreach (ClsLineaPolizaContabilidad Linea in Lineas)
             {
+                if (Linea.IdCuenta <= 0)
+                {
+                    yield return new ValidationResult("Todas las líneas deben tener una cuenta contable válida (" + Linea.Cuenta + ").", new[] { "Lineas" });
+                    yield break;
+                }
                 if (Linea.Debe < 0 || Linea.Haber < 0)
                 {
                     yield return new ValidationResult("Los importes no pueden ser negativos (" + Linea.Cuenta + ").", new[] { "Lineas" });

@@ -36,15 +36,16 @@ namespace CapaVista_Contabilidad
         private readonly ClsValidacionContabilidad _Validacion = new ClsValidacionContabilidad();
 
 
- 
+
         // Prepara la ventana y sus eventos.
         public FrmPolizasLocales(int idModulo)
         {
             InitializeComponent();
             _idModulo = idModulo;
             ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Pólizas locales", new Size(1180, 688));
+            ContabilidadLblTitulo.Text = "Póliza " + ContabilidadFuncNombreModulo(_idModulo);
             foreach (Control Campo in new Control[] { ContabilidadTxtDescripcion, ContabilidadDtpFecha, ContabilidadCboEstado, ContabilidadCboOrigen, ContabilidadCboCuenta })
-              
+
                 _Validacion.ContabilidadMetObligatorio(Campo);
             Disposed += (Remitente, Argumentos) => _Validacion.Dispose();
             ContabilidadColDebe.DefaultCellStyle.FormatProvider = _Cultura;
@@ -55,8 +56,8 @@ namespace CapaVista_Contabilidad
             ContabilidadBtnAgregar.Click += ContabilidadMetAgregarCuenta;
             ContabilidadBtnNueva.Click += ContabilidadMetNueva;
             ContabilidadBtnLimpiarDetalle.Click += ContabilidadMetLimpiarDetalle;
-            ContabilidadBtnGuardar.Click += ContabilidadMetGuardar;
             ContabilidadBtnAplicar.Click += ContabilidadMetAplicar;
+            ContabilidadBtnGuardar.Click += ContabilidadMetGuardar;
             ContabilidadDgvDetalle.CellContentClick += ContabilidadMetQuitarCuenta;
             ContabilidadDgvDetalle.CellEndEdit += ContabilidadMetTerminarEdicion;
             ContabilidadDgvDetalle.CellParsing += ContabilidadMetInterpretarImporte;
@@ -70,6 +71,20 @@ namespace CapaVista_Contabilidad
 
         public FrmPolizasLocales() : this(1)
         {
+        }
+
+        // Nombre del módulo ERP según su id.
+        private static string ContabilidadFuncNombreModulo(int idModulo)
+        {
+            switch (idModulo)
+            {
+                case 1: return "Logística";
+                case 2: return "Ventas";
+                case 3: return "Compras";
+                case 4: return "Recursos Humanos";
+                case 5: return "Bancos";
+                default: return "Encabezado";
+            }
         }
 
         // Llena cuentas, estados y orígenes.
@@ -115,7 +130,7 @@ namespace CapaVista_Contabilidad
             _Lineas.Add(new ClsLineaPolizaContabilidad
             {
                 IdCuenta = IdCuenta,
-                Cuenta = Cuenta.Nombre, // <-- Antes decía Cuenta.Descripcion
+                Cuenta = Cuenta.Nombre,
                 Debe = 0m,
                 Haber = 0m
             });
@@ -246,48 +261,68 @@ namespace CapaVista_Contabilidad
             ContabilidadTxtDescripcion.Focus();
         }
 
-        // Guarda la póliza.
-        private void ContabilidadMetGuardar(object Remitente, EventArgs Argumentos)
-        {
-            ContabilidadMetProcesarPoliza(false);
-        }
 
-        // Revisa que la póliza esté lista para aplicar.
-        private void ContabilidadMetAplicar(object Remitente, EventArgs Argumentos)
-        {
-            ContabilidadMetProcesarPoliza(true);
-        }
-
-        // Valida y, si es Guardar, graba la póliza.
+        // Valida y graba la póliza. Si Aplicar es true, se graba con estado APLICADA.
         private void ContabilidadMetProcesarPoliza(bool Aplicar)
         {
+            // 1. Cerrar cualquier celda en edición y recalcular.
             if (!ContabilidadDgvDetalle.EndEdit()) return;
             ContabilidadMetRecalcularTotales();
-            string Motivo = _Controlador.ContabilidadFuncValidar(ContabilidadTxtDescripcion.Text, _Lineas);
+
+            // 2. Descripción obligatoria (marca el campo en rojo).
             if (!_Validacion.ContabilidadFuncValidar(ContabilidadTxtDescripcion,
                 string.IsNullOrWhiteSpace(ContabilidadTxtDescripcion.Text) ? "Escriba la descripción de la póliza." : null)) return;
+
+            // 3. Validación rápida del Controlador (líneas, cuadre, etc.).
+            string Motivo = _Controlador.ContabilidadFuncValidar(ContabilidadTxtDescripcion.Text, _Lineas);
             if (!string.IsNullOrEmpty(Motivo))
             {
                 ClsDialogosContabilidad.ContabilidadMetError(this, Motivo);
                 return;
             }
-            if (Aplicar)
-            {
-                ClsDialogosContabilidad.ContabilidadMetExito(this, "La póliza está cuadrada y lista para aplicar.");
+
+            // 4. Confirmar antes de aplicar.
+            if (Aplicar && MessageBox.Show(this,
+                    "¿Desea aplicar la póliza? Una póliza aplicada ya no se podrá modificar.",
+                    "Aplicar póliza", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 return;
-            }
-            // El Controlador valida y graba; la Vista solo muestra el mensaje.
+
+            // 5. Leer los valores del formulario.
+            string Estado = Aplicar ? "APLICADA" : Convert.ToString(ContabilidadCboEstado.SelectedItem);
+            string Origen = Convert.ToString(ContabilidadCboOrigen.SelectedItem);
+
             ClsModeloPolizaContabilidad Modelo = new ClsModeloPolizaContabilidad
             {
-                Descripcion = ContabilidadTxtDescripcion.Text, Fecha = ContabilidadDtpFecha.Value,
-                Estado = ContabilidadCboEstado.Text, Origen = ContabilidadCboOrigen.Text, Lineas = _Lineas
+                Descripcion = ContabilidadTxtDescripcion.Text.Trim(),
+                Fecha = ContabilidadDtpFecha.Value.Date,
+                Estado = Estado,
+                Origen = Origen,
+                Lineas = _Lineas.ToList()
             };
+
+            // 6. El Controlador valida y graba; la Vista solo muestra el resultado.
             string Mensaje;
             if (_Controlador.ContabilidadFuncGrabarCambios(EstadoEntidadContabilidad.Agregar, Modelo, out Mensaje))
+            {
                 ClsDialogosContabilidad.ContabilidadMetExito(this, Mensaje);
+                ContabilidadMetNueva(this, EventArgs.Empty);
+            }
             else
+            {
                 ClsDialogosContabilidad.ContabilidadMetError(this, Mensaje);
+            }
         }
 
+        // Graba la póliza con el estado del combo.
+        private void ContabilidadMetGuardar(object Remitente, EventArgs Argumentos)
+        {
+            ContabilidadMetProcesarPoliza(false);
+        }
+
+        // Graba la póliza con estado APLICADA.
+        private void ContabilidadMetAplicar(object Remitente, EventArgs Argumentos)
+        {
+            ContabilidadMetProcesarPoliza(true);
+        }
     }
 }
