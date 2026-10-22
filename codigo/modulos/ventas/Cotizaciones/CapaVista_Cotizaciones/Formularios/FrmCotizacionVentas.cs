@@ -18,7 +18,24 @@ namespace CapaVista_Cotizaciones
             InitializeComponent();
             _Presentador = new ClsCotizacionesPresentador(this);
         }
-        public int VentasIdUsuario { get { return _Presentador.VentasIdUsuario; } set { _Presentador.VentasIdUsuario = value; } }
-        private void VentasCotVigencia_Changed(object sender, EventArgs e) { if (_Presentador != null) _Presentador.VentasMetMostrarVigencia(); }
+
+        public int VentasIdUsuario
+        {
+            get
+            {
+                return _Presentador.VentasIdUsuario;
+            }
+
+            set
+            {
+                _Presentador.VentasIdUsuario = value;
+            }
+        }
+
+        private void VentasCotVigencia_Changed(object sender, EventArgs e)
+        {
+            if (_Presentador != null)
+                _Presentador.VentasMetMostrarVigencia();
+        }
     }
 }

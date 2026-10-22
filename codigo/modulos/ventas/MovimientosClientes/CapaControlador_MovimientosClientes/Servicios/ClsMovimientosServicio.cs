@@ -1,217 +1,397 @@
-﻿// Jose Javier Torres Martinez | 0901-23-1091 | 20/10/2026
-using System;
+﻿// Jose Javier Torres Martinez | 0901-23-1091 | 22/10/2026
+using CapaControlador_MovimientosClientes.Validaciones;
+using CapaModelo_MovimientosClientes;
 using System.Data;
 using System.Linq;
-using CapaModelo_MovimientosClientes;
-using CapaControlador_MovimientosClientes.Validaciones;
+using System;
 using VentasValidaciones;
 
 namespace CapaControlador_MovimientosClientes.Servicios
 {
-    internal sealed partial class ClsMovimientosServicio
+    internal sealed class ClsMovimientosServicio
     {
-        public DataTable Catalogo(string Nombre) { using (var Db = new ClsMovimientosRepositorio()) return Db.Catalogo(Nombre); }
-
-
-        public DataSet EstadoCuenta(int Cliente, int Moneda, DateTime Desde, DateTime Hasta)
+        // RecibosMovimientos.
+        public string VentasMetRegistrarRecibo(int Cliente, int Moneda, int Usuario, string Numero, DateTime Fecha, decimal Monto, decimal TipoCambio, string Forma, string Referencia, string Observaciones, DataTable Aplicaciones)
         {
-            ClsValidacionesVentas.Exigir(Cliente > 0 && Moneda > 0, "Seleccione cliente y moneda.");
-            ClsValidacionesVentas.Exigir(Desde.Date <= Hasta.Date, "La fecha inicial supera la fecha final.");
-            using (var Db = new ClsMovimientosRepositorio())
+            ClsValidacionesVentas.VentasMetExigir(Monto > 0 && Monto <= ClsValidacionesVentas.ImporteMaximo && Monto == ClsValidacionesVentas.VentasFuncRedondear(Monto) && TipoCambio > 0 && TipoCambio <= 999999999999.999999m && TipoCambio == Math.Round(TipoCambio, 6), "Monto o tipo de cambio invalido.");
+            ClsValidacionesVentas.VentasMetExigir(new[] { "EFECTIVO", "TRANSFERENCIA", "DEPOSITO", "CHEQUE", "TARJETA" }.Contains(Forma), "Seleccione la forma de pago.");
+            Referencia = ClsValidacionesVentas.VentasFuncTexto(Referencia, 100, "referencia", Forma != "EFECTIVO");
+            Numero = ClsValidacionesVentas.VentasFuncTexto(Numero, 40, "numero de recibo", false);
+            Observaciones = ClsValidacionesVentas.VentasFuncTexto(Observaciones, 500, "observaciones", false);
+            ClsValidacionesVentas.VentasMetExigir(Aplicaciones != null && Aplicaciones.Rows.Count > 0, "Seleccione las facturas a pagar.");
+            var Filas = Aplicaciones.AsEnumerable().OrderBy(F => Convert.ToInt32(F["idFactura"])).ToList();
+            ClsValidacionesVentas.VentasMetExigir(Filas.Select(F => Convert.ToInt32(F["idFactura"])).Distinct().Count() == Filas.Count, "Una factura se repite en las aplicaciones.");
+            ClsValidacionesVentas.VentasMetExigir(Filas.Sum(F => Convert.ToDecimal(F["Importe"])) == Monto, "Aplique el monto completo del recibo a las facturas; no se admiten anticipos en esta etapa.");
+            using (var Repositorio = new ClsMovimientosRepositorio())
+            {
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                Repositorio.VentasMetPeriodoAbierto(Moneda, Fecha);
+                ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasMetRegistrarReciboConsultarCliente(Cliente)) == 1, "Seleccione un cliente activo.");
+                if (Numero.Length == 0)
+                    Numero = Repositorio.VentasMetNumero("REC");
+                // Validar y bloquear todas las facturas antes de registrar el encabezado.
+                foreach (DataRow Fila in Filas)
+                {
+                    int Factura = Convert.ToInt32(Fila["idFactura"]);
+                    decimal Importe = Convert.ToDecimal(Fila["Importe"]);
+                    DataTable Datos = Repositorio.VentasMetRegistrarReciboConsultarFactura(Factura, Cliente, Moneda);
+                    ClsValidacionesVentas.VentasMetExigir(Datos.Rows.Count == 1, "Una factura no pertenece al cliente/moneda o no esta emitida.");
+                    ClsValidacionesVentas.VentasMetExigir(Fecha.Date >= Convert.ToDateTime(Datos.Rows[0][0]).Date, "El pago es anterior a una factura.");
+                    ClsValidacionesVentas.VentasMetExigir(Importe > 0 && Importe == ClsValidacionesVentas.VentasFuncRedondear(Importe), "Cada aplicacion debe ser positiva y tener hasta dos decimales.");
+                    ClsValidacionesVentas.VentasMetExigir(Importe <= VentasMetDisponible(Repositorio, Factura, Fecha), "El saldo de una factura cambio o el importe lo supera. Consulte nuevamente.");
+                }
+
+                Repositorio.VentasMetRegistrarReciboInsertarPago(Numero, Cliente, Moneda, Fecha.Date, Monto, TipoCambio, Forma, Referencia, Observaciones, Usuario);
+                int Pago = Repositorio.VentasFuncObtenerId();
+                foreach (DataRow Fila in Filas)
+                {
+                    int Factura = Convert.ToInt32(Fila["idFactura"]);
+                    decimal Importe = Convert.ToDecimal(Fila["Importe"]);
+                    Repositorio.VentasMetRegistrarReciboInsertarAplicacionpago(Pago, Factura, Fecha.Date, Importe, Usuario);
+                    VentasMetMovimiento(Repositorio, Factura, Fecha, "PAGO", "Recibo " + Numero, 0, Importe, Usuario, Repositorio.VentasFuncObtenerId());
+                }
+
+                Repositorio.VentasMetConfirmar();
+                return Numero;
+            }
+        }
+
+        public DataTable VentasMetListarRecibos(int Cliente, int Moneda)
+        {
+            using (var Repositorio = new ClsMovimientosRepositorio())
+                return Repositorio.VentasMetListarRecibosConsultarPago(Cliente, Cliente, Moneda, Moneda);
+        }
+
+        public DataTable VentasMetConsultarRecibos(string Recibo, string Deposito)
+        {
+            using (var Repositorio = new ClsMovimientosRepositorio())
+                return Repositorio.VentasMetGeneralesConsultarRecibosConsultarPago(Recibo ?? "", Recibo ?? "", Deposito ?? "", Deposito ?? "");
+        }
+
+        public DataTable VentasMetAplicaciones(int Pago)
+        {
+            using (var Repositorio = new ClsMovimientosRepositorio())
+                return Repositorio.VentasMetAplicacionesConsultarAplicacionpago(Pago);
+        }
+
+        public void VentasMetAnularRecibo(int Pago, DateTime Fecha, int Usuario, string Motivo)
+        {
+            Motivo = ClsValidacionesVentas.VentasFuncTexto(Motivo, 180, "motivo de anulacion");
+            using (var Repositorio = new ClsMovimientosRepositorio())
+            {
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                object Moneda = Repositorio.VentasMetAnularReciboConsultarPago(Pago);
+                ClsValidacionesVentas.VentasMetExigir(Moneda != null, "No existe el recibo.");
+                Repositorio.VentasMetPeriodoAbierto(Convert.ToInt32(Moneda), Fecha);
+                DataTable P = Repositorio.VentasMetAnularReciboConsultarPago2(Pago);
+                ClsValidacionesVentas.VentasMetExigir((string)P.Rows[0]["estadoPago"] == "CONFIRMADO" && Fecha.Date >= Convert.ToDateTime(P.Rows[0]["fechaPago"]).Date, "El recibo ya esta anulado o la fecha es anterior al pago.");
+                ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasMetAnularReciboConsultarDepositoventasdetalle(Pago)) == 0, "El recibo pertenece a un deposito; coordine su reverso con Bancos.");
+                DataTable Movimientos = Repositorio.VentasMetAnularReciboConsultarMovimientocxc(Pago);
+                foreach (DataRow M in Movimientos.Rows)
+                    VentasMetMovimiento(Repositorio, Convert.ToInt32(M["idFactura"]), Fecha, "REVERSO", "Anulacion: " + Motivo, (decimal)M["abono"], (decimal)M["cargo"], Usuario, null, null, Convert.ToInt32(M["idMovimiento"]));
+                Repositorio.VentasMetAnularReciboActualizarAplicacionpago(Pago);
+                Repositorio.VentasMetAnularReciboActualizarPago(Pago);
+                Repositorio.VentasMetAuditar("RECIBO", Pago, "ANULAR", Motivo, Usuario);
+                Repositorio.VentasMetConfirmar();
+            }
+        }
+
+        public void VentasMetModificarRecibo(int Pago, int Usuario, string Observaciones)
+        {
+            Observaciones = ClsValidacionesVentas.VentasFuncTexto(Observaciones, 500, "observaciones", false);
+            using (var Repositorio = new ClsMovimientosRepositorio())
+            {
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                DataTable Origen = Repositorio.VentasMetModificarReciboConsultarPago(Pago);
+                ClsValidacionesVentas.VentasMetExigir(Origen.Rows.Count == 1, "No existe el recibo.");
+                Repositorio.VentasMetPeriodoAbierto(Convert.ToInt32(Origen.Rows[0]["idMoneda"]), Convert.ToDateTime(Origen.Rows[0]["fechaPago"]));
+                DataTable Actual = Repositorio.VentasMetModificarReciboConsultarPago2(Pago);
+                ClsValidacionesVentas.VentasMetExigir((string)Actual.Rows[0][0] == "CONFIRMADO", "El recibo fue anulado.");
+                ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasMetAnularReciboConsultarDepositoventasdetalle(Pago)) == 0, "El recibo ya forma parte de un deposito; coordine el cambio con Bancos.");
+                Repositorio.VentasMetModificarReciboActualizarPago(Observaciones, Pago);
+                Repositorio.VentasMetAuditar("RECIBO", Pago, "MODIFICAR", Observaciones, Usuario);
+                Repositorio.VentasMetConfirmar();
+            }
+        }
+
+        public DataSet VentasMetLeerRecibo(int Id)
+        {
+            using (var Repositorio = new ClsMovimientosRepositorio())
             {
                 var Datos = new DataSet();
-                Datos.Tables.Add(Db.Tabla(ConsultaMovimientos.EstadoCuentaConsultarMovimientocxc,
-                    Desde.Date, Desde.Date, Desde.Date, Cliente, Moneda, Hasta.Date));
-                DataTable Libro = Db.Tabla(ConsultaMovimientos.EstadoCuentaConsultarMovimientocxc2, Cliente, Moneda, Desde.Date, Hasta.Date);
+                Datos.Tables.Add(Repositorio.VentasMetLecturaConsultarRecibo(Id));
+                ClsValidacionesVentas.VentasMetExigir(Datos.Tables[0].Rows.Count == 1, "No se encontro el recibo.");
+                Datos.Tables.Add(Repositorio.VentasMetLecturaConsultarAplicacionesRecibo(Id));
+                return Datos;
+            }
+        }
+
+        // OperacionMovimientos.
+        private static void VentasMetMovimiento(ClsMovimientosRepositorio Repositorio, int Factura, DateTime Fecha, string Tipo, string Descripcion, decimal Cargo, decimal Abono, int Usuario, int? Aplicacion = null, int? Nota = null, int? Origen = null)
+        {
+            Repositorio.VentasMetMovimientoInsertarMovimientocxc(Factura, Fecha.Date, Tipo, Descripcion, Cargo, Abono, Usuario, Aplicacion, Nota, Origen);
+        }
+
+        private static decimal VentasMetSaldo(ClsMovimientosRepositorio Repositorio, int Factura, DateTime? Fecha)
+        {
+            return ClsValidacionesVentas.VentasFuncDecimal(Fecha.HasValue ? Repositorio.VentasMetSaldoConsultarMovimientocxc(Factura, Fecha.Value.Date) : Repositorio.VentasMetSaldoConsultarMovimientocxc2(Factura));
+        }
+
+        private static decimal VentasMetDisponible(ClsMovimientosRepositorio Repositorio, int Factura, DateTime Fecha)
+        {
+            decimal AlDia = VentasMetSaldo(Repositorio, Factura, Fecha);
+            // Un pago retroactivo tampoco puede dejar negativos los saldos de fechas posteriores.
+            object Minimo = Repositorio.VentasMetDisponibleConsultarMovimientocxc(Factura, Fecha.Date);
+            return Minimo == null || Minimo == DBNull.Value ? AlDia : Math.Min(AlDia, Convert.ToDecimal(Minimo));
+        }
+
+        // DocumentosMovimientos.
+        public string VentasMetRegistrarDocumento(int Cliente, int Moneda, int Usuario, int Establecimiento, string Numero, int Tipo, DateTime Fecha, DateTime Vencimiento, decimal Importe, string Referencia, string Motivo)
+        {
+            ClsValidacionesVentas.VentasMetExigir(Tipo >= 0 && Tipo <= 4, "Seleccione el tipo de documento.");
+            ClsValidacionesVentas.VentasMetExigir(Importe > 0 && Importe <= ClsValidacionesVentas.ImporteMaximo && Importe == ClsValidacionesVentas.VentasFuncRedondear(Importe), "El importe debe ser positivo, estar dentro del rango y tener hasta dos decimales.");
+            Numero = ClsValidacionesVentas.VentasFuncTexto(Numero, 40, "numero de documento", false);
+            Motivo = ClsValidacionesVentas.VentasFuncTexto(Motivo, 255, "descripcion / motivo");
+            using (var Repositorio = new ClsMovimientosRepositorio())
+            {
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                Repositorio.VentasMetPeriodoAbierto(Moneda, Fecha);
+                DataTable Clientes = Repositorio.VentasMetRegistrarDocumentoConsultarCliente(Cliente);
+                ClsValidacionesVentas.VentasMetExigir(Clientes.Rows.Count == 1, "Seleccione un cliente activo.");
+                if (Numero.Length == 0)
+                    Numero = Repositorio.VentasMetNumero(Tipo == 0 ? "CXC" : "NOT");
+                int Factura;
+                if (Tipo == 0)
+                {
+                    ClsValidacionesVentas.VentasMetExigir(Vencimiento.Date >= Fecha.Date, "El vencimiento es anterior a la emision.");
+                    ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasMetRegistrarDocumentoConsultarEstablecimientoventas(Establecimiento)) == 1, "Seleccione un establecimiento emisor activo.");
+                    DataRow C = Clientes.Rows[0];
+                    Repositorio.VentasMetRegistrarDocumentoInsertarFactura(Numero, Establecimiento, Cliente, Moneda, Fecha.Date, Vencimiento.Date, Vencimiento.Date == Fecha.Date ? "CONTADO" : "CREDITO", (Vencimiento.Date - Fecha.Date).Days, C["tipoIdentificacion"], C["numeroIdentificacion"] == DBNull.Value ? "CF" : C["numeroIdentificacion"], C["nombreCliente"], C["direccionCliente"], Importe, Importe, Motivo, Usuario);
+                    Factura = Repositorio.VentasFuncObtenerId();
+                    VentasMetMovimiento(Repositorio, Factura, Fecha, "FACTURA", Motivo, Importe, 0, Usuario);
+                }
+                else
+                {
+                    Referencia = ClsValidacionesVentas.VentasFuncTexto(Referencia, 80, "factura relacionada (serie-numero)");
+                    DataTable Facturas = Repositorio.VentasMetRegistrarDocumentoConsultarFactura(Cliente, Moneda, Referencia);
+                    ClsValidacionesVentas.VentasMetExigir(Facturas.Rows.Count == 1, "La referencia debe identificar una sola factura emitida del cliente y moneda seleccionados.");
+                    Factura = Convert.ToInt32(Facturas.Rows[0]["idFactura"]);
+                    ClsValidacionesVentas.VentasMetExigir(Fecha.Date >= Convert.ToDateTime(Facturas.Rows[0]["fechaEmision"]).Date, "El ajuste es anterior a la factura.");
+                    bool Abono = Tipo == 1 || Tipo == 4;
+                    if (Abono)
+                        ClsValidacionesVentas.VentasMetExigir(Importe <= VentasMetDisponible(Repositorio, Factura, Fecha), "El abono supera el saldo disponible de la factura.");
+                    Repositorio.VentasMetRegistrarDocumentoInsertarNotacxc(Numero, Factura, Abono ? "CREDITO" : "DEBITO", Fecha.Date, Importe, Motivo, Usuario);
+                    int Nota = Repositorio.VentasFuncObtenerId();
+                    string[] Tipos =
+                    {
+                        "FACTURA",
+                        "NOTA_CREDITO",
+                        "NOTA_DEBITO",
+                        "AJUSTE_POSITIVO",
+                        "AJUSTE_NEGATIVO"
+                    };
+                    VentasMetMovimiento(Repositorio, Factura, Fecha, Tipos[Tipo], Motivo, Abono ? 0 : Importe, Abono ? Importe : 0, Usuario, null, Nota);
+                }
+
+                Repositorio.VentasMetConfirmar();
+                return Numero;
+            }
+        }
+
+        public DataTable VentasMetListarDocumentos(int Cliente, int Moneda)
+        {
+            using (var Repositorio = new ClsMovimientosRepositorio())
+                return Repositorio.VentasMetListarDocumentosConsultarFactura(Cliente, Cliente, Moneda, Moneda, Cliente, Cliente, Moneda, Moneda);
+        }
+
+        public DataTable VentasMetDocumento(int Cliente, int Moneda, int Establecimiento, string Numero, bool Factura)
+        {
+            using (var Repositorio = new ClsMovimientosRepositorio())
+                return Factura ? Repositorio.VentasMetDocumentoConsultarFactura(Cliente, Moneda, Establecimiento, Numero) : Repositorio.VentasMetDocumentoConsultarNotacxc(Cliente, Moneda, Numero);
+        }
+
+        private static DataRow VentasMetBloquearDocumento(ClsMovimientosRepositorio Repositorio, int Id, string Clase)
+        {
+            ClsValidacionesVentas.VentasMetExigir(Clase == "FACTURA" || Clase == "NOTA", "Seleccione un documento interno de CxC.");
+            DataTable Origen = Clase == "FACTURA" ? Repositorio.VentasMetBloquearDocumentoConsultarFactura(Id) : Repositorio.VentasMetBloquearDocumentoConsultarNotacxc(Id);
+            ClsValidacionesVentas.VentasMetExigir(Origen.Rows.Count == 1, "El documento no existe.");
+            Repositorio.VentasMetPeriodoAbierto(Convert.ToInt32(Origen.Rows[0]["idMoneda"]), Convert.ToDateTime(Origen.Rows[0]["Fecha"]));
+            DataTable Factura = Repositorio.VentasMetBloquearDocumentoConsultarFactura2(Origen.Rows[0]["idFactura"]);
+            ClsValidacionesVentas.VentasMetExigir((string)Factura.Rows[0]["estadoFactura"] == "EMITIDA", "La factura no esta emitida o ya fue anulada.");
+            if (Clase == "FACTURA")
+                return Factura.Rows[0];
+            DataTable Nota = Repositorio.VentasMetBloquearDocumentoConsultarNotacxc2(Id);
+            ClsValidacionesVentas.VentasMetExigir((string)Nota.Rows[0]["estadoNota"] == "APLICADA", "La nota ya fue anulada.");
+            return Nota.Rows[0];
+        }
+
+        public void VentasMetModificarDocumento(int Id, string Clase, int Usuario, string Descripcion, DateTime Vencimiento)
+        {
+            Descripcion = ClsValidacionesVentas.VentasFuncTexto(Descripcion, 255, "descripcion");
+            using (var Repositorio = new ClsMovimientosRepositorio())
+            {
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                DataRow Fila = VentasMetBloquearDocumento(Repositorio, Id, Clase);
+                if (Clase == "FACTURA")
+                {
+                    ClsValidacionesVentas.VentasMetExigir(Vencimiento.Date >= Convert.ToDateTime(Fila["fechaEmision"]).Date, "El vencimiento no puede ser anterior a la emision.");
+                    Repositorio.VentasMetModificarDocumentoActualizarFactura(Descripcion, Vencimiento.Date, Id);
+                }
+                else
+                    Repositorio.VentasMetModificarDocumentoActualizarNotacxc(Descripcion, Id);
+                Repositorio.VentasMetAuditar(Clase + "_CXC", Id, "MODIFICAR", "Descripcion: " + Descripcion + "; vencimiento: " + Vencimiento.ToString("yyyy-MM-dd"), Usuario);
+                Repositorio.VentasMetConfirmar();
+            }
+        }
+
+        public void VentasMetAnularDocumento(int Id, string Clase, int Usuario, string Motivo)
+        {
+            Motivo = ClsValidacionesVentas.VentasFuncTexto(Motivo, 180, "motivo de anulacion");
+            using (var Repositorio = new ClsMovimientosRepositorio())
+            {
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                DataRow Fila = VentasMetBloquearDocumento(Repositorio, Id, Clase);
+                int Factura = Convert.ToInt32(Fila["idFactura"]);
+                DataRow F = Repositorio.VentasMetAnularDocumentoConsultarFactura(Factura).Rows[0];
+                Repositorio.VentasMetPeriodoAbierto(Convert.ToInt32(F["idMoneda"]), DateTime.Today);
+                if (Clase == "FACTURA")
+                {
+                    ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasMetAnularDocumentoConsultarAplicacionpago(Factura)) == 0 && Convert.ToInt32(Repositorio.VentasMetAnularDocumentoConsultarNotacxc(Factura)) == 0, "Anule primero los recibos y las notas aplicados a esta factura.");
+                }
+
+                DataTable Libro = Clase == "FACTURA" ? Repositorio.VentasMetAnularDocumentoConsultarMovimientocxc(Factura) : Repositorio.VentasMetAnularDocumentoConsultarMovimientocxc2(Id);
+                ClsValidacionesVentas.VentasMetExigir(Libro.Rows.Count == 1, "El movimiento original no se puede identificar de forma unica.");
+                DataRow M = Libro.Rows[0];
+                ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasMetAnularDocumentoConsultarMovimientocxc3(M["idMovimiento"])) == 0, "El documento ya tiene un reverso.");
+                if ((decimal)M["cargo"] > 0)
+                    ClsValidacionesVentas.VentasMetExigir(VentasMetDisponible(Repositorio, Factura, DateTime.Today) >= (decimal)M["cargo"], "La anulacion dejaria un saldo negativo. Revise pagos y ajustes posteriores.");
+                VentasMetMovimiento(Repositorio, Factura, DateTime.Today, "REVERSO", "Anulacion: " + Motivo, (decimal)M["abono"], (decimal)M["cargo"], Usuario, null, null, Convert.ToInt32(M["idMovimiento"]));
+                if (Clase == "FACTURA")
+                    Repositorio.VentasMetAnularDocumentoActualizarFactura(Id);
+                else
+                    Repositorio.VentasMetAnularDocumentoActualizarNotacxc(Id);
+                Repositorio.VentasMetAuditar(Clase + "_CXC", Id, "ANULAR", Motivo, Usuario);
+                Repositorio.VentasMetConfirmar();
+            }
+        }
+
+        public DataRow VentasMetLeerDocumento(int Id, string Clase)
+        {
+            ClsValidacionesVentas.VentasMetExigir(Id > 0 && (Clase == "FACTURA" || Clase == "NOTA"), "Seleccione un documento de CxC.");
+            using (var Repositorio = new ClsMovimientosRepositorio())
+            {
+                DataTable Datos = (Clase == "FACTURA" ? Repositorio.VentasMetLecturaConsultarFactura(Id) : Repositorio.VentasMetLecturaConsultarNota(Id));
+                ClsValidacionesVentas.VentasMetExigir(Datos.Rows.Count == 1, "No se encontro el documento interno.");
+                return Datos.Rows[0];
+            }
+        }
+
+        // DepositosMovimientos.
+        public DataSet VentasMetDeposito(string Numero)
+        {
+            using (var Repositorio = new ClsMovimientosRepositorio())
+            {
+                var D = new DataSet();
+                D.Tables.Add(Repositorio.VentasMetDepositoConsultarDepositoventas(Numero));
+                ClsValidacionesVentas.VentasMetExigir(D.Tables[0].Rows.Count == 1, "Consulte el codigo de un deposito preparado.");
+                D.Tables.Add(Repositorio.VentasMetDepositoConsultarDepositoventasdetalle(D.Tables[0].Rows[0]["idDeposito"]));
+                return D;
+            }
+        }
+
+        public DataTable VentasMetRecibosDisponibles(int Moneda)
+        {
+            using (var Repositorio = new ClsMovimientosRepositorio())
+                return Repositorio.VentasMetRecibosDisponiblesConsultarPago(Moneda);
+        }
+
+        public string VentasMetPrepararDeposito(int Moneda, int Usuario, DateTime Fecha, string Numero, string Empresa, string Banco, string Cuenta, string Concepto, string Referencia, DataTable Recibos)
+        {
+            Empresa = ClsValidacionesVentas.VentasFuncTexto(Empresa, 100, "empresa suministrada por Bancos");
+            Banco = ClsValidacionesVentas.VentasFuncTexto(Banco, 100, "banco destino");
+            Cuenta = ClsValidacionesVentas.VentasFuncTexto(Cuenta, 100, "cuenta de la empresa");
+            Concepto = ClsValidacionesVentas.VentasFuncTexto(Concepto, 100, "concepto bancario");
+            Referencia = ClsValidacionesVentas.VentasFuncTexto(Referencia, 100, "referencia", false);
+            Numero = ClsValidacionesVentas.VentasFuncTexto(Numero, 40, "codigo de deposito", false);
+            ClsValidacionesVentas.VentasMetExigir(Recibos != null && Recibos.Rows.Count > 0, "Seleccione recibos para preparar el deposito.");
+            var Filas = Recibos.AsEnumerable().OrderBy(F => Convert.ToInt32(F["idPago"])).ToList();
+            ClsValidacionesVentas.VentasMetExigir(Filas.Select(F => Convert.ToInt32(F["idPago"])).Distinct().Count() == Filas.Count, "No repita un recibo.");
+            using (var Repositorio = new ClsMovimientosRepositorio())
+            {
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                Repositorio.VentasMetPeriodoAbierto(Moneda, Fecha);
+                decimal Total = 0;
+                foreach (DataRow Fila in Filas)
+                {
+                    DataTable P = Repositorio.VentasMetPrepararDepositoConsultarPago(Fila["idPago"], Moneda);
+                    ClsValidacionesVentas.VentasMetExigir(P.Rows.Count == 1 && Fecha.Date >= Convert.ToDateTime(P.Rows[0]["fechaPago"]).Date, "Recibo no confirmado, moneda o fecha incorrecta.");
+                    decimal Importe = Convert.ToDecimal(Fila["Importe"]);
+                    decimal Usado = ClsValidacionesVentas.VentasFuncDecimal(Repositorio.VentasMetPrepararDepositoConsultarDepositoventasdetalle(Fila["idPago"]));
+                    ClsValidacionesVentas.VentasMetExigir(Importe > 0 && Importe == ClsValidacionesVentas.VentasFuncRedondear(Importe) && Importe <= (decimal)P.Rows[0]["montoPago"] - Usado, "Importe de deposito invalido o superior al disponible.");
+                    Total += Importe;
+                }
+
+                if (Numero.Length == 0)
+                    Numero = Repositorio.VentasMetNumero("DEP");
+                ClsValidacionesVentas.VentasMetExigir(Total <= ClsValidacionesVentas.ImporteMaximo, "El deposito supera la capacidad del documento.");
+                Repositorio.VentasMetPrepararDepositoInsertarDepositoventas(Numero, Fecha.Date, Empresa, Banco, Cuenta, Concepto, Referencia, Moneda, Total, Usuario);
+                int Id = Repositorio.VentasFuncObtenerId();
+                foreach (DataRow Fila in Filas)
+                    Repositorio.VentasMetPrepararDepositoInsertarDepositoventasdetalle(Id, Fila["idPago"], Fila["Importe"]);
+                Repositorio.VentasMetConfirmar();
+                return Numero;
+            }
+        }
+
+        // CuentaMovimientos.
+        public DataTable VentasMetCatalogo(string Nombre)
+        {
+            using (var Repositorio = new ClsMovimientosRepositorio())
+                return Repositorio.VentasMetCatalogo(Nombre);
+        }
+
+        public DataSet VentasMetEstadoCuenta(int Cliente, int Moneda, DateTime Desde, DateTime Hasta)
+        {
+            ClsValidacionesVentas.VentasMetExigir(Cliente > 0 && Moneda > 0, "Seleccione cliente y moneda.");
+            ClsValidacionesVentas.VentasMetExigir(Desde.Date <= Hasta.Date, "La fecha inicial supera la fecha final.");
+            using (var Repositorio = new ClsMovimientosRepositorio())
+            {
+                var Datos = new DataSet();
+                Datos.Tables.Add(Repositorio.VentasMetEstadoCuentaConsultarMovimientocxc(Desde.Date, Desde.Date, Desde.Date, Cliente, Moneda, Hasta.Date));
+                DataTable Libro = Repositorio.VentasMetEstadoCuentaConsultarMovimientocxc2(Cliente, Moneda, Desde.Date, Hasta.Date);
                 Libro.Columns.Add("Saldo", typeof(decimal));
-                decimal Saldo = ClsValidacionesVentas.Decimal(Datos.Tables[0].Rows[0]["Inicial"]);
-                foreach (DataRow Fila in Libro.Rows) { Saldo += (decimal)Fila["Cargo"] - (decimal)Fila["Abono"]; Fila["Saldo"] = Saldo; }
+                decimal Saldo = ClsValidacionesVentas.VentasFuncDecimal(Datos.Tables[0].Rows[0]["Inicial"]);
+                foreach (DataRow Fila in Libro.Rows)
+                {
+                    Saldo += (decimal)Fila["Cargo"] - (decimal)Fila["Abono"];
+                    Fila["Saldo"] = Saldo;
+                }
+
                 Datos.Tables.Add(Libro);
                 return Datos;
             }
         }
 
-        public DataTable Pendientes(int Cliente, int Moneda)
+        public DataTable VentasMetPendientes(int Cliente, int Moneda)
         {
-            using (var Db = new ClsMovimientosRepositorio()) return Db.Tabla(ConsultaMovimientos.PendientesConsultarFactura, Cliente, Moneda);
+            using (var Repositorio = new ClsMovimientosRepositorio())
+                return Repositorio.VentasMetPendientesConsultarFactura(Cliente, Moneda);
         }
 
-        private static void Movimiento(ClsMovimientosRepositorio Db, int Factura, DateTime Fecha, string Tipo, string Descripcion, decimal Cargo, decimal Abono, int Usuario, int? Aplicacion = null, int? Nota = null, int? Origen = null)
+        public DataRow VentasMetLeerMovimiento(int Id)
         {
-            Db.Ejecutar(ConsultaMovimientos.MovimientoInsertarMovimientocxc,
-                Factura, Fecha.Date, Tipo, Descripcion, Cargo, Abono, Usuario, Aplicacion, Nota, Origen);
-        }
-
-        public string RegistrarDocumento(int Cliente, int Moneda, int Usuario, int Establecimiento, string Numero, int Tipo, DateTime Fecha, DateTime Vencimiento, decimal Importe, string Referencia, string Motivo)
-        {
-            ClsValidacionesVentas.Exigir(Tipo >= 0 && Tipo <= 4, "Seleccione el tipo de documento.");
-            ClsValidacionesVentas.Exigir(Importe > 0 && Importe <= ClsValidacionesVentas.ImporteMaximo && Importe == ClsValidacionesVentas.Redondear(Importe), "El importe debe ser positivo, estar dentro del rango y tener hasta dos decimales.");
-            Numero = ClsValidacionesVentas.Texto(Numero, 40, "numero de documento", false);
-            Motivo = ClsValidacionesVentas.Texto(Motivo, 255, "descripcion / motivo");
-            using (var Db = new ClsMovimientosRepositorio())
+            using (var Repositorio = new ClsMovimientosRepositorio())
             {
-                Db.Iniciar(); Db.Usuario(Usuario); Db.PeriodoAbierto(Moneda, Fecha);
-                DataTable Clientes = Db.Tabla(ConsultaMovimientos.RegistrarDocumentoConsultarCliente, Cliente);
-                ClsValidacionesVentas.Exigir(Clientes.Rows.Count == 1, "Seleccione un cliente activo.");
-                if (Numero.Length == 0) Numero = Db.Numero(Tipo == 0 ? "CXC" : "NOT");
-                int Factura;
-                if (Tipo == 0)
-                {
-                    ClsValidacionesVentas.Exigir(Vencimiento.Date >= Fecha.Date, "El vencimiento es anterior a la emision.");
-                    ClsValidacionesVentas.Exigir(Convert.ToInt32(Db.Escalar(ConsultaMovimientos.RegistrarDocumentoConsultarEstablecimientoventas, Establecimiento)) == 1, "Seleccione un establecimiento emisor activo.");
-                    DataRow C = Clientes.Rows[0];
-                    Db.Ejecutar(ConsultaMovimientos.RegistrarDocumentoInsertarFactura, Numero, Establecimiento, Cliente, Moneda, Fecha.Date, Vencimiento.Date,
-                        Vencimiento.Date == Fecha.Date ? "CONTADO" : "CREDITO", (Vencimiento.Date - Fecha.Date).Days,
-                        C["tipoIdentificacion"], C["numeroIdentificacion"] == DBNull.Value ? "CF" : C["numeroIdentificacion"], C["nombreCliente"], C["direccionCliente"], Importe, Importe, Motivo, Usuario);
-                    Factura = Db.Id();
-                    Movimiento(Db, Factura, Fecha, "FACTURA", Motivo, Importe, 0, Usuario);
-                }
-                else
-                {
-                    Referencia = ClsValidacionesVentas.Texto(Referencia, 80, "factura relacionada (serie-numero)");
-                    DataTable Facturas = Db.Tabla(ConsultaMovimientos.RegistrarDocumentoConsultarFactura, Cliente, Moneda, Referencia);
-                    ClsValidacionesVentas.Exigir(Facturas.Rows.Count == 1, "La referencia debe identificar una sola factura emitida del cliente y moneda seleccionados.");
-                    Factura = Convert.ToInt32(Facturas.Rows[0]["idFactura"]);
-                    ClsValidacionesVentas.Exigir(Fecha.Date >= Convert.ToDateTime(Facturas.Rows[0]["fechaEmision"]).Date, "El ajuste es anterior a la factura.");
-                    bool Abono = Tipo == 1 || Tipo == 4;
-                    if (Abono) ClsValidacionesVentas.Exigir(Importe <= Disponible(Db, Factura, Fecha), "El abono supera el saldo disponible de la factura.");
-                    Db.Ejecutar(ConsultaMovimientos.RegistrarDocumentoInsertarNotacxc, Numero, Factura, Abono ? "CREDITO" : "DEBITO", Fecha.Date, Importe, Motivo, Usuario);
-                    int Nota = Db.Id();
-                    string[] Tipos = { "FACTURA", "NOTA_CREDITO", "NOTA_DEBITO", "AJUSTE_POSITIVO", "AJUSTE_NEGATIVO" };
-                    Movimiento(Db, Factura, Fecha, Tipos[Tipo], Motivo, Abono ? 0 : Importe, Abono ? Importe : 0, Usuario, null, Nota);
-                }
-                Db.Confirmar(); return Numero;
-            }
-        }
-
-        private static decimal Saldo(ClsMovimientosRepositorio Db, int Factura, DateTime? Fecha)
-        {
-            return ClsValidacionesVentas.Decimal(Fecha.HasValue
-                ? Db.Escalar(ConsultaMovimientos.SaldoConsultarMovimientocxc, Factura, Fecha.Value.Date)
-                : Db.Escalar(ConsultaMovimientos.SaldoConsultarMovimientocxc2, Factura));
-        }
-        private static decimal Disponible(ClsMovimientosRepositorio Db, int Factura, DateTime Fecha)
-        {
-            decimal AlDia = Saldo(Db, Factura, Fecha);
-            // Un pago retroactivo tampoco puede dejar negativos los saldos de fechas posteriores.
-            object Minimo = Db.Escalar(ConsultaMovimientos.DisponibleConsultarMovimientocxc, Factura, Fecha.Date);
-            return Minimo == null || Minimo == DBNull.Value ? AlDia : Math.Min(AlDia, Convert.ToDecimal(Minimo));
-        }
-
-        public string RegistrarRecibo(int Cliente, int Moneda, int Usuario, string Numero, DateTime Fecha, decimal Monto, decimal TipoCambio, string Forma, string Referencia, string Observaciones, DataTable Aplicaciones)
-        {
-            ClsValidacionesVentas.Exigir(Monto > 0 && Monto <= ClsValidacionesVentas.ImporteMaximo && Monto == ClsValidacionesVentas.Redondear(Monto) && TipoCambio > 0 && TipoCambio <= 999999999999.999999m && TipoCambio == Math.Round(TipoCambio, 6), "Monto o tipo de cambio invalido.");
-            ClsValidacionesVentas.Exigir(new[] { "EFECTIVO", "TRANSFERENCIA", "DEPOSITO", "CHEQUE", "TARJETA" }.Contains(Forma), "Seleccione la forma de pago.");
-            Referencia = ClsValidacionesVentas.Texto(Referencia, 100, "referencia", Forma != "EFECTIVO");
-            Numero = ClsValidacionesVentas.Texto(Numero, 40, "numero de recibo", false);
-            Observaciones = ClsValidacionesVentas.Texto(Observaciones, 500, "observaciones", false);
-            ClsValidacionesVentas.Exigir(Aplicaciones != null && Aplicaciones.Rows.Count > 0, "Seleccione las facturas a pagar.");
-            var Filas = Aplicaciones.AsEnumerable().OrderBy(F => Convert.ToInt32(F["idFactura"])).ToList();
-            ClsValidacionesVentas.Exigir(Filas.Select(F => Convert.ToInt32(F["idFactura"])).Distinct().Count() == Filas.Count, "Una factura se repite en las aplicaciones.");
-            ClsValidacionesVentas.Exigir(Filas.Sum(F => Convert.ToDecimal(F["Importe"])) == Monto, "Aplique el monto completo del recibo a las facturas; no se admiten anticipos en esta etapa.");
-            using (var Db = new ClsMovimientosRepositorio())
-            {
-                Db.Iniciar(); Db.Usuario(Usuario); Db.PeriodoAbierto(Moneda, Fecha);
-                ClsValidacionesVentas.Exigir(Convert.ToInt32(Db.Escalar(ConsultaMovimientos.RegistrarReciboConsultarCliente, Cliente)) == 1, "Seleccione un cliente activo.");
-                if (Numero.Length == 0) Numero = Db.Numero("REC");
-                // Validar y bloquear todas las facturas antes de registrar el encabezado.
-                foreach (DataRow Fila in Filas)
-                {
-                    int Factura = Convert.ToInt32(Fila["idFactura"]); decimal Importe = Convert.ToDecimal(Fila["Importe"]);
-                    DataTable Datos = Db.Tabla(ConsultaMovimientos.RegistrarReciboConsultarFactura, Factura, Cliente, Moneda);
-                    ClsValidacionesVentas.Exigir(Datos.Rows.Count == 1, "Una factura no pertenece al cliente/moneda o no esta emitida.");
-                    ClsValidacionesVentas.Exigir(Fecha.Date >= Convert.ToDateTime(Datos.Rows[0][0]).Date, "El pago es anterior a una factura.");
-                    ClsValidacionesVentas.Exigir(Importe > 0 && Importe == ClsValidacionesVentas.Redondear(Importe), "Cada aplicacion debe ser positiva y tener hasta dos decimales.");
-                    ClsValidacionesVentas.Exigir(Importe <= Disponible(Db, Factura, Fecha), "El saldo de una factura cambio o el importe lo supera. Consulte nuevamente.");
-                }
-                Db.Ejecutar(ConsultaMovimientos.RegistrarReciboInsertarPago, Numero, Cliente, Moneda, Fecha.Date, Monto, TipoCambio, Forma, Referencia, Observaciones, Usuario);
-                int Pago = Db.Id();
-                foreach (DataRow Fila in Filas)
-                {
-                    int Factura = Convert.ToInt32(Fila["idFactura"]); decimal Importe = Convert.ToDecimal(Fila["Importe"]);
-                    Db.Ejecutar(ConsultaMovimientos.RegistrarReciboInsertarAplicacionpago, Pago, Factura, Fecha.Date, Importe, Usuario);
-                    Movimiento(Db, Factura, Fecha, "PAGO", "Recibo " + Numero, 0, Importe, Usuario, Db.Id());
-                }
-                Db.Confirmar(); return Numero;
-            }
-        }
-
-        public DataTable ConsultarRecibos(string Recibo, string Deposito)
-        {
-            using (var Db = new ClsMovimientosRepositorio()) return Db.Tabla(ConsultaMovimientos.ConsultarRecibosConsultarPago, Recibo ?? "", Recibo ?? "", Deposito ?? "", Deposito ?? "");
-        }
-        public DataTable Aplicaciones(int Pago)
-        {
-            using (var Db = new ClsMovimientosRepositorio()) return Db.Tabla(ConsultaMovimientos.AplicacionesConsultarAplicacionpago, Pago);
-        }
-        public DataTable Documento(int Cliente, int Moneda, int Establecimiento, string Numero, bool Factura)
-        {
-            using (var Db = new ClsMovimientosRepositorio())
-                return Factura
-                    ? Db.Tabla(ConsultaMovimientos.DocumentoConsultarFactura, Cliente, Moneda, Establecimiento, Numero)
-                    : Db.Tabla(ConsultaMovimientos.DocumentoConsultarNotacxc, Cliente, Moneda, Numero);
-        }
-        public DataSet Deposito(string Numero)
-        {
-            using (var Db = new ClsMovimientosRepositorio())
-            {
-                var D = new DataSet();
-                D.Tables.Add(Db.Tabla(ConsultaMovimientos.DepositoConsultarDepositoventas, Numero));
-                ClsValidacionesVentas.Exigir(D.Tables[0].Rows.Count == 1, "Consulte el codigo de un deposito preparado.");
-                D.Tables.Add(Db.Tabla(ConsultaMovimientos.DepositoConsultarDepositoventasdetalle, D.Tables[0].Rows[0]["idDeposito"]));
-                return D;
-            }
-        }
-        public DataTable RecibosDisponibles(int Moneda)
-        {
-            using (var Db = new ClsMovimientosRepositorio()) return Db.Tabla(ConsultaMovimientos.RecibosDisponiblesConsultarPago, Moneda);
-        }
-        public string PrepararDeposito(int Moneda, int Usuario, DateTime Fecha, string Numero, string Empresa, string Banco, string Cuenta, string Concepto, string Referencia, DataTable Recibos)
-        {
-            Empresa = ClsValidacionesVentas.Texto(Empresa, 100, "empresa suministrada por Bancos");
-            Banco = ClsValidacionesVentas.Texto(Banco, 100, "banco destino"); Cuenta = ClsValidacionesVentas.Texto(Cuenta, 100, "cuenta de la empresa");
-            Concepto = ClsValidacionesVentas.Texto(Concepto, 100, "concepto bancario"); Referencia = ClsValidacionesVentas.Texto(Referencia, 100, "referencia", false);
-            Numero = ClsValidacionesVentas.Texto(Numero, 40, "codigo de deposito", false);
-            ClsValidacionesVentas.Exigir(Recibos != null && Recibos.Rows.Count > 0, "Seleccione recibos para preparar el deposito.");
-            var Filas = Recibos.AsEnumerable().OrderBy(F => Convert.ToInt32(F["idPago"])).ToList();
-            ClsValidacionesVentas.Exigir(Filas.Select(F => Convert.ToInt32(F["idPago"])).Distinct().Count() == Filas.Count, "No repita un recibo.");
-            using (var Db = new ClsMovimientosRepositorio())
-            {
-                Db.Iniciar(); Db.Usuario(Usuario); Db.PeriodoAbierto(Moneda, Fecha);
-                decimal Total = 0;
-                foreach (DataRow Fila in Filas)
-                {
-                    DataTable P = Db.Tabla(ConsultaMovimientos.PrepararDepositoConsultarPago, Fila["idPago"], Moneda);
-                    ClsValidacionesVentas.Exigir(P.Rows.Count == 1 && Fecha.Date >= Convert.ToDateTime(P.Rows[0]["fechaPago"]).Date, "Recibo no confirmado, moneda o fecha incorrecta.");
-                    decimal Importe = Convert.ToDecimal(Fila["Importe"]);
-                    decimal Usado = ClsValidacionesVentas.Decimal(Db.Escalar(ConsultaMovimientos.PrepararDepositoConsultarDepositoventasdetalle, Fila["idPago"]));
-                    ClsValidacionesVentas.Exigir(Importe > 0 && Importe == ClsValidacionesVentas.Redondear(Importe) && Importe <= (decimal)P.Rows[0]["montoPago"] - Usado, "Importe de deposito invalido o superior al disponible."); Total += Importe;
-                }
-                if (Numero.Length == 0) Numero = Db.Numero("DEP");
-                ClsValidacionesVentas.Exigir(Total <= ClsValidacionesVentas.ImporteMaximo, "El deposito supera la capacidad del documento.");
-                Db.Ejecutar(ConsultaMovimientos.PrepararDepositoInsertarDepositoventas, Numero, Fecha.Date, Empresa, Banco, Cuenta, Concepto, Referencia, Moneda, Total, Usuario);
-                int Id = Db.Id();
-                foreach (DataRow Fila in Filas) Db.Ejecutar(ConsultaMovimientos.PrepararDepositoInsertarDepositoventasdetalle, Id, Fila["idPago"], Fila["Importe"]);
-                Db.Confirmar(); return Numero;
-            }
-        }
-        public void AnularRecibo(int Pago, DateTime Fecha, int Usuario, string Motivo)
-        {
-            Motivo = ClsValidacionesVentas.Texto(Motivo, 180, "motivo de anulacion");
-            using (var Db = new ClsMovimientosRepositorio())
-            {
-                Db.Iniciar(); Db.Usuario(Usuario);
-                object Moneda = Db.Escalar(ConsultaMovimientos.AnularReciboConsultarPago, Pago);
-                ClsValidacionesVentas.Exigir(Moneda != null, "No existe el recibo."); Db.PeriodoAbierto(Convert.ToInt32(Moneda), Fecha);
-                DataTable P = Db.Tabla(ConsultaMovimientos.AnularReciboConsultarPago2, Pago);
-                ClsValidacionesVentas.Exigir((string)P.Rows[0]["estadoPago"] == "CONFIRMADO" && Fecha.Date >= Convert.ToDateTime(P.Rows[0]["fechaPago"]).Date, "El recibo ya esta anulado o la fecha es anterior al pago.");
-                ClsValidacionesVentas.Exigir(Convert.ToInt32(Db.Escalar(ConsultaMovimientos.AnularReciboConsultarDepositoventasdetalle, Pago)) == 0, "El recibo pertenece a un deposito; coordine su reverso con Bancos.");
-                DataTable Movimientos = Db.Tabla(ConsultaMovimientos.AnularReciboConsultarMovimientocxc, Pago);
-                foreach (DataRow M in Movimientos.Rows) Movimiento(Db, Convert.ToInt32(M["idFactura"]), Fecha, "REVERSO", "Anulacion: " + Motivo, (decimal)M["abono"], (decimal)M["cargo"], Usuario, null, null, Convert.ToInt32(M["idMovimiento"]));
-                Db.Ejecutar(ConsultaMovimientos.AnularReciboActualizarAplicacionpago, Pago);
-                Db.Ejecutar(ConsultaMovimientos.AnularReciboActualizarPago, Pago);
-                Db.Auditar("RECIBO", Pago, "ANULAR", Motivo, Usuario);
-                Db.Confirmar();
+                DataTable Datos = Repositorio.VentasMetLecturaConsultarMovimiento(Id);
+                ClsValidacionesVentas.VentasMetExigir(Datos.Rows.Count == 1, "El documento pertenece a Facturas o no admite cambios desde CxC.");
+                return Datos.Rows[0];
             }
         }
     }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -44,5 +44,19 @@
       <Name>CapaModelo_Ventas</Name>
       <Private>True</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Consultas\ClsAntiguedadDatos.cs" />
+    <Compile Include="..\..\Ventas y CxC\CapaModelo_Ventas\Datos\ClsDatosVentas.cs">
+      <Link>Datos\ClsDatosVentas.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Ventas y CxC\CapaModelo_Ventas\Datos\ClsCatalogosVentas.cs">
+      <Link>Datos\ClsCatalogosVentas.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ventas y CxC\CapaModelo_Ventas\Datos\ClsCorrelativosVentas.cs">
+      <Link>Datos\ClsCorrelativosVentas.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

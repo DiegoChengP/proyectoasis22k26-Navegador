@@ -23,8 +23,29 @@ namespace CapaVista_CierreMovimientos
             InitializeComponent();
             _Presentador = new ClsCierrePresentador(this);
         }
-        public int VentasIdUsuario { get { return _Presentador.VentasIdUsuario; } set { _Presentador.VentasIdUsuario = value; } }
-        public void VentasMetConfigurarEnlaceContable(Func<string, int, DateTime, System.Data.DataTable, string> Registrar) { _Presentador.VentasMetConfigurarEnlaceContable(Registrar); }
-        private void VentasPeriodoCierre_Changed(object sender, EventArgs e) { if (_Presentador != null) _Presentador.VentasMetPeriodoCambio(); }
+
+        public int VentasIdUsuario
+        {
+            get
+            {
+                return _Presentador.VentasIdUsuario;
+            }
+
+            set
+            {
+                _Presentador.VentasIdUsuario = value;
+            }
+        }
+
+        public void VentasMetConfigurarEnlaceContable(Func<string, int, DateTime, System.Data.DataTable, string> Registrar)
+        {
+            _Presentador.VentasMetConfigurarEnlaceContable(Registrar);
+        }
+
+        private void VentasPeriodoCierre_Changed(object sender, EventArgs e)
+        {
+            if (_Presentador != null)
+                _Presentador.VentasMetPeriodoCambio();
+        }
     }
 }

@@ -129,8 +129,7 @@ namespace CapaVista_Ventas
         // Abre la opción de reportes de Ventas.
         private void VentasBtnReportes_Click(object sender, EventArgs e)
         {
-            using (var Formulario = new CapaVista_Reportes.FrmReportesVentas())
-                Formulario.ShowDialog(this);
+            CapaVista_Reportes.ClsDocumentoAntiguedad.VentasMetAbrir(this);
         }
 
         // Abre el formulario independiente de cotizaciones.

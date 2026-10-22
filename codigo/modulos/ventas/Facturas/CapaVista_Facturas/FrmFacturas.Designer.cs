@@ -1,4 +1,4 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — Ventas y cuentas por cobrar
  * Asignación: Matthew, Jose, Natali
  * Matthew Andreé Juárez Xoy | Carné: 0901-23-4250
@@ -393,7 +393,7 @@ namespace CapaVista_Facturas
             this.VentasBtnEmitirFactura.Text = string.Empty;
             this.VentasBtnEmitirFactura.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnEmitirFactura.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            //this.VentasBtnEmitirFactura.BackgroundImage = global::CapaVista_Facturas.Properties.Resources.BotonOriginalImprimirVentas;
+            this.VentasBtnEmitirFactura.BackgroundImage = global::CapaVista_Facturas.Properties.Resources.BotonOriginalImprimirVentas;
             this.VentasBtnEmitirFactura.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.VentasBtnEmitirFactura.Image = null;
             this.VentasBtnEmitirFactura.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -422,7 +422,7 @@ namespace CapaVista_Facturas
             this.VentasBtnAgregarItem.Text = string.Empty;
             this.VentasBtnAgregarItem.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnAgregarItem.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            //this.VentasBtnAgregarItem.BackgroundImage = global::CapaVista_Facturas.Properties.Resources.BotonOriginalIngresarVentas;
+            this.VentasBtnAgregarItem.BackgroundImage = global::CapaVista_Facturas.Properties.Resources.BotonOriginalIngresarVentas;
             this.VentasBtnAgregarItem.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.VentasBtnAgregarItem.Image = null;
             this.VentasBtnAgregarItem.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -478,7 +478,7 @@ namespace CapaVista_Facturas
             this.Font = new System.Drawing.Font("Segoe UI", 14F);
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            //this.Icon = global::CapaVista_Facturas.Properties.Resources.IconoVentas;
+            this.Icon = global::CapaVista_Facturas.Properties.Resources.IconoVentas;
             this.MaximizeBox = false;
             this.Name = "FrmFacturas";
             this.ShowInTaskbar = false;

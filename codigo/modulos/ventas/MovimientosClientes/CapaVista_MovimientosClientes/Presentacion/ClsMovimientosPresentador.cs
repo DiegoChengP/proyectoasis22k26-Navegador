@@ -1,403 +1,483 @@
-﻿using System;
+﻿// Jose Javier Torres Martinez | 0901-23-1091 | 22/10/2026
+using CapaControlador_MovimientosClientes;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
-using CapaControlador_MovimientosClientes;
-using V = VentasPresentacion.ClsVistaVentas;
+using System;
+using VentasPresentacion;
 
 namespace CapaVista_MovimientosClientes
 {
-    internal sealed partial class ClsMovimientosPresentador
+    internal sealed class ClsMovimientosPresentador
     {
-        private readonly FrmMovimientosClientesVentas _Vista;
+        internal FrmMovimientosClientesVentas Vista { get; set; }
+        internal ClsMovimientosControlador Controlador { get; set; } = new ClsMovimientosControlador();
+        internal Button SeleccionarFactura { get; set; } = new Button();
+        internal bool Cargando { get; set; } = true;
+        internal bool Inicializado { get; set; }
+        internal bool[] Guardados { get; set; } = new bool[5];
+        internal DataSet EstadoCuenta { get; set; }
+        internal int UsuarioInicial { get; set; }
+        internal DataRow DocumentoActual { get; set; }
+        internal DataRow ReciboActual { get; set; }
+        internal bool EditandoDocumento { get; set; }
+        internal bool EditandoRecibo { get; set; }
+
+        public int VentasIdUsuario
+        {
+            get
+            {
+                return UsuarioInicial > 0 ? UsuarioInicial : ClsHerramientasVentas.VentasFuncObtenerId(Vista.VentasCboUsuarioRegistro);
+            }
+
+            set
+            {
+                UsuarioInicial = value;
+                Vista.VentasCboUsuarioRegistro.Enabled = value <= 0;
+                if (Vista.VentasCboUsuarioRegistro.DataSource != null)
+                    Vista.VentasCboUsuarioRegistro.SelectedValue = value;
+            }
+        }
+
+        internal int Cliente
+        {
+            get
+            {
+                return ClsHerramientasVentas.VentasFuncObtenerId(Vista.VentasCboCliente);
+            }
+        }
+
+        internal int Moneda
+        {
+            get
+            {
+                return ClsHerramientasVentas.VentasFuncObtenerId(Vista.VentasCboMoneda);
+            }
+        }
+
+        internal string CodigoMoneda
+        {
+            get
+            {
+                var F = ClsHerramientasVentas.VentasFuncObtenerFila(Vista.VentasCboMoneda);
+                return F == null ? "" : Convert.ToString(F["codigoMoneda"]);
+            }
+        }
+
+        internal ClsCapturaMovimientos CapturaMovimientos { get; private set; }
+
         internal ClsMovimientosPresentador(FrmMovimientosClientesVentas Vista)
         {
-            _Vista = Vista;
+            this.Vista = Vista;
+            CapturaMovimientos = new ClsCapturaMovimientos(this);
             VentasMetConectarEventos();
         }
 
-        private readonly ClsMovimientosControlador _Controlador = new ClsMovimientosControlador();
-        private readonly Button _SeleccionarFactura = new Button();
-        private bool _Cargando = true;
-        private bool _Inicializado;
-        private readonly bool[] _Guardados = new bool[5];
-        private DataSet _EstadoCuenta;
-        private int _UsuarioInicial;
-        public int VentasIdUsuario
-        {
-            get { return _UsuarioInicial > 0 ? _UsuarioInicial : V.Id(_Vista.VentasCboUsuarioRegistro); }
-            set
-            {
-                _UsuarioInicial = value;
-                _Vista.VentasCboUsuarioRegistro.Enabled = value <= 0;
-                if (_Vista.VentasCboUsuarioRegistro.DataSource != null) _Vista.VentasCboUsuarioRegistro.SelectedValue = value;
-            }
-        }
-        private int Cliente { get { return V.Id(_Vista.VentasCboCliente); } }
-        private int Moneda { get { return V.Id(_Vista.VentasCboMoneda); } }
-        private string CodigoMoneda { get { var F = V.Fila(_Vista.VentasCboMoneda); return F == null ? "" : Convert.ToString(F["codigoMoneda"]); } }
-        private void VentasMetConectarEventos()
-        {
-            int AnchoSelector = Math.Max(120, TextRenderer.MeasureText("Elegir factura", _Vista.VentasTxtFacturaReferencia.Font).Width + 24);
-            _Vista.VentasTxtFacturaReferencia.Width -= AnchoSelector + 8;
-            _SeleccionarFactura.Name = "VentasBtnSeleccionarFactura";
-            _SeleccionarFactura.Text = "Elegir factura";
-            _SeleccionarFactura.SetBounds(_Vista.VentasTxtFacturaReferencia.Right + 8, _Vista.VentasTxtFacturaReferencia.Top, AnchoSelector, _Vista.VentasTxtFacturaReferencia.Height);
-            _SeleccionarFactura.Font = _Vista.VentasTxtFacturaReferencia.Font;
-            _SeleccionarFactura.Anchor = _Vista.VentasTxtFacturaReferencia.Anchor;
-            _SeleccionarFactura.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
-            _SeleccionarFactura.ForeColor = System.Drawing.Color.White;
-            _SeleccionarFactura.FlatStyle = FlatStyle.Flat;
-            _Vista.VentasTxtFacturaReferencia.Parent.Controls.Add(_SeleccionarFactura);
-            _SeleccionarFactura.Click += (s, e) => V.Ejecutar(_Vista, VentasMetSeleccionarFactura);
-            _Vista.VentasDtpFechaDocumento.ValueChanged += (s, e) => { if (!_Cargando && _DocumentoActual == null && _Vista.VentasCboTipoDocumento.SelectedIndex == 0) VentasMetVencimientoCargo(); };
-            foreach (var Grid in new[] { _Vista.VentasDgvMovimientos, _Vista.VentasDgvDocumentos, _Vista.VentasDgvConsultaRecibos, _Vista.VentasDgvConsultaAplicaciones }) V.Fechas(Grid);
-            _Vista.Load += (s, e) => V.Ejecutar(_Vista, VentasMetCargar);
-            _Vista.VentasBtnConsultar.Click += (s, e) => V.Ejecutar(_Vista, () => { if (!_Inicializado) VentasMetCargar(); else VentasMetConsultarCaptura(); });
-            _Vista.VentasBtnModificar.Click += (s,e) => V.Ejecutar(_Vista, VentasMetModificar);
-            _Vista.VentasBtnEliminar.Click += (s,e) => V.Ejecutar(_Vista, VentasMetAnular);
-            _Vista.VentasBtnRefrescar.Click += (s,e) => V.Ejecutar(_Vista, () =>
-            {
-                if (_Vista.VentasTbcMovimientos.SelectedIndex == 1 && _DocumentoActual != null) VentasMetCargarDocumento(Convert.ToInt32(_DocumentoActual["Id"]),Convert.ToString(_DocumentoActual["Clase"]));
-                else if (_Vista.VentasTbcMovimientos.SelectedIndex == 2 && _ReciboActual != null) VentasMetCargarRecibo(Convert.ToInt32(_ReciboActual["idPago"]));
-                else VentasMetConsultarActual();
-            });
-            _Vista.VentasDgvMovimientos.CellDoubleClick += (s,e) => { if(e.RowIndex>=0) V.Ejecutar(_Vista,VentasMetAbrirSeleccionActual); };
-            _Vista.VentasDgvConsultaRecibos.CellDoubleClick += (s,e) => { if(e.RowIndex>=0) V.Ejecutar(_Vista,VentasMetAbrirSeleccionActual); };
-            foreach(var Combo in new[] { _Vista.VentasCboEmpresaDeposito, _Vista.VentasCboBancoDestino, _Vista.VentasCboCuentaDestino, _Vista.VentasCboConceptoBancario }) Combo.DropDownStyle=ComboBoxStyle.DropDown;
-            _Vista.VentasBtnGuardar.Click += (s, e) => V.Ejecutar(_Vista, VentasMetGuardar);
-            _Vista.VentasBtnIngresar.Click += (s, e) => V.Ejecutar(_Vista, VentasMetNuevo);
-            _Vista.VentasBtnCancelar.Click += (s, e) => V.Ejecutar(_Vista, VentasMetNuevo);
-            _Vista.VentasBtnCerrar.Click += (s, e) => _Vista.Close();
-            _Vista.VentasBtnImprimir.Click += (s, e) => V.Ejecutar(_Vista, VentasMetImprimir);
-            _Vista.VentasCboCliente.SelectedIndexChanged += (s, e) => { if (!_Cargando) V.Ejecutar(_Vista, VentasMetClienteCambio); };
-            _Vista.VentasCboMoneda.SelectedIndexChanged += (s, e) => { if (!_Cargando) V.Ejecutar(_Vista, VentasMetConsultarActual); };
-            _Vista.VentasCboMonedaDeposito.SelectedIndexChanged += (s, e) => { if (!_Cargando) V.Ejecutar(_Vista, VentasMetDisponibles); };
-            _Vista.VentasCboTipoConsulta.SelectedIndexChanged += (s, e) => { if (!_Cargando && _EstadoCuenta != null) VentasMetMostrarEstado(); };
-            _Vista.VentasCboEstadoConsulta.SelectedIndexChanged += (s, e) => { if (!_Cargando && _EstadoCuenta != null) VentasMetMostrarEstado(); };
-            _Vista.VentasNudMontoPago.ValueChanged += (s, e) => VentasMetTotalesPago();
-            foreach (var Grid in new[] { _Vista.VentasDgvDocumentos, _Vista.VentasDgvRecibosDeposito })
-            {
-                Grid.CurrentCellDirtyStateChanged += (s, e) => { if (Grid.IsCurrentCellDirty && Grid.CurrentCell is DataGridViewCheckBoxCell) Grid.CommitEdit(DataGridViewDataErrorContexts.Commit); };
-                Grid.DataError += (s, e) => { e.ThrowException = false; V.Informar(_Vista, "Ingrese un importe numerico valido."); };
-            }
-            _Vista.VentasDgvDocumentos.CellValueChanged += VentasMetAplicacionCambio;
-            _Vista.VentasDgvRecibosDeposito.CellValueChanged += VentasMetDepositoCambio;
-            _Vista.VentasDgvConsultaRecibos.SelectionChanged += (s, e) => { if (!_Cargando) V.Ejecutar(_Vista, VentasMetAplicacionesConsulta); };
-            VentasMetEstadoNuevoDocumento();
-            _Vista.VentasCboEstadoDeposito.Items.Clear(); _Vista.VentasCboEstadoDeposito.Items.Add("Preparacion local"); _Vista.VentasCboEstadoDeposito.SelectedIndex = 0; _Vista.VentasCboEstadoDeposito.Enabled = false;
-            _Vista.VentasTxtEstadoEnvio.Text = "Pendiente de enlace con Bancos"; _Vista.VentasTxtModoActualizacion.Text = "Lo define Bancos; sin afectar saldos bancarios";
-            _Vista.VentasDtpDesde.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            _Vista.VentasDtpHasta.Value = DateTime.Today;
-            _Vista.VentasNudTipoCambioPago.Value = 1;
-            _Vista.VentasTtpAcciones.SetToolTip(_Vista.VentasTxtNumeroDocumento, "Numero interno. Si se deja vacio, se genera un correlativo. No emite DTE.");
-            _Vista.VentasTtpAcciones.SetToolTip(_Vista.VentasTxtRecibo, "Dejar vacio para generar el numero del recibo al guardar.");
-            _Vista.VentasLblDocumentoRecibo.Text = "Para registrar dinero recibido y reducir la deuda use Recepcion de pagos; al guardar se genera el recibo.";
-            _Vista.VentasTtpAcciones.SetToolTip(_Vista.VentasTxtFacturaReferencia, "Seleccione una factura del cliente y moneda actuales con Elegir factura.");
-            _Vista.VentasCboTipoDocumento.SelectedIndex = 0;
-            VentasMetTipoDocumentoCambio();
-        }
-        private void VentasMetCargar()
-        {
-            _Cargando = true;
-            try
-            {
-                V.Combo(_Vista.VentasCboUsuarioRegistro, _Controlador.Catalogo("Usuarios"), _UsuarioInicial);
-                V.Combo(_Vista.VentasCboCliente, _Controlador.Catalogo("Clientes"));
-                DataTable Monedas = _Controlador.Catalogo("Monedas");
-                V.Combo(_Vista.VentasCboMoneda, Monedas); V.Combo(_Vista.VentasCboMonedaDeposito, Monedas.Copy());
-                V.Combo(_Vista.VentasCboEstablecimientoDocumento, _Controlador.Catalogo("Establecimientos"));
-                _Vista.VentasCboTipoConsulta.SelectedIndex = 0; _Vista.VentasCboEstadoConsulta.SelectedIndex = 0;
-                _Inicializado = true;
-                _Vista.VentasLblEtapaBancos.Text = _Vista.VentasCboCliente.Items.Count == 0 ? "Registre clientes, monedas y emisor en los catalogos de Ventas para comenzar." : "Seleccione cliente y moneda. Los recibos se generan al guardar Recepcion de pagos.";
-            }
-            finally { _Cargando = false; VentasMetRefrescarBotones(); }
-            if (_Vista.VentasTbcMovimientos.SelectedTab == _Vista.VentasTbpConsultaRecibos) VentasMetConsultarRecibos();
-        }
-        private void VentasMetClienteCambio()
-        {
-            _DocumentoActual=null; _ReciboActual=null; _EditandoDocumento=_EditandoRecibo=false;
-            _Guardados[1]=_Guardados[2]=false;
-            _Vista.VentasTxtNumeroDocumento.Clear(); _Vista.VentasTxtRecibo.Clear();
-            _Vista.VentasTxtDescripcionDocumento.Clear(); _Vista.VentasTxtObservacionesPago.Clear();
-            VentasMetRefrescarBotones();
-            DataRow C = V.Fila(_Vista.VentasCboCliente);
-            _Vista.VentasTxtCondicion.Text = C == null ? "" : C["diasCredito"] + " dias; limite " + Convert.ToDecimal(C["limiteCredito"]).ToString("N2", V.Cultura);
-            if (C != null) _Vista.VentasCboMoneda.SelectedValue = Convert.ToInt32(C["idMonedaCredito"]);
-            _Vista.VentasTxtFacturaReferencia.Clear();
-            VentasMetEstadoNuevoDocumento();
-            VentasMetVencimientoCargo();
-            VentasMetLimpiarResultados();
-            if (Cliente > 0 && Moneda > 0) VentasMetConsultarActual();
-        }
-        private void VentasMetLimpiarResultados()
-        {
-            _EstadoCuenta = null; _Vista.VentasDgvMovimientos.Rows.Clear(); _Vista.VentasDgvDocumentos.Rows.Clear();
-            _Vista.VentasLblValorInicial.Text = _Vista.VentasLblValorCargos.Text = _Vista.VentasLblValorAbonos.Text = _Vista.VentasLblValorFinal.Text = V.Dinero(0, CodigoMoneda);
-        }
-        private void VentasMetConsultarActual()
-        {
-            if (_Cargando) return;
-            if (_Vista.VentasTbcMovimientos.SelectedTab == _Vista.VentasTbpConsultaRecibos) { VentasMetConsultarRecibos(); return; }
-            if (_Vista.VentasTbcMovimientos.SelectedTab == _Vista.VentasTbpDepositos) { if(!string.IsNullOrWhiteSpace(_Vista.VentasTxtCodigoDeposito.Text)) VentasMetConsultarDeposito(); else VentasMetDisponibles(); return; }
-            if (Cliente <= 0 || Moneda <= 0) { VentasMetLimpiarResultados(); return; }
-            if (_Vista.VentasTbcMovimientos.SelectedTab == _Vista.VentasTbpCuenta)
-            { _EstadoCuenta = _Controlador.EstadoCuenta(Cliente, Moneda, _Vista.VentasDtpDesde.Value, _Vista.VentasDtpHasta.Value); VentasMetMostrarEstado(); }
-            if (_Vista.VentasTbcMovimientos.SelectedTab == _Vista.VentasTbpRecibos && _ReciboActual == null) VentasMetPendientes();
-        }
-        private void VentasMetMostrarEstado()
-        {
-            _Vista.VentasDgvMovimientos.Rows.Clear(); DataRow R = _EstadoCuenta.Tables[0].Rows[0];
-            decimal Inicial = Convert.ToDecimal(R["Inicial"]), Cargos = Convert.ToDecimal(R["Cargos"]), Abonos = Convert.ToDecimal(R["Abonos"]);
-            _Vista.VentasLblValorInicial.Text = V.Dinero(Inicial, CodigoMoneda); _Vista.VentasLblValorCargos.Text = V.Dinero(Cargos, CodigoMoneda);
-            _Vista.VentasLblValorAbonos.Text = V.Dinero(Abonos, CodigoMoneda); _Vista.VentasLblValorFinal.Text = V.Dinero(Inicial + Cargos - Abonos, CodigoMoneda);
-            string[] Tipos = { "", "FACTURA", "PAGO", "NOTA_CREDITO", "NOTA_DEBITO", "AJUSTE_POSITIVO", "AJUSTE_NEGATIVO" };
-            string Tipo = Tipos[Math.Max(0, _Vista.VentasCboTipoConsulta.SelectedIndex)];
-            foreach (DataRow F in _EstadoCuenta.Tables[1].Rows)
-            {
-                if (Tipo.Length > 0 && (string)F["Tipo"] != Tipo) continue;
-                if (_Vista.VentasCboEstadoConsulta.SelectedIndex > 0 && !string.Equals((string)F["Estado"], _Vista.VentasCboEstadoConsulta.Text, StringComparison.OrdinalIgnoreCase)) continue;
-                int I = _Vista.VentasDgvMovimientos.Rows.Add(F["Fecha"], F["Documento"], F["Tipo"], F["Descripcion"], F["Cargo"], F["Abono"], F["Saldo"], F["Estado"]);
-                _Vista.VentasDgvMovimientos.Rows[I].Tag = F;
-            }
-            _Vista.VentasLblRegistros.Text = _Vista.VentasDgvMovimientos.Rows.Count + " movimientos mostrados";
-            _Vista.VentasLblEstadoCierre.Text = "Los totales representan todo el periodo; los filtros solo cambian las filas mostradas.";
-        }
-        private void VentasMetPendientes()
-        {
-            _Cargando = true;
-            try
-            {
-                _Vista.VentasDgvDocumentos.Rows.Clear();
-                foreach (DataRow F in _Controlador.Pendientes(Cliente, Moneda).Rows)
-                {
-                    int I = _Vista.VentasDgvDocumentos.Rows.Add(false, F["Documento"], F["Fecha"], F["Vencimiento"], F["Moneda"], F["Saldo"], 0m);
-                    _Vista.VentasDgvDocumentos.Rows[I].Tag = F;
-                }
-            }
-            finally { _Cargando = false; }
-            VentasMetTotalesPago();
-        }
-        private void VentasMetAplicacionCambio(object Sender, DataGridViewCellEventArgs E)
-        {
-            if (_Cargando || E.RowIndex < 0) return;
-            V.Ejecutar(_Vista, () =>
-            {
-                if (E.ColumnIndex == 0 && Convert.ToBoolean(_Vista.VentasDgvDocumentos.Rows[E.RowIndex].Cells[0].Value))
-                {
-                    var F = _Vista.VentasDgvDocumentos.Rows[E.RowIndex];
-                    if (_Controlador.ImporteCelda(F.Cells[6].Value) == 0) F.Cells[6].Value = _Vista.VentasNudMontoPago.Value == 0 ? _Controlador.ImporteCelda(F.Cells[5].Value) : Math.Min(_Controlador.ImporteCelda(F.Cells[5].Value), Math.Max(0, _Vista.VentasNudMontoPago.Value - VentasMetSumar(_Vista.VentasDgvDocumentos, 6)));
-                }
-                VentasMetTotalesPago();
-            });
-        }
-        private decimal VentasMetSumar(DataGridView Grid, int Columna)
-        { return Grid.Rows.Cast<DataGridViewRow>().Where(F => F.Cells[0].Value is bool && (bool)F.Cells[0].Value).Sum(F => _Controlador.ImporteCelda(F.Cells[Columna].Value)); }
-        private void VentasMetTotalesPago()
-        {
-            if (_Cargando) return;
-            decimal Aplicado = VentasMetSumar(_Vista.VentasDgvDocumentos, 6);
-            _Vista.VentasLblValorRecibido.Text = V.Dinero(_Vista.VentasNudMontoPago.Value, CodigoMoneda);
-            _Vista.VentasLblValorAplicado.Text = V.Dinero(Aplicado, CodigoMoneda);
-            _Vista.VentasLblValorDisponible.Text = V.Dinero(_Vista.VentasNudMontoPago.Value - Aplicado, CodigoMoneda);
-        }
-        private DataTable VentasMetSeleccionados(DataGridView Grid, string Id, int Importe)
-        {
-            _Controlador.ValidarCaptura(!(!Grid.EndEdit()), "Corrija la celda en edicion.");
-            var Tabla = new DataTable(); Tabla.Columns.Add(Id, typeof(int)); Tabla.Columns.Add("Importe", typeof(decimal));
-            foreach (DataGridViewRow F in Grid.Rows)
-                if (F.Cells[0].Value is bool && (bool)F.Cells[0].Value && F.Tag is DataRow)
-                    Tabla.Rows.Add(((DataRow)F.Tag)[Id], _Controlador.ImporteCelda(F.Cells[Importe].Value));
-            return Tabla;
-        }
-        private void VentasMetGuardar()
-        {
-            if (VentasMetGuardarModificacion()) return;
-            int Tab = _Vista.VentasTbcMovimientos.SelectedIndex;
-            _Controlador.ValidarCaptura(!(_Guardados[Tab]), "El registro ya se guardo. Use Ingresar para comenzar otro.");
-            string Numero;
-            if (Tab == 1)
-            {
-                Numero = _Controlador.RegistrarDocumento(Cliente, Moneda, VentasIdUsuario, V.Id(_Vista.VentasCboEstablecimientoDocumento), _Vista.VentasTxtNumeroDocumento.Text, _Vista.VentasCboTipoDocumento.SelectedIndex, _Vista.VentasDtpFechaDocumento.Value, _Vista.VentasDtpVencimientoDocumento.Value, _Vista.VentasNudImporteDocumento.Value, _Vista.VentasTxtFacturaReferencia.Text, _Vista.VentasTxtDescripcionDocumento.Text);
-                _Vista.VentasTxtNumeroDocumento.Text = Numero;
-                bool Abono = _Vista.VentasCboTipoDocumento.SelectedIndex == 1 || _Vista.VentasCboTipoDocumento.SelectedIndex == 4;
-                V.Informar(_Vista, (Abono ? "Abono registrado; disminuye la deuda: " : "Cargo registrado; aumenta la deuda: ") + Numero);
-            }
-            else if (Tab == 2)
-            {
-                string[] Formas = { "EFECTIVO", "TRANSFERENCIA", "DEPOSITO", "CHEQUE", "TARJETA" };
-                _Controlador.ValidarCaptura(!(_Vista.VentasCboFormaPago.SelectedIndex < 0), "Seleccione la forma de pago.");
-                Numero = _Controlador.RegistrarRecibo(Cliente, Moneda, VentasIdUsuario, _Vista.VentasTxtRecibo.Text, _Vista.VentasDtpFechaPago.Value, _Vista.VentasNudMontoPago.Value, _Vista.VentasNudTipoCambioPago.Value, Formas[_Vista.VentasCboFormaPago.SelectedIndex], _Vista.VentasTxtReferenciaPago.Text, _Vista.VentasTxtObservacionesPago.Text, VentasMetSeleccionados(_Vista.VentasDgvDocumentos, "idFactura", 6));
-                _Vista.VentasTxtRecibo.Text = Numero; VentasMetPendientes();
-                V.Informar(_Vista, "Recibo generado y aplicado correctamente: " + Numero);
-            }
-            else if (Tab == 3)
-            {
-                Numero = _Controlador.PrepararDeposito(V.Id(_Vista.VentasCboMonedaDeposito), VentasIdUsuario, _Vista.VentasDtpFechaDeposito.Value, _Vista.VentasTxtCodigoDeposito.Text, VentasMetReferencia(_Vista.VentasCboEmpresaDeposito), VentasMetReferencia(_Vista.VentasCboBancoDestino), VentasMetReferencia(_Vista.VentasCboCuentaDestino), VentasMetReferencia(_Vista.VentasCboConceptoBancario), _Vista.VentasTxtReferenciaDeposito.Text, VentasMetSeleccionados(_Vista.VentasDgvRecibosDeposito, "idPago", 7));
-                _Vista.VentasTxtCodigoDeposito.Text = Numero; VentasMetDisponibles();
-                V.Informar(_Vista, "Deposito preparado localmente: " + Numero + ". El registro en Bancos requiere su enlace.");
-            }
-            else { _Controlador.ValidarCaptura(false, "Seleccione una pestana de captura."); return; }
-            _Guardados[Tab] = true;
-            if (Tab == 1)
-            {
-                string Documento=_Vista.VentasCboTipoDocumento.SelectedIndex == 0 ? "CXC-"+Numero : Numero;
-                DataRow F=_Controlador.ListarDocumentos(Cliente,Moneda).AsEnumerable().Single(R => Convert.ToString(R["Documento"]) == Documento);
-                VentasMetCargarDocumento(Convert.ToInt32(F["Id"]),Convert.ToString(F["Clase"]));
-            }
-            else if(Tab == 2) VentasMetCargarRecibo(Convert.ToInt32(_Controlador.ConsultarRecibos(Numero, "").Rows[0]["idPago"]));
-            VentasMetRefrescarBotones();
-        }
-        private void VentasMetNuevo()
-        {
-            if (_Vista.VentasTbcMovimientos.SelectedIndex == 0) _Vista.VentasTbcMovimientos.SelectedTab = _Vista.VentasTbpDocumento;
-            if (_Vista.VentasTbcMovimientos.SelectedTab == _Vista.VentasTbpConsultaRecibos) _Vista.VentasTbcMovimientos.SelectedTab = _Vista.VentasTbpRecibos;
-            int Tab = _Vista.VentasTbcMovimientos.SelectedIndex; _Guardados[Tab] = false;
-            if(Tab == 1) { _DocumentoActual=null; _EditandoDocumento=false; }
-            if(Tab == 2) { _ReciboActual=null; _EditandoRecibo=false; }
-            if (Tab == 1)
-            {
-                VentasMetEstadoNuevoDocumento();
-                _Vista.VentasTxtNumeroDocumento.Clear(); _Vista.VentasTxtFacturaReferencia.Clear(); _Vista.VentasTxtDescripcionDocumento.Clear(); _Vista.VentasNudImporteDocumento.Value = 0;
-                _Vista.VentasCboTipoDocumento.SelectedIndex = 0; _Vista.VentasDtpFechaDocumento.Value = DateTime.Today;
-                DataRow C = V.Fila(_Vista.VentasCboCliente);
-                _Vista.VentasDtpVencimientoDocumento.Value = DateTime.Today.AddDays(C == null ? 0 : Convert.ToInt32(C["diasCredito"]));
-            }
-            if (Tab == 2) { _Vista.VentasTxtRecibo.Clear(); _Vista.VentasTxtReferenciaPago.Clear(); _Vista.VentasTxtObservacionesPago.Clear(); _Vista.VentasNudMontoPago.Value = 0; _Vista.VentasNudTipoCambioPago.Value = 1; _Vista.VentasDtpFechaPago.Value = DateTime.Today; _Vista.VentasCboFormaPago.SelectedIndex = 0; VentasMetPendientes(); }
-            if (Tab == 3) { _Vista.VentasTxtCodigoDeposito.Clear(); _Vista.VentasTxtReferenciaDeposito.Clear(); _Vista.VentasDtpFechaDeposito.Value = DateTime.Today; VentasMetDisponibles(); }
-            VentasMetRefrescarBotones();
-            if (Tab == 1) _Vista.VentasLblEtapaBancos.Text = "Nuevo cargo: seleccione cliente, moneda y emisor; ingrese importe y motivo, y presione Guardar.";
-            if (Tab < 3 && Cliente <= 0) _Vista.VentasCboCliente.Focus();
-            else if (Tab == 1) _Vista.VentasNudImporteDocumento.Focus();
-            else if (Tab == 2) _Vista.VentasNudMontoPago.Focus();
-        }
-        private void VentasMetRefrescarBotones()
-        {
-            int Tab = _Vista.VentasTbcMovimientos.SelectedIndex;
-            _Vista.VentasBtnGuardar.Enabled = _Inicializado && Tab > 0 && Tab < 4 && !_Guardados[Tab];
-            _Vista.VentasBtnIngresar.Enabled = _Inicializado; _Vista.VentasBtnCancelar.Enabled = _Vista.VentasBtnIngresar.Enabled;
-            VentasMetActualizarAcciones();
-        }
         public void VentasMetConfigurarCatalogosBancos(DataTable Empresas, DataTable Bancos, DataTable Cuentas, DataTable Conceptos, string Modo)
         {
-            // Tablas con Id y Nombre suministradas por el modulo dueno de esos catalogos.
-            foreach(var Combo in new[] { _Vista.VentasCboEmpresaDeposito, _Vista.VentasCboBancoDestino, _Vista.VentasCboCuentaDestino, _Vista.VentasCboConceptoBancario }) Combo.DropDownStyle=ComboBoxStyle.DropDownList;
-            V.Combo(_Vista.VentasCboEmpresaDeposito, Empresas); V.Combo(_Vista.VentasCboBancoDestino, Bancos);
-            V.Combo(_Vista.VentasCboCuentaDestino, Cuentas); V.Combo(_Vista.VentasCboConceptoBancario, Conceptos);
-            _Vista.VentasTxtModoActualizacion.Text = Modo;
-        }
-        private static string VentasMetReferencia(ComboBox Combo)
-        { return Combo.SelectedValue == null ? Combo.Text.Trim() : Convert.ToString(Combo.SelectedValue); }
-        private void VentasMetDisponibles()
-        {
-            _Cargando = true;
-            try
-            {
-                _Vista.VentasDgvRecibosDeposito.Rows.Clear();
-                foreach (DataRow F in _Controlador.RecibosDisponibles(V.Id(_Vista.VentasCboMonedaDeposito)).Rows)
-                {
-                    int I = _Vista.VentasDgvRecibosDeposito.Rows.Add(false, F["Recibo"], F["Cliente"], F["Moneda"], F["Monto"], F["Depositado"], F["Disponible"], 0m);
-                    _Vista.VentasDgvRecibosDeposito.Rows[I].Tag = F;
-                }
-            }
-            finally { _Cargando = false; }
-            _Vista.VentasTxtTotalDeposito.Text = "0.00";
-        }
-        private void VentasMetDepositoCambio(object Sender, DataGridViewCellEventArgs E)
-        {
-            if (_Cargando || E.RowIndex < 0) return;
-            V.Ejecutar(_Vista, () =>
-            {
-                var F = _Vista.VentasDgvRecibosDeposito.Rows[E.RowIndex];
-                if (E.ColumnIndex == 0 && Convert.ToBoolean(F.Cells[0].Value) && _Controlador.ImporteCelda(F.Cells[7].Value) == 0) F.Cells[7].Value = F.Cells[6].Value;
-                _Vista.VentasTxtTotalDeposito.Text = VentasMetSumar(_Vista.VentasDgvRecibosDeposito, 7).ToString("N2", V.Cultura);
-            });
-        }
-        private void VentasMetConsultarRecibos()
-        {
-            _Cargando = true;
-            try
-            {
-                _Vista.VentasDgvConsultaRecibos.Rows.Clear(); _Vista.VentasDgvConsultaAplicaciones.Rows.Clear(); _Vista.VentasTxtMovimientoBancario.Clear();
-                foreach (DataRow F in _Controlador.ConsultarRecibos(_Vista.VentasTxtConsultaRecibo.Text.Trim(), _Vista.VentasTxtConsultaDeposito.Text.Trim()).Rows)
-                {
-                    int I = _Vista.VentasDgvConsultaRecibos.Rows.Add(F["Recibo"], F["Fecha"], F["Cliente"], F["Moneda"], F["Monto"], F["Estado"], F["Deposito"], F["Depositado"]);
-                    _Vista.VentasDgvConsultaRecibos.Rows[I].Tag = F;
-                }
-            }
-            finally { _Cargando = false; }
-            VentasMetAplicacionesConsulta();
-        }
-        private void VentasMetAplicacionesConsulta()
-        {
-            DataRow F = _Vista.VentasDgvConsultaRecibos.CurrentRow == null ? null : _Vista.VentasDgvConsultaRecibos.CurrentRow.Tag as DataRow;
-            _Vista.VentasDgvConsultaAplicaciones.Rows.Clear(); if (F == null) return;
-            _Vista.VentasTxtMovimientoBancario.Text = Convert.ToString(F["MovimientoBancario"]);
-            foreach (DataRow A in _Controlador.Aplicaciones(Convert.ToInt32(F["idPago"])).Rows) _Vista.VentasDgvConsultaAplicaciones.Rows.Add(A["Factura"], A["Fecha"], A["Importe"], A["Estado"]);
-        }
-        private void VentasMetImprimir()
-        {
-            if (_Vista.VentasTbcMovimientos.SelectedTab == _Vista.VentasTbpCuenta)
-            { V.Imprimir(_Vista, "Estado de cuenta", _Vista.VentasCboCliente.Text + " / " + CodigoMoneda, _EstadoCuenta == null ? null : _EstadoCuenta.Tables[1]); return; }
-            if (_Vista.VentasTbcMovimientos.SelectedTab == _Vista.VentasTbpDocumento)
-            { V.Imprimir(_Vista, "Documento interno de CxC", CodigoMoneda, _Controlador.Documento(Cliente, Moneda, V.Id(_Vista.VentasCboEstablecimientoDocumento), _Vista.VentasTxtNumeroDocumento.Text.Trim(), _Vista.VentasCboTipoDocumento.SelectedIndex == 0)); return; }
-            if (_Vista.VentasTbcMovimientos.SelectedTab == _Vista.VentasTbpDepositos)
-            {
-                DataSet D = _Controlador.Deposito(_Vista.VentasTxtCodigoDeposito.Text.Trim()); DataRow H = D.Tables[0].Rows[0];
-                V.Imprimir(_Vista, "Preparacion local " + H["codigoDeposito"], "Estado: " + H["estadoDeposito"] + " / Referencia de cuenta: " + H["cuentaReferencia"] + " / Total: " + H["total"], D.Tables[1]); return;
-            }
-            bool Recepcion = _Vista.VentasTbcMovimientos.SelectedTab == _Vista.VentasTbpRecibos;
-            DataTable Recibos = _Controlador.ConsultarRecibos(Recepcion ? _Vista.VentasTxtRecibo.Text.Trim() : _Vista.VentasTxtConsultaRecibo.Text.Trim(), Recepcion ? "" : _Vista.VentasTxtConsultaDeposito.Text.Trim());
-            _Controlador.ValidarCaptura(!(Recibos.Rows.Count != 1), "Consulte un solo recibo para imprimir su comprobante.");
-            DataRow R = Recibos.Rows[0];
-            V.Imprimir(_Vista, "Recibo " + R["Recibo"], R["Cliente"] + " / " + R["Moneda"] + " / Total: " + Convert.ToDecimal(R["Monto"]).ToString("N2", V.Cultura) + " / " + R["Estado"], _Controlador.Aplicaciones(Convert.ToInt32(R["idPago"])));
+            this.CapturaMovimientos.VentasMetConfigurarCatalogosBancos(Empresas, Bancos, Cuentas, Conceptos, Modo);
         }
 
-        internal void VentasMetMostrarRecepcionPagos() { _Vista.VentasTbcMovimientos.SelectedTab = _Vista.VentasTbpRecibos; VentasMetActualizarContexto(); }
-        internal void VentasMetMostrarConsultaRecibos(string Recibo, string Deposito)
-        { _Vista.VentasTxtConsultaRecibo.Text = Recibo ?? ""; _Vista.VentasTxtConsultaDeposito.Text = Deposito ?? ""; _Vista.VentasTbcMovimientos.SelectedTab = _Vista.VentasTbpConsultaRecibos; VentasMetActualizarContexto(); }
-        internal void VentasMetCambiarPestana()
-        { VentasMetActualizarContexto(); if (!_Cargando && _Inicializado) V.Ejecutar(_Vista, VentasMetConsultarActual); }
-        private void VentasMetActualizarContexto() {
-            // Un depósito agrupa recibos de distintos clientes; no hereda el filtro individual.
-            _Vista.VentasPnlCliente.Enabled = _Vista.VentasTbcMovimientos.SelectedIndex < 3;
-            VentasMetRefrescarBotones();
+        internal void VentasMetTipoDocumentoCambio()
+        {
+            this.CapturaMovimientos.VentasMetTipoDocumentoCambio();
         }
-        internal void VentasMetTipoDocumentoCambio() {
-            // Presenta el efecto y los campos requeridos del documento.
-            int Tipo = _Vista.VentasCboTipoDocumento.SelectedIndex;
-            _Vista.VentasTxtNaturalezaDocumento.Text = Tipo < 0 ? string.Empty :
-                (Tipo == 1 || Tipo == 4 ? "Abono - disminuye la deuda" : "Cargo - aumenta la deuda");
-            if (_DocumentoActual == null && !_Cargando)
+
+        // EventosMovimientos.
+        internal void VentasMetConectarEventos()
+        {
+            int AnchoSelector = Math.Max(120, TextRenderer.MeasureText("Elegir factura", this.Vista.VentasTxtFacturaReferencia.Font).Width + 24);
+            this.Vista.VentasTxtFacturaReferencia.Width -= AnchoSelector + 8;
+            this.SeleccionarFactura.Name = "VentasBtnSeleccionarFactura";
+            this.SeleccionarFactura.Text = "Elegir factura";
+            this.SeleccionarFactura.SetBounds(this.Vista.VentasTxtFacturaReferencia.Right + 8, this.Vista.VentasTxtFacturaReferencia.Top, AnchoSelector, this.Vista.VentasTxtFacturaReferencia.Height);
+            this.SeleccionarFactura.Font = this.Vista.VentasTxtFacturaReferencia.Font;
+            this.SeleccionarFactura.Anchor = this.Vista.VentasTxtFacturaReferencia.Anchor;
+            this.SeleccionarFactura.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
+            this.SeleccionarFactura.ForeColor = System.Drawing.Color.White;
+            this.SeleccionarFactura.FlatStyle = FlatStyle.Flat;
+            this.Vista.VentasTxtFacturaReferencia.Parent.Controls.Add(this.SeleccionarFactura);
+            this.SeleccionarFactura.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.CapturaMovimientos.VentasMetSeleccionarFactura);
+            this.Vista.VentasDtpFechaDocumento.ValueChanged += (s, e) =>
             {
-                _Vista.VentasTxtFacturaReferencia.Clear();
-                if (Tipo == 0) VentasMetVencimientoCargo();
+                if (!this.Cargando && this.DocumentoActual == null && this.Vista.VentasCboTipoDocumento.SelectedIndex == 0)
+                    this.CapturaMovimientos.VentasMetVencimientoCargo();
+            };
+            foreach (var Grid in new[]
+            {
+                this.Vista.VentasDgvMovimientos,
+                this.Vista.VentasDgvDocumentos,
+                this.Vista.VentasDgvConsultaRecibos,
+                this.Vista.VentasDgvConsultaAplicaciones
             }
-            VentasMetActualizarAcciones();
+
+            )
+                ClsHerramientasVentas.VentasMetFormatearFechas(Grid);
+            this.Vista.Load += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetCargar);
+            this.Vista.VentasBtnConsultar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, () =>
+            {
+                if (!this.Inicializado)
+                    VentasMetCargar();
+                else
+                    VentasMetConsultarCaptura();
+            });
+            this.Vista.VentasBtnModificar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.CapturaMovimientos.VentasMetModificar);
+            this.Vista.VentasBtnEliminar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.CapturaMovimientos.VentasMetAnular);
+            this.Vista.VentasBtnRefrescar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, () =>
+            {
+                if (this.Vista.VentasTbcMovimientos.SelectedIndex == 1 && this.DocumentoActual != null)
+                    this.CapturaMovimientos.VentasMetCargarDocumento(Convert.ToInt32(this.DocumentoActual["Id"]), Convert.ToString(this.DocumentoActual["Clase"]));
+                else if (this.Vista.VentasTbcMovimientos.SelectedIndex == 2 && this.ReciboActual != null)
+                    this.CapturaMovimientos.VentasMetCargarRecibo(Convert.ToInt32(this.ReciboActual["idPago"]));
+                else
+                    VentasMetConsultarActual();
+            });
+            this.Vista.VentasDgvMovimientos.CellDoubleClick += (s, e) =>
+            {
+                if (e.RowIndex >= 0)
+                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetAbrirSeleccionActual);
+            };
+            this.Vista.VentasDgvConsultaRecibos.CellDoubleClick += (s, e) =>
+            {
+                if (e.RowIndex >= 0)
+                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetAbrirSeleccionActual);
+            };
+            foreach (var Combo in new[]
+            {
+                this.Vista.VentasCboEmpresaDeposito,
+                this.Vista.VentasCboBancoDestino,
+                this.Vista.VentasCboCuentaDestino,
+                this.Vista.VentasCboConceptoBancario
+            }
+
+            )
+                Combo.DropDownStyle = ComboBoxStyle.DropDown;
+            this.Vista.VentasBtnGuardar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.CapturaMovimientos.VentasMetGuardar);
+            this.Vista.VentasBtnIngresar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.CapturaMovimientos.VentasMetNuevo);
+            this.Vista.VentasBtnCancelar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.CapturaMovimientos.VentasMetNuevo);
+            this.Vista.VentasBtnCerrar.Click += (s, e) => this.Vista.Close();
+            this.Vista.VentasBtnImprimir.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetImprimir);
+            this.Vista.VentasCboCliente.SelectedIndexChanged += (s, e) =>
+            {
+                if (!this.Cargando)
+                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetClienteCambio);
+            };
+            this.Vista.VentasCboMoneda.SelectedIndexChanged += (s, e) =>
+            {
+                if (!this.Cargando)
+                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetConsultarActual);
+            };
+            this.Vista.VentasCboMonedaDeposito.SelectedIndexChanged += (s, e) =>
+            {
+                if (!this.Cargando)
+                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.CapturaMovimientos.VentasMetDisponibles);
+            };
+            this.Vista.VentasCboTipoConsulta.SelectedIndexChanged += (s, e) =>
+            {
+                if (!this.Cargando && this.EstadoCuenta != null)
+                    VentasMetMostrarEstado();
+            };
+            this.Vista.VentasCboEstadoConsulta.SelectedIndexChanged += (s, e) =>
+            {
+                if (!this.Cargando && this.EstadoCuenta != null)
+                    VentasMetMostrarEstado();
+            };
+            this.Vista.VentasNudMontoPago.ValueChanged += (s, e) => this.CapturaMovimientos.VentasMetTotalesPago();
+            foreach (var Grid in new[]
+            {
+                this.Vista.VentasDgvDocumentos,
+                this.Vista.VentasDgvRecibosDeposito
+            }
+
+            )
+            {
+                Grid.CurrentCellDirtyStateChanged += (s, e) =>
+                {
+                    if (Grid.IsCurrentCellDirty && Grid.CurrentCell is DataGridViewCheckBoxCell)
+                        Grid.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                };
+                Grid.DataError += (s, e) =>
+                {
+                    e.ThrowException = false;
+                    ClsHerramientasVentas.VentasMetInformar(this.Vista, "Ingrese un importe numerico valido.");
+                };
+            }
+
+            this.Vista.VentasDgvDocumentos.CellValueChanged += this.CapturaMovimientos.VentasMetAplicacionCambio;
+            this.Vista.VentasDgvRecibosDeposito.CellValueChanged += this.CapturaMovimientos.VentasMetDepositoCambio;
+            this.Vista.VentasDgvConsultaRecibos.SelectionChanged += (s, e) =>
+            {
+                if (!this.Cargando)
+                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.CapturaMovimientos.VentasMetAplicacionesConsulta);
+            };
+            this.CapturaMovimientos.VentasMetEstadoNuevoDocumento();
+            this.Vista.VentasCboEstadoDeposito.Items.Clear();
+            this.Vista.VentasCboEstadoDeposito.Items.Add("Preparacion local");
+            this.Vista.VentasCboEstadoDeposito.SelectedIndex = 0;
+            this.Vista.VentasCboEstadoDeposito.Enabled = false;
+            this.Vista.VentasTxtEstadoEnvio.Text = "Pendiente de enlace con Bancos";
+            this.Vista.VentasTxtModoActualizacion.Text = "Lo define Bancos; sin afectar saldos bancarios";
+            this.Vista.VentasDtpDesde.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            this.Vista.VentasDtpHasta.Value = DateTime.Today;
+            this.Vista.VentasNudTipoCambioPago.Value = 1;
+            this.Vista.VentasTtpAcciones.SetToolTip(this.Vista.VentasTxtNumeroDocumento, "Numero interno. Si se deja vacio, se genera un correlativo. No emite DTE.");
+            this.Vista.VentasTtpAcciones.SetToolTip(this.Vista.VentasTxtRecibo, "Dejar vacio para generar el numero del recibo al guardar.");
+            this.Vista.VentasLblDocumentoRecibo.Text = "Para registrar dinero recibido y reducir la deuda use Recepcion de pagos; al guardar se genera el recibo.";
+            this.Vista.VentasTtpAcciones.SetToolTip(this.Vista.VentasTxtFacturaReferencia, "Seleccione una factura del cliente y moneda actuales con Elegir factura.");
+            this.Vista.VentasCboTipoDocumento.SelectedIndex = 0;
+            this.CapturaMovimientos.VentasMetTipoDocumentoCambio();
         }
-        private void VentasMetEstadoNuevoDocumento()
+
+        // CatalogosMovimientos.
+        internal void VentasMetCargar()
         {
-            _Vista.VentasCboEstadoDocumento.Items.Clear();
-            _Vista.VentasCboEstadoDocumento.Items.Add("Pendiente de guardar");
-            _Vista.VentasCboEstadoDocumento.SelectedIndex = 0;
-            _Vista.VentasCboEstadoDocumento.Enabled = false;
+            this.Cargando = true;
+            try
+            {
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboUsuarioRegistro, this.Controlador.VentasMetCatalogo("Usuarios"), this.UsuarioInicial);
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboCliente, this.Controlador.VentasMetCatalogo("Clientes"));
+                DataTable Monedas = this.Controlador.VentasMetCatalogo("Monedas");
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboMoneda, Monedas);
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboMonedaDeposito, Monedas.Copy());
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboEstablecimientoDocumento, this.Controlador.VentasMetCatalogo("Establecimientos"));
+                this.Vista.VentasCboTipoConsulta.SelectedIndex = 0;
+                this.Vista.VentasCboEstadoConsulta.SelectedIndex = 0;
+                this.Inicializado = true;
+                this.Vista.VentasLblEtapaBancos.Text = this.Vista.VentasCboCliente.Items.Count == 0 ? "Registre clientes, monedas y emisor en los catalogos de Ventas para comenzar." : "Seleccione cliente y moneda. Los recibos se generan al guardar Recepcion de pagos.";
+            }
+            finally
+            {
+                this.Cargando = false;
+                this.CapturaMovimientos.VentasMetRefrescarBotones();
+            }
+
+            if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpConsultaRecibos)
+                this.CapturaMovimientos.VentasMetConsultarRecibos();
         }
-        private void VentasMetVencimientoCargo()
+
+        internal void VentasMetClienteCambio()
         {
-            if (_DocumentoActual != null || _Vista.VentasCboTipoDocumento.SelectedIndex != 0) return;
-            DataRow C = V.Fila(_Vista.VentasCboCliente);
-            _Vista.VentasDtpVencimientoDocumento.Value = _Vista.VentasDtpFechaDocumento.Value.Date.AddDays(C == null ? 0 : Convert.ToInt32(C["diasCredito"]));
+            this.DocumentoActual = null;
+            this.ReciboActual = null;
+            this.EditandoDocumento = this.EditandoRecibo = false;
+            this.Guardados[1] = this.Guardados[2] = false;
+            this.Vista.VentasTxtNumeroDocumento.Clear();
+            this.Vista.VentasTxtRecibo.Clear();
+            this.Vista.VentasTxtDescripcionDocumento.Clear();
+            this.Vista.VentasTxtObservacionesPago.Clear();
+            this.CapturaMovimientos.VentasMetRefrescarBotones();
+            DataRow C = ClsHerramientasVentas.VentasFuncObtenerFila(this.Vista.VentasCboCliente);
+            this.Vista.VentasTxtCondicion.Text = C == null ? "" : C["diasCredito"] + " dias; limite " + Convert.ToDecimal(C["limiteCredito"]).ToString("N2", ClsHerramientasVentas.Cultura);
+            if (C != null)
+                this.Vista.VentasCboMoneda.SelectedValue = Convert.ToInt32(C["idMonedaCredito"]);
+            this.Vista.VentasTxtFacturaReferencia.Clear();
+            this.CapturaMovimientos.VentasMetEstadoNuevoDocumento();
+            this.CapturaMovimientos.VentasMetVencimientoCargo();
+            VentasMetLimpiarResultados();
+            if (this.Cliente > 0 && this.Moneda > 0)
+                VentasMetConsultarActual();
         }
-        private void VentasMetSeleccionarFactura()
+
+        internal void VentasMetLimpiarResultados()
         {
-            _Controlador.ValidarCaptura(Cliente > 0 && Moneda > 0, "Seleccione primero el cliente y la moneda.");
-            DataTable Datos = _Controlador.ListarDocumentos(Cliente, Moneda);
-            DataTable Facturas = Datos.Clone();
-            foreach (DataRow F in Datos.Rows)
-                if (Convert.ToString(F["Clase"]) == "FACTURA" && Convert.ToString(F["Estado"]) == "EMITIDA") Facturas.ImportRow(F);
-            _Controlador.ValidarCaptura(Facturas.Rows.Count > 0, "El cliente no tiene documentos emitidos en esta moneda. Registre primero un Cargo inicial.");
-            DataRow Seleccion = V.Seleccionar(_Vista, "Factura a la que se aplica la nota o ajuste", Facturas);
-            if (Seleccion != null) _Vista.VentasTxtFacturaReferencia.Text = Convert.ToString(Seleccion["Documento"]);
+            this.EstadoCuenta = null;
+            this.Vista.VentasDgvMovimientos.Rows.Clear();
+            this.Vista.VentasDgvDocumentos.Rows.Clear();
+            this.Vista.VentasLblValorInicial.Text = this.Vista.VentasLblValorCargos.Text = this.Vista.VentasLblValorAbonos.Text = this.Vista.VentasLblValorFinal.Text = ClsHerramientasVentas.VentasFuncDinero(0, this.CodigoMoneda);
+        }
+
+        internal void VentasMetConsultarActual()
+        {
+            if (this.Cargando)
+                return;
+            if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpConsultaRecibos)
+            {
+                this.CapturaMovimientos.VentasMetConsultarRecibos();
+                return;
+            }
+
+            if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpDepositos)
+            {
+                if (!string.IsNullOrWhiteSpace(this.Vista.VentasTxtCodigoDeposito.Text))
+                    this.CapturaMovimientos.VentasMetConsultarDeposito();
+                else
+                    this.CapturaMovimientos.VentasMetDisponibles();
+                return;
+            }
+
+            if (this.Cliente <= 0 || this.Moneda <= 0)
+            {
+                VentasMetLimpiarResultados();
+                return;
+            }
+
+            if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpCuenta)
+            {
+                this.EstadoCuenta = this.Controlador.VentasMetEstadoCuenta(this.Cliente, this.Moneda, this.Vista.VentasDtpDesde.Value, this.Vista.VentasDtpHasta.Value);
+                VentasMetMostrarEstado();
+            }
+
+            if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpRecibos && this.ReciboActual == null)
+                this.CapturaMovimientos.VentasMetPendientes();
+        }
+
+        internal void VentasMetCambiarPestana()
+        {
+            VentasMetActualizarContexto();
+            if (!this.Cargando && this.Inicializado)
+                ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetConsultarActual);
+        }
+
+        internal void VentasMetActualizarContexto()
+        {
+            // Un depósito agrupa recibos de distintos clientes; no hereda el filtro individual.
+            this.Vista.VentasPnlCliente.Enabled = this.Vista.VentasTbcMovimientos.SelectedIndex < 3;
+            this.CapturaMovimientos.VentasMetRefrescarBotones();
+        }
+
+        internal void VentasMetMostrarRecepcionPagos()
+        {
+            this.Vista.VentasTbcMovimientos.SelectedTab = this.Vista.VentasTbpRecibos;
+            VentasMetActualizarContexto();
+        }
+
+        internal void VentasMetMostrarConsultaRecibos(string Recibo, string Deposito)
+        {
+            this.Vista.VentasTxtConsultaRecibo.Text = Recibo ?? "";
+            this.Vista.VentasTxtConsultaDeposito.Text = Deposito ?? "";
+            this.Vista.VentasTbcMovimientos.SelectedTab = this.Vista.VentasTbpConsultaRecibos;
+            VentasMetActualizarContexto();
+        }
+
+        // ConsultaMovimientos.
+        internal void VentasMetMostrarEstado()
+        {
+            this.Vista.VentasDgvMovimientos.Rows.Clear();
+            DataRow R = this.EstadoCuenta.Tables[0].Rows[0];
+            decimal Inicial = Convert.ToDecimal(R["Inicial"]), Cargos = Convert.ToDecimal(R["Cargos"]), Abonos = Convert.ToDecimal(R["Abonos"]);
+            this.Vista.VentasLblValorInicial.Text = ClsHerramientasVentas.VentasFuncDinero(Inicial, this.CodigoMoneda);
+            this.Vista.VentasLblValorCargos.Text = ClsHerramientasVentas.VentasFuncDinero(Cargos, this.CodigoMoneda);
+            this.Vista.VentasLblValorAbonos.Text = ClsHerramientasVentas.VentasFuncDinero(Abonos, this.CodigoMoneda);
+            this.Vista.VentasLblValorFinal.Text = ClsHerramientasVentas.VentasFuncDinero(Inicial + Cargos - Abonos, this.CodigoMoneda);
+            string[] Tipos =
+            {
+                "",
+                "FACTURA",
+                "PAGO",
+                "NOTA_CREDITO",
+                "NOTA_DEBITO",
+                "AJUSTE_POSITIVO",
+                "AJUSTE_NEGATIVO"
+            };
+            string Tipo = Tipos[Math.Max(0, this.Vista.VentasCboTipoConsulta.SelectedIndex)];
+            foreach (DataRow F in this.EstadoCuenta.Tables[1].Rows)
+            {
+                if (Tipo.Length > 0 && (string)F["Tipo"] != Tipo)
+                    continue;
+                if (this.Vista.VentasCboEstadoConsulta.SelectedIndex > 0 && !string.Equals((string)F["Estado"], this.Vista.VentasCboEstadoConsulta.Text, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                int I = this.Vista.VentasDgvMovimientos.Rows.Add(F["Fecha"], F["Documento"], F["Tipo"], F["Descripcion"], F["Cargo"], F["Abono"], F["Saldo"], F["Estado"]);
+                this.Vista.VentasDgvMovimientos.Rows[I].Tag = F;
+            }
+
+            this.Vista.VentasLblRegistros.Text = this.Vista.VentasDgvMovimientos.Rows.Count + " movimientos mostrados";
+            this.Vista.VentasLblEstadoCierre.Text = "Los totales representan todo el periodo; los filtros solo cambian las filas mostradas.";
+        }
+
+        internal void VentasMetConsultarCaptura()
+        {
+            if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpDocumento)
+            {
+                DataTable Datos = this.Controlador.VentasMetListarDocumentos(this.Cliente, this.Moneda);
+                string Numero = this.Vista.VentasTxtNumeroDocumento.Text.Trim();
+                DataRow F = Datos.AsEnumerable().FirstOrDefault(R => Convert.ToString(R["Documento"]) == Numero || Convert.ToString(R["Documento"]) == "CXC-" + Numero);
+                if (F == null || Numero.Length == 0)
+                    F = ClsHerramientasVentas.VentasMetSeleccionar(this.Vista, "Consultar documentos de CxC", Datos);
+                if (F != null)
+                    this.CapturaMovimientos.VentasMetCargarDocumento(Convert.ToInt32(F["Id"]), Convert.ToString(F["Clase"]));
+            }
+            else if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpRecibos)
+            {
+                DataTable Datos = this.Controlador.VentasMetListarRecibos(this.Cliente, this.Moneda);
+                string Numero = this.Vista.VentasTxtRecibo.Text.Trim();
+                DataRow F = Datos.AsEnumerable().FirstOrDefault(R => Convert.ToString(R["Recibo"]) == Numero);
+                if (F == null || Numero.Length == 0)
+                    F = ClsHerramientasVentas.VentasMetSeleccionar(this.Vista, "Consultar recibos", Datos);
+                if (F != null)
+                    this.CapturaMovimientos.VentasMetCargarRecibo(Convert.ToInt32(F["Id"]));
+            }
+            else
+                VentasMetConsultarActual();
+        }
+
+        internal void VentasMetAbrirSeleccionActual()
+        {
+            if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpCuenta)
+            {
+                DataRow F = this.Vista.VentasDgvMovimientos.CurrentRow == null ? null : this.Vista.VentasDgvMovimientos.CurrentRow.Tag as DataRow;
+                this.Controlador.VentasMetValidarCaptura(F != null, "Seleccione un movimiento de la cuenta.");
+                DataRow R = this.Controlador.VentasMetLeerMovimiento(Convert.ToInt32(F["idMovimiento"]));
+                if (Convert.ToString(R["Clase"]) == "RECIBO")
+                    this.CapturaMovimientos.VentasMetCargarRecibo(Convert.ToInt32(R["Id"]));
+                else
+                    this.CapturaMovimientos.VentasMetCargarDocumento(Convert.ToInt32(R["Id"]), Convert.ToString(R["Clase"]));
+            }
+            else if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpConsultaRecibos)
+            {
+                DataRow F = this.Vista.VentasDgvConsultaRecibos.CurrentRow == null ? null : this.Vista.VentasDgvConsultaRecibos.CurrentRow.Tag as DataRow;
+                this.Controlador.VentasMetValidarCaptura(F != null, "Seleccione un recibo.");
+                this.CapturaMovimientos.VentasMetCargarRecibo(Convert.ToInt32(F["idPago"]));
+            }
+            else if ((this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpDocumento && this.DocumentoActual == null) || (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpRecibos && this.ReciboActual == null))
+                VentasMetConsultarCaptura();
+        }
+
+        // DetalleMovimientos.
+        internal decimal VentasMetSumar(DataGridView Grid, int Columna)
+        {
+            return Grid.Rows.Cast<DataGridViewRow>().Where(F => F.Cells[0].Value is bool && (bool)F.Cells[0].Value).Sum(F => this.Controlador.VentasFuncImporteCelda(F.Cells[Columna].Value));
+        }
+
+        internal DataTable VentasMetSeleccionados(DataGridView Grid, string Id, int Importe)
+        {
+            this.Controlador.VentasMetValidarCaptura(!(!Grid.EndEdit()), "Corrija la celda en edicion.");
+            var Tabla = new DataTable();
+            Tabla.Columns.Add(Id, typeof(int));
+            Tabla.Columns.Add("Importe", typeof(decimal));
+            foreach (DataGridViewRow F in Grid.Rows)
+                if (F.Cells[0].Value is bool && (bool)F.Cells[0].Value && F.Tag is DataRow)
+                    Tabla.Rows.Add(((DataRow)F.Tag)[Id], this.Controlador.VentasFuncImporteCelda(F.Cells[Importe].Value));
+            return Tabla;
+        }
+
+        // ImpresionMovimientos.
+        internal void VentasMetImprimir()
+        {
+            if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpCuenta)
+            {
+                ClsHerramientasVentas.VentasMetImprimir(this.Vista, "Estado de cuenta", this.Vista.VentasCboCliente.Text + " / " + this.CodigoMoneda, this.EstadoCuenta == null ? null : this.EstadoCuenta.Tables[1]);
+                return;
+            }
+
+            if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpDocumento)
+            {
+                ClsHerramientasVentas.VentasMetImprimir(this.Vista, "Documento interno de CxC", this.CodigoMoneda, this.Controlador.VentasMetDocumento(this.Cliente, this.Moneda, ClsHerramientasVentas.VentasFuncObtenerId(this.Vista.VentasCboEstablecimientoDocumento), this.Vista.VentasTxtNumeroDocumento.Text.Trim(), this.Vista.VentasCboTipoDocumento.SelectedIndex == 0));
+                return;
+            }
+
+            if (this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpDepositos)
+            {
+                DataSet D = this.Controlador.VentasMetDeposito(this.Vista.VentasTxtCodigoDeposito.Text.Trim());
+                DataRow H = D.Tables[0].Rows[0];
+                ClsHerramientasVentas.VentasMetImprimir(this.Vista, "Preparacion local " + H["codigoDeposito"], "Estado: " + H["estadoDeposito"] + " / Referencia de cuenta: " + H["cuentaReferencia"] + " / Total: " + H["total"], D.Tables[1]);
+                return;
+            }
+
+            bool Recepcion = this.Vista.VentasTbcMovimientos.SelectedTab == this.Vista.VentasTbpRecibos;
+            DataTable Recibos = this.Controlador.VentasMetConsultarRecibos(Recepcion ? this.Vista.VentasTxtRecibo.Text.Trim() : this.Vista.VentasTxtConsultaRecibo.Text.Trim(), Recepcion ? "" : this.Vista.VentasTxtConsultaDeposito.Text.Trim());
+            this.Controlador.VentasMetValidarCaptura(!(Recibos.Rows.Count != 1), "Consulte un solo recibo para imprimir su comprobante.");
+            DataRow R = Recibos.Rows[0];
+            ClsHerramientasVentas.VentasMetImprimir(this.Vista, "Recibo " + R["Recibo"], R["Cliente"] + " / " + R["Moneda"] + " / Total: " + Convert.ToDecimal(R["Monto"]).ToString("N2", ClsHerramientasVentas.Cultura) + " / " + R["Estado"], this.Controlador.VentasMetAplicaciones(Convert.ToInt32(R["idPago"])));
         }
     }
 }

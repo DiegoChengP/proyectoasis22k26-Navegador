@@ -59,5 +59,17 @@ namespace CapaVista_Facturas.Properties {
                 resourceCulture = value;
             }
         }
+        internal static System.Drawing.Icon IconoVentas
+        {
+            get { return (System.Drawing.Icon)ResourceManager.GetObject("IconoVentas", resourceCulture); }
+        }
+        internal static System.Drawing.Bitmap BotonOriginalIngresarVentas
+        {
+            get { return (System.Drawing.Bitmap)ResourceManager.GetObject("BotonOriginalIngresarVentas", resourceCulture); }
+        }
+        internal static System.Drawing.Bitmap BotonOriginalImprimirVentas
+        {
+            get { return (System.Drawing.Bitmap)ResourceManager.GetObject("BotonOriginalImprimirVentas", resourceCulture); }
+        }
     }
 }

@@ -6,32 +6,41 @@ namespace CapaControlador_CierreMovimientos.Validaciones
 {
     internal static class ClsReglasCierre
     {
-        internal static void Usuario(this ClsCierreRepositorio Db, int Usuario)
-        { ClsValidacionesVentas.Exigir(Usuario > 0 && Db.UsuarioActivo(Usuario), "Seleccione un responsable activo de Seguridad."); }
-        internal static void BloquearMoneda(this ClsCierreRepositorio Db, int Moneda)
+        internal static void VentasMetUsuario(this ClsCierreRepositorio Repositorio, int Usuario)
         {
-            ClsValidacionesVentas.Exigir(Db.EnTransaccion, "La operacion requiere una transaccion.");
-            ClsValidacionesVentas.Exigir(Moneda > 0 && Db.MonedaActiva(Moneda), "Seleccione una moneda activa.");
-            Db.AsegurarBloqueoMoneda(Moneda);
+            ClsValidacionesVentas.VentasMetExigir(Usuario > 0 && Repositorio.VentasMetUsuarioActivo(Usuario), "Seleccione un responsable activo de Seguridad.");
         }
-        internal static void PeriodoAbierto(this ClsCierreRepositorio Db, int Moneda, DateTime Fecha)
+
+        internal static void VentasMetBloquearMoneda(this ClsCierreRepositorio Repositorio, int Moneda)
         {
-            Db.BloquearMoneda(Moneda);
-            object Ultimo=Db.UltimoCierre(Moneda);
-            ClsValidacionesVentas.Exigir(Ultimo == null || Ultimo == DBNull.Value || Fecha.Date > Convert.ToDateTime(Ultimo).Date,
-                "La fecha pertenece a un periodo cerrado. Registre el movimiento en un periodo abierto.");
+            ClsValidacionesVentas.VentasMetExigir(Repositorio.EnTransaccion, "La operacion requiere una transaccion.");
+            ClsValidacionesVentas.VentasMetExigir(Moneda > 0 && Repositorio.VentasMetMonedaActiva(Moneda), "Seleccione una moneda activa.");
+            Repositorio.VentasMetAsegurarBloqueoMoneda(Moneda);
         }
-        internal static DateTime[] Periodo(int Anio, int Mes, bool Anual)
+
+        internal static void VentasMetPeriodoAbierto(this ClsCierreRepositorio Repositorio, int Moneda, DateTime Fecha)
         {
-            ClsValidacionesVentas.Exigir(Anio >= 2000 && Anio <= 9998 && Mes >= 1 && Mes <= 12, "Seleccione un anio y mes validos.");
-            DateTime Desde=new DateTime(Anio,Anual ? 1 : Mes,1);
-            return new[] { Desde, Anual ? new DateTime(Anio,12,31) : Desde.AddMonths(1).AddDays(-1) };
+            Repositorio.VentasMetBloquearMoneda(Moneda);
+            object Ultimo = Repositorio.VentasMetUltimoCierre(Moneda);
+            ClsValidacionesVentas.VentasMetExigir(Ultimo == null || Ultimo == DBNull.Value || Fecha.Date > Convert.ToDateTime(Ultimo).Date, "La fecha pertenece a un periodo cerrado. Registre el movimiento en un periodo abierto.");
         }
-        internal static void ValidarPeriodo(string Tipo, DateTime Desde, DateTime Hasta)
+
+        internal static DateTime[] VentasMetPeriodo(int Anio, int Mes, bool Anual)
+        {
+            ClsValidacionesVentas.VentasMetExigir(Anio >= 2000 && Anio <= 9998 && Mes >= 1 && Mes <= 12, "Seleccione un anio y mes validos.");
+            DateTime Desde = new DateTime(Anio, Anual ? 1 : Mes, 1);
+            return new[]
+            {
+                Desde,
+                Anual ? new DateTime(Anio, 12, 31) : Desde.AddMonths(1).AddDays(-1)
+            };
+        }
+
+        internal static void VentasMetValidarPeriodo(string Tipo, DateTime Desde, DateTime Hasta)
         {
             bool Mensual = Tipo == "MENSUAL" && Desde.Day == 1 && Hasta.Date == Desde.Date.AddMonths(1).AddDays(-1);
             bool Anual = Tipo == "ANUAL" && Desde.Month == 1 && Desde.Day == 1 && Hasta.Date == Desde.Date.AddYears(1).AddDays(-1);
-            ClsValidacionesVentas.Exigir(Mensual || Anual, "Seleccione un periodo mensual o anual completo.");
+            ClsValidacionesVentas.VentasMetExigir(Mensual || Anual, "Seleccione un periodo mensual o anual completo.");
         }
     }
 }

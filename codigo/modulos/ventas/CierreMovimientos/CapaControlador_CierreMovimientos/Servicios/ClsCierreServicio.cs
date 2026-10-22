@@ -1,155 +1,273 @@
-﻿// Jose Javier Torres Martinez | 0901-23-1091 | 20/10/2026
-using System;
+﻿// Jose Javier Torres Martinez | 0901-23-1091 | 22/10/2026
+using CapaControlador_CierreMovimientos.Validaciones;
+using CapaModelo_CierreMovimientos;
 using System.Data;
 using System.Linq;
-using CapaModelo_CierreMovimientos;
-using CapaControlador_CierreMovimientos.Validaciones;
+using System;
 using VentasValidaciones;
 
 namespace CapaControlador_CierreMovimientos.Servicios
 {
-    internal sealed partial class ClsCierreServicio
+    internal sealed class ClsCierreServicio
     {
-        public DataTable Catalogo(string Nombre) { using (var Db = new ClsCierreRepositorio()) return Db.Catalogo(Nombre); }
+        // TrasladoCierres.
+        public DataTable VentasMetEstadoTraslado(int IdCierre)
+        {
+            using (var Repositorio = new ClsCierreRepositorio())
+                return Repositorio.VentasMetEstadoTrasladoConsultarTrasladocxc(IdCierre);
+        }
 
-        private static DataTable Saldos(ClsCierreRepositorio Db, int Moneda, DateTime Desde, DateTime Hasta)
+        public DataSet VentasMetPrepararTraslado(int IdCierre, int Usuario)
         {
-            return Db.Tabla(ConsultaCierre.SaldosConsultarMovimientocxc,
-                Desde.Date, Desde.Date, Desde.Date, new DateTime(Desde.Year, 1, 1), new DateTime(Desde.Year, 1, 1), Moneda, Hasta.Date);
-        }
-        public DataTable Revisar(int Moneda, string Tipo, DateTime Desde, DateTime Hasta)
-        {
-            ClsReglasCierre.ValidarPeriodo(Tipo, Desde, Hasta);
-            using (var Db = new ClsCierreRepositorio()) return Saldos(Db, Moneda, Desde, Hasta);
-        }
-        public DataTable EstadoPeriodo(int Moneda, string Tipo, DateTime Desde, DateTime Hasta)
-        {
-            using (var Db = new ClsCierreRepositorio()) return Db.Tabla(ConsultaCierre.EstadoPeriodoConsultarCierremovimientos, Moneda, Tipo, Desde.Date, Hasta.Date);
-        }
-        public string Confirmar(int Moneda, int Usuario, string Tipo, DateTime Desde, DateTime Hasta, bool Revisado)
-        {
-            ClsReglasCierre.ValidarPeriodo(Tipo, Desde, Hasta);
-            ClsValidacionesVentas.Exigir(Revisado, "Confirme que reviso los documentos y los recibos del periodo.");
-            ClsValidacionesVentas.Exigir(Hasta.Date < DateTime.Today, "El periodo debe haber finalizado antes de confirmarlo.");
-            using (var Db = new ClsCierreRepositorio())
+            DataTable Partida = VentasMetPartida(IdCierre);
+            ClsValidacionesVentas.VentasMetExigir(Partida.Rows.Count > 0 && !Partida.AsEnumerable().Any(F => ((string)F["Cuenta"]).StartsWith("PENDIENTE", StringComparison.Ordinal)), "Contabilidad debe configurar las cuentas de cada tipo de movimiento antes del traslado.");
+            ClsValidacionesVentas.VentasMetExigir(Partida.AsEnumerable().Sum(F => (decimal)F["Debe"]) == Partida.AsEnumerable().Sum(F => (decimal)F["Haber"]), "La partida no esta balanceada.");
+            using (var Repositorio = new ClsCierreRepositorio())
             {
-                Db.Iniciar(); Db.Usuario(Usuario); Db.BloquearMoneda(Moneda);
-                ClsValidacionesVentas.Exigir(Convert.ToInt32(Db.Escalar(ConsultaCierre.ConfirmarConsultarCierremovimientos, Moneda, Tipo, Desde.Date, Hasta.Date)) == 0, "El periodo ya fue cerrado.");
-                if (Tipo == "ANUAL")
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                DataTable Cierre = Repositorio.VentasMetPrepararTrasladoConsultarCierremovimientos(IdCierre);
+                ClsValidacionesVentas.VentasMetExigir(Cierre.Rows.Count == 1, "El cierre debe estar confirmado antes del traslado.");
+                if (Convert.ToInt32(Repositorio.VentasMetPrepararTrasladoConsultarTrasladocxc(IdCierre)) == 0)
                 {
-                    object Primera = Db.Escalar(ConsultaCierre.ConfirmarConsultarCierremovimientos2, Moneda);
-                    int Inicio = Primera != null && Primera != DBNull.Value && Convert.ToDateTime(Primera).Year == Desde.Year ? Convert.ToDateTime(Primera).Month : 1;
-                    ClsValidacionesVentas.Exigir(Convert.ToInt32(Db.Escalar(ConsultaCierre.ConfirmarConsultarCierremovimientos3, Moneda, Desde.Year, Inicio)) == 13 - Inicio,
-                        "Cierre primero todos los meses operados del ano, hasta diciembre, en esta moneda.");
+                    Repositorio.VentasMetPrepararTrasladoInsertarTrasladocxc(IdCierre, "VENTAS-CXC-CIERRE-" + IdCierre, Usuario);
+                    int N = 0;
+                    foreach (DataRow F in Partida.Rows)
+                        Repositorio.VentasMetPrepararTrasladoInsertarTrasladocxcdetalle(IdCierre, ++N, F["Cuenta"], F["Descripcion"], F["Debe"], F["Haber"]);
                 }
-                else
-                {
-                    object Ultimo = Db.Escalar(ConsultaCierre.ConfirmarConsultarControlperiodocxc, Moneda);
-                    if (Ultimo != null && Ultimo != DBNull.Value)
-                        ClsValidacionesVentas.Exigir(Desde.Date == Convert.ToDateTime(Ultimo).Date.AddDays(1), "Los cierres mensuales deben ser consecutivos y no pueden superponerse.");
-                    else
-                    {
-                        object Primera = Db.Escalar(ConsultaCierre.ConfirmarConsultarMovimientocxc, Moneda);
-                        if (Primera != null && Primera != DBNull.Value)
-                        {
-                            DateTime Fecha = Convert.ToDateTime(Primera);
-                            ClsValidacionesVentas.Exigir(Desde.Date <= new DateTime(Fecha.Year, Fecha.Month, 1), "Hay movimientos de meses anteriores sin cerrar.");
-                        }
-                    }
-                }
-                ClsValidacionesVentas.Exigir(Convert.ToInt32(Db.Escalar(ConsultaCierre.ConfirmarConsultarFactura, Moneda, Desde.Date, Hasta.Date)) == 0,
-                    "Hay facturas en borrador en el periodo. Emitirlas o anularlas corresponde a Facturas.");
-                ClsValidacionesVentas.Exigir(Convert.ToInt32(Db.Escalar(ConsultaCierre.ConfirmarConsultarPago, Moneda, Desde.Date, Hasta.Date)) == 0, "Hay recibos en borrador en el periodo.");
-                DataTable Clientes = Saldos(Db, Moneda, Desde, Hasta);
-                foreach (DataRow C in Clientes.Rows)
-                    foreach (string Campo in new[] { "Anterior", "Cargos", "Abonos", "CargosAcumulados", "AbonosAcumulados", "Actual" })
-                        ClsValidacionesVentas.Exigir(Math.Abs(Convert.ToDecimal(C[Campo])) <= ClsValidacionesVentas.ImporteMaximo, "Un saldo supera la capacidad del historico de cierre.");
-                DataTable Borrador = Db.Tabla(ConsultaCierre.ConfirmarConsultarCierremovimientos4, Moneda, Tipo, Desde.Date, Hasta.Date);
-                ClsValidacionesVentas.Exigir(Borrador.Rows.Count <= 1, "Hay varios borradores del mismo periodo; revise los registros antes de confirmar.");
-                string Numero; int Id;
-                if (Borrador.Rows.Count == 1)
-                {
-                    Id = Convert.ToInt32(Borrador.Rows[0]["idCierre"]); Numero = Convert.ToString(Borrador.Rows[0]["numeroCierre"]);
-                    Db.Ejecutar(ConsultaCierre.ConfirmarActualizarCierremovimientos, Usuario, Id);
-                }
-                else
-                {
-                    Numero = Db.Numero("CIE");
-                    Db.Ejecutar(ConsultaCierre.ConfirmarInsertarCierremovimientos, Numero, Desde.Date, Hasta.Date, Hasta.Date, Moneda, Tipo, Usuario);
-                    Id = Db.Id();
-                }
-                foreach (DataRow C in Clientes.Rows) Db.Ejecutar(ConsultaCierre.ConfirmarInsertarCierresaldocliente,
-                    Id, C["idCliente"], C["Codigo"], C["Nombre"], C["Anterior"], C["Cargos"], C["Abonos"], C["CargosAcumulados"], C["AbonosAcumulados"], C["Actual"]);
-                Db.Ejecutar(ConsultaCierre.ConfirmarInsertarCierremovimientosdetalle, Id, Desde.Date, Desde.Date, Desde.Date, Moneda, Hasta.Date);
-                Db.Ejecutar(ConsultaCierre.ConfirmarActualizarCierremovimientos2, Id);
-                if (Tipo == "MENSUAL") Db.Ejecutar(ConsultaCierre.ConfirmarActualizarControlperiodocxc, Hasta.Date, Moneda);
-                Db.Auditar("CIERRE", Id, "CONFIRMAR", Numero, Usuario);
-                Db.Confirmar(); return Numero;
+
+                var D = new DataSet();
+                D.Tables.Add(Repositorio.VentasMetPrepararTrasladoConsultarTrasladocxc2(IdCierre));
+                D.Tables.Add(Repositorio.VentasMetPrepararTrasladoConsultarTrasladocxcdetalle(IdCierre));
+                Repositorio.VentasMetConfirmar();
+                return D;
             }
         }
-        public DataTable Historial(int Moneda, int Cliente, string Periodo)
+
+        public void VentasMetConfirmarTraslado(int IdCierre, int Usuario, string Referencia)
+        {
+            Referencia = ClsValidacionesVentas.VentasFuncTexto(Referencia, 100, "referencia devuelta por Contabilidad");
+            using (var Repositorio = new ClsCierreRepositorio())
+            {
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                DataTable T = Repositorio.VentasMetConfirmarTrasladoConsultarTrasladocxc(IdCierre);
+                ClsValidacionesVentas.VentasMetExigir(T.Rows.Count == 1, "La partida no fue preparada.");
+                if ((string)T.Rows[0]["estado"] == "CONFIRMADO")
+                    ClsValidacionesVentas.VentasMetExigir((string)T.Rows[0]["referenciaContable"] == Referencia, "Contabilidad devolvio referencias diferentes para la misma clave.");
+                else
+                    Repositorio.VentasMetConfirmarTrasladoActualizarTrasladocxc(Referencia, IdCierre);
+                Repositorio.VentasMetConfirmar();
+            }
+        }
+
+        // RegistroCierres.
+        public DataTable VentasMetListar(int Moneda)
+        {
+            using (var Repositorio = new ClsCierreRepositorio())
+                return Repositorio.VentasMetListarConsultarCierremovimientos(Moneda, Moneda);
+        }
+
+        public string VentasMetGuardarBorrador(int Id, int Moneda, int Usuario, string Tipo, DateTime Desde, DateTime Hasta, string Observaciones)
+        {
+            Tipo = (Tipo ?? "").Trim().ToUpperInvariant();
+            ClsReglasCierre.VentasMetValidarPeriodo(Tipo, Desde.Date, Hasta.Date);
+            Observaciones = ClsValidacionesVentas.VentasFuncTexto(Observaciones, 500, "observaciones", false);
+            using (var Repositorio = new ClsCierreRepositorio())
+            {
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                Repositorio.VentasMetPeriodoAbierto(Moneda, Desde);
+                if (Id > 0)
+                {
+                    DataTable Actual = Repositorio.VentasMetGuardarBorradorConsultarCierremovimientos(Id);
+                    ClsValidacionesVentas.VentasMetExigir(Actual.Rows.Count == 1 && (string)Actual.Rows[0]["estadoCierre"] == "BORRADOR" && Convert.ToInt32(Actual.Rows[0]["idMoneda"]) == Moneda, "Solo se modifica un borrador de la moneda seleccionada. Los cierres confirmados conservan su historico.");
+                }
+
+                ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasMetGuardarBorradorConsultarCierremovimientos2(Moneda, Tipo, Desde.Date, Hasta.Date, Id)) == 0, "Ya existe un borrador o cierre confirmado para ese periodo y moneda.");
+                string Numero;
+                if (Id == 0)
+                {
+                    Numero = Repositorio.VentasMetNumero("CIE");
+                    Repositorio.VentasMetGuardarBorradorInsertarCierremovimientos(Numero, Desde.Date, Hasta.Date, Hasta.Date, Moneda, Tipo, Observaciones, Usuario);
+                    Id = Repositorio.VentasFuncObtenerId();
+                }
+                else
+                {
+                    Numero = Convert.ToString(Repositorio.VentasMetGuardarBorradorConsultarCierremovimientos3(Id));
+                    Repositorio.VentasMetGuardarBorradorActualizarCierremovimientos(Tipo, Desde.Date, Hasta.Date, Hasta.Date, Observaciones, Id);
+                }
+
+                Repositorio.VentasMetAuditar("CIERRE", Id, "GUARDAR_BORRADOR", Observaciones, Usuario);
+                Repositorio.VentasMetConfirmar();
+                return Numero;
+            }
+        }
+
+        public void VentasMetEliminarBorrador(int Id, int Usuario, string Motivo)
+        {
+            Motivo = ClsValidacionesVentas.VentasFuncTexto(Motivo, 180, "motivo de eliminacion");
+            using (var Repositorio = new ClsCierreRepositorio())
+            {
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                DataTable Origen = Repositorio.VentasMetGeneralesEliminarBorradorConsultarCierremovimientos(Id);
+                ClsValidacionesVentas.VentasMetExigir(Origen.Rows.Count == 1, "No existe el cierre.");
+                Repositorio.VentasMetBloquearMoneda(Convert.ToInt32(Origen.Rows[0][0]));
+                DataTable Actual = Repositorio.VentasMetGeneralesEliminarBorradorConsultarCierremovimientos2(Id);
+                ClsValidacionesVentas.VentasMetExigir((string)Actual.Rows[0][0] == "BORRADOR", "Solo se elimina un borrador. No se eliminan cierres confirmados.");
+                Repositorio.VentasMetGeneralesEliminarBorradorActualizarCierremovimientos(Motivo, Id);
+                Repositorio.VentasMetAuditar("CIERRE", Id, "ELIMINAR_BORRADOR", Motivo, Usuario);
+                Repositorio.VentasMetConfirmar();
+            }
+        }
+
+        // OperacionCierres.
+        private static DataTable VentasMetSaldos(ClsCierreRepositorio Repositorio, int Moneda, DateTime Desde, DateTime Hasta)
+        {
+            return Repositorio.VentasMetSaldosConsultarMovimientocxc(Desde.Date, Desde.Date, Desde.Date, new DateTime(Desde.Year, 1, 1), new DateTime(Desde.Year, 1, 1), Moneda, Hasta.Date);
+        }
+
+        // ConsultaCierres.
+        public DataTable VentasMetCatalogo(string Nombre)
+        {
+            using (var Repositorio = new ClsCierreRepositorio())
+                return Repositorio.VentasMetCatalogo(Nombre);
+        }
+
+        public DataTable VentasMetRevisar(int Moneda, string Tipo, DateTime Desde, DateTime Hasta)
+        {
+            ClsReglasCierre.VentasMetValidarPeriodo(Tipo, Desde, Hasta);
+            using (var Repositorio = new ClsCierreRepositorio())
+                return VentasMetSaldos(Repositorio, Moneda, Desde, Hasta);
+        }
+
+        public DataTable VentasMetEstadoPeriodo(int Moneda, string Tipo, DateTime Desde, DateTime Hasta)
+        {
+            using (var Repositorio = new ClsCierreRepositorio())
+                return Repositorio.VentasMetEstadoPeriodoConsultarCierremovimientos(Moneda, Tipo, Desde.Date, Hasta.Date);
+        }
+
+        public DataTable VentasMetHistorial(int Moneda, int Cliente, string Periodo)
         {
             Periodo = (Periodo ?? "").Trim();
-            ClsValidacionesVentas.Exigir(Periodo.Length == 0 || System.Text.RegularExpressions.Regex.IsMatch(Periodo, @"^\d{4}(-\d{2})?$"), "Consulte el periodo como AAAA o AAAA-MM.");
-            using (var Db = new ClsCierreRepositorio()) return Db.Tabla(ConsultaCierre.HistorialConsultarCierremovimientos, Moneda, Cliente, Cliente, Periodo);
+            ClsValidacionesVentas.VentasMetExigir(Periodo.Length == 0 || System.Text.RegularExpressions.Regex.IsMatch(Periodo, @"^\d{4}(-\d{2})?$"), "Consulte el periodo como AAAA o AAAA-MM.");
+            using (var Repositorio = new ClsCierreRepositorio())
+                return Repositorio.VentasMetHistorialConsultarCierremovimientos(Moneda, Cliente, Cliente, Periodo);
         }
-        public DataTable EstadoTraslado(int IdCierre)
-        { using (var Db = new ClsCierreRepositorio()) return Db.Tabla(ConsultaCierre.EstadoTrasladoConsultarTrasladocxc, IdCierre); }
-        public DataSet PrepararTraslado(int IdCierre, int Usuario)
-        {
-            DataTable Partida = this.Partida(IdCierre);
-            ClsValidacionesVentas.Exigir(Partida.Rows.Count > 0 && !Partida.AsEnumerable().Any(F => ((string)F["Cuenta"]).StartsWith("PENDIENTE", StringComparison.Ordinal)), "Contabilidad debe configurar las cuentas de cada tipo de movimiento antes del traslado.");
-            ClsValidacionesVentas.Exigir(Partida.AsEnumerable().Sum(F => (decimal)F["Debe"]) == Partida.AsEnumerable().Sum(F => (decimal)F["Haber"]), "La partida no esta balanceada.");
-            using (var Db = new ClsCierreRepositorio())
-            {
-                Db.Iniciar(); Db.Usuario(Usuario);
-                DataTable Cierre = Db.Tabla(ConsultaCierre.PrepararTrasladoConsultarCierremovimientos, IdCierre);
-                ClsValidacionesVentas.Exigir(Cierre.Rows.Count == 1, "El cierre debe estar confirmado antes del traslado.");
-                if (Convert.ToInt32(Db.Escalar(ConsultaCierre.PrepararTrasladoConsultarTrasladocxc, IdCierre)) == 0)
-                {
-                    Db.Ejecutar(ConsultaCierre.PrepararTrasladoInsertarTrasladocxc, IdCierre, "VENTAS-CXC-CIERRE-" + IdCierre, Usuario);
-                    int N = 0;
-                    foreach (DataRow F in Partida.Rows) Db.Ejecutar(ConsultaCierre.PrepararTrasladoInsertarTrasladocxcdetalle, IdCierre, ++N, F["Cuenta"], F["Descripcion"], F["Debe"], F["Haber"]);
-                }
-                var D = new DataSet();
-                D.Tables.Add(Db.Tabla(ConsultaCierre.PrepararTrasladoConsultarTrasladocxc2, IdCierre));
-                D.Tables.Add(Db.Tabla(ConsultaCierre.PrepararTrasladoConsultarTrasladocxcdetalle, IdCierre));
-                Db.Confirmar(); return D;
-            }
-        }
-        public void ConfirmarTraslado(int IdCierre, int Usuario, string Referencia)
-        {
-            Referencia = ClsValidacionesVentas.Texto(Referencia, 100, "referencia devuelta por Contabilidad");
-            using (var Db = new ClsCierreRepositorio())
-            {
-                Db.Iniciar(); Db.Usuario(Usuario);
-                DataTable T = Db.Tabla(ConsultaCierre.ConfirmarTrasladoConsultarTrasladocxc, IdCierre);
-                ClsValidacionesVentas.Exigir(T.Rows.Count == 1, "La partida no fue preparada.");
-                if ((string)T.Rows[0]["estado"] == "CONFIRMADO") ClsValidacionesVentas.Exigir((string)T.Rows[0]["referenciaContable"] == Referencia, "Contabilidad devolvio referencias diferentes para la misma clave.");
-                else Db.Ejecutar(ConsultaCierre.ConfirmarTrasladoActualizarTrasladocxc, Referencia, IdCierre);
-                Db.Confirmar();
-            }
-        }
-        public DataTable Partida(int IdCierre)
+
+        public DataTable VentasMetPartida(int IdCierre)
         {
             var Partida = new DataTable();
-            Partida.Columns.Add("Cuenta", typeof(string)); Partida.Columns.Add("Descripcion", typeof(string));
-            Partida.Columns.Add("Debe", typeof(decimal)); Partida.Columns.Add("Haber", typeof(decimal));
-            using (var Db = new ClsCierreRepositorio())
+            Partida.Columns.Add("Cuenta", typeof(string));
+            Partida.Columns.Add("Descripcion", typeof(string));
+            Partida.Columns.Add("Debe", typeof(decimal));
+            Partida.Columns.Add("Haber", typeof(decimal));
+            using (var Repositorio = new ClsCierreRepositorio())
             {
-                DataTable Guardada = Db.Tabla(ConsultaCierre.PrepararTrasladoConsultarTrasladocxcdetalle, IdCierre);
-                if (Guardada.Rows.Count > 0) return Guardada;
-                DataTable Movimientos = Db.Tabla(ConsultaCierre.PartidaConsultarCierremovimientos, IdCierre);
+                DataTable Guardada = Repositorio.VentasMetPrepararTrasladoConsultarTrasladocxcdetalle(IdCierre);
+                if (Guardada.Rows.Count > 0)
+                    return Guardada;
+                DataTable Movimientos = Repositorio.VentasMetPartidaConsultarCierremovimientos(IdCierre);
                 foreach (DataRow M in Movimientos.Rows)
                 {
                     string Clientes = M["cuentaClientes"] == DBNull.Value ? "PENDIENTE: CxC" : (string)M["cuentaClientes"];
                     string Contra = M["cuentaContrapartida"] == DBNull.Value ? "PENDIENTE: contrapartida" : (string)M["cuentaContrapartida"];
                     decimal Cargos = (decimal)M["Cargos"], Abonos = (decimal)M["Abonos"];
-                    if (Cargos > 0) { Partida.Rows.Add(Clientes, M["tipoMovimiento"], Cargos, 0m); Partida.Rows.Add(Contra, M["tipoMovimiento"], 0m, Cargos); }
-                    if (Abonos > 0) { Partida.Rows.Add(Contra, M["tipoMovimiento"], Abonos, 0m); Partida.Rows.Add(Clientes, M["tipoMovimiento"], 0m, Abonos); }
+                    if (Cargos > 0)
+                    {
+                        Partida.Rows.Add(Clientes, M["tipoMovimiento"], Cargos, 0m);
+                        Partida.Rows.Add(Contra, M["tipoMovimiento"], 0m, Cargos);
+                    }
+
+                    if (Abonos > 0)
+                    {
+                        Partida.Rows.Add(Contra, M["tipoMovimiento"], Abonos, 0m);
+                        Partida.Rows.Add(Clientes, M["tipoMovimiento"], 0m, Abonos);
+                    }
                 }
             }
+
             return Partida;
+        }
+
+        // ConfirmacionCierres.
+        public string VentasMetConfirmar(int Moneda, int Usuario, string Tipo, DateTime Desde, DateTime Hasta, bool Revisado)
+        {
+            ClsReglasCierre.VentasMetValidarPeriodo(Tipo, Desde, Hasta);
+            ClsValidacionesVentas.VentasMetExigir(Revisado, "Confirme que reviso los documentos y los recibos del periodo.");
+            ClsValidacionesVentas.VentasMetExigir(Hasta.Date < DateTime.Today, "El periodo debe haber finalizado antes de confirmarlo.");
+            using (var Repositorio = new ClsCierreRepositorio())
+            {
+                Repositorio.VentasMetIniciar();
+                Repositorio.VentasMetUsuario(Usuario);
+                Repositorio.VentasMetBloquearMoneda(Moneda);
+                ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasMetConfirmarConsultarCierremovimientos(Moneda, Tipo, Desde.Date, Hasta.Date)) == 0, "El periodo ya fue cerrado.");
+                if (Tipo == "ANUAL")
+                {
+                    object Primera = Repositorio.VentasMetConfirmarConsultarCierremovimientos2(Moneda);
+                    int Inicio = Primera != null && Primera != DBNull.Value && Convert.ToDateTime(Primera).Year == Desde.Year ? Convert.ToDateTime(Primera).Month : 1;
+                    ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasMetConfirmarConsultarCierremovimientos3(Moneda, Desde.Year, Inicio)) == 13 - Inicio, "Cierre primero todos los meses operados del ano, hasta diciembre, en esta moneda.");
+                }
+                else
+                {
+                    object Ultimo = Repositorio.VentasMetConfirmarConsultarControlperiodocxc(Moneda);
+                    if (Ultimo != null && Ultimo != DBNull.Value)
+                        ClsValidacionesVentas.VentasMetExigir(Desde.Date == Convert.ToDateTime(Ultimo).Date.AddDays(1), "Los cierres mensuales deben ser consecutivos y no pueden superponerse.");
+                    else
+                    {
+                        object Primera = Repositorio.VentasMetConfirmarConsultarMovimientocxc(Moneda);
+                        if (Primera != null && Primera != DBNull.Value)
+                        {
+                            DateTime Fecha = Convert.ToDateTime(Primera);
+                            ClsValidacionesVentas.VentasMetExigir(Desde.Date <= new DateTime(Fecha.Year, Fecha.Month, 1), "Hay movimientos de meses anteriores sin cerrar.");
+                        }
+                    }
+                }
+
+                ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasMetConfirmarConsultarFactura(Moneda, Desde.Date, Hasta.Date)) == 0, "Hay facturas en borrador en el periodo. Emitirlas o anularlas corresponde a Facturas.");
+                ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasMetConfirmarConsultarPago(Moneda, Desde.Date, Hasta.Date)) == 0, "Hay recibos en borrador en el periodo.");
+                DataTable Clientes = VentasMetSaldos(Repositorio, Moneda, Desde, Hasta);
+                foreach (DataRow C in Clientes.Rows)
+                    foreach (string Campo in new[]
+                    {
+                        "Anterior",
+                        "Cargos",
+                        "Abonos",
+                        "CargosAcumulados",
+                        "AbonosAcumulados",
+                        "Actual"
+                    }
+
+                    )
+                        ClsValidacionesVentas.VentasMetExigir(Math.Abs(Convert.ToDecimal(C[Campo])) <= ClsValidacionesVentas.ImporteMaximo, "Un saldo supera la capacidad del historico de cierre.");
+                DataTable Borrador = Repositorio.VentasMetConfirmarConsultarCierremovimientos4(Moneda, Tipo, Desde.Date, Hasta.Date);
+                ClsValidacionesVentas.VentasMetExigir(Borrador.Rows.Count <= 1, "Hay varios borradores del mismo periodo; revise los registros antes de confirmar.");
+                string Numero;
+                int Id;
+                if (Borrador.Rows.Count == 1)
+                {
+                    Id = Convert.ToInt32(Borrador.Rows[0]["idCierre"]);
+                    Numero = Convert.ToString(Borrador.Rows[0]["numeroCierre"]);
+                    Repositorio.VentasMetConfirmarActualizarCierremovimientos(Usuario, Id);
+                }
+                else
+                {
+                    Numero = Repositorio.VentasMetNumero("CIE");
+                    Repositorio.VentasMetConfirmarInsertarCierremovimientos(Numero, Desde.Date, Hasta.Date, Hasta.Date, Moneda, Tipo, Usuario);
+                    Id = Repositorio.VentasFuncObtenerId();
+                }
+
+                foreach (DataRow C in Clientes.Rows)
+                    Repositorio.VentasMetConfirmarInsertarCierresaldocliente(Id, C["idCliente"], C["Codigo"], C["Nombre"], C["Anterior"], C["Cargos"], C["Abonos"], C["CargosAcumulados"], C["AbonosAcumulados"], C["Actual"]);
+                Repositorio.VentasMetConfirmarInsertarCierremovimientosdetalle(Id, Desde.Date, Desde.Date, Desde.Date, Moneda, Hasta.Date);
+                Repositorio.VentasMetConfirmarActualizarCierremovimientos2(Id);
+                if (Tipo == "MENSUAL")
+                    Repositorio.VentasMetConfirmarActualizarControlperiodocxc(Hasta.Date, Moneda);
+                Repositorio.VentasMetAuditar("CIERRE", Id, "CONFIRMAR", Numero, Usuario);
+                Repositorio.VentasMetConfirmar();
+                return Numero;
+            }
         }
     }
 }

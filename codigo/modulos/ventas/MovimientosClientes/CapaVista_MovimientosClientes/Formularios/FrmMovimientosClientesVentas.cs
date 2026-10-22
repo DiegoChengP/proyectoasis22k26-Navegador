@@ -17,12 +17,45 @@ namespace CapaVista_MovimientosClientes
             InitializeComponent();
             _Presentador = new ClsMovimientosPresentador(this);
         }
-        public int VentasIdUsuario { get { return _Presentador.VentasIdUsuario; } set { _Presentador.VentasIdUsuario = value; } }
-        public void VentasMetMostrarRecepcionPagos() { _Presentador.VentasMetMostrarRecepcionPagos(); }
-        public void VentasMetMostrarConsultaRecibos(string Recibo, string Deposito) { _Presentador.VentasMetMostrarConsultaRecibos(Recibo, Deposito); }
+
+        public int VentasIdUsuario
+        {
+            get
+            {
+                return _Presentador.VentasIdUsuario;
+            }
+
+            set
+            {
+                _Presentador.VentasIdUsuario = value;
+            }
+        }
+
+        public void VentasMetMostrarRecepcionPagos()
+        {
+            _Presentador.VentasMetMostrarRecepcionPagos();
+        }
+
+        public void VentasMetMostrarConsultaRecibos(string Recibo, string Deposito)
+        {
+            _Presentador.VentasMetMostrarConsultaRecibos(Recibo, Deposito);
+        }
+
         public void VentasMetConfigurarCatalogosBancos(System.Data.DataTable Empresas, System.Data.DataTable Bancos, System.Data.DataTable Cuentas, System.Data.DataTable Conceptos, string Modo)
-        { _Presentador.VentasMetConfigurarCatalogosBancos(Empresas, Bancos, Cuentas, Conceptos, Modo); }
-        private void VentasTbcMovimientos_SelectedIndexChanged(object sender, EventArgs e) { if (_Presentador != null) _Presentador.VentasMetCambiarPestana(); }
-        private void VentasCboTipoDocumento_SelectedIndexChanged(object sender, EventArgs e) { if (_Presentador != null) _Presentador.VentasMetTipoDocumentoCambio(); }
+        {
+            _Presentador.VentasMetConfigurarCatalogosBancos(Empresas, Bancos, Cuentas, Conceptos, Modo);
+        }
+
+        private void VentasTbcMovimientos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_Presentador != null)
+                _Presentador.VentasMetCambiarPestana();
+        }
+
+        private void VentasCboTipoDocumento_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_Presentador != null)
+                _Presentador.VentasMetTipoDocumentoCambio();
+        }
     }
 }

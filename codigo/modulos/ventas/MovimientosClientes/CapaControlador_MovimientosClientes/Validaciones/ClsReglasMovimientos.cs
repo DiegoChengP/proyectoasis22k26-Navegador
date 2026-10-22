@@ -6,20 +6,23 @@ namespace CapaControlador_MovimientosClientes.Validaciones
 {
     internal static class ClsReglasMovimientos
     {
-        internal static void Usuario(this ClsMovimientosRepositorio Db, int Usuario)
-        { ClsValidacionesVentas.Exigir(Usuario > 0 && Db.UsuarioActivo(Usuario), "Seleccione un responsable activo de Seguridad."); }
-        internal static void BloquearMoneda(this ClsMovimientosRepositorio Db, int Moneda)
+        internal static void VentasMetUsuario(this ClsMovimientosRepositorio Repositorio, int Usuario)
         {
-            ClsValidacionesVentas.Exigir(Db.EnTransaccion, "La operacion requiere una transaccion.");
-            ClsValidacionesVentas.Exigir(Moneda > 0 && Db.MonedaActiva(Moneda), "Seleccione una moneda activa.");
-            Db.AsegurarBloqueoMoneda(Moneda);
+            ClsValidacionesVentas.VentasMetExigir(Usuario > 0 && Repositorio.VentasMetUsuarioActivo(Usuario), "Seleccione un responsable activo de Seguridad.");
         }
-        internal static void PeriodoAbierto(this ClsMovimientosRepositorio Db, int Moneda, DateTime Fecha)
+
+        internal static void VentasMetBloquearMoneda(this ClsMovimientosRepositorio Repositorio, int Moneda)
         {
-            Db.BloquearMoneda(Moneda);
-            object Ultimo=Db.UltimoCierre(Moneda);
-            ClsValidacionesVentas.Exigir(Ultimo == null || Ultimo == DBNull.Value || Fecha.Date > Convert.ToDateTime(Ultimo).Date,
-                "La fecha pertenece a un periodo cerrado. Registre el movimiento en un periodo abierto.");
+            ClsValidacionesVentas.VentasMetExigir(Repositorio.EnTransaccion, "La operacion requiere una transaccion.");
+            ClsValidacionesVentas.VentasMetExigir(Moneda > 0 && Repositorio.VentasMetMonedaActiva(Moneda), "Seleccione una moneda activa.");
+            Repositorio.VentasMetAsegurarBloqueoMoneda(Moneda);
+        }
+
+        internal static void VentasMetPeriodoAbierto(this ClsMovimientosRepositorio Repositorio, int Moneda, DateTime Fecha)
+        {
+            Repositorio.VentasMetBloquearMoneda(Moneda);
+            object Ultimo = Repositorio.VentasMetUltimoCierre(Moneda);
+            ClsValidacionesVentas.VentasMetExigir(Ultimo == null || Ultimo == DBNull.Value || Fecha.Date > Convert.ToDateTime(Ultimo).Date, "La fecha pertenece a un periodo cerrado. Registre el movimiento en un periodo abierto.");
         }
     }
 }

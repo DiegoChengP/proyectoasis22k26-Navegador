@@ -22,6 +22,4 @@ namespace CapaVista_MovimientosClientes
             VentasMetMostrarRecepcionPagos();
         }
     }
-}
-
-// FIN DEL CÓDIGO — Equipo asignado al formulario | Fecha: 17/10/2026
+} // FIN DEL CÓDIGO — Equipo asignado al formulario | Fecha: 17/10/2026

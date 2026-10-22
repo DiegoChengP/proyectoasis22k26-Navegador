@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("CapaControlador_MovimientosClientes")]
 [assembly: AssemblyProduct("Ventas y cuentas por cobrar")]
