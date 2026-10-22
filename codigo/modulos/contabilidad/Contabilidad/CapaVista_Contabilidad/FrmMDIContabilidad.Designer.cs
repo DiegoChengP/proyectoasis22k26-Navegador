@@ -83,6 +83,8 @@ namespace CapaVista_Contabilidad
             this.ContabilidadBtnCierreContable = new System.Windows.Forms.Button();
             this.ContabilidadBtnEstadosFinancieros = new System.Windows.Forms.Button();
             this.ContabilidadBtnPaises = new System.Windows.Forms.Button();
+            this.ContabilidadBtnModulosContables = new System.Windows.Forms.Button();
+            this.ContabilidadBtnVidaUtil = new System.Windows.Forms.Button();
             this.ContabilidadPbLogo = new System.Windows.Forms.PictureBox();
             this.ContabilidadPbButti = new System.Windows.Forms.PictureBox();
             this.ContabilidadPbInfo = new System.Windows.Forms.PictureBox();
@@ -191,6 +193,8 @@ namespace CapaVista_Contabilidad
             this.ContabilidadPnlNavegador.Controls.Add(this.ContabilidadBtnCierreContable);
             this.ContabilidadPnlNavegador.Controls.Add(this.ContabilidadBtnEstadosFinancieros);
             this.ContabilidadPnlNavegador.Controls.Add(this.ContabilidadBtnPaises);
+            this.ContabilidadPnlNavegador.Controls.Add(this.ContabilidadBtnModulosContables);
+            this.ContabilidadPnlNavegador.Controls.Add(this.ContabilidadBtnVidaUtil);
             this.ContabilidadPnlNavegador.Controls.Add(this.ContabilidadPbLogo);
             this.ContabilidadPnlNavegador.Location = new System.Drawing.Point(16, 14);
             this.ContabilidadPnlNavegador.Name = "ContabilidadPnlNavegador";
@@ -304,6 +308,42 @@ namespace CapaVista_Contabilidad
             this.ContabilidadBtnPaises.TabIndex = 6;
             this.ContabilidadBtnPaises.UseVisualStyleBackColor = false;
             this.ContabilidadBtnPaises.Click += new System.EventHandler(this.ContabilidadMetAbrirPaises);
+            // 
+            // ContabilidadBtnModulosContables
+            // 
+            this.ContabilidadBtnModulosContables.BackColor = System.Drawing.Color.Transparent;
+            this.ContabilidadBtnModulosContables.BackgroundImage = global::CapaVista_Contabilidad.Properties.Resources.botonmdi7;
+            this.ContabilidadBtnModulosContables.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ContabilidadBtnModulosContables.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ContabilidadBtnModulosContables.FlatAppearance.BorderSize = 0;
+            this.ContabilidadBtnModulosContables.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.ContabilidadBtnModulosContables.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.ContabilidadBtnModulosContables.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular);
+            this.ContabilidadBtnModulosContables.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ContabilidadBtnModulosContables.Location = new System.Drawing.Point(3, 507);
+            this.ContabilidadBtnModulosContables.Name = "ContabilidadBtnModulosContables";
+            this.ContabilidadBtnModulosContables.Size = new System.Drawing.Size(264, 53);
+            this.ContabilidadBtnModulosContables.TabIndex = 7;
+            this.ContabilidadBtnModulosContables.UseVisualStyleBackColor = false;
+            this.ContabilidadBtnModulosContables.Click += new System.EventHandler(this.ContabilidadMetAbrirModulosContables);
+            // 
+            // ContabilidadBtnVidaUtil
+            // 
+            this.ContabilidadBtnVidaUtil.BackColor = System.Drawing.Color.Transparent;
+            this.ContabilidadBtnVidaUtil.BackgroundImage = global::CapaVista_Contabilidad.Properties.Resources.botonmdi8;
+            this.ContabilidadBtnVidaUtil.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ContabilidadBtnVidaUtil.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ContabilidadBtnVidaUtil.FlatAppearance.BorderSize = 0;
+            this.ContabilidadBtnVidaUtil.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.ContabilidadBtnVidaUtil.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.ContabilidadBtnVidaUtil.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular);
+            this.ContabilidadBtnVidaUtil.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ContabilidadBtnVidaUtil.Location = new System.Drawing.Point(3, 569);
+            this.ContabilidadBtnVidaUtil.Name = "ContabilidadBtnVidaUtil";
+            this.ContabilidadBtnVidaUtil.Size = new System.Drawing.Size(264, 53);
+            this.ContabilidadBtnVidaUtil.TabIndex = 8;
+            this.ContabilidadBtnVidaUtil.UseVisualStyleBackColor = false;
+            this.ContabilidadBtnVidaUtil.Click += new System.EventHandler(this.ContabilidadMetAbrirVidaUtil);
             // 
             // ContabilidadPbLogo
             // 
@@ -802,6 +842,8 @@ namespace CapaVista_Contabilidad
         private System.Windows.Forms.Button ContabilidadBtnCierreContable;
         private System.Windows.Forms.Button ContabilidadBtnEstadosFinancieros;
         private System.Windows.Forms.Button ContabilidadBtnPaises;
+        private System.Windows.Forms.Button ContabilidadBtnModulosContables;
+        private System.Windows.Forms.Button ContabilidadBtnVidaUtil;
         private System.Windows.Forms.PictureBox ContabilidadPbLogo;
         private System.Windows.Forms.PictureBox ContabilidadPbButti;
         private System.Windows.Forms.PictureBox ContabilidadPbInfo;

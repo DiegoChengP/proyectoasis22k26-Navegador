@@ -97,6 +97,12 @@
   <data name="botonmdi6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\botonmdi6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="botonmdi7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\botonmdi7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="botonmdi8" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\botonmdi8.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 
   <data name="kpi1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\kpi1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

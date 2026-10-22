@@ -39,7 +39,9 @@ namespace CapaControlador_Contabilidad
             { 10003, "Activos fijos" }, { 10004, "Cierre contable" },
             { 10005, "Estados financieros" },
             // Mantenimientos (usan el control Navegador).
-            { 10011, "Mantenimiento de países" }
+            { 10011, "Mantenimiento de países" },
+            { 10012, "Mantenimiento de módulos contables" },
+            { 10013, "Mantenimiento de vida útil" }
         };
 
         // Arma el estado de la sesión y los permisos de cada pantalla.
