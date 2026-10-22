@@ -1,0 +1,37 @@
+/*
+ * ==================================================================
+ * Área : Contabilidad
+ * Autor : Gabriel André Guillén Pocón
+ * Carné : 0901-23-1998
+ * Fecha : 21/10/2026
+ * ==================================================================
+ * Propósito :
+ *  Mantenimiento del asignación módulo - cuenta - país (tblModuloCuentaPais).
+ *  Usa el control Navegador: la grilla, los botones y los permisos los maneja el
+ *  componente con los IDs de módulo y aplicación registrados en Seguridad.
+ * ===================================================================
+*/
+
+using System.Drawing;
+using System.Windows.Forms;
+using CapaControlador_Contabilidad;
+
+namespace CapaVista_Contabilidad
+{
+    // Ventana de mantenimiento con el control Navegador.
+    public partial class FrmAsignacionCuentaModulo : Form
+    {
+        // Constructor para el diseñador y las pruebas: todos los permisos.
+        public FrmAsignacionCuentaModulo() : this(ClsPermisosPantallaContabilidad.Total)
+        {
+        }
+
+        // Abre la ventana con los IDs y permisos que dio Seguridad.
+        public FrmAsignacionCuentaModulo(ClsPermisosPantallaContabilidad Permisos)
+        {
+            InitializeComponent();
+            ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Asignación de cuentas por módulo", new Size(1180, 688));
+            ContabilidadUsrNavegador.NavegadorMetConfigurar("tblmodulocuentapais", Permisos.IdModulo, Permisos.IdAplicacion);
+        }
+    }
+}

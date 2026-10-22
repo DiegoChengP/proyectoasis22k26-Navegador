@@ -97,6 +97,24 @@
     <Compile Include="FrmMantenimientoPais.Designer.cs">
       <DependentUpon>FrmMantenimientoPais.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmMantenimientoModuloContable.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMantenimientoModuloContable.Designer.cs">
+      <DependentUpon>FrmMantenimientoModuloContable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmMantenimientoVidaUtil.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMantenimientoVidaUtil.Designer.cs">
+      <DependentUpon>FrmMantenimientoVidaUtil.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmAsignacionCuentaModulo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmAsignacionCuentaModulo.Designer.cs">
+      <DependentUpon>FrmAsignacionCuentaModulo.cs</DependentUpon>
+    </Compile>
     <Compile Include="ClsPresentacionContabilidad.cs" />
     <Compile Include="Componentes\ClsBotonContabilidad.cs">
       <SubType>Component</SubType>

@@ -61,7 +61,10 @@ namespace CapaVista_Contabilidad
                 { 10001, ContabilidadBtnPolizasLocales }, { 10002, ContabilidadBtnPresupuestos },
                 { 10003, ContabilidadBtnActivosFijos }, { 10004, ContabilidadBtnCierreContable },
                 { 10005, ContabilidadBtnEstadosFinancieros },
-                { 10011, ContabilidadBtnPaises }
+                { 10011, ContabilidadBtnPaises },
+                { 10012, ContabilidadBtnModulosContables },
+                { 10013, ContabilidadBtnVidaUtil },
+                { 10015, ContabilidadBtnCuentasModulo }
             };
             foreach (Button Boton in _BotonesMenu.Values) _PermisosMenu.ContabilidadMetAplicar(Boton, false);
             Disposed += (Remitente, Evento) => _PermisosMenu.Dispose();
@@ -250,6 +253,24 @@ namespace CapaVista_Contabilidad
             ContabilidadMetAbrirPantalla(10011, (Button)Remitente, Permisos => new FrmMantenimientoPais(Permisos));
         }
 
+        // Abre Mantenimiento de módulos contables.
+        private void ContabilidadMetAbrirModulosContables(object Remitente, EventArgs Evento)
+        {
+            ContabilidadMetAbrirPantalla(10012, (Button)Remitente, Permisos => new FrmMantenimientoModuloContable(Permisos));
+        }
+
+        // Abre Mantenimiento de vida útil.
+        private void ContabilidadMetAbrirVidaUtil(object Remitente, EventArgs Evento)
+        {
+            ContabilidadMetAbrirPantalla(10013, (Button)Remitente, Permisos => new FrmMantenimientoVidaUtil(Permisos));
+        }
+
+        // Abre Asignación de cuentas por módulo.
+        private void ContabilidadMetAbrirCuentasModulo(object Remitente, EventArgs Evento)
+        {
+            ContabilidadMetAbrirPantalla(10015, (Button)Remitente, Permisos => new FrmAsignacionCuentaModulo(Permisos));
+        }
+
         // Abre Pólizas locales.
         private void ContabilidadMetAbrirPolizasLocales(object Remitente, EventArgs Evento)
         {
@@ -286,9 +307,12 @@ namespace CapaVista_Contabilidad
         {
             Button[] Botones = { ContabilidadBtnPolizasLocales, ContabilidadBtnPresupuestos,
                 ContabilidadBtnActivosFijos, ContabilidadBtnCierreContable, ContabilidadBtnEstadosFinancieros,
-                ContabilidadBtnPaises };
+                ContabilidadBtnPaises,
+                ContabilidadBtnModulosContables,
+                ContabilidadBtnVidaUtil,
+                ContabilidadBtnCuentasModulo };
             string[] Titulos = { "Pólizas locales", "Presupuestos", "Activos fijos",
-                "Cierre contable", "Estados financieros", "Países" };
+                "Cierre contable", "Estados financieros", "Países", "Módulos contables", "Vida útil", "Cuentas por módulo" };
             for (int Indice = 0; Indice < Botones.Length; Indice++)
             {
                 Button Boton = Botones[Indice];
