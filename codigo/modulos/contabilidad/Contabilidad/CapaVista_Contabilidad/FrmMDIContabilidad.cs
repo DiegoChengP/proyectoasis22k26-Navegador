@@ -63,7 +63,8 @@ namespace CapaVista_Contabilidad
                 { 10005, ContabilidadBtnEstadosFinancieros },
                 { 10011, ContabilidadBtnPaises },
                 { 10012, ContabilidadBtnModulosContables },
-                { 10013, ContabilidadBtnVidaUtil }
+                { 10013, ContabilidadBtnVidaUtil },
+                { 10015, ContabilidadBtnCuentasModulo }
             };
             foreach (Button Boton in _BotonesMenu.Values) _PermisosMenu.ContabilidadMetAplicar(Boton, false);
             Disposed += (Remitente, Evento) => _PermisosMenu.Dispose();
@@ -264,6 +265,12 @@ namespace CapaVista_Contabilidad
             ContabilidadMetAbrirPantalla(10013, (Button)Remitente, Permisos => new FrmMantenimientoVidaUtil(Permisos));
         }
 
+        // Abre Asignación de cuentas por módulo.
+        private void ContabilidadMetAbrirCuentasModulo(object Remitente, EventArgs Evento)
+        {
+            ContabilidadMetAbrirPantalla(10015, (Button)Remitente, Permisos => new FrmAsignacionCuentaModulo(Permisos));
+        }
+
         // Abre Pólizas locales.
         private void ContabilidadMetAbrirPolizasLocales(object Remitente, EventArgs Evento)
         {
@@ -302,9 +309,10 @@ namespace CapaVista_Contabilidad
                 ContabilidadBtnActivosFijos, ContabilidadBtnCierreContable, ContabilidadBtnEstadosFinancieros,
                 ContabilidadBtnPaises,
                 ContabilidadBtnModulosContables,
-                ContabilidadBtnVidaUtil };
+                ContabilidadBtnVidaUtil,
+                ContabilidadBtnCuentasModulo };
             string[] Titulos = { "Pólizas locales", "Presupuestos", "Activos fijos",
-                "Cierre contable", "Estados financieros", "Países", "Módulos contables", "Vida útil" };
+                "Cierre contable", "Estados financieros", "Países", "Módulos contables", "Vida útil", "Cuentas por módulo" };
             for (int Indice = 0; Indice < Botones.Length; Indice++)
             {
                 Button Boton = Botones[Indice];

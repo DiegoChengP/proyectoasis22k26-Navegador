@@ -25,7 +25,8 @@ namespace CapaVista_Contabilidad
             { "FrmCierreContable", 10004 }, { "FrmEstadosFinancieros", 10005 },
             { "FrmMantenimientoPais", 10011 },
             { "FrmMantenimientoModuloContable", 10012 },
-            { "FrmMantenimientoVidaUtil", 10013 }
+            { "FrmMantenimientoVidaUtil", 10013 },
+            { "FrmAsignacionCuentaModulo", 10015 }
         };
 
         // Ventana hija de tamaño fijo, centrada sobre el MDI y con el ícono del módulo.

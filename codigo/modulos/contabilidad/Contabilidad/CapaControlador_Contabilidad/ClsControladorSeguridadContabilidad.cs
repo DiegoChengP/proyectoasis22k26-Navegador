@@ -41,7 +41,8 @@ namespace CapaControlador_Contabilidad
             // Mantenimientos (usan el control Navegador).
             { 10011, "Mantenimiento de países" },
             { 10012, "Mantenimiento de módulos contables" },
-            { 10013, "Mantenimiento de vida útil" }
+            { 10013, "Mantenimiento de vida útil" },
+            { 10015, "Asignación de cuentas por módulo" }
         };
 
         // Arma el estado de la sesión y los permisos de cada pantalla.
@@ -124,3 +125,4 @@ namespace CapaControlador_Contabilidad
         }
     }
 }
+

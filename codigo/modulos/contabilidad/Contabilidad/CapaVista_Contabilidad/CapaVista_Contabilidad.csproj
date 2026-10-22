@@ -109,6 +109,12 @@
     <Compile Include="FrmMantenimientoVidaUtil.Designer.cs">
       <DependentUpon>FrmMantenimientoVidaUtil.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmAsignacionCuentaModulo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmAsignacionCuentaModulo.Designer.cs">
+      <DependentUpon>FrmAsignacionCuentaModulo.cs</DependentUpon>
+    </Compile>
     <Compile Include="ClsPresentacionContabilidad.cs" />
     <Compile Include="Componentes\ClsBotonContabilidad.cs">
       <SubType>Component</SubType>
