@@ -39,7 +39,7 @@ namespace CapaControlador_Contabilidad
             Resultado.Columns.Add("Haber", typeof(decimal));
             Resultado.Columns.Add("Diferencia", typeof(decimal));
             string Mes = Periodo.ToString("yyyy-MM");
-            foreach (ClsPolizaContabilidad Poliza in _Repositorio.ContabilidadFuncObtenerTodos().Where(Elemento => Elemento.Periodo == Mes))
+            foreach (ClsPolizaContabilidad Poliza in _Repositorio.ContabilidadFuncObtenerTodos().Where(Elemento => Elemento.PeriodoContable == Mes))
             {
                 decimal Debe = Poliza.Detalle.Sum(Linea => Linea.Debe);
                 decimal Haber = Poliza.Detalle.Sum(Linea => Linea.Haber);

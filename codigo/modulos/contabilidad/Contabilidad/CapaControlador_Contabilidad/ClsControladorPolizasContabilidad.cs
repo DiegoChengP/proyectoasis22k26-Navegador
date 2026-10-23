@@ -26,17 +26,28 @@ namespace CapaControlador_Contabilidad
 {
     public class ClsControladorPolizasContabilidad
     {
-        // Repositorio de pólizas (hoy en memoria).
-        private readonly IRepositorioPolizasContabilidad _Repositorio = new ClsRepositorioPolizasContabilidad();
+        // Repositorio de pólizas (base de datos por ODBC).
+        private readonly IRepositorioPolizasContabilidad _Repositorio;
 
-        // Cuentas del catálogo, validadas con el formato C.GG.CC.SSS.
+        public ClsControladorPolizasContabilidad() : this(new ClsRepositorioPolizasContabilidad())
+        {
+        }
+
+        // Permite inyectar otro repositorio (pruebas).
+        public ClsControladorPolizasContabilidad(IRepositorioPolizasContabilidad Repositorio)
+        {
+            _Repositorio = Repositorio ?? throw new ArgumentNullException(nameof(Repositorio));
+        }
+
+        // Cuentas del catálogo. Si la cuenta trae código se valida el formato C.GG.CC.SSS.
         public List<ClsCuentaPolizaContabilidad> ContabilidadFuncObtenerCuentas()
         {
             List<ClsCuentaPolizaContabilidad> Cuentas = _Repositorio.ContabilidadFuncObtenerCuentas()
                 .Select(Cuenta => new ClsCuentaPolizaContabilidad { IdCuenta = Cuenta.IdCuenta, Codigo = Cuenta.Codigo, Nombre = Cuenta.Nombre })
                 .ToList();
-            if (Cuentas.Any(Cuenta => !ClsCodigoCuentaContabilidad.ContabilidadFuncEsValido(Cuenta.Codigo)) ||
-                Cuentas.GroupBy(Cuenta => Cuenta.Codigo).Any(Grupo => Grupo.Count() > 1))
+            List<ClsCuentaPolizaContabilidad> ConCodigo = Cuentas.Where(Cuenta => !string.IsNullOrWhiteSpace(Cuenta.Codigo)).ToList();
+            if (ConCodigo.Any(Cuenta => !ClsCodigoCuentaContabilidad.ContabilidadFuncEsValido(Cuenta.Codigo)) ||
+                ConCodigo.GroupBy(Cuenta => Cuenta.Codigo).Any(Grupo => Grupo.Count() > 1))
                 throw new InvalidOperationException("El catálogo contiene códigos contables inválidos o duplicados.");
             return Cuentas;
         }
@@ -57,6 +68,12 @@ namespace CapaControlador_Contabilidad
         public string ContabilidadFuncObtenerPeriodo(DateTime Fecha)
         {
             return Fecha.ToString("yyyy-MM");
+        }
+
+        // Código automático cuando la Vista no envía uno: POL-yyyyMMdd-HHmmssfff (24 caracteres).
+        public string ContabilidadFuncGenerarCodigo(DateTime Fecha)
+        {
+            return "POL-" + Fecha.ToString("yyyyMMdd") + "-" + DateTime.Now.ToString("HHmmssfff");
         }
 
         // Suma del debe.
@@ -85,17 +102,60 @@ namespace CapaControlador_Contabilidad
                 new ClsModeloPolizaContabilidad { Descripcion = Descripcion, Lineas = Lineas });
         }
 
+        // Todas las pólizas existentes con su detalle, como modelos del Controlador.
+        public List<ClsModeloPolizaContabilidad> ContabilidadFuncObtenerPolizas()
+        {
+            return _Repositorio.ContabilidadFuncObtenerTodos()
+                .Select(Poliza => new ClsModeloPolizaContabilidad
+                {
+                    IdPoliza = Poliza.IdPoliza, CodigoPoliza = Poliza.CodigoPoliza, Fecha = Poliza.Fecha,
+                    Periodo = Poliza.PeriodoContable, Estado = Poliza.Estado, Origen = Poliza.Origen, Descripcion = Poliza.Descripcion,
+                    Lineas = Poliza.Detalle.Select(Detalle => new ClsLineaPolizaContabilidad
+                        { IdCuenta = Detalle.IdCuenta, Cuenta = Detalle.Cuenta, Debe = Detalle.Debe, Haber = Detalle.Haber }).ToList()
+                })
+                .ToList();
+        }
+
         // Valida el modelo y lo graba, modifica o borra según el estado.
         public bool ContabilidadFuncGrabarCambios(EstadoEntidadContabilidad Estado, ClsModeloPolizaContabilidad Modelo, out string Mensaje)
         {
+            if (Modelo == null)
+            {
+                Mensaje = "No se recibió la póliza.";
+                return false;
+            }
+
             Mensaje = ClsValidacionDatosContabilidad.ContabilidadFuncPrimerError(Modelo);
             if (Mensaje != string.Empty) return false;
+
+            // Estado y origen deben existir en los catálogos.
+            string EstadoPoliza = string.IsNullOrWhiteSpace(Modelo.Estado) ? "BORRADOR" : Modelo.Estado.Trim().ToUpperInvariant();
+            string OrigenPoliza = string.IsNullOrWhiteSpace(Modelo.Origen) ? "MANUAL" : Modelo.Origen.Trim().ToUpperInvariant();
+            if (!ContabilidadFuncObtenerEstados().Contains(EstadoPoliza))
+            {
+                Mensaje = "El estado '" + Modelo.Estado + "' no es válido.";
+                return false;
+            }
+            if (!ContabilidadFuncObtenerOrigenes().Contains(OrigenPoliza))
+            {
+                Mensaje = "El origen '" + Modelo.Origen + "' no es válido.";
+                return false;
+            }
+
+            // Una cuenta solo puede aparecer una vez en el detalle.
+            if (Modelo.Lineas.GroupBy(Linea => Linea.IdCuenta).Any(Grupo => Grupo.Count() > 1))
+            {
+                Mensaje = "Una cuenta no puede repetirse en el detalle de la póliza.";
+                return false;
+            }
 
             // Se pasa del modelo validado a la entidad del Modelo.
             ClsPolizaContabilidad Entidad = new ClsPolizaContabilidad
             {
-                IdPoliza = Modelo.IdPoliza, Fecha = Modelo.Fecha, Estado = Modelo.Estado, Origen = Modelo.Origen,
-                Periodo = ContabilidadFuncObtenerPeriodo(Modelo.Fecha), Descripcion = Modelo.Descripcion.Trim(),
+                IdPoliza = Modelo.IdPoliza,
+                CodigoPoliza = string.IsNullOrWhiteSpace(Modelo.CodigoPoliza) ? ContabilidadFuncGenerarCodigo(Modelo.Fecha) : Modelo.CodigoPoliza.Trim(),
+                Fecha = Modelo.Fecha.Date, Estado = EstadoPoliza, Origen = OrigenPoliza,
+                PeriodoContable = ContabilidadFuncObtenerPeriodo(Modelo.Fecha), Descripcion = Modelo.Descripcion.Trim(),
                 Detalle = Modelo.Lineas.Select(Linea => new ClsPolizaDetalleContabilidad
                     { IdCuenta = Linea.IdCuenta, Cuenta = Linea.Cuenta, Debe = Linea.Debe, Haber = Linea.Haber }).ToList()
             };
@@ -104,8 +164,16 @@ namespace CapaControlador_Contabilidad
                 switch (Estado)
                 {
                     case EstadoEntidadContabilidad.Agregar:
-                        _Repositorio.ContabilidadFuncAgregar(Entidad);
-                        Mensaje = "Póliza validada correctamente.";
+                        if (_Repositorio.ContabilidadFuncAgregar(Entidad) <= 0)
+                        {
+                            Mensaje = "No se pudo registrar la póliza.";
+                            return false;
+                        }
+                        // Se devuelven al modelo los datos generados al grabar.
+                        Modelo.IdPoliza = Entidad.IdPoliza;
+                        Modelo.CodigoPoliza = Entidad.CodigoPoliza;
+                        Modelo.Periodo = Entidad.PeriodoContable;
+                        Mensaje = "Póliza " + Entidad.CodigoPoliza + " registrada correctamente.";
                         break;
                     case EstadoEntidadContabilidad.Modificar:
                         _Repositorio.ContabilidadFuncEditar(Entidad);
@@ -120,7 +188,7 @@ namespace CapaControlador_Contabilidad
             }
             catch (Exception Excepcion)
             {
-                Mensaje = Excepcion.Message;
+                Mensaje = "Error al grabar la póliza: " + Excepcion.Message;
                 return false;
             }
         }

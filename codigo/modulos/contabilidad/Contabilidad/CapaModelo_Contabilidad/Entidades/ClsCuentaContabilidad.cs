@@ -18,9 +18,19 @@ namespace CapaModelo_Contabilidad.Entidades
         // Llave de la cuenta.
         public int IdCuenta { get; set; }
         // Código con formato C.GG.CC.SSS.
-        public string Codigo { get; set; }
+        // public string Codigo { get; set; } <= Comentado temporalmente
         // Nombre de la cuenta.
         public string Nombre { get; set; }
+
+        public string Codigo { get; set; }
+        //Oskar Cermeño Inicio
+        // Cuenta padre a la que vamos a hacer referencia
+        public int IdPadre { get; set; }
+
+        public string Tipo { get; set; }
+
+        public int Estado;
+        //Oskar Cermeño Fin
 
         // Se muestra el nombre en los listados.
         public override string ToString()

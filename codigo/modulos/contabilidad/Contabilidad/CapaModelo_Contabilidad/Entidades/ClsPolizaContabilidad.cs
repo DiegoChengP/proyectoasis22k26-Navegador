@@ -1,50 +1,35 @@
-/*
- * ==================================================================
- * Área : Contabilidad
- * Autor : Gabriel André Guillén Pocón
- * Carné : 0901-23-1998
- * Fecha : 17/10/2026
- * ==================================================================
- * Propósito :
- *  Entidades de la póliza: el encabezado y sus líneas de detalle.
- *  Los importes son decimal, nunca double.
- * ===================================================================
-*/
-
 using System;
 using System.Collections.Generic;
+
+
+// Oskar Cermeño
 
 namespace CapaModelo_Contabilidad.Entidades
 {
     public class ClsPolizaContabilidad
     {
-        // Número de la póliza.
+        // id_poliza INT AUTO_INCREMENT PRIMARY KEY
         public int IdPoliza { get; set; }
-        // Fecha de la póliza.
-        public DateTime Fecha { get; set; }
-        // BORRADOR, APLICADA o ANULADA.
-        public string Estado { get; set; }
-        // Período con formato yyyy-MM.
-        public string Periodo { get; set; }
-        // MANUAL, ACTIVOS_FIJOS o PRESUPUESTO.
-        public string Origen { get; set; }
-        // Descripción libre.
-        public string Descripcion { get; set; }
-        // Líneas del detalle.
-        public List<ClsPolizaDetalleContabilidad> Detalle { get; set; } = new List<ClsPolizaDetalleContabilidad>();
-    }
 
-    public class ClsPolizaDetalleContabilidad
-    {
-        // Cuenta de la línea.
-        public int IdCuenta { get; set; }
-        // Código de la cuenta.
-        public string Codigo { get; set; }
-        // Nombre de la cuenta.
-        public string Cuenta { get; set; }
-        // Importe al debe.
-        public decimal Debe { get; set; }
-        // Importe al haber.
-        public decimal Haber { get; set; }
+        // codigo_poliza VARCHAR(40) NOT NULL
+        public string CodigoPoliza { get; set; }
+
+        // fecha DATE NOT NULL
+        public DateTime Fecha { get; set; }
+
+        // estado ENUM('BORRADOR','APLICADA','ANULADA') NOT NULL DEFAULT 'BORRADOR'
+        public string Estado { get; set; } = "BORRADOR";
+
+        // periodo_contable CHAR(7) NOT NULL (Formato 'YYYY-MM')
+        public string PeriodoContable { get; set; }
+
+        // origen VARCHAR(50) NOT NULL DEFAULT 'MANUAL' (MANUAL, ACTIVOS_FIJOS, PRESUPUESTO, etc.)
+        public string Origen { get; set; } = "MANUAL";
+
+        // descripcion VARCHAR(255) NULL
+        public string Descripcion { get; set; }
+
+        // Líneas del detalle asociadas a la póliza
+        public List<ClsPolizaDetalleContabilidad> Detalle { get; set; } = new List<ClsPolizaDetalleContabilidad>();
     }
 }
