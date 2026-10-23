@@ -51,6 +51,10 @@ namespace CapaVista_Contabilidad
         private ClsEstadoSeguridadContabilidad _Estado;
         // Maneja el acceso del menú.
         private readonly ClsPermisosMenuContabilidad _PermisosMenu = new ClsPermisosMenuContabilidad();
+        // Botones del submenú Catálogos (códigos 10011 a 10015).
+        private Button[] _BotonesCatalogos;
+        // Indica si el submenú Catálogos está desplegado.
+        private bool _CatalogosAbierto;
         // Botón de cada código de ventana.
         private readonly Dictionary<int, Button> _BotonesMenu;
 
@@ -76,7 +80,10 @@ namespace CapaVista_Contabilidad
                 { 10014, ContabilidadBtnCuentas },
                 { 10015, ContabilidadBtnCuentasModulo }
             };
+            _BotonesCatalogos = new[] { ContabilidadBtnPaises, ContabilidadBtnModulosContables, ContabilidadBtnVidaUtil,
+                ContabilidadBtnCuentas, ContabilidadBtnCuentasModulo };
             foreach (Button Boton in _BotonesMenu.Values) _PermisosMenu.ContabilidadMetAplicar(Boton, false);
+            _PermisosMenu.ContabilidadMetAplicar(ContabilidadBtnCatalogos, false);
             Disposed += (Remitente, Evento) => _PermisosMenu.Dispose();
             ContabilidadPnlPrincipal.Resize += (Remitente, Evento) => ContabilidadMetAcomodarEncabezado();
             this.WindowState = FormWindowState.Maximized;
@@ -117,6 +124,11 @@ namespace CapaVista_Contabilidad
             ContabilidadLblUsuarioRol.Text = "Rol: " + Estado.Roles;
             foreach (KeyValuePair<int, Button> Boton in _BotonesMenu)
                 _PermisosMenu.ContabilidadMetAplicar(Boton.Value, Estado.Permisos[Boton.Key].TieneAcceso);
+            bool AlgunCatalogo = false;
+            foreach (int Codigo in new[] { 10011, 10012, 10013, 10014, 10015 }) AlgunCatalogo |= Estado.Permisos[Codigo].TieneAcceso;
+            _PermisosMenu.ContabilidadMetAplicar(ContabilidadBtnCatalogos, AlgunCatalogo);
+            if (!AlgunCatalogo) _CatalogosAbierto = false;
+            ContabilidadMetAcomodarCatalogos();
             if (_BotonActivo != null && !_BotonActivo.Enabled) _BotonActivo = null;
             _BotonSobre = null;
             ContabilidadMetAcomodarEncabezado();
@@ -255,6 +267,26 @@ namespace CapaVista_Contabilidad
 
             ContabilidadPnlNavegador.Width = NuevoAncho;
             ContabilidadPnlLateral.Width = NuevoAncho + _MargenMenu;
+            ContabilidadMetAcomodarCatalogos();
+        }
+
+        // Despliega o recoge el submenú de catálogos.
+        private void ContabilidadMetAlternarCatalogos(object Remitente, EventArgs Evento)
+        {
+            _CatalogosAbierto = !_CatalogosAbierto;
+            ContabilidadMetAcomodarCatalogos();
+        }
+
+        // Muestra u oculta los catálogos; con el menú contraído se alinean a la izquierda para ver su ícono.
+        private void ContabilidadMetAcomodarCatalogos()
+        {
+            int Izquierda = ContabilidadPnlNavegador.Width == _AnchoMenuExpandido ? 21 : 3;
+            foreach (Button Boton in _BotonesCatalogos)
+            {
+                Boton.Visible = _CatalogosAbierto;
+                Boton.Left = Izquierda;
+            }
+            ContabilidadBtnCatalogos.Invalidate();
         }
 
         // Abre Mantenimiento de países.
@@ -323,13 +355,14 @@ namespace CapaVista_Contabilidad
         {
             Button[] Botones = { ContabilidadBtnPolizasLocales, ContabilidadBtnPresupuestos,
                 ContabilidadBtnActivosFijos, ContabilidadBtnCierreContable, ContabilidadBtnEstadosFinancieros,
+                ContabilidadBtnCatalogos,
                 ContabilidadBtnPaises,
                 ContabilidadBtnModulosContables,
                 ContabilidadBtnVidaUtil,
                 ContabilidadBtnCuentas,
                 ContabilidadBtnCuentasModulo };
             string[] Titulos = { "Pólizas locales", "Presupuestos", "Activos fijos",
-                "Cierre contable", "Estados financieros", "Países", "Módulos contables", "Vida útil", "Cuentas contables", "Cuentas por módulo" };
+                "Cierre contable", "Estados financieros", "Catálogos", "Países", "Módulos contables", "Vida útil", "Cuentas contables", "Cuentas por módulo" };
             for (int Indice = 0; Indice < Botones.Length; Indice++)
             {
                 Button Boton = Botones[Indice];
@@ -352,12 +385,14 @@ namespace CapaVista_Contabilidad
         private void ContabilidadMetPintarEstadoMenu(object Remitente, PaintEventArgs Evento)
         {
             Button Boton = (Button)Remitente;
-            if (Boton.Enabled && (Boton == _BotonSobre || Boton == _BotonActivo))
+            // Catálogos queda marcado mientras esté abierto alguno de sus mantenimientos.
+            bool Activo = Boton == _BotonActivo || (Boton == ContabilidadBtnCatalogos && _BotonActivo != null && Array.IndexOf(_BotonesCatalogos, _BotonActivo) >= 0);
+            if (Boton.Enabled && (Boton == _BotonSobre || Activo))
             {
                 using (SolidBrush Fondo = new SolidBrush(Color.FromArgb(65, 70, 104, 125)))
                     Evento.Graphics.FillRectangle(Fondo, Boton.ClientRectangle);
             }
-            if (Boton.Enabled && Boton == _BotonActivo)
+            if (Boton.Enabled && Activo)
             {
                 using (SolidBrush Acento = new SolidBrush(Color.FromArgb(197, 143, 62)))
                     Evento.Graphics.FillRectangle(Acento, 0, 0, 4, Boton.Height);
@@ -368,9 +403,18 @@ namespace CapaVista_Contabilidad
             using (SolidBrush Fondo = new SolidBrush(Boton.Enabled ? Color.FromArgb(70, 104, 125) : Color.FromArgb(96, 96, 96)))
                 Evento.Graphics.FillRectangle(Fondo, Etiqueta);
             Color Texto = !Boton.Enabled ? Color.FromArgb(210, 210, 210) :
-                Boton == _BotonActivo ? Color.FromArgb(197, 143, 62) : Color.FromArgb(212, 222, 228);
+                Activo ? Color.FromArgb(197, 143, 62) : Color.FromArgb(212, 222, 228);
             TextRenderer.DrawText(Evento.Graphics, Boton.AccessibleName, Boton.Font,
                 Etiqueta, Texto, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
+            if (Boton == ContabilidadBtnCatalogos)
+            {
+                // Flecha de desplegado (hacia abajo) o recogido (hacia la derecha).
+                int X = Boton.Width - 26, Y = Boton.Height / 2;
+                Point[] Flecha = _CatalogosAbierto
+                    ? new[] { new Point(X, Y - 3), new Point(X + 10, Y - 3), new Point(X + 5, Y + 4) }
+                    : new[] { new Point(X + 2, Y - 6), new Point(X + 2, Y + 6), new Point(X + 9, Y) };
+                using (SolidBrush Pincel = new SolidBrush(Texto)) Evento.Graphics.FillPolygon(Pincel, Flecha);
+            }
         }
 
         // Consulta los permisos y abre la pantalla si el usuario tiene acceso.
