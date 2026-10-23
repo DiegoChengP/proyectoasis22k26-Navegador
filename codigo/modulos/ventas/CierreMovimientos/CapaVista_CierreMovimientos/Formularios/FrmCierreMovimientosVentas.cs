@@ -39,10 +39,10 @@ namespace CapaVista_CierreMovimientos
 
         public void VentasMetConfigurarEnlaceContable(Func<string, int, DateTime, System.Data.DataTable, string> Registrar)
         {
-            _Presentador.VentasMetConfigurarEnlaceContable(Registrar);
+            _Presentador.Consultas.VentasMetConfigurarEnlaceContable(Registrar);
         }
 
-        private void VentasPeriodoCierre_Changed(object sender, EventArgs e)
+        private void VentasMetPeriodoCierreChanged(object Origen, EventArgs Evento)
         {
             if (_Presentador != null)
                 _Presentador.VentasMetPeriodoCambio();

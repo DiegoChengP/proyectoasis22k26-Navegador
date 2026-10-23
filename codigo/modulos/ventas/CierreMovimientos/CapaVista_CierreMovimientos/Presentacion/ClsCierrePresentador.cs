@@ -1,4 +1,4 @@
-﻿// Jose Javier Torres Martinez | 0901-23-1091 | 22/10/2026
+﻿// Jose Javier Torres Martinez | 0901-23-1091 | 23/10/2026
 using CapaControlador_CierreMovimientos;
 using System.Data;
 using System.Linq;
@@ -10,16 +10,36 @@ namespace CapaVista_CierreMovimientos
 {
     internal sealed class ClsCierrePresentador
     {
+        internal ClsConsultasCierre Consultas { get; }
+
+        internal ClsCierrePresentador(FrmCierreMovimientosVentas Vista)
+        {
+            this.Vista = Vista;
+            BorradorCierre = new ClsBorradorCierre(this);
+            Consultas = new ClsConsultasCierre(this);
+            new ClsEventosCierre(this).VentasMetConectarEventos();
+        }
+
         internal FrmCierreMovimientosVentas Vista { get; set; }
+
         internal ClsCierreControlador Controlador { get; set; } = new ClsCierreControlador();
+
         internal bool Cargando { get; set; } = true;
+
         internal int UsuarioInicial { get; set; }
+
         internal int IdCierre { get; set; }
+
         internal DataTable Revision { get; set; }
+
         internal DataTable Partida { get; set; }
+
         internal string NumeroCierre { get; set; } = "";
+
         internal Func<string, int, DateTime, DataTable, string> EnlaceContable { get; set; }
+
         internal int IdBorrador { get; set; }
+
         internal bool EditandoBorrador { get; set; } = true;
 
         public int VentasIdUsuario
@@ -56,93 +76,14 @@ namespace CapaVista_CierreMovimientos
 
         internal ClsBorradorCierre BorradorCierre { get; private set; }
 
-        internal ClsCierrePresentador(FrmCierreMovimientosVentas Vista)
-        {
-            this.Vista = Vista;
-            BorradorCierre = new ClsBorradorCierre(this);
-            VentasMetConectarEventos();
-        }
-
-        // EventosCierre.
-        internal void VentasMetConectarEventos()
-        {
-            this.Vista.Load += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetCargar);
-            this.Vista.VentasBtnIngresar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetNuevo);
-            this.Vista.VentasBtnRevisar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.BorradorCierre.VentasMetConsultarCierre);
-            this.Vista.VentasBtnGuardarBorrador.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.BorradorCierre.VentasMetGuardarBorrador);
-            this.Vista.VentasBtnModificar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.BorradorCierre.VentasMetModificarBorrador);
-            this.Vista.VentasBtnEliminar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.BorradorCierre.VentasMetAnularBorrador);
-            this.Vista.VentasBtnRefrescar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetRevisar);
-            this.Vista.VentasCboClienteHistorial.SelectedIndexChanged += (s, e) =>
-            {
-                if (!this.Cargando && this.Moneda > 0 && this.Vista.VentasTbcCierre.SelectedTab == this.Vista.VentasTbpHistorial)
-                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetHistorial);
-            };
-            this.Vista.VentasTxtPeriodoHistorial.KeyDown += (s, e) =>
-            {
-                if (e.KeyCode == Keys.Enter)
-                {
-                    e.SuppressKeyPress = true;
-                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetHistorial);
-                }
-            };
-            this.Vista.VentasBtnConfirmar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.BorradorCierre.VentasMetConfirmar);
-            this.Vista.VentasBtnCancelar.Click += (s, e) => VentasMetLimpiarRevision();
-            this.Vista.VentasBtnCerrar.Click += (s, e) => this.Vista.Close();
-            this.Vista.VentasBtnTrasladarContabilidad.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, () =>
-            {
-                if (MessageBox.Show(this.Vista, "¿Desea registrar esta partida en Contabilidad?", "Traslado contable", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
-                    return;
-                string Referencia = this.Controlador.VentasMetTrasladar(this.IdCierre, this.VentasIdUsuario, this.EnlaceContable);
-                VentasMetMostrarPartida();
-                ClsHerramientasVentas.VentasMetInformar(this.Vista, "Contabilidad confirmo la partida: " + Referencia);
-            });
-            this.Vista.VentasBtnImprimir.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetImprimirCierre);
-            this.Vista.VentasCboMonedaCierre.SelectedIndexChanged += (s, e) =>
-            {
-                if (!this.Cargando)
-                {
-                    this.IdBorrador = 0;
-                    this.EditandoBorrador = true;
-                    VentasMetLimpiarRevision();
-                    this.BorradorCierre.VentasMetActualizarAccionesCierre();
-                }
-            };
-            this.Vista.VentasChkRevisionDocumentos.CheckedChanged += (s, e) => VentasMetActualizarConfirmacion();
-            this.Vista.VentasTbcCierre.SelectedIndexChanged += (s, e) =>
-            {
-                if (!this.Cargando && this.Moneda > 0)
-                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetRevisar);
-            };
-            this.Vista.VentasDgvHistorialCierre.SelectionChanged += (s, e) =>
-            {
-                if (this.Cargando || this.Vista.VentasDgvHistorialCierre.CurrentRow == null)
-                    return;
-                var F = this.Vista.VentasDgvHistorialCierre.CurrentRow.Tag as DataRow;
-                if (F != null)
-                {
-                    this.IdCierre = Convert.ToInt32(F["idCierre"]);
-                    this.NumeroCierre = Convert.ToString(F["numeroCierre"]);
-                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetMostrarPartida);
-                }
-            };
-            this.Vista.VentasDtpDesdeCierre.Enabled = false;
-            this.Vista.VentasDtpHastaCierre.Enabled = false;
-            this.Vista.VentasDtpCorteCierre.Enabled = false;
-            this.Vista.VentasTxtPeriodoHistorial.MaxLength = 7;
-            this.Vista.VentasBtnTrasladarContabilidad.Enabled = false;
-            this.Vista.VentasLblTrasladoCierre.Text = "La partida se prepara despues del cierre. El registro contable requiere el enlace del modulo de Contabilidad.";
-        }
-
-        // RevisionCierre.
         internal void VentasMetCargar()
         {
             this.Cargando = true;
             try
             {
-                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboUsuarioRegistro, this.Controlador.VentasMetCatalogo("Usuarios"), this.UsuarioInicial);
-                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboMonedaCierre, this.Controlador.VentasMetCatalogo("Monedas"));
-                DataTable Clientes = this.Controlador.VentasMetCatalogo("Clientes");
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboUsuarioRegistro, this.Controlador.VentasFuncCatalogo("Usuarios"), this.UsuarioInicial);
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboMonedaCierre, this.Controlador.VentasFuncCatalogo("Monedas"));
+                DataTable Clientes = this.Controlador.VentasFuncCatalogo("Clientes");
                 DataRow Todos = Clientes.NewRow();
                 Todos["Id"] = 0;
                 Todos["Nombre"] = "Todos los clientes";
@@ -201,36 +142,36 @@ namespace CapaVista_CierreMovimientos
         internal void VentasMetRevisar()
         {
             this.Vista.VentasBtnConfirmar.Enabled = false;
-            this.Controlador.VentasMetValidarCaptura(!(this.Moneda <= 0), "Seleccione la moneda. Cada moneda se cierra por separado.");
+            this.Controlador.VentasMetValidarCaptura(this.Moneda > 0, "Seleccione la moneda. Cada moneda se cierra por separado.");
             if (this.Vista.VentasTbcCierre.SelectedTab == this.Vista.VentasTbpHistorial)
             {
-                VentasMetHistorial();
+                Consultas.VentasMetHistorial();
                 return;
             }
 
             if (this.Vista.VentasTbcCierre.SelectedTab == this.Vista.VentasTbpContabilidad)
             {
-                VentasMetMostrarPartida();
+                Consultas.VentasMetMostrarPartida();
                 return;
             }
 
-            DataTable Estado = this.Controlador.VentasMetEstadoPeriodo(this.Moneda, this.Tipo, this.Vista.VentasDtpDesdeCierre.Value, this.Vista.VentasDtpHastaCierre.Value);
+            DataTable Estado = this.Controlador.VentasFuncEstadoPeriodo(this.Moneda, this.Tipo, this.Vista.VentasDtpDesdeCierre.Value, this.Vista.VentasDtpHastaCierre.Value);
             this.IdCierre = Estado.Rows.Count == 0 ? 0 : Convert.ToInt32(Estado.Rows[0]["idCierre"]);
             this.NumeroCierre = Estado.Rows.Count == 0 ? "" : Convert.ToString(Estado.Rows[0]["numeroCierre"]);
             if (this.IdCierre == 0)
-                this.Revision = this.Controlador.VentasMetRevisar(this.Moneda, this.Tipo, this.Vista.VentasDtpDesdeCierre.Value, this.Vista.VentasDtpHastaCierre.Value);
+                this.Revision = this.Controlador.VentasFuncRevisar(this.Moneda, this.Tipo, this.Vista.VentasDtpDesdeCierre.Value, this.Vista.VentasDtpHastaCierre.Value);
             else
             {
-                DataTable Historia = this.Controlador.VentasMetHistorial(this.Moneda, 0, this.Vista.VentasDtpDesdeCierre.Value.Year.ToString());
+                DataTable Historia = this.Controlador.VentasFuncHistorial(this.Moneda, 0, this.Vista.VentasDtpDesdeCierre.Value.Year.ToString());
                 this.Revision = Historia.Clone();
-                foreach (DataRow F in Historia.Rows)
-                    if (Convert.ToInt32(F["idCierre"]) == this.IdCierre)
-                        this.Revision.ImportRow(F);
+                foreach (DataRow Fila in Historia.Rows)
+                    if (Convert.ToInt32(Fila["idCierre"]) == this.IdCierre)
+                        this.Revision.ImportRow(Fila);
             }
 
             this.Vista.VentasDgvRevisionCierre.Rows.Clear();
-            foreach (DataRow F in this.Revision.Rows)
-                this.Vista.VentasDgvRevisionCierre.Rows.Add(F["Codigo"], F["Nombre"], F["Anterior"], F["Cargos"], F["Abonos"], F["CargosAcumulados"], F["AbonosAcumulados"], F["Actual"]);
+            foreach (DataRow Fila2 in this.Revision.Rows)
+                this.Vista.VentasDgvRevisionCierre.Rows.Add(Fila2["Codigo"], Fila2["Nombre"], Fila2["Anterior"], Fila2["Cargos"], Fila2["Abonos"], Fila2["CargosAcumulados"], Fila2["AbonosAcumulados"], Fila2["Actual"]);
             var Etiquetas = new[]
             {
                 this.Vista.VentasLblValorAnteriorCierre,
@@ -249,21 +190,21 @@ namespace CapaVista_CierreMovimientos
                 "AbonosAcumulados",
                 "Actual"
             };
-            for (int I = 0; I < Columnas.Length; I++)
-                Etiquetas[I].Text = this.Revision.AsEnumerable().Sum(F => Convert.ToDecimal(F[Columnas[I]])).ToString("N2", ClsHerramientasVentas.Cultura);
+            for (int IndiceFila = 0; IndiceFila < Columnas.Length; IndiceFila++)
+                Etiquetas[IndiceFila].Text = this.Revision.AsEnumerable().Sum(Registro => Convert.ToDecimal(Registro[Columnas[IndiceFila]])).ToString("N2", ClsHerramientasVentas.Cultura);
             if (this.IdCierre == 0 && !this.EditandoBorrador)
             {
-                DataRow B = this.Controlador.VentasMetListar(this.Moneda).AsEnumerable().FirstOrDefault(F => Convert.ToString(F["Estado"]) == "BORRADOR" && Convert.ToString(F["Tipo"]) == this.Tipo && Convert.ToDateTime(F["Desde"]).Date == this.Vista.VentasDtpDesdeCierre.Value.Date && Convert.ToDateTime(F["Hasta"]).Date == this.Vista.VentasDtpHastaCierre.Value.Date);
-                if (B != null)
+                DataRow Borrador = this.Controlador.VentasFuncListar(this.Moneda).AsEnumerable().FirstOrDefault(Registro => Convert.ToString(Registro["Estado"]) == "BORRADOR" && Convert.ToString(Registro["Tipo"]) == this.Tipo && Convert.ToDateTime(Registro["Desde"]).Date == this.Vista.VentasDtpDesdeCierre.Value.Date && Convert.ToDateTime(Registro["Hasta"]).Date == this.Vista.VentasDtpHastaCierre.Value.Date);
+                if (Borrador != null)
                 {
-                    this.IdBorrador = Convert.ToInt32(B["Id"]);
-                    this.Vista.VentasTxtObservacionesCierre.Text = Convert.ToString(B["Observaciones"]);
+                    this.IdBorrador = Convert.ToInt32(Borrador["Id"]);
+                    this.Vista.VentasTxtObservacionesCierre.Text = Convert.ToString(Borrador["Observaciones"]);
                 }
             }
 
             this.Vista.VentasTxtEstadoCierre.Text = this.IdCierre == 0 ? (this.IdBorrador > 0 ? "Borrador revisado" : "Revisado; sin cerrar") : "Cerrado: " + this.NumeroCierre;
             VentasMetActualizarConfirmacion();
-            VentasMetMostrarPartida();
+            Consultas.VentasMetMostrarPartida();
         }
 
         internal void VentasMetActualizarConfirmacion()
@@ -278,7 +219,7 @@ namespace CapaVista_CierreMovimientos
             bool Anual = this.Vista.VentasCboTipoCierre.Text == "Anual";
             int Anio = (int)this.Vista.VentasNudAnioCierre.Value;
             int Mes = this.Vista.VentasCboMesCierre.SelectedIndex < 0 ? DateTime.Today.Month : this.Vista.VentasCboMesCierre.SelectedIndex + 1;
-            DateTime[] Periodo = this.Controlador.VentasMetPeriodo(Anio, Mes, Anual);
+            DateTime[] Periodo = this.Controlador.VentasFuncPeriodo(Anio, Mes, Anual);
             DateTime Desde = Periodo[0], Hasta = Periodo[1];
             this.Vista.VentasCboMesCierre.Enabled = !Anual;
             this.Vista.VentasDtpDesdeCierre.Value = Desde;
@@ -301,91 +242,6 @@ namespace CapaVista_CierreMovimientos
                 VentasMetLimpiarRevision();
                 this.BorradorCierre.VentasMetActualizarAccionesCierre();
             }
-        }
-
-        // HistorialCierre.
-        internal void VentasMetHistorial()
-        {
-            this.Cargando = true;
-            try
-            {
-                this.IdCierre = 0;
-                this.NumeroCierre = "";
-                this.Vista.VentasDgvHistorialCierre.Rows.Clear();
-                foreach (DataRow F in this.Controlador.VentasMetHistorial(this.Moneda, ClsHerramientasVentas.VentasFuncObtenerId(this.Vista.VentasCboClienteHistorial), this.Vista.VentasTxtPeriodoHistorial.Text).Rows)
-                {
-                    int I = this.Vista.VentasDgvHistorialCierre.Rows.Add(F["Periodo"], F["Codigo"], F["Nombre"], F["Anterior"], F["Cargos"], F["Abonos"], F["CargosAcumulados"], F["AbonosAcumulados"], F["Actual"], F["Estado"]);
-                    this.Vista.VentasDgvHistorialCierre.Rows[I].Tag = F;
-                }
-            }
-            finally
-            {
-                this.Cargando = false;
-            }
-
-            if (this.Vista.VentasDgvHistorialCierre.CurrentRow != null)
-            {
-                var F = this.Vista.VentasDgvHistorialCierre.CurrentRow.Tag as DataRow;
-                if (F != null)
-                {
-                    this.IdCierre = Convert.ToInt32(F["idCierre"]);
-                    this.NumeroCierre = Convert.ToString(F["numeroCierre"]);
-                }
-            }
-
-            this.Vista.VentasBtnConfirmar.Enabled = false;
-            VentasMetMostrarPartida();
-        }
-
-        internal void VentasMetMostrarPartida()
-        {
-            this.Vista.VentasDgvPoliza.Rows.Clear();
-            this.Vista.VentasBtnTrasladarContabilidad.Enabled = false;
-            if (this.IdCierre <= 0)
-                return;
-            this.Partida = this.Controlador.VentasMetPartida(this.IdCierre);
-            foreach (DataRow F in this.Partida.Rows)
-                this.Vista.VentasDgvPoliza.Rows.Add(F["Cuenta"], F["Descripcion"], F["Debe"], F["Haber"]);
-            decimal Debe = this.Partida.AsEnumerable().Sum(F => (decimal)F["Debe"]), Haber = this.Partida.AsEnumerable().Sum(F => (decimal)F["Haber"]);
-            this.Vista.VentasLblPolizaTotales.Text = "Debe: " + Debe.ToString("N2", ClsHerramientasVentas.Cultura) + " / Haber: " + Haber.ToString("N2", ClsHerramientasVentas.Cultura);
-            this.Vista.VentasTxtReferenciaPoliza.Text = "CXC-" + this.NumeroCierre;
-            this.Vista.VentasTxtEstadoTraslado.Text = "Preparada; pendiente de enlace";
-            DataTable Estado = this.Controlador.VentasMetEstadoTraslado(this.IdCierre);
-            bool Confirmado = Estado.Rows.Count > 0 && (string)Estado.Rows[0]["estado"] == "CONFIRMADO";
-            if (Confirmado)
-            {
-                this.Vista.VentasTxtReferenciaPoliza.Text = Convert.ToString(Estado.Rows[0]["referenciaContable"]);
-                this.Vista.VentasTxtFechaTraslado.Text = Convert.ToDateTime(Estado.Rows[0]["fechaConfirmacion"]).ToString("dd/MM/yyyy HH:mm");
-                this.Vista.VentasTxtEstadoTraslado.Text = "Confirmado por Contabilidad";
-            }
-
-            this.Vista.VentasBtnTrasladarContabilidad.Enabled = !Confirmado && this.EnlaceContable != null && this.Partida.Rows.Count > 0 && !this.Partida.AsEnumerable().Any(F => ((string)F["Cuenta"]).StartsWith("PENDIENTE", StringComparison.Ordinal));
-        }
-
-        internal void VentasMetImprimirCierre()
-        {
-            DataTable Datos = this.Revision;
-            string Titulo = "Cierre " + this.NumeroCierre;
-            if (this.Vista.VentasTbcCierre.SelectedTab == this.Vista.VentasTbpHistorial)
-            {
-                Datos = this.Controlador.VentasMetHistorial(this.Moneda, ClsHerramientasVentas.VentasFuncObtenerId(this.Vista.VentasCboClienteHistorial), this.Vista.VentasTxtPeriodoHistorial.Text);
-                Titulo = "Historial de cierres";
-            }
-            else if (this.Vista.VentasTbcCierre.SelectedTab == this.Vista.VentasTbpContabilidad)
-            {
-                Datos = this.Partida;
-                Titulo = "Partida del cierre " + this.NumeroCierre;
-            }
-
-            ClsHerramientasVentas.VentasMetImprimir(this.Vista, Titulo, this.Vista.VentasCboMonedaCierre.Text, Datos);
-        }
-
-        // EnlaceCierre.
-        public void VentasMetConfigurarEnlaceContable(Func<string, int, DateTime, DataTable, string> Registrar)
-        {
-            this.EnlaceContable = Registrar;
-            if (this.IdCierre > 0)
-                VentasMetMostrarPartida();
         }
     }
 }

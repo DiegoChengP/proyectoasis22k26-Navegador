@@ -1,4 +1,4 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — Ventas y cuentas por cobrar
  * Asignación: Roger
  * Roger Yankhel de Jesús Herrera Alcántara | Carné: 0901-23-2429
@@ -6,7 +6,7 @@
  * Fecha de actualización: 15/10/2026
  * Propósito: Definir controles visibles desde el diseñador de Windows Forms.
  */
-namespace ComisionVendedoresVista
+namespace CapaVista_ComisionVendedores
 {
     partial class FrmComisionesVendedoresVentas
     {
@@ -90,10 +90,10 @@ namespace ComisionVendedoresVista
         private System.Windows.Forms.Label VentasLblAvisoEnvio;
         private System.Windows.Forms.Button VentasBtnEnviar;
 
-        protected override void Dispose(bool disposing)
+        protected override void Dispose(bool Disposing)
         {
-            if (disposing && (components != null)) components.Dispose();
-            base.Dispose(disposing);
+            if (Disposing && (components != null)) components.Dispose();
+            base.Dispose(Disposing);
         }
 
         #region Windows Form Designer generated code
@@ -232,7 +232,7 @@ namespace ComisionVendedoresVista
             //
             // VentasPbMarca
             //
-            this.VentasPbMarca.Image = global::ComisionVendedoresVista.Properties.Resources.IconoVentasImagen;
+            this.VentasPbMarca.Image = global::CapaVista_ComisionVendedores.Properties.Resources.IconoVentasImagen;
             this.VentasPbMarca.Location = new System.Drawing.Point(20, 14);
             this.VentasPbMarca.Name = "VentasPbMarca";
             this.VentasPbMarca.Size = new System.Drawing.Size(52, 52);
@@ -412,7 +412,7 @@ namespace ComisionVendedoresVista
             this.VentasBtnCalcular.Text = string.Empty;
             this.VentasBtnCalcular.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnCalcular.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasBtnCalcular.BackgroundImage = global::ComisionVendedoresVista.Properties.Resources.BotonOriginalConsultarVentas;
+            this.VentasBtnCalcular.BackgroundImage = global::CapaVista_ComisionVendedores.Properties.Resources.BotonOriginalConsultarVentas;
             this.VentasBtnCalcular.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.VentasBtnCalcular.Image = null;
             this.VentasBtnCalcular.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -691,7 +691,7 @@ namespace ComisionVendedoresVista
             this.VentasBtnAnterior.Text = string.Empty;
             this.VentasBtnAnterior.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnAnterior.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasBtnAnterior.BackgroundImage = global::ComisionVendedoresVista.Properties.Resources.BotonOriginalAnteriorVentas;
+            this.VentasBtnAnterior.BackgroundImage = global::CapaVista_ComisionVendedores.Properties.Resources.BotonOriginalAnteriorVentas;
             this.VentasBtnAnterior.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.VentasBtnAnterior.Image = null;
             this.VentasBtnAnterior.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -720,7 +720,7 @@ namespace ComisionVendedoresVista
             this.VentasBtnSiguiente.Text = string.Empty;
             this.VentasBtnSiguiente.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnSiguiente.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasBtnSiguiente.BackgroundImage = global::ComisionVendedoresVista.Properties.Resources.BotonOriginalSiguienteVentas;
+            this.VentasBtnSiguiente.BackgroundImage = global::CapaVista_ComisionVendedores.Properties.Resources.BotonOriginalSiguienteVentas;
             this.VentasBtnSiguiente.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.VentasBtnSiguiente.Image = null;
             this.VentasBtnSiguiente.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -771,7 +771,7 @@ namespace ComisionVendedoresVista
             this.VentasBtnSolicitar.Text = string.Empty;
             this.VentasBtnSolicitar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnSolicitar.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasBtnSolicitar.BackgroundImage = global::ComisionVendedoresVista.Properties.Resources.BotonOriginalGuardarVentas;
+            this.VentasBtnSolicitar.BackgroundImage = global::CapaVista_ComisionVendedores.Properties.Resources.BotonOriginalGuardarVentas;
             this.VentasBtnSolicitar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.VentasBtnSolicitar.Image = null;
             this.VentasBtnSolicitar.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -896,7 +896,7 @@ namespace ComisionVendedoresVista
             this.VentasBtnBuscar.Text = string.Empty;
             this.VentasBtnBuscar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnBuscar.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasBtnBuscar.BackgroundImage = global::ComisionVendedoresVista.Properties.Resources.BotonOriginalConsultarVentas;
+            this.VentasBtnBuscar.BackgroundImage = global::CapaVista_ComisionVendedores.Properties.Resources.BotonOriginalConsultarVentas;
             this.VentasBtnBuscar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.VentasBtnBuscar.Image = null;
             this.VentasBtnBuscar.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1271,7 +1271,7 @@ namespace ComisionVendedoresVista
             this.VentasBtnRechazar.Text = string.Empty;
             this.VentasBtnRechazar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnRechazar.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasBtnRechazar.BackgroundImage = global::ComisionVendedoresVista.Properties.Resources.BotonOriginalCancelarVentas;
+            this.VentasBtnRechazar.BackgroundImage = global::CapaVista_ComisionVendedores.Properties.Resources.BotonOriginalCancelarVentas;
             this.VentasBtnRechazar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.VentasBtnRechazar.Image = null;
             this.VentasBtnRechazar.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1300,7 +1300,7 @@ namespace ComisionVendedoresVista
             this.VentasBtnAprobar.Text = string.Empty;
             this.VentasBtnAprobar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnAprobar.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasBtnAprobar.BackgroundImage = global::ComisionVendedoresVista.Properties.Resources.BotonOriginalGuardarVentas;
+            this.VentasBtnAprobar.BackgroundImage = global::CapaVista_ComisionVendedores.Properties.Resources.BotonOriginalGuardarVentas;
             this.VentasBtnAprobar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.VentasBtnAprobar.Image = null;
             this.VentasBtnAprobar.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1350,7 +1350,7 @@ namespace ComisionVendedoresVista
             this.VentasBtnEnviar.Text = string.Empty;
             this.VentasBtnEnviar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnEnviar.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasBtnEnviar.BackgroundImage = global::ComisionVendedoresVista.Properties.Resources.BotonOriginalSalirVentas;
+            this.VentasBtnEnviar.BackgroundImage = global::CapaVista_ComisionVendedores.Properties.Resources.BotonOriginalSalirVentas;
             this.VentasBtnEnviar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.VentasBtnEnviar.Image = null;
             this.VentasBtnEnviar.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1403,7 +1403,7 @@ namespace ComisionVendedoresVista
             this.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = global::ComisionVendedoresVista.Properties.Resources.IconoVentas;
+            this.Icon = global::CapaVista_ComisionVendedores.Properties.Resources.IconoVentas;
             this.MaximizeBox = false;
             this.Name = "FrmComisionesVendedoresVentas";
             this.ShowInTaskbar = false;

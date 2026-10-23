@@ -15,13 +15,13 @@ namespace CapaVista_Facturas
         private System.ComponentModel.IContainer components = null;
 
         // Libera los componentes que el equipo incorpore desde el diseñador.
-        protected override void Dispose(bool disposing)
+        protected override void Dispose(bool Disposing)
         {
-            if (disposing && (components != null))
+            if (Disposing && (components != null))
             {
                 components.Dispose();
             }
-            base.Dispose(disposing);
+            base.Dispose(Disposing);
         }
 
         #region Windows Form Designer generated code

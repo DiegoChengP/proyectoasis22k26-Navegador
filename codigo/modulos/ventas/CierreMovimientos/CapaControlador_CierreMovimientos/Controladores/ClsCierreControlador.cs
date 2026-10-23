@@ -7,14 +7,14 @@ namespace CapaControlador_CierreMovimientos
     public sealed class ClsCierreControlador
     {
         private readonly Servicios.ClsCierreServicio _Servicio = new Servicios.ClsCierreServicio();
-        public DataTable VentasMetListar(int Moneda)
+        public DataTable VentasFuncListar(int Moneda)
         {
-            return _Servicio.VentasMetListar(Moneda);
+            return _Servicio.VentasFuncListar(Moneda);
         }
 
-        public string VentasMetGuardarBorrador(int Id, int Moneda, int Usuario, string Tipo, DateTime Desde, DateTime Hasta, string Observaciones)
+        public string VentasFuncGuardarBorrador(int Id, int Moneda, int Usuario, string Tipo, DateTime Desde, DateTime Hasta, string Observaciones)
         {
-            return _Servicio.VentasMetGuardarBorrador(Id, Moneda, Usuario, Tipo, Desde, Hasta, Observaciones);
+            return _Servicio.VentasFuncGuardarBorrador(Id, Moneda, Usuario, Tipo, Desde, Hasta, Observaciones);
         }
 
         public void VentasMetEliminarBorrador(int Id, int Usuario, string Motivo)
@@ -22,51 +22,51 @@ namespace CapaControlador_CierreMovimientos
             _Servicio.VentasMetEliminarBorrador(Id, Usuario, Motivo);
         }
 
-        public DataTable VentasMetCatalogo(string Nombre)
+        public DataTable VentasFuncCatalogo(string Nombre)
         {
-            return _Servicio.VentasMetCatalogo(Nombre);
+            return _Servicio.VentasFuncCatalogo(Nombre);
         }
 
-        public DataTable VentasMetRevisar(int Moneda, string Tipo, DateTime Desde, DateTime Hasta)
+        public DataTable VentasFuncRevisar(int Moneda, string Tipo, DateTime Desde, DateTime Hasta)
         {
-            return _Servicio.VentasMetRevisar(Moneda, Tipo, Desde, Hasta);
+            return _Servicio.VentasFuncRevisar(Moneda, Tipo, Desde, Hasta);
         }
 
-        public DataTable VentasMetEstadoPeriodo(int Moneda, string Tipo, DateTime Desde, DateTime Hasta)
+        public DataTable VentasFuncEstadoPeriodo(int Moneda, string Tipo, DateTime Desde, DateTime Hasta)
         {
-            return _Servicio.VentasMetEstadoPeriodo(Moneda, Tipo, Desde, Hasta);
+            return _Servicio.VentasFuncEstadoPeriodo(Moneda, Tipo, Desde, Hasta);
         }
 
-        public string VentasMetConfirmar(int Moneda, int Usuario, string Tipo, DateTime Desde, DateTime Hasta, bool Revisado)
+        public string VentasFuncConfirmar(int Moneda, int Usuario, string Tipo, DateTime Desde, DateTime Hasta, bool Revisado)
         {
-            return _Servicio.VentasMetConfirmar(Moneda, Usuario, Tipo, Desde, Hasta, Revisado);
+            return _Servicio.VentasFuncConfirmar(Moneda, Usuario, Tipo, Desde, Hasta, Revisado);
         }
 
-        public DataTable VentasMetHistorial(int Moneda, int Cliente, string Periodo)
+        public DataTable VentasFuncHistorial(int Moneda, int Cliente, string Periodo)
         {
-            return _Servicio.VentasMetHistorial(Moneda, Cliente, Periodo);
+            return _Servicio.VentasFuncHistorial(Moneda, Cliente, Periodo);
         }
 
-        public DataTable VentasMetPartida(int IdCierre)
+        public DataTable VentasFuncPartida(int IdCierre)
         {
-            return _Servicio.VentasMetPartida(IdCierre);
+            return _Servicio.VentasFuncPartida(IdCierre);
         }
 
-        public DataTable VentasMetEstadoTraslado(int IdCierre)
+        public DataTable VentasFuncEstadoTraslado(int IdCierre)
         {
-            return _Servicio.VentasMetEstadoTraslado(IdCierre);
+            return _Servicio.VentasFuncEstadoTraslado(IdCierre);
         }
 
-        public string VentasMetTrasladar(int IdCierre, int Usuario, Func<string, int, DateTime, DataTable, string> Registrar)
+        public string VentasFuncTrasladar(int IdCierre, int Usuario, Func<string, int, DateTime, DataTable, string> Registrar)
         {
             if (Registrar == null)
                 throw new InvalidOperationException("Configure el enlace de Contabilidad.");
-            DataSet Datos = _Servicio.VentasMetPrepararTraslado(IdCierre, Usuario);
-            DataRow H = Datos.Tables[0].Rows[0];
-            if ((string)H["estado"] == "CONFIRMADO")
-                return (string)H["referenciaContable"];
+            DataSet Datos = _Servicio.VentasFuncPrepararTraslado(IdCierre, Usuario);
+            DataRow Encabezado = Datos.Tables[0].Rows[0];
+            if ((string)Encabezado["estado"] == "CONFIRMADO")
+                return (string)Encabezado["referenciaContable"];
             // Sin transaccion abierta durante la llamada externa. El receptor debe deduplicar por clave.
-            string Referencia = Registrar((string)H["claveIntegracion"], Convert.ToInt32(H["idMoneda"]), Convert.ToDateTime(H["fechaHasta"]), Datos.Tables[1]);
+            string Referencia = Registrar((string)Encabezado["claveIntegracion"], Convert.ToInt32(Encabezado["idMoneda"]), Convert.ToDateTime(Encabezado["fechaHasta"]), Datos.Tables[1]);
             if (string.IsNullOrWhiteSpace(Referencia))
                 throw new InvalidOperationException("Contabilidad no devolvio una confirmacion. La partida sigue pendiente con la misma clave para reintentar.");
             _Servicio.VentasMetConfirmarTraslado(IdCierre, Usuario, Referencia);
@@ -83,9 +83,9 @@ namespace CapaControlador_CierreMovimientos
             return VentasValidaciones.ClsValidacionesVentas.VentasFuncImporteCelda(Valor);
         }
 
-        public DateTime[] VentasMetPeriodo(int Anio, int Mes, bool Anual)
+        public DateTime[] VentasFuncPeriodo(int Anio, int Mes, bool Anual)
         {
-            return Validaciones.ClsReglasCierre.VentasMetPeriodo(Anio, Mes, Anual);
+            return Validaciones.ClsReglasCierre.VentasFuncPeriodo(Anio, Mes, Anual);
         }
     }
 }

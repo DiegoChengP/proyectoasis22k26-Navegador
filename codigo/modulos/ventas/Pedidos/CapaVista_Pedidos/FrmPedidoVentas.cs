@@ -1,4 +1,4 @@
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,18 +12,18 @@ namespace CapaVista_Pedidos
         {
             InitializeComponent();
             VentasMetPrepararVista();
-            Load += (Sender, Args) => VentasMetCargarCatalogos();
+            Load += (Origen, Evento) => VentasMetCargarCatalogos();
         }
 
-        private void VentasBtnIngresarProducto_Click(object Sender, EventArgs Args) { VentasMetAgregarProducto(); }
-        private void VentasBtnEliminarProducto_Click(object Sender, EventArgs Args) { VentasMetQuitarProducto(); }
-        private void VentasBtnGuardar_Click(object Sender, EventArgs Args) { VentasMetGuardar(); }
-        private void VentasBtnCancelar_Click(object Sender, EventArgs Args) { VentasMetLimpiar(); }
+        private void VentasMetBtnIngresarProductoClick(object Origen, EventArgs Evento) { VentasMetAgregarProducto(); }
+        private void VentasMetBtnEliminarProductoClick(object Origen, EventArgs Evento) { VentasMetQuitarProducto(); }
+        private void VentasMetBtnGuardarClick(object Origen, EventArgs Evento) { VentasMetGuardar(); }
+        private void VentasMetBtnCancelarClick(object Origen, EventArgs Evento) { VentasMetLimpiar(); }
 
         private readonly ClsPedidoControlador _Controlador = new ClsPedidoControlador();
         private readonly List<ClsLineaPedido> _Lineas = new List<ClsLineaPedido>();
         private readonly ComboBox VentasCboProductoPedido = new ComboBox();
-        private readonly NumericUpDown VentasNumCantidadProducto = new NumericUpDown();
+        private readonly NumericUpDown VentasNudCantidadProducto = new NumericUpDown();
         private readonly CultureInfo _Cultura = CultureInfo.GetCultureInfo("es-GT");
         private int _MonedaId;
         private int _MonedaPublica;
@@ -49,7 +49,7 @@ namespace CapaVista_Pedidos
                     Vencimiento = VentasDtpVencimiento.Value.Date,
                     Lineas = new List<ClsLineaPedido>(_Lineas)
                 };
-                int Id = _Controlador.VentasMetGuardar(Pedido);
+                int Id = _Controlador.VentasFuncGuardar(Pedido);
                 MessageBox.Show(this, "Pedido " + Pedido.Numero + " guardado (ID " + Id +
                     ") con vencimiento " + Pedido.Vencimiento.ToString("dd/MM/yyyy") + ".",
                     "Pedido guardado", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -62,7 +62,7 @@ namespace CapaVista_Pedidos
 
         private void VentasMetLimpiar()
         {
-            VentasTxtNumeroPedido.Text = VentasMetNuevoNumero();
+            VentasTxtNumeroPedido.Text = VentasFuncNuevoNumero();
             VentasTxtReferenciaIndependiente.Text = string.Empty;
             VentasDtpPedido.Value = DateTime.Today;
             VentasDtpEntrega.Value = DateTime.Today.AddDays(2);

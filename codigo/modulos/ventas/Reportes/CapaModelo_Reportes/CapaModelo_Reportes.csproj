@@ -52,11 +52,5 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Ventas y CxC\CapaModelo_Ventas\Datos\ClsCatalogosVentas.cs">
-      <Link>Datos\ClsCatalogosVentas.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Ventas y CxC\CapaModelo_Ventas\Datos\ClsCorrelativosVentas.cs">
-      <Link>Datos\ClsCorrelativosVentas.cs</Link>
-    </Compile>
   </ItemGroup>
 </Project>

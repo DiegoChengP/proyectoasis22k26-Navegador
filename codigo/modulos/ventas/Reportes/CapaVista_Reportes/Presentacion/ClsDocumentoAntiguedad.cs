@@ -15,7 +15,7 @@ namespace CapaVista_Reportes
             {
                 Padre.UseWaitCursor = true;
                 DateTime Corte = DateTime.Today;
-                DataTable Datos = new ClsAntiguedadControlador().VentasMetConsultar(Corte, 0, "Todos");
+                DataTable Datos = new ClsAntiguedadControlador().VentasFuncConsultar(Corte, 0, "Todos");
                 using (var Visor = new FrmVistaAntiguedad(Datos, Corte, "Todos los clientes", "Todos"))
                 {
                     Padre.UseWaitCursor = false;

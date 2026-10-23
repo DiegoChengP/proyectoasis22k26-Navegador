@@ -1,4 +1,4 @@
-﻿// Jose Javier Torres Martinez | 0901-23-1091 | 22/10/2026
+﻿// Jose Javier Torres Martinez | 0901-23-1091 | 23/10/2026
 using CapaControlador_Cotizaciones;
 using System.Data;
 using System.Linq;
@@ -10,15 +10,31 @@ namespace CapaVista_Cotizaciones
 {
     internal sealed class ClsCotizacionesPresentador
     {
+        internal ClsCotizacionesPresentador(FrmCotizacionVentas Vista)
+        {
+            this.Vista = Vista;
+            RegistroVistaCotizaciones = new ClsRegistroVistaCotizaciones(this);
+            new ClsEventosCotizaciones(this).VentasMetConectarEventos();
+        }
+
         internal FrmCotizacionVentas Vista { get; set; }
+
         internal ClsCotizacionesControlador Controlador { get; set; } = new ClsCotizacionesControlador();
-        internal DataTable Lineas { get; set; } = ClsCotizacionesPresentador.VentasMetCrearDetalle();
+
+        internal DataTable Lineas { get; set; } = ClsCotizacionesPresentador.VentasFuncCrearDetalle();
+
         internal bool Cargando { get; set; } = true;
+
         internal int IdCotizacion { get; set; }
+
         internal int UsuarioInicial { get; set; }
+
         internal string EstadoGuardado { get; set; } = "";
+
         internal string NumeroGuardado { get; set; } = "";
+
         internal bool EditandoCotizacion { get; set; } = true;
+
         internal int IndiceLinea { get; set; } = -1;
 
         public int VentasIdUsuario
@@ -39,96 +55,16 @@ namespace CapaVista_Cotizaciones
 
         internal ClsRegistroVistaCotizaciones RegistroVistaCotizaciones { get; private set; }
 
-        internal ClsCotizacionesPresentador(FrmCotizacionVentas Vista)
-        {
-            this.Vista = Vista;
-            RegistroVistaCotizaciones = new ClsRegistroVistaCotizaciones(this);
-            VentasMetConectarEventos();
-        }
-
-        // EventosCotizaciones.
-        internal void VentasMetConectarEventos()
-        {
-            this.Vista.Load += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetCargar);
-            this.Vista.VentasBtnCotIngresar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetNuevo);
-            this.Vista.VentasBtnCotModificar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.RegistroVistaCotizaciones.VentasMetModificar);
-            this.Vista.VentasBtnCotAnular.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.RegistroVistaCotizaciones.VentasMetAnular);
-            this.Vista.VentasBtnCotRefrescar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.RegistroVistaCotizaciones.VentasMetRefrescar);
-            this.Vista.VentasDgvCotProductos.CellDoubleClick += (s, e) =>
-            {
-                if (e.RowIndex >= 0)
-                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetEditarLinea);
-            };
-            this.Vista.VentasBtnCotAgregar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetAgregar);
-            this.Vista.VentasBtnCotGuardar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.RegistroVistaCotizaciones.VentasMetGuardar);
-            this.Vista.VentasBtnCotLimpiar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetNuevo);
-            this.Vista.VentasBtnCotConsultar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.RegistroVistaCotizaciones.VentasMetBuscar);
-            this.Vista.VentasTxtCotNumero.KeyDown += (s, e) =>
-            {
-                if (e.KeyCode == Keys.Enter)
-                {
-                    e.SuppressKeyPress = true;
-                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, this.RegistroVistaCotizaciones.VentasMetBuscar);
-                }
-            };
-            this.Vista.VentasBtnCotPedido.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, () => this.RegistroVistaCotizaciones.VentasMetConvertir(false));
-            this.Vista.VentasBtnCotFactura.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, () => this.RegistroVistaCotizaciones.VentasMetConvertir(true));
-            this.Vista.VentasBtnCotEliminar.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, () =>
-            {
-                if (this.Vista.VentasDgvCotProductos.CurrentRow != null && this.RegistroVistaCotizaciones.VentasMetEditable())
-                {
-                    this.Lineas.Rows.RemoveAt(this.Vista.VentasDgvCotProductos.CurrentRow.Index);
-                    VentasMetRestablecerLinea();
-                    VentasMetMostrarLineas();
-                }
-            });
-            this.Vista.VentasBtnCotCerrar.Click += (s, e) => this.Vista.Close();
-            this.Vista.VentasBtnCotImprimir.Click += (s, e) => ClsHerramientasVentas.VentasMetEjecutar(this.Vista, () =>
-            {
-                this.Controlador.VentasMetValidarCaptura(!(this.IdCotizacion <= 0), "Guarde la cotizacion antes de imprimir.");
-                ClsHerramientasVentas.VentasMetImprimir(this.Vista, "Cotizacion " + this.NumeroGuardado, this.Vista.VentasCboCotCliente.Text + " / " + this.Vista.VentasCboCotMoneda.Text + " / " + this.Vista.VentasCboCotEstado.Text + " / Vigencia " + this.Vista.VentasDtpCotVigencia.Value.ToString("dd/MM/yyyy"), this.Lineas);
-            });
-            this.Vista.VentasCboCotCliente.SelectedIndexChanged += (s, e) =>
-            {
-                if (!this.Cargando)
-                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetCliente);
-            };
-            this.Vista.VentasCboCotMoneda.SelectedIndexChanged += (s, e) =>
-            {
-                if (!this.Cargando)
-                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetPrecios);
-            };
-            this.Vista.VentasDtpCotFecha.ValueChanged += (s, e) =>
-            {
-                if (!this.Cargando)
-                    ClsHerramientasVentas.VentasMetEjecutar(this.Vista, VentasMetPrecios);
-            };
-            this.Vista.VentasCboCotProducto.SelectedIndexChanged += (s, e) =>
-            {
-                DataRow P = ClsHerramientasVentas.VentasFuncObtenerFila(this.Vista.VentasCboCotProducto);
-                this.Vista.VentasTxtCotPrecio.Text = P == null ? "" : Convert.ToDecimal(P["Precio"]).ToString("N4", ClsHerramientasVentas.Cultura);
-            };
-            this.Vista.VentasTxtCotNit.ReadOnly = true;
-            this.Vista.VentasTxtCotContacto.ReadOnly = true;
-            this.Vista.VentasTxtCotDireccion.ReadOnly = true;
-            this.Vista.VentasNudCotCantidad.DecimalPlaces = 4;
-            this.Vista.VentasNudCotCantidad.Minimum = 0.0001m;
-            this.Vista.VentasNudCotCantidad.Value = 1;
-            this.Vista.VentasTtpAcciones.SetToolTip(this.Vista.VentasNudCotDescuento, "Descuento como importe de la linea, en la moneda de la cotizacion.");
-            this.Vista.VentasTtpAcciones.SetToolTip(this.Vista.VentasTxtCotNumero, "Numero o vacio para generar correlativo. Enter para consultar una cotizacion guardada.");
-        }
-
-        // CapturaCotizaciones.
         internal void VentasMetCargar()
         {
             this.Cargando = true;
             try
             {
-                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboUsuarioRegistro, this.Controlador.VentasMetCatalogo("Usuarios"), this.UsuarioInicial);
-                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboCotCliente, this.Controlador.VentasMetCatalogo("Clientes"));
-                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboCotMoneda, this.Controlador.VentasMetCatalogo("Monedas"));
-                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboCotVendedor, this.Controlador.VentasMetCatalogo("Vendedores"));
-                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboCotEstablecimiento, this.Controlador.VentasMetCatalogo("Establecimientos"));
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboUsuarioRegistro, this.Controlador.VentasFuncCatalogo("Usuarios"), this.UsuarioInicial);
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboCotCliente, this.Controlador.VentasFuncCatalogo("Clientes"));
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboCotMoneda, this.Controlador.VentasFuncCatalogo("Monedas"));
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboCotVendedor, this.Controlador.VentasFuncCatalogo("Vendedores"));
+                ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboCotEstablecimiento, this.Controlador.VentasFuncCatalogo("Establecimientos"));
             }
             finally
             {
@@ -140,18 +76,18 @@ namespace CapaVista_Cotizaciones
 
         internal void VentasMetCliente()
         {
-            DataRow C = ClsHerramientasVentas.VentasFuncObtenerFila(this.Vista.VentasCboCotCliente);
-            this.Vista.VentasTxtCotNit.Text = C == null ? "" : Convert.ToString(C["numeroIdentificacion"]);
-            this.Vista.VentasTxtCotDireccion.Text = C == null ? "" : Convert.ToString(C["direccionCliente"]);
-            this.Vista.VentasTxtCotContacto.Text = C == null ? "" : Convert.ToString(C["contactoCliente"]);
-            if (C != null)
-                this.Vista.VentasCboCotMoneda.SelectedValue = Convert.ToInt32(C["idMonedaCredito"]);
+            DataRow ClienteSeleccionado = ClsHerramientasVentas.VentasFuncObtenerFila(this.Vista.VentasCboCotCliente);
+            this.Vista.VentasTxtCotNit.Text = ClienteSeleccionado == null ? "" : Convert.ToString(ClienteSeleccionado["numeroIdentificacion"]);
+            this.Vista.VentasTxtCotDireccion.Text = ClienteSeleccionado == null ? "" : Convert.ToString(ClienteSeleccionado["direccionCliente"]);
+            this.Vista.VentasTxtCotContacto.Text = ClienteSeleccionado == null ? "" : Convert.ToString(ClienteSeleccionado["contactoCliente"]);
+            if (ClienteSeleccionado != null)
+                this.Vista.VentasCboCotMoneda.SelectedValue = Convert.ToInt32(ClienteSeleccionado["idMonedaCredito"]);
             VentasMetPrecios();
         }
 
         internal void VentasMetPrecios()
         {
-            if (this.Cargando || !this.RegistroVistaCotizaciones.VentasMetEditable())
+            if (this.Cargando || !this.RegistroVistaCotizaciones.VentasFuncEditable())
                 return;
             int Cliente = ClsHerramientasVentas.VentasFuncObtenerId(this.Vista.VentasCboCotCliente), Moneda = ClsHerramientasVentas.VentasFuncObtenerId(this.Vista.VentasCboCotMoneda);
             if (Cliente <= 0 || Moneda <= 0)
@@ -161,9 +97,9 @@ namespace CapaVista_Cotizaciones
                 return;
             }
 
-            DataTable Lista = this.Controlador.VentasMetListaCliente(Cliente, Moneda, this.Vista.VentasDtpCotFecha.Value);
+            DataTable Lista = this.Controlador.VentasFuncListaCliente(Cliente, Moneda, this.Vista.VentasDtpCotFecha.Value);
             this.Vista.VentasTxtCotListaPrecios.Text = Lista.Rows.Count == 1 ? Convert.ToString(Lista.Rows[0]["nombreListaPrecio"]) : "Sin lista vigente asignada para esta moneda";
-            ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboCotProducto, this.Controlador.VentasMetProductos(Cliente, Moneda, this.Vista.VentasDtpCotFecha.Value));
+            ClsHerramientasVentas.VentasMetCargarOpciones(this.Vista.VentasCboCotProducto, this.Controlador.VentasFuncProductos(Cliente, Moneda, this.Vista.VentasDtpCotFecha.Value));
         }
 
         internal void VentasMetNuevo()
@@ -217,14 +153,13 @@ namespace CapaVista_Cotizaciones
             this.RegistroVistaCotizaciones.VentasMetActualizarEdicion();
         }
 
-        // DetalleCotizaciones.
-        internal static DataTable VentasMetCrearDetalle()
+        internal static DataTable VentasFuncCrearDetalle()
         {
-            var T = new DataTable();
-            T.Columns.Add("idProducto", typeof(int));
-            T.Columns.Add("Descripcion", typeof(string));
-            T.Columns.Add("Tipo", typeof(string));
-            foreach (string C in new[]
+            var TablaDetalle = new DataTable();
+            TablaDetalle.Columns.Add("idProducto", typeof(int));
+            TablaDetalle.Columns.Add("Descripcion", typeof(string));
+            TablaDetalle.Columns.Add("Tipo", typeof(string));
+            foreach (string NombreColumna in new[]
             {
                 "Cantidad",
                 "Precio",
@@ -233,17 +168,15 @@ namespace CapaVista_Cotizaciones
                 "Base",
                 "Impuesto",
                 "Total"
-            }
-
-            )
-                T.Columns.Add(C, typeof(decimal));
-            return T;
+            })
+                TablaDetalle.Columns.Add(NombreColumna, typeof(decimal));
+            return TablaDetalle;
         }
 
         internal void VentasMetAgregar()
         {
-            this.Controlador.VentasMetValidarCaptura(!(!this.RegistroVistaCotizaciones.VentasMetEditable()), "La cotizacion emitida conserva su detalle.");
-            object[] Valores = this.Controlador.VentasMetCalcularLinea(ClsHerramientasVentas.VentasFuncObtenerFila(this.Vista.VentasCboCotProducto), this.Vista.VentasNudCotCantidad.Value, this.Vista.VentasNudCotDescuento.Value);
+            this.Controlador.VentasMetValidarCaptura(this.RegistroVistaCotizaciones.VentasFuncEditable(), "La cotizacion emitida conserva su detalle.");
+            object[] Valores = this.Controlador.VentasFuncCalcularLinea(ClsHerramientasVentas.VentasFuncObtenerFila(this.Vista.VentasCboCotProducto), this.Vista.VentasNudCotCantidad.Value, this.Vista.VentasNudCotDescuento.Value);
             if (this.IndiceLinea >= 0)
                 this.Lineas.Rows[this.IndiceLinea].ItemArray = Valores;
             else
@@ -256,13 +189,13 @@ namespace CapaVista_Cotizaciones
         internal void VentasMetMostrarLineas()
         {
             this.Vista.VentasDgvCotProductos.Rows.Clear();
-            foreach (DataRow F in this.Lineas.Rows)
-                this.Vista.VentasDgvCotProductos.Rows.Add(F["Descripcion"], F["Cantidad"], F["Precio"], F["Descuento"], F["Base"], F["Impuesto"], F["Total"]);
+            foreach (DataRow Fila in this.Lineas.Rows)
+                this.Vista.VentasDgvCotProductos.Rows.Add(Fila["Descripcion"], Fila["Cantidad"], Fila["Precio"], Fila["Descuento"], Fila["Base"], Fila["Impuesto"], Fila["Total"]);
             string Moneda = ClsHerramientasVentas.VentasFuncObtenerFila(this.Vista.VentasCboCotMoneda) == null ? "" : Convert.ToString(ClsHerramientasVentas.VentasFuncObtenerFila(this.Vista.VentasCboCotMoneda)["codigoMoneda"]);
-            this.Vista.VentasLblCotSubtotal.Text = ClsHerramientasVentas.VentasFuncDinero(this.Lineas.AsEnumerable().Sum(F => (decimal)F["Base"]), Moneda);
-            this.Vista.VentasLblCotDescuento.Text = ClsHerramientasVentas.VentasFuncDinero(this.Lineas.AsEnumerable().Sum(F => (decimal)F["Descuento"]), Moneda);
-            this.Vista.VentasLblCotImpuesto.Text = ClsHerramientasVentas.VentasFuncDinero(this.Lineas.AsEnumerable().Sum(F => (decimal)F["Impuesto"]), Moneda);
-            this.Vista.VentasLblCotTotal.Text = ClsHerramientasVentas.VentasFuncDinero(this.Lineas.AsEnumerable().Sum(F => (decimal)F["Total"]), Moneda);
+            this.Vista.VentasLblCotSubtotal.Text = ClsHerramientasVentas.VentasFuncDinero(this.Lineas.AsEnumerable().Sum(Registro => (decimal)Registro["Base"]), Moneda);
+            this.Vista.VentasLblCotDescuento.Text = ClsHerramientasVentas.VentasFuncDinero(this.Lineas.AsEnumerable().Sum(Registro => (decimal)Registro["Descuento"]), Moneda);
+            this.Vista.VentasLblCotImpuesto.Text = ClsHerramientasVentas.VentasFuncDinero(this.Lineas.AsEnumerable().Sum(Registro => (decimal)Registro["Impuesto"]), Moneda);
+            this.Vista.VentasLblCotTotal.Text = ClsHerramientasVentas.VentasFuncDinero(this.Lineas.AsEnumerable().Sum(Registro => (decimal)Registro["Total"]), Moneda);
             this.RegistroVistaCotizaciones.VentasMetActualizarEdicion();
         }
 
@@ -274,10 +207,10 @@ namespace CapaVista_Cotizaciones
             if (this.Vista.VentasDgvCotProductos.CurrentRow == null)
                 return;
             this.IndiceLinea = this.Vista.VentasDgvCotProductos.CurrentRow.Index;
-            DataRow F = this.Lineas.Rows[this.IndiceLinea];
-            this.Vista.VentasCboCotProducto.SelectedValue = F["idProducto"];
-            this.Vista.VentasNudCotCantidad.Value = Convert.ToDecimal(F["Cantidad"]);
-            this.Vista.VentasNudCotDescuento.Value = Convert.ToDecimal(F["Descuento"]);
+            DataRow Fila = this.Lineas.Rows[this.IndiceLinea];
+            this.Vista.VentasCboCotProducto.SelectedValue = Fila["idProducto"];
+            this.Vista.VentasNudCotCantidad.Value = Convert.ToDecimal(Fila["Cantidad"]);
+            this.Vista.VentasNudCotDescuento.Value = Convert.ToDecimal(Fila["Descuento"]);
             this.Vista.VentasBtnCotAgregar.BackgroundImage = Properties.Resources.BotonOriginalGuardarVentas;
             this.Vista.VentasTtpAcciones.SetToolTip(this.Vista.VentasBtnCotAgregar, "Guardar cambios del producto seleccionado");
         }

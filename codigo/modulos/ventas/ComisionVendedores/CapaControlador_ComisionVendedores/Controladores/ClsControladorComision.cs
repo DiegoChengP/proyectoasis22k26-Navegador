@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using CapaControlador_ComisionVendedores.Contratos;
 using CapaControlador_ComisionVendedores.DTO;
@@ -23,7 +23,7 @@ namespace CapaControlador_ComisionVendedores.Controladores
             _RepositorioComision = RepositorioComision ?? throw new ArgumentNullException("RepositorioComision");
         }
 
-        public List<ClsComisionVendedorResultado> ComisionVendedoresMetCalcular(
+        public List<ClsComisionVendedorResultado> VentasFuncCalcular(
             EnumMetodoComision Metodo,
             EnumBaseComision BaseCalculo,
             DateTime FechaInicio,
@@ -35,7 +35,7 @@ namespace CapaControlador_ComisionVendedores.Controladores
             if (BaseCalculo != EnumBaseComision.Ventas)
                 throw new NotSupportedException("La base COBRADO está reservada para la siguiente etapa.");
 
-            List<ClsVentaVendedorBase> Ventas = _RepositorioComision.ComisionVendedoresMetObtenerVentasPorMetodo(
+            List<ClsVentaVendedorBase> Ventas = _RepositorioComision.VentasFuncObtenerVentasPorMetodo(
                 Metodo.ToString(),
                 FechaInicio.Date,
                 FechaFin.Date.AddDays(1));
@@ -57,7 +57,7 @@ namespace CapaControlador_ComisionVendedores.Controladores
             return Resultados;
         }
 
-        public int ComisionVendedoresMetGuardar(
+        public int VentasFuncGuardar(
             List<ClsComisionVendedorResultado> Resultados,
             DateTime FechaInicio,
             DateTime FechaFin,
@@ -87,27 +87,27 @@ namespace CapaControlador_ComisionVendedores.Controladores
                 });
             }
 
-            return _RepositorioComision.ComisionVendedoresMetGuardarComisiones(Comisiones);
+            return _RepositorioComision.VentasFuncGuardarComisiones(Comisiones);
         }
 
-        public List<ClsProductoPorcentaje> ComisionVendedoresMetConsultarPorcentajes(EnumMetodoComision Metodo)
+        public List<ClsProductoPorcentaje> VentasFuncConsultarPorcentajes(EnumMetodoComision Metodo)
         {
-            ComisionVendedoresMetValidarMetodoMantenimiento(Metodo);
+            VentasMetValidarMetodoMantenimiento(Metodo);
             List<ClsProductoPorcentaje> Resultado = new List<ClsProductoPorcentaje>();
-            foreach (ClsProductoComision Producto in _RepositorioComision.ComisionVendedoresMetConsultarPorcentajes())
+            foreach (ClsProductoComision Producto in _RepositorioComision.VentasFuncConsultarPorcentajes())
                 Resultado.Add(new ClsProductoPorcentaje { IdProducto = Producto.IdProducto, NombreProducto = Producto.NombreProducto, Marca = Producto.Marca, Linea = Producto.Linea, Categoria = Producto.Categoria, Porcentaje = Producto.Porcentaje });
             return Resultado;
         }
 
-        public int ComisionVendedoresMetActualizarPorcentaje(EnumMetodoComision Metodo, List<int> IdsProducto, decimal Porcentaje)
+        public int VentasFuncActualizarPorcentaje(EnumMetodoComision Metodo, List<int> IdsProducto, decimal Porcentaje)
         {
-            ComisionVendedoresMetValidarMetodoMantenimiento(Metodo);
+            VentasMetValidarMetodoMantenimiento(Metodo);
             if (IdsProducto == null || IdsProducto.Count == 0) throw new ArgumentException("Seleccione al menos un producto para actualizar.");
             if (Porcentaje < 0 || Porcentaje > 100) throw new ArgumentOutOfRangeException("Porcentaje", "El porcentaje debe estar entre 0 y 100.");
-            return _RepositorioComision.ComisionVendedoresMetActualizarPorcentaje(IdsProducto, Porcentaje);
+            return _RepositorioComision.VentasFuncActualizarPorcentaje(IdsProducto, Porcentaje);
         }
 
-        private void ComisionVendedoresMetValidarMetodoMantenimiento(EnumMetodoComision Metodo)
+        private void VentasMetValidarMetodoMantenimiento(EnumMetodoComision Metodo)
         {
             switch (Metodo)
             {
@@ -121,26 +121,26 @@ namespace CapaControlador_ComisionVendedores.Controladores
             }
         }
 
-        public List<ClsFacturaComisionVista> ComisionVendedoresMetObtenerFacturas()
+        public List<ClsFacturaComisionVista> VentasFuncObtenerFacturas()
         {
             List<ClsFacturaComisionVista> Resultado = new List<ClsFacturaComisionVista>();
-            foreach (ClsFacturaComision Factura in _RepositorioComision.ComisionVendedoresMetObtenerFacturas())
+            foreach (ClsFacturaComision Factura in _RepositorioComision.VentasFuncObtenerFacturas())
                 Resultado.Add(new ClsFacturaComisionVista { IdFactura = Factura.IdFactura, Fecha = Factura.Fecha, Cliente = Factura.Cliente, Total = Factura.Total, TotalPagado = Factura.TotalPagado, UltimoAbono = Factura.UltimoAbono });
             return Resultado;
         }
 
-        public List<ClsVendedorComisionVista> ComisionVendedoresMetObtenerVendedores()
+        public List<ClsVendedorComisionVista> VentasFuncObtenerVendedores()
         {
             List<ClsVendedorComisionVista> Resultado = new List<ClsVendedorComisionVista>();
-            foreach (ClsVendedorComision Vendedor in _RepositorioComision.ComisionVendedoresMetObtenerVendedores())
+            foreach (ClsVendedorComision Vendedor in _RepositorioComision.VentasFuncObtenerVendedores())
                 Resultado.Add(new ClsVendedorComisionVista { IdVendedor = Vendedor.IdVendedor, NombreVendedor = Vendedor.NombreVendedor, Porcentaje = Vendedor.Porcentaje });
             return Resultado;
         }
 
-        public List<ClsComisionFacturaDetalle> ComisionVendedoresMetCalcularFactura(int IdFactura, int IdVendedor, EnumMetodoComision Metodo)
+        public List<ClsComisionFacturaDetalle> VentasFuncCalcularFactura(int IdFactura, int IdVendedor, EnumMetodoComision Metodo)
         {
-            ClsFacturaComision Factura = _RepositorioComision.ComisionVendedoresMetObtenerFactura(IdFactura);
-            ClsVendedorComision Vendedor = _RepositorioComision.ComisionVendedoresMetObtenerVendedor(IdVendedor);
+            ClsFacturaComision Factura = _RepositorioComision.VentasFuncObtenerFactura(IdFactura);
+            ClsVendedorComision Vendedor = _RepositorioComision.VentasFuncObtenerVendedor(IdVendedor);
             if (Factura == null) throw new ArgumentException("La factura seleccionada no existe.");
             if (Vendedor == null) throw new ArgumentException("El vendedor seleccionado no existe.");
 
@@ -149,7 +149,7 @@ namespace CapaControlador_ComisionVendedores.Controladores
             decimal UltimoAbonoAplicable = Math.Min(Factura.UltimoAbono, Math.Max(0m, Factura.Total - PagoPrevioAlUltimo));
             decimal ProporcionUltimoAbono = Factura.Total <= 0 ? 0 : UltimoAbonoAplicable / Factura.Total;
             List<ClsComisionFacturaDetalle> Resultado = new List<ClsComisionFacturaDetalle>();
-            foreach (ClsDetalleProductoComision Detalle in _RepositorioComision.ComisionVendedoresMetObtenerDetallesFactura(IdFactura))
+            foreach (ClsDetalleProductoComision Detalle in _RepositorioComision.VentasFuncObtenerDetallesFactura(IdFactura))
             {
                 decimal BaseVenta = Detalle.Cantidad * Detalle.PrecioUnitario;
                 decimal Porcentaje = Metodo == EnumMetodoComision.Vendedor ? Vendedor.Porcentaje : Detalle.Porcentaje;
@@ -157,7 +157,7 @@ namespace CapaControlador_ComisionVendedores.Controladores
                 Resultado.Add(new ClsComisionFacturaDetalle
                 {
                     NombreProducto = Detalle.NombreProducto,
-                    ElementoComision = ComisionVendedoresMetObtenerElementoComision(Detalle, Metodo),
+                    ElementoComision = VentasFuncObtenerElementoComision(Detalle, Metodo),
                     Cantidad = Detalle.Cantidad,
                     BaseVenta = BaseVenta,
                     Porcentaje = Porcentaje,
@@ -171,7 +171,7 @@ namespace CapaControlador_ComisionVendedores.Controladores
             return Resultado;
         }
 
-        private string ComisionVendedoresMetObtenerElementoComision(ClsDetalleProductoComision Detalle, EnumMetodoComision Metodo)
+        private string VentasFuncObtenerElementoComision(ClsDetalleProductoComision Detalle, EnumMetodoComision Metodo)
         {
             switch (Metodo)
             {

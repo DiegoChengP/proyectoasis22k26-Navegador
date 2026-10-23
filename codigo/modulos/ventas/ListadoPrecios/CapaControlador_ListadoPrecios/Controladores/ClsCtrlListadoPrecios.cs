@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using CapaModelo_ListadoPrecios;
@@ -9,37 +9,37 @@ namespace CapaControlador_ListadoPrecios
     // Controlador del punto 2.1: validación, cálculo y coordinación con el modelo.
     public class ClsCtrlListadoPrecios : ICtrlListadoPrecios
     {
-        private readonly ClsModeloListadoPrecios _modelo;
-        public string MensajeEstado { get { return _modelo.MensajeEstado; } }
-        public bool UsaBaseDeDatos { get { return _modelo.UsaBaseDeDatos; } }
+        private readonly ClsModeloListadoPrecios _Modelo;
+        public string MensajeEstado { get { return _Modelo.MensajeEstado; } }
+        public bool UsaBaseDeDatos { get { return _Modelo.UsaBaseDeDatos; } }
 
-        public ClsCtrlListadoPrecios() { _modelo = new ClsModeloListadoPrecios(); }
+        public ClsCtrlListadoPrecios() { _Modelo = new ClsModeloListadoPrecios(); }
 
-        public List<ClsPrecioCliente> ConsultarListado()
+        public List<ClsPrecioCliente> VentasFuncConsultarListado()
         {
-            return _modelo.ObtenerListado().OrderBy(x => x.TipoCliente).ThenBy(x => x.TipoProducto).Select(x => new ClsPrecioCliente { TipoCliente = x.TipoCliente, TipoProducto = x.TipoProducto, PorcentajeDescuento = x.PorcentajeDescuento, PrecioBase = x.PrecioBase, PrecioFinal = x.PrecioFinal }).ToList();
+            return _Modelo.VentasFuncObtenerListado().OrderBy(Elemento => Elemento.TipoCliente).ThenBy(Elemento => Elemento.TipoProducto).Select(Elemento => new ClsPrecioCliente { TipoCliente = Elemento.TipoCliente, TipoProducto = Elemento.TipoProducto, PorcentajeDescuento = Elemento.PorcentajeDescuento, PrecioBase = Elemento.PrecioBase, PrecioFinal = Elemento.PrecioFinal }).ToList();
         }
 
-        public decimal CalcularPrecioFinal(decimal precioBase, decimal descuento)
+        public decimal VentasFuncCalcularPrecioFinal(decimal PrecioBase, decimal Descuento)
         {
-            if (precioBase < 0) throw new ArgumentOutOfRangeException("precioBase", "El precio base no puede ser negativo.");
-            if (descuento < 0 || descuento > 100) throw new ArgumentOutOfRangeException("descuento", "El descuento debe estar entre 0 y 100 %.");
-            return ClsModeloListadoPrecios.CalcularPrecioFinal(precioBase, descuento);
+            if (PrecioBase < 0) throw new ArgumentOutOfRangeException("precioBase", "El precio base no puede ser negativo.");
+            if (Descuento < 0 || Descuento > 100) throw new ArgumentOutOfRangeException("descuento", "El descuento debe estar entre 0 y 100 %.");
+            return ClsModeloListadoPrecios.VentasFuncCalcularPrecioFinal(PrecioBase, Descuento);
         }
 
-        public bool Guardar(string tipoCliente, string tipoProducto, decimal porcentaje, decimal precioBase, out string mensaje)
+        public bool VentasFuncGuardar(string TipoCliente, string TipoProducto, decimal Porcentaje, decimal PrecioBase, out string Mensaje)
         {
-            if (string.IsNullOrWhiteSpace(tipoCliente)) { mensaje = "Seleccione un tipo de cliente."; return false; }
-            if (string.IsNullOrWhiteSpace(tipoProducto)) { mensaje = "Seleccione un tipo de producto."; return false; }
-            if (precioBase < 0) { mensaje = "El precio base no puede ser negativo."; return false; }
-            if (porcentaje < 0 || porcentaje > 100) { mensaje = "El descuento debe estar entre 0 y 100 %."; return false; }
-            CapaModelo_ListadoPrecios.Entidades.ClsPrecioCliente registro = new CapaModelo_ListadoPrecios.Entidades.ClsPrecioCliente
+            if (string.IsNullOrWhiteSpace(TipoCliente)) { Mensaje = "Seleccione un tipo de cliente."; return false; }
+            if (string.IsNullOrWhiteSpace(TipoProducto)) { Mensaje = "Seleccione un tipo de producto."; return false; }
+            if (PrecioBase < 0) { Mensaje = "El precio base no puede ser negativo."; return false; }
+            if (Porcentaje < 0 || Porcentaje > 100) { Mensaje = "El descuento debe estar entre 0 y 100 %."; return false; }
+            CapaModelo_ListadoPrecios.Entidades.ClsPrecioCliente Registro = new CapaModelo_ListadoPrecios.Entidades.ClsPrecioCliente
             {
-                TipoCliente = tipoCliente.Trim(), TipoProducto = tipoProducto.Trim(),
-                PorcentajeDescuento = porcentaje, PrecioBase = precioBase,
-                PrecioFinal = CalcularPrecioFinal(precioBase, porcentaje)
+                TipoCliente = TipoCliente.Trim(), TipoProducto = TipoProducto.Trim(),
+                PorcentajeDescuento = Porcentaje, PrecioBase = PrecioBase,
+                PrecioFinal = VentasFuncCalcularPrecioFinal(PrecioBase, Porcentaje)
             };
-            return _modelo.Guardar(registro, out mensaje);
+            return _Modelo.VentasFuncGuardar(Registro, out Mensaje);
         }
     }
 }

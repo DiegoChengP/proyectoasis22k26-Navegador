@@ -1,4 +1,4 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — Ventas y cuentas por cobrar
  * Asignación: Matthew, Jose, Natali
  * Matthew Andreé Juárez Xoy | Carné: 0901-23-4250
@@ -14,13 +14,13 @@ namespace CapaVista_Pedidos
     {
         private System.ComponentModel.IContainer components = null;
 
-        protected override void Dispose(bool disposing)
+        protected override void Dispose(bool Disposing)
         {
-            if (disposing && (components != null))
+            if (Disposing && (components != null))
             {
                 components.Dispose();
             }
-            base.Dispose(disposing);
+            base.Dispose(Disposing);
         }
 
         #region Windows Form Designer generated code
@@ -28,11 +28,11 @@ namespace CapaVista_Pedidos
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPedidoVentas));
+            System.ComponentModel.ComponentResourceManager Resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPedidoVentas));
             this.VentasTtpAcciones = new System.Windows.Forms.ToolTip(this.components);
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.VentasPnlEncabezado = new System.Windows.Forms.Panel();
             this.VentasLblCodigo = new System.Windows.Forms.Label();
             this.VentasLblSubtitulo = new System.Windows.Forms.Label();
@@ -164,7 +164,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnGuardar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnGuardar.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasBtnGuardar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnGuardar.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Guardar")));
+            this.VentasBtnGuardar.BackgroundImage = ((System.Drawing.Image)(Resources.GetObject("Guardar")));
             this.VentasBtnGuardar.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnGuardar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnGuardar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -178,7 +178,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnGuardar.UseCompatibleTextRendering = false;
             this.VentasBtnGuardar.Size = new System.Drawing.Size(64, 64);
             this.VentasBtnGuardar.TabIndex = 0;
-            this.VentasBtnGuardar.Click += new System.EventHandler(this.VentasBtnGuardar_Click);
+            this.VentasBtnGuardar.Click += new System.EventHandler(this.VentasMetBtnGuardarClick);
 
             this.VentasBtnGuardar.AccessibleName = "Guardar";
             //
@@ -195,7 +195,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnCancelar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnCancelar.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasBtnCancelar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnCancelar.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Cancelar")));
+            this.VentasBtnCancelar.BackgroundImage = ((System.Drawing.Image)(Resources.GetObject("Cancelar")));
             this.VentasBtnCancelar.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnCancelar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnCancelar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -209,7 +209,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnCancelar.UseCompatibleTextRendering = false;
             this.VentasBtnCancelar.Size = new System.Drawing.Size(64, 64);
             this.VentasBtnCancelar.TabIndex = 1;
-            this.VentasBtnCancelar.Click += new System.EventHandler(this.VentasBtnCancelar_Click);
+            this.VentasBtnCancelar.Click += new System.EventHandler(this.VentasMetBtnCancelarClick);
 
             this.VentasBtnCancelar.AccessibleName = "Cancelar";
             //
@@ -276,22 +276,22 @@ namespace CapaVista_Pedidos
             this.VentasDgvDetalle.AllowUserToAddRows = false;
             this.VentasDgvDetalle.AllowUserToDeleteRows = false;
             this.VentasDgvDetalle.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.VentasDgvDetalle.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            DataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.VentasDgvDetalle.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1;
             this.VentasDgvDetalle.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.VentasDgvDetalle.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.VentasDgvDetalle.BackgroundColor = System.Drawing.Color.White;
             this.VentasDgvDetalle.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.VentasDgvDetalle.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.VentasDgvDetalle.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.VentasDgvDetalle.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            DataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            DataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F);
+            DataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.VentasDgvDetalle.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2;
             this.VentasDgvDetalle.ColumnHeadersHeight = 40;
             this.VentasDgvDetalle.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.VentasDgvDetalleColCodigo,
@@ -301,14 +301,14 @@ namespace CapaVista_Pedidos
             this.VentasDgvDetalleColPrecio,
             this.VentasDgvDetalleColDescuento,
             this.VentasDgvDetalleColTotal});
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 9F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(51)))), ((int)(((byte)(63)))));
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(228)))), ((int)(((byte)(212)))), ((int)(((byte)(234)))));
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.VentasDgvDetalle.DefaultCellStyle = dataGridViewCellStyle3;
+            DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            DataGridViewCellStyle3.BackColor = System.Drawing.Color.White;
+            DataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 9F);
+            DataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(51)))), ((int)(((byte)(63)))));
+            DataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(228)))), ((int)(((byte)(212)))), ((int)(((byte)(234)))));
+            DataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.VentasDgvDetalle.DefaultCellStyle = DataGridViewCellStyle3;
             this.VentasDgvDetalle.EnableHeadersVisualStyles = false;
             this.VentasDgvDetalle.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(229)))), ((int)(((byte)(238)))));
             this.VentasDgvDetalle.Location = new System.Drawing.Point(30, 354);
@@ -418,7 +418,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnEliminarProducto.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnEliminarProducto.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasBtnEliminarProducto.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnEliminarProducto.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Eliminar")));
+            this.VentasBtnEliminarProducto.BackgroundImage = ((System.Drawing.Image)(Resources.GetObject("Eliminar")));
             this.VentasBtnEliminarProducto.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnEliminarProducto.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnEliminarProducto.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -432,7 +432,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnEliminarProducto.UseCompatibleTextRendering = false;
             this.VentasBtnEliminarProducto.Size = new System.Drawing.Size(64, 64);
             this.VentasBtnEliminarProducto.TabIndex = 3;
-            this.VentasBtnEliminarProducto.Click += new System.EventHandler(this.VentasBtnEliminarProducto_Click);
+            this.VentasBtnEliminarProducto.Click += new System.EventHandler(this.VentasMetBtnEliminarProductoClick);
 
             //
             // VentasBtnIngresarProducto
@@ -448,7 +448,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnIngresarProducto.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnIngresarProducto.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasBtnIngresarProducto.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnIngresarProducto.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Ingresar")));
+            this.VentasBtnIngresarProducto.BackgroundImage = ((System.Drawing.Image)(Resources.GetObject("Ingresar")));
             this.VentasBtnIngresarProducto.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnIngresarProducto.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnIngresarProducto.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -462,7 +462,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnIngresarProducto.UseCompatibleTextRendering = false;
             this.VentasBtnIngresarProducto.Size = new System.Drawing.Size(64, 64);
             this.VentasBtnIngresarProducto.TabIndex = 2;
-            this.VentasBtnIngresarProducto.Click += new System.EventHandler(this.VentasBtnIngresarProducto_Click);
+            this.VentasBtnIngresarProducto.Click += new System.EventHandler(this.VentasMetBtnIngresarProductoClick);
 
             //
             // VentasLblDetalleTitulo
@@ -750,7 +750,7 @@ namespace CapaVista_Pedidos
             this.Controls.Add(this.VentasPnlEncabezado);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("IconoVentas")));
+            this.Icon = ((System.Drawing.Icon)(Resources.GetObject("IconoVentas")));
             this.MaximizeBox = false;
             this.Name = "FrmPedidoVentas";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

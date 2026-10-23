@@ -10,23 +10,23 @@ namespace CapaVista_Cotizaciones
     partial class FrmCotizacionVentas
     {
         private System.ComponentModel.IContainer components = null;
-        protected override void Dispose(bool disposing)
+        protected override void Dispose(bool Disposing)
         {
-            if (disposing && components != null) components.Dispose();
-            base.Dispose(disposing);
+            if (Disposing && components != null) components.Dispose();
+            base.Dispose(Disposing);
         }
         #region Windows Form Designer generated code
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.VentasTtpAcciones = new System.Windows.Forms.ToolTip(this.components);
             this.VentasPnlEncabezado = new System.Windows.Forms.Panel();
             this.VentasLblTitulo = new System.Windows.Forms.Label();
@@ -352,18 +352,18 @@ namespace CapaVista_Cotizaciones
             this.VentasDgvCotProductos.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.VentasDgvCotProductos.ColumnHeadersHeight = 34;
             this.VentasDgvCotProductos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.VentasDgvCotProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(228, 212, 234);
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
-            this.VentasDgvCotProductos.DefaultCellStyle = dataGridViewCellStyle2;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(248, 245, 249);
-            this.VentasDgvCotProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            DataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(59, 29, 74);
+            DataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
+            DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(59, 29, 74);
+            DataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.VentasDgvCotProductos.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1;
+            DataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
+            DataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(228, 212, 234);
+            DataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
+            this.VentasDgvCotProductos.DefaultCellStyle = DataGridViewCellStyle2;
+            DataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(248, 245, 249);
+            this.VentasDgvCotProductos.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle3;
             this.VentasClmCotProductosProducto.Name = "VentasClmCotProductosProducto";
             this.VentasClmCotProductosProducto.HeaderText = "Producto / servicio";
             this.VentasClmCotProductosProducto.FillWeight = 200F;
@@ -376,37 +376,37 @@ namespace CapaVista_Cotizaciones
             this.VentasClmCotProductosPrecio.HeaderText = "Precio unitario";
             this.VentasClmCotProductosPrecio.FillWeight = 85F;
             this.VentasClmCotProductosPrecio.ReadOnly = true;
-            dataGridViewCellStyle4.Format = "N2";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.VentasClmCotProductosPrecio.DefaultCellStyle = dataGridViewCellStyle4;
+            DataGridViewCellStyle4.Format = "N2";
+            DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.VentasClmCotProductosPrecio.DefaultCellStyle = DataGridViewCellStyle4;
             this.VentasClmCotProductosDescuento.Name = "VentasClmCotProductosDescuento";
             this.VentasClmCotProductosDescuento.HeaderText = "Descuento";
             this.VentasClmCotProductosDescuento.FillWeight = 80F;
             this.VentasClmCotProductosDescuento.ReadOnly = true;
-            dataGridViewCellStyle5.Format = "N2";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.VentasClmCotProductosDescuento.DefaultCellStyle = dataGridViewCellStyle5;
+            DataGridViewCellStyle5.Format = "N2";
+            DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.VentasClmCotProductosDescuento.DefaultCellStyle = DataGridViewCellStyle5;
             this.VentasClmCotProductosSubtotal.Name = "VentasClmCotProductosSubtotal";
             this.VentasClmCotProductosSubtotal.HeaderText = "Subtotal";
             this.VentasClmCotProductosSubtotal.FillWeight = 85F;
             this.VentasClmCotProductosSubtotal.ReadOnly = true;
-            dataGridViewCellStyle6.Format = "N2";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.VentasClmCotProductosSubtotal.DefaultCellStyle = dataGridViewCellStyle6;
+            DataGridViewCellStyle6.Format = "N2";
+            DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.VentasClmCotProductosSubtotal.DefaultCellStyle = DataGridViewCellStyle6;
             this.VentasClmCotProductosImpuesto.Name = "VentasClmCotProductosImpuesto";
             this.VentasClmCotProductosImpuesto.HeaderText = "Impuesto";
             this.VentasClmCotProductosImpuesto.FillWeight = 80F;
             this.VentasClmCotProductosImpuesto.ReadOnly = true;
-            dataGridViewCellStyle7.Format = "N2";
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.VentasClmCotProductosImpuesto.DefaultCellStyle = dataGridViewCellStyle7;
+            DataGridViewCellStyle7.Format = "N2";
+            DataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.VentasClmCotProductosImpuesto.DefaultCellStyle = DataGridViewCellStyle7;
             this.VentasClmCotProductosTotal.Name = "VentasClmCotProductosTotal";
             this.VentasClmCotProductosTotal.HeaderText = "Total";
             this.VentasClmCotProductosTotal.FillWeight = 85F;
             this.VentasClmCotProductosTotal.ReadOnly = true;
-            dataGridViewCellStyle8.Format = "N2";
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.VentasClmCotProductosTotal.DefaultCellStyle = dataGridViewCellStyle8;
+            DataGridViewCellStyle8.Format = "N2";
+            DataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.VentasClmCotProductosTotal.DefaultCellStyle = DataGridViewCellStyle8;
             this.VentasDgvCotProductos.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { this.VentasClmCotProductosProducto, this.VentasClmCotProductosCantidad, this.VentasClmCotProductosPrecio, this.VentasClmCotProductosDescuento, this.VentasClmCotProductosSubtotal, this.VentasClmCotProductosImpuesto, this.VentasClmCotProductosTotal });
             this.VentasLblCotVigencia.Location = new System.Drawing.Point(16, 514);
             this.VentasLblCotVigencia.Size = new System.Drawing.Size(1088, 20);
@@ -638,9 +638,9 @@ namespace CapaVista_Cotizaciones
             this.VentasTtpAcciones.SetToolTip(this.VentasBtnCotCerrar, "Salir");
             this.VentasBtnCotCerrar.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.CancelButton = this.VentasBtnCotCerrar;
-            this.VentasDtpCotFecha.ValueChanged += new System.EventHandler(this.VentasCotVigencia_Changed);
-            this.VentasDtpCotVigencia.ValueChanged += new System.EventHandler(this.VentasCotVigencia_Changed);
-            this.VentasCboCotEstado.SelectedIndexChanged += new System.EventHandler(this.VentasCotVigencia_Changed);
+            this.VentasDtpCotFecha.ValueChanged += new System.EventHandler(this.VentasMetCotVigenciaChanged);
+            this.VentasDtpCotVigencia.ValueChanged += new System.EventHandler(this.VentasMetCotVigenciaChanged);
+            this.VentasCboCotEstado.SelectedIndexChanged += new System.EventHandler(this.VentasMetCotVigenciaChanged);
             this.VentasLblUsuarioRegistro.Text = "Responsable del registro";
             this.VentasLblUsuarioRegistro.Name = "VentasLblUsuarioRegistro";
             this.VentasLblUsuarioRegistro.Location = new System.Drawing.Point(744, 8);
@@ -651,9 +651,10 @@ namespace CapaVista_Cotizaciones
             this.VentasCboUsuarioRegistro.Location = new System.Drawing.Point(744, 31);
             this.VentasCboUsuarioRegistro.Size = new System.Drawing.Size(220, 28);
             this.VentasCboUsuarioRegistro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.VentasCboUsuarioRegistro.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.VentasCboUsuarioRegistro.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.VentasPnlEncabezado.Controls.Add(this.VentasLblUsuarioRegistro);
             this.VentasPnlEncabezado.Controls.Add(this.VentasCboUsuarioRegistro);
+            this.VentasLblCotTipoCambio.Name = "VentasLblCotTipoCambio";
             this.VentasLblCotTipoCambio.Text = "Tipo de cambio";
             this.VentasLblCotTipoCambio.Location = new System.Drawing.Point(638, 68);
             this.VentasLblCotTipoCambio.Size = new System.Drawing.Size(238, 21);
@@ -665,6 +666,7 @@ namespace CapaVista_Cotizaciones
             this.VentasNudCotTipoCambio.Maximum = 1000000M;
             this.VentasNudCotTipoCambio.Minimum = 0.000001M;
             this.VentasNudCotTipoCambio.Value = 1M;
+            this.VentasLblCotEstablecimiento.Name = "VentasLblCotEstablecimiento";
             this.VentasLblCotEstablecimiento.Text = "Emisor de factura";
             this.VentasLblCotEstablecimiento.Location = new System.Drawing.Point(894, 68);
             this.VentasLblCotEstablecimiento.Size = new System.Drawing.Size(174, 21);

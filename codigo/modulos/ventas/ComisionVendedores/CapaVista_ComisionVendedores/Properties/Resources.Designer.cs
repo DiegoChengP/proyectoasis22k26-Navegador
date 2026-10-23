@@ -1,5 +1,5 @@
-// Recursos propios de la Vista; archivos originales enlazados mediante Resources.resx.
-namespace ComisionVendedoresVista.Properties
+﻿// Recursos propios de la Vista; archivos originales enlazados mediante Resources.resx.
+namespace CapaVista_ComisionVendedores.Properties
 {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -11,7 +11,7 @@ namespace ComisionVendedoresVista.Properties
         internal Resources() { }
         internal static global::System.Resources.ResourceManager ResourceManager
         {
-            get { if (object.ReferenceEquals(resourceMan, null)) resourceMan = new global::System.Resources.ResourceManager("ComisionVendedoresVista.Properties.Resources", typeof(Resources).Assembly); return resourceMan; }
+            get { if (object.ReferenceEquals(resourceMan, null)) resourceMan = new global::System.Resources.ResourceManager("CapaVista_ComisionVendedores.Properties.Resources", typeof(Resources).Assembly); return resourceMan; }
         }
         internal static global::System.Globalization.CultureInfo Culture
         { get { return resourceCulture; } set { resourceCulture = value; } }

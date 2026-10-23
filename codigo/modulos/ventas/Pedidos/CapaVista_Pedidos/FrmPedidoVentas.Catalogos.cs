@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Forms;
 using CapaControlador_Pedidos;
@@ -12,13 +12,13 @@ namespace CapaVista_Pedidos
             try
             {
                 _Cargando = true;
-                VentasMetOpciones(VentasCboCliente, _Controlador.VentasMetClientes(), -1);
-                VentasMetOpciones(VentasCboVendedor, _Controlador.VentasMetVendedores(), -1);
-                var Cotizaciones = _Controlador.VentasMetCotizaciones();
+                VentasMetOpciones(VentasCboCliente, _Controlador.VentasFuncClientes(), -1);
+                VentasMetOpciones(VentasCboVendedor, _Controlador.VentasFuncVendedores(), -1);
+                var Cotizaciones = _Controlador.VentasFuncCotizaciones();
                 Cotizaciones.Insert(0, new ClsCotizacionPedido { Id = 0, Nombre = "Seleccionar cotización" });
                 VentasMetOpciones(VentasCboCotizacionOrigen, Cotizaciones, 0);
                 VentasMetCargarProductos();
-                _MonedaId = _MonedaPublica = _Controlador.VentasMetMonedaPublica();
+                _MonedaId = _MonedaPublica = _Controlador.VentasFuncMonedaPublica();
                 _CatalogosDisponibles = true;
             }
             catch (Exception Error)
@@ -47,7 +47,7 @@ namespace CapaVista_Pedidos
 
         private void VentasMetCargarProductos()
         {
-            try { VentasCboProductoPedido.DataSource = _Controlador.VentasMetProductos(VentasDtpPedido.Value.Date); }
+            try { VentasCboProductoPedido.DataSource = _Controlador.VentasFuncProductos(VentasDtpPedido.Value.Date); }
             catch (Exception Error)
             {
                 VentasCboProductoPedido.DataSource = null;

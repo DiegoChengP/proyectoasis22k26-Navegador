@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Modelo = CapaModelo_Pedidos;
@@ -14,35 +14,35 @@ namespace CapaControlador_Pedidos
             _Repositorio = new Modelo.ClsPedidoRepositorio();
         }
 
-        public List<ClsCatalogoPedido> VentasMetClientes()
+        public List<ClsCatalogoPedido> VentasFuncClientes()
         {
-            return VentasMetConvertirCatalogo(_Repositorio.VentasMetClientes());
+            return VentasFuncConvertirCatalogo(_Repositorio.VentasFuncClientes());
         }
 
-        public List<ClsCatalogoPedido> VentasMetVendedores()
+        public List<ClsCatalogoPedido> VentasFuncVendedores()
         {
-            return VentasMetConvertirCatalogo(_Repositorio.VentasMetVendedores());
+            return VentasFuncConvertirCatalogo(_Repositorio.VentasFuncVendedores());
         }
 
-        private static List<ClsCatalogoPedido> VentasMetConvertirCatalogo(List<Modelo.ClsCatalogoPedido> Datos)
+        private static List<ClsCatalogoPedido> VentasFuncConvertirCatalogo(List<Modelo.ClsCatalogoPedido> Datos)
         {
             return Datos.Select(Dato => new ClsCatalogoPedido { Id = Dato.Id, Nombre = Dato.Nombre }).ToList();
         }
 
-        public List<ClsCotizacionPedido> VentasMetCotizaciones()
+        public List<ClsCotizacionPedido> VentasFuncCotizaciones()
         {
             // Integrar aquí la DLL del compañero: devolver cotizaciones vigentes
             // con Número, cliente, vendedor, moneda, cambio, vencimiento y líneas.
             return new List<ClsCotizacionPedido>();
         }
 
-        public List<ClsLineaPedido> VentasMetProductos(DateTime Fecha)
+        public List<ClsLineaPedido> VentasFuncProductos(DateTime Fecha)
         {
-            return _Repositorio.VentasMetProductosPublicos(Fecha)
-                .Select(VentasMetConvertirLinea).ToList();
+            return _Repositorio.VentasFuncProductosPublicos(Fecha)
+                .Select(VentasFuncConvertirLinea).ToList();
         }
 
-        private static ClsLineaPedido VentasMetConvertirLinea(Modelo.ClsLineaPedido Dato)
+        private static ClsLineaPedido VentasFuncConvertirLinea(Modelo.ClsLineaPedido Dato)
         {
             return new ClsLineaPedido {
                 ProductoId = Dato.ProductoId, CotizacionDetalleId = Dato.CotizacionDetalleId,
@@ -52,7 +52,7 @@ namespace CapaControlador_Pedidos
             };
         }
 
-        public int VentasMetMonedaPublica() { return _Repositorio.VentasMetMonedaPublica(); }
+        public int VentasFuncMonedaPublica() { return _Repositorio.VentasFuncMonedaPublica(); }
 
         public static void VentasMetCalcular(ClsLineaPedido Linea)
         {
@@ -61,7 +61,7 @@ namespace CapaControlador_Pedidos
             Linea.Total = Base - Linea.Descuento + Linea.Impuesto;
         }
 
-        public int VentasMetGuardar(ClsPedido Pedido)
+        public int VentasFuncGuardar(ClsPedido Pedido)
         {
             var Registro = new Modelo.ClsPedido {
                 Numero = Pedido.Numero.Trim(), CotizacionId = Pedido.CotizacionId,
@@ -81,7 +81,7 @@ namespace CapaControlador_Pedidos
                     PorcentajeImpuesto = Linea.PorcentajeImpuesto, Impuesto = Linea.Impuesto, Total = Linea.Total
                 });
             }
-            return _Repositorio.VentasMetGuardar(Registro);
+            return _Repositorio.VentasFuncGuardar(Registro);
         }
 
     }

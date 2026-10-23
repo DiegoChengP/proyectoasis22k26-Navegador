@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Odbc;
 using System.Globalization;
@@ -8,16 +8,16 @@ namespace CapaModelo_Pedidos
 {
     public sealed class ClsPedidoRepositorio : ClsConexion
     {
-        private OdbcConnection VentasMetAbrir()
+        private OdbcConnection VentasFuncAbrir()
         {
-            var Conexion = VentasMetObtenerConexion();
+            var Conexion = VentasFuncObtenerConexion();
             Conexion.Open();
             return Conexion;
         }
 
-        private static OdbcCommand VentasMetComando(OdbcConnection Conexion, OdbcTransaction Transaccion, string Sql, params object[] Valores)
+        private static OdbcCommand VentasFuncComando(OdbcConnection Conexion, OdbcTransaction Transaccion, string SentenciaSql, params object[] Valores)
         {
-            var Comando = new OdbcCommand(Sql, Conexion, Transaccion);
+            var Comando = new OdbcCommand(SentenciaSql, Conexion, Transaccion);
             foreach (object Valor in Valores)
                 Comando.Parameters.AddWithValue("?", Valor is decimal
                     ? ((decimal)Valor).ToString(CultureInfo.InvariantCulture)
@@ -25,34 +25,34 @@ namespace CapaModelo_Pedidos
             return Comando;
         }
 
-        private List<T> VentasMetConsultar<T>(string Sql, Func<OdbcDataReader, T> Leer, params object[] Valores)
+        private List<T> VentasFuncConsultar<T>(string SentenciaSql, Func<OdbcDataReader, T> Leer, params object[] Valores)
         {
             var Lista = new List<T>();
-            using (var Conexion = VentasMetAbrir())
-            using (var Comando = VentasMetComando(Conexion, null, Sql, Valores))
+            using (var Conexion = VentasFuncAbrir())
+            using (var Comando = VentasFuncComando(Conexion, null, SentenciaSql, Valores))
             using (var Lector = Comando.ExecuteReader())
                 while (Lector.Read()) Lista.Add(Leer(Lector));
             return Lista;
         }
 
-        public List<ClsCatalogoPedido> VentasMetClientes()
+        public List<ClsCatalogoPedido> VentasFuncClientes()
         {
-            return VentasMetCatalogo("SELECT idCliente, CONCAT(codigoCliente, ' · ', nombreCliente) FROM tblcliente WHERE is_active=1 ORDER BY nombreCliente");
+            return VentasFuncCatalogo("SELECT idCliente, CONCAT(codigoCliente, ' · ', nombreCliente) FROM tblcliente WHERE is_active=1 ORDER BY nombreCliente");
         }
 
-        public List<ClsCatalogoPedido> VentasMetVendedores()
+        public List<ClsCatalogoPedido> VentasFuncVendedores()
         {
-            return VentasMetCatalogo("SELECT idVendedor, codigoVendedor FROM tblvendedor WHERE is_active=1 ORDER BY codigoVendedor");
+            return VentasFuncCatalogo("SELECT idVendedor, codigoVendedor FROM tblvendedor WHERE is_active=1 ORDER BY codigoVendedor");
         }
 
-        private List<ClsCatalogoPedido> VentasMetCatalogo(string Sql)
+        private List<ClsCatalogoPedido> VentasFuncCatalogo(string SentenciaSql)
         {
-            return VentasMetConsultar(Sql, Lector => new ClsCatalogoPedido { Id = Lector.GetInt32(0), Nombre = Lector.GetString(1) });
+            return VentasFuncConsultar(SentenciaSql, Lector => new ClsCatalogoPedido { Id = Lector.GetInt32(0), Nombre = Lector.GetString(1) });
         }
 
-        public List<ClsLineaPedido> VentasMetProductosPublicos(DateTime Fecha)
+        public List<ClsLineaPedido> VentasFuncProductosPublicos(DateTime Fecha)
         {
-            return VentasMetConsultar(
+            return VentasFuncConsultar(
                 "SELECT p.idProducto,p.codigoProducto,p.nombreProducto,p.tipoItem,p.porcentajeImpuesto,d.precioUnitario " +
                 "FROM tblproductoventas p JOIN tbllistapreciosdetalle d ON d.idProducto=p.idProducto AND d.is_active=1 " +
                 "JOIN tbllistaprecios l ON l.idListaPrecio=d.idListaPrecio AND l.is_active=1 " +
@@ -64,10 +64,10 @@ namespace CapaModelo_Pedidos
                 }, Fecha.Date, Fecha.Date);
         }
 
-        public int VentasMetMonedaPublica()
+        public int VentasFuncMonedaPublica()
         {
-            using (var Conexion = VentasMetAbrir())
-            using (var Comando = VentasMetComando(Conexion, null,
+            using (var Conexion = VentasFuncAbrir())
+            using (var Comando = VentasFuncComando(Conexion, null,
                 "SELECT idMoneda FROM tbllistaprecios WHERE UPPER(codigoListaPrecio)='PUBLICO' AND is_active=1 LIMIT 1"))
             {
                 object Valor = Comando.ExecuteScalar();
@@ -75,18 +75,18 @@ namespace CapaModelo_Pedidos
             }
         }
 
-        public int VentasMetGuardar(ClsPedido Pedido)
+        public int VentasFuncGuardar(ClsPedido Pedido)
         {
             decimal Subtotal = Pedido.Lineas.Sum(Linea => Math.Round(Linea.Cantidad * Linea.Precio, 2, MidpointRounding.AwayFromZero));
             decimal Descuento = Pedido.Lineas.Sum(Linea => Linea.Descuento);
             decimal Impuesto = Pedido.Lineas.Sum(Linea => Linea.Impuesto);
             decimal Total = Pedido.Lineas.Sum(Linea => Linea.Total);
-            using (var Conexion = VentasMetAbrir())
+            using (var Conexion = VentasFuncAbrir())
             using (var Transaccion = Conexion.BeginTransaction())
             {
                 try
                 {
-                    using (var Comando = VentasMetComando(Conexion, Transaccion,
+                    using (var Comando = VentasFuncComando(Conexion, Transaccion,
                         "INSERT INTO tblpedido (numeroPedido,idCotizacion,referenciaIndependiente,idCliente,idVendedor,idMoneda,fechaPedido,fechaEntrega,fechaVencimiento,tipoCambio,estadoPedido,subtotal,descuentoTotal,impuestoTotal,total) " +
                         "VALUES (?,?,?,?,?,?,?,?,?,?,'PENDIENTE',?,?,?,?)",
                         Pedido.Numero, Pedido.CotizacionId, Pedido.Referencia, Pedido.ClienteId, Pedido.VendedorId,
@@ -94,11 +94,11 @@ namespace CapaModelo_Pedidos
                         Pedido.TipoCambio, Subtotal, Descuento, Impuesto, Total))
                         Comando.ExecuteNonQuery();
                     int Id;
-                    using (var Comando = VentasMetComando(Conexion, Transaccion, "SELECT LAST_INSERT_ID()")) Id = Convert.ToInt32(Comando.ExecuteScalar());
+                    using (var Comando = VentasFuncComando(Conexion, Transaccion, "SELECT LAST_INSERT_ID()")) Id = Convert.ToInt32(Comando.ExecuteScalar());
                     for (int Indice = 0; Indice < Pedido.Lineas.Count; Indice++)
                     {
                         ClsLineaPedido Linea = Pedido.Lineas[Indice];
-                        using (var Comando = VentasMetComando(Conexion, Transaccion,
+                        using (var Comando = VentasFuncComando(Conexion, Transaccion,
                             "INSERT INTO tblpedidodetalle (idPedido,idCotizacionDetalle,numeroLinea,idProducto,descripcionItem,tipoItem,cantidad,precioUnitario,descuentoMonto,porcentajeImpuesto,impuestoMonto,totalLinea) " +
                             "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", Id, Linea.CotizacionDetalleId, Indice + 1, Linea.ProductoId,
                             Linea.Descripcion, Linea.Tipo, Linea.Cantidad, Linea.Precio, Linea.Descuento, Linea.PorcentajeImpuesto, Linea.Impuesto, Linea.Total))

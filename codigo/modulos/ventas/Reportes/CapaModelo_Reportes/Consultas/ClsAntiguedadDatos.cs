@@ -7,13 +7,13 @@ namespace CapaModelo_Reportes
 {
     public sealed class ClsAntiguedadDatos
     {
-        public DataTable VentasMetClientes()
+        public DataTable VentasFuncClientes()
         {
             using (var Datos = new ClsDatosVentas())
-                return Datos.VentasMetTabla("SELECT idCliente, CONCAT(codigoCliente,' - ',nombreCliente) Cliente FROM tblcliente ORDER BY nombreCliente");
+                return Datos.VentasFuncTabla("SELECT idCliente, CONCAT(codigoCliente,' - ',nombreCliente) Cliente FROM tblcliente ORDER BY nombreCliente");
         }
 
-        public DataTable VentasMetConsultar(DateTime Corte, int Cliente)
+        public DataTable VentasFuncConsultar(DateTime Corte, int Cliente)
         {
             // El libro conserva el saldo historico aunque hoy la factura ya este pagada o anulada.
             const string Consulta = @"SELECT c.nombreCliente Cliente,
@@ -29,7 +29,7 @@ namespace CapaModelo_Reportes
                 HAVING SUM(m.cargo-m.abono)>0
                 ORDER BY c.nombreCliente,f.fechaVencimiento,f.idFactura";
             using (var Datos = new ClsDatosVentas())
-                return Datos.VentasMetTabla(Consulta, Corte.Date, Corte.Date, Cliente, Cliente);
+                return Datos.VentasFuncTabla(Consulta, Corte.Date, Corte.Date, Cliente, Cliente);
         }
     }
 }

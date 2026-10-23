@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
@@ -15,14 +15,14 @@ namespace CapaModelo_ListadoPrecios
     public class ClsModeloListadoPrecios : IRepositorioListadoPrecios
     {
         private static string CadenaConexion { get { return CapaModelo_Ventas.ClsConexion.CadenaConexion; } }
-        private static readonly List<ClsPrecioCliente> DatosDemostracion = new List<ClsPrecioCliente>
+        private static readonly List<ClsPrecioCliente> _DatosDemostracion = new List<ClsPrecioCliente>
         {
             new ClsPrecioCliente { TipoCliente = "Mayorista", TipoProducto = "Producto A", PorcentajeDescuento = 12m, PrecioBase = 100m, PrecioFinal = 88m },
             new ClsPrecioCliente { TipoCliente = "Minorista", TipoProducto = "Producto A", PorcentajeDescuento = 5m, PrecioBase = 100m, PrecioFinal = 95m },
             new ClsPrecioCliente { TipoCliente = "Público", TipoProducto = "Producto B", PorcentajeDescuento = 0m, PrecioBase = 75m, PrecioFinal = 75m }
         };
-        private static readonly object Bloqueo = new object();
-        private TablaPrecio _tablaDetectada;
+        private static readonly object _Bloqueo = new object();
+        private ClsTablaPrecio _TablaDetectada;
         public bool UsaBaseDeDatos { get; private set; }
         public string MensajeEstado { get; private set; }
 
@@ -31,210 +31,210 @@ namespace CapaModelo_ListadoPrecios
             MensajeEstado = "Modo demostración: no se ha confirmado una tabla de precios compatible.";
         }
 
-        public List<ClsPrecioCliente> ObtenerListado()
+        public List<ClsPrecioCliente> VentasFuncObtenerListado()
         {
             try
             {
-                using (OdbcConnection conexion = new OdbcConnection(CadenaConexion))
+                using (OdbcConnection Conexion = new OdbcConnection(CadenaConexion))
                 {
-                    conexion.Open();
-                    _tablaDetectada = DetectarTabla(conexion);
-                    if (_tablaDetectada != null)
+                    Conexion.Open();
+                    _TablaDetectada = VentasFuncDetectarTabla(Conexion);
+                    if (_TablaDetectada != null)
                     {
-                        List<ClsPrecioCliente> datos = ConsultarTabla(conexion, _tablaDetectada);
+                        List<ClsPrecioCliente> Datos = VentasFuncConsultarTabla(Conexion, _TablaDetectada);
                         UsaBaseDeDatos = true;
                         MensajeEstado = "Listado cargado desde la base de datos.";
-                        return datos;
+                        return Datos;
                     }
                     MensajeEstado = "Conexión disponible, pero no se encontró una tabla con columnas de listado de precios reconocibles. Se muestran datos de demostración.";
                 }
             }
-            catch (Exception ex)
+            catch (Exception Error)
             {
-                MensajeEstado = "Modo demostración: no fue posible consultar la conexión configurada en Ventas (" + ex.Message + ").";
+                MensajeEstado = "Modo demostración: no fue posible consultar la conexión configurada en Ventas (" + Error.Message + ").";
             }
             UsaBaseDeDatos = false;
-            lock (Bloqueo) return DatosDemostracion.Select(Clonar).ToList();
+            lock (_Bloqueo) return _DatosDemostracion.Select(VentasFuncClonar).ToList();
         }
 
-        public bool Guardar(ClsPrecioCliente registro, out string mensaje)
+        public bool VentasFuncGuardar(ClsPrecioCliente Registro, out string Mensaje)
         {
-            if (registro == null) { mensaje = "No se recibió información para guardar."; return false; }
-            registro.PrecioFinal = CalcularPrecioFinal(registro.PrecioBase, registro.PorcentajeDescuento);
+            if (Registro == null) { Mensaje = "No se recibió información para guardar."; return false; }
+            Registro.PrecioFinal = VentasFuncCalcularPrecioFinal(Registro.PrecioBase, Registro.PorcentajeDescuento);
             try
             {
-                using (OdbcConnection conexion = new OdbcConnection(CadenaConexion))
+                using (OdbcConnection Conexion = new OdbcConnection(CadenaConexion))
                 {
-                    conexion.Open();
-                    TablaPrecio tabla = _tablaDetectada ?? DetectarTabla(conexion);
-                    if (tabla != null)
+                    Conexion.Open();
+                    ClsTablaPrecio Tabla = _TablaDetectada ?? VentasFuncDetectarTabla(Conexion);
+                    if (Tabla != null)
                     {
-                        GuardarEnTabla(conexion, tabla, registro);
-                        _tablaDetectada = tabla;
+                        VentasMetGuardarEnTabla(Conexion, Tabla, Registro);
+                        _TablaDetectada = Tabla;
                         UsaBaseDeDatos = true;
                         MensajeEstado = "Cambios guardados en la base de datos.";
-                        mensaje = MensajeEstado;
+                        Mensaje = MensajeEstado;
                         return true;
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception Error)
             {
                 // Si nunca se detectó una tabla compatible, permite la prueba de interfaz sin fingir persistencia.
-                if (_tablaDetectada != null)
+                if (_TablaDetectada != null)
                 {
-                    mensaje = "No se pudo guardar en la tabla detectada: " + ex.Message;
+                    Mensaje = "No se pudo guardar en la tabla detectada: " + Error.Message;
                     return false;
                 }
-                lock (Bloqueo)
+                lock (_Bloqueo)
                 {
-                    ClsPrecioCliente existente = DatosDemostracion.FirstOrDefault(x =>
-                        Igual(x.TipoCliente, registro.TipoCliente) && Igual(x.TipoProducto, registro.TipoProducto));
-                    if (existente == null) DatosDemostracion.Add(Clonar(registro));
+                    ClsPrecioCliente Existente = _DatosDemostracion.FirstOrDefault(Elemento =>
+                        VentasFuncIgual(Elemento.TipoCliente, Registro.TipoCliente) && VentasFuncIgual(Elemento.TipoProducto, Registro.TipoProducto));
+                    if (Existente == null) _DatosDemostracion.Add(VentasFuncClonar(Registro));
                     else
                     {
-                        existente.PorcentajeDescuento = registro.PorcentajeDescuento;
-                        existente.PrecioBase = registro.PrecioBase;
-                        existente.PrecioFinal = registro.PrecioFinal;
+                        Existente.PorcentajeDescuento = Registro.PorcentajeDescuento;
+                        Existente.PrecioBase = Registro.PrecioBase;
+                        Existente.PrecioFinal = Registro.PrecioFinal;
                     }
                 }
                 UsaBaseDeDatos = false;
-                MensajeEstado = "Guardado solo en memoria de demostración; la conexión ODBC no está disponible (" + ex.Message + ").";
-                mensaje = MensajeEstado;
+                MensajeEstado = "Guardado solo en memoria de demostración; la conexión ODBC no está disponible (" + Error.Message + ").";
+                Mensaje = MensajeEstado;
                 return true;
             }
             // Fallback explícito para permitir probar el formulario mientras se configura el esquema.
-            lock (Bloqueo)
+            lock (_Bloqueo)
             {
-                ClsPrecioCliente existente = DatosDemostracion.FirstOrDefault(x =>
-                    Igual(x.TipoCliente, registro.TipoCliente) && Igual(x.TipoProducto, registro.TipoProducto));
-                if (existente == null) DatosDemostracion.Add(Clonar(registro));
+                ClsPrecioCliente Existente = _DatosDemostracion.FirstOrDefault(Elemento =>
+                    VentasFuncIgual(Elemento.TipoCliente, Registro.TipoCliente) && VentasFuncIgual(Elemento.TipoProducto, Registro.TipoProducto));
+                if (Existente == null) _DatosDemostracion.Add(VentasFuncClonar(Registro));
                 else
                 {
-                    existente.PorcentajeDescuento = registro.PorcentajeDescuento;
-                    existente.PrecioBase = registro.PrecioBase;
-                    existente.PrecioFinal = registro.PrecioFinal;
+                    Existente.PorcentajeDescuento = Registro.PorcentajeDescuento;
+                    Existente.PrecioBase = Registro.PrecioBase;
+                    Existente.PrecioFinal = Registro.PrecioFinal;
                 }
             }
             UsaBaseDeDatos = false;
             MensajeEstado = "Guardado solo en memoria de demostración; no se persistió en la base de datos.";
-            mensaje = MensajeEstado;
+            Mensaje = MensajeEstado;
             return true;
         }
 
-        public static decimal CalcularPrecioFinal(decimal precioBase, decimal descuento)
+        public static decimal VentasFuncCalcularPrecioFinal(decimal PrecioBase, decimal Descuento)
         {
-            return Math.Round(precioBase * (1m - descuento / 100m), 2, MidpointRounding.AwayFromZero);
+            return Math.Round(PrecioBase * (1m - Descuento / 100m), 2, MidpointRounding.AwayFromZero);
         }
 
-        private static TablaPrecio DetectarTabla(OdbcConnection conexion)
+        private static ClsTablaPrecio VentasFuncDetectarTabla(OdbcConnection Conexion)
         {
-            DataTable tablas = conexion.GetSchema("Tables");
-            foreach (DataRow fila in tablas.Rows)
+            DataTable Tablas = Conexion.GetSchema("Tables");
+            foreach (DataRow Fila in Tablas.Rows)
             {
-                string tipo = Convert.ToString(fila["TABLE_TYPE"], CultureInfo.InvariantCulture);
-                if (!string.IsNullOrEmpty(tipo) && !tipo.Equals("TABLE", StringComparison.OrdinalIgnoreCase) && !tipo.Equals("BASE TABLE", StringComparison.OrdinalIgnoreCase)) continue;
-                string nombre = Convert.ToString(fila["TABLE_NAME"], CultureInfo.InvariantCulture);
-                string esquema = tablas.Columns.Contains("TABLE_SCHEM") ? Convert.ToString(fila["TABLE_SCHEM"], CultureInfo.InvariantCulture) : null;
-                if (string.IsNullOrWhiteSpace(nombre)) continue;
-                DataTable columnas;
-                try { columnas = conexion.GetSchema("Columns", new string[] { null, esquema, nombre, null }); }
+                string Tipo = Convert.ToString(Fila["TABLE_TYPE"], CultureInfo.InvariantCulture);
+                if (!string.IsNullOrEmpty(Tipo) && !Tipo.Equals("TABLE", StringComparison.OrdinalIgnoreCase) && !Tipo.Equals("BASE TABLE", StringComparison.OrdinalIgnoreCase)) continue;
+                string Nombre = Convert.ToString(Fila["TABLE_NAME"], CultureInfo.InvariantCulture);
+                string Esquema = Tablas.Columns.Contains("TABLE_SCHEM") ? Convert.ToString(Fila["TABLE_SCHEM"], CultureInfo.InvariantCulture) : null;
+                if (string.IsNullOrWhiteSpace(Nombre)) continue;
+                DataTable Columnas;
+                try { Columnas = Conexion.GetSchema("Columns", new string[] { null, Esquema, Nombre, null }); }
                 catch { continue; }
-                Dictionary<string, string> mapa = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                foreach (DataRow columna in columnas.Rows)
+                Dictionary<string, string> Mapa = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                foreach (DataRow Columna in Columnas.Rows)
                 {
-                    string campo = Convert.ToString(columna["COLUMN_NAME"], CultureInfo.InvariantCulture);
-                    if (!string.IsNullOrWhiteSpace(campo)) mapa[campo] = campo;
+                    string Campo = Convert.ToString(Columna["COLUMN_NAME"], CultureInfo.InvariantCulture);
+                    if (!string.IsNullOrWhiteSpace(Campo)) Mapa[Campo] = Campo;
                 }
-                string cliente = BuscarColumna(mapa, "tipo_cliente", "tipocliente", "clasificacion_cliente", "categoria_cliente", "cliente_tipo");
-                string producto = BuscarColumna(mapa, "tipo_producto", "tipoproducto", "nombre_producto", "producto", "descripcion_producto");
-                string descuento = BuscarColumna(mapa, "porcentaje_descuento", "porcentajedescuento", "descuento_porcentaje", "descuento", "porcentaje");
-                string precio = BuscarColumna(mapa, "precio_base", "preciobase", "precio_unitario", "precio", "price");
-                string final = BuscarColumna(mapa, "precio_final", "preciofinal", "precio_con_descuento");
-                if (cliente != null && producto != null && descuento != null && precio != null)
-                    return new TablaPrecio { Esquema = esquema, Nombre = nombre, ColumnaCliente = cliente, ColumnaProducto = producto, ColumnaDescuento = descuento, ColumnaBase = precio, ColumnaFinal = final };
+                string Cliente = VentasFuncBuscarColumna(Mapa, "tipo_cliente", "tipocliente", "clasificacion_cliente", "categoria_cliente", "cliente_tipo");
+                string Producto = VentasFuncBuscarColumna(Mapa, "tipo_producto", "tipoproducto", "nombre_producto", "producto", "descripcion_producto");
+                string Descuento = VentasFuncBuscarColumna(Mapa, "porcentaje_descuento", "porcentajedescuento", "descuento_porcentaje", "descuento", "porcentaje");
+                string Precio = VentasFuncBuscarColumna(Mapa, "precio_base", "preciobase", "precio_unitario", "precio", "price");
+                string Final = VentasFuncBuscarColumna(Mapa, "precio_final", "preciofinal", "precio_con_descuento");
+                if (Cliente != null && Producto != null && Descuento != null && Precio != null)
+                    return new ClsTablaPrecio { Esquema = Esquema, Nombre = Nombre, ColumnaCliente = Cliente, ColumnaProducto = Producto, ColumnaDescuento = Descuento, ColumnaBase = Precio, ColumnaFinal = Final };
             }
             return null;
         }
 
-        private static string BuscarColumna(Dictionary<string, string> mapa, params string[] nombres)
+        private static string VentasFuncBuscarColumna(Dictionary<string, string> Mapa, params string[] Nombres)
         {
-            foreach (string candidato in nombres)
-                foreach (KeyValuePair<string, string> campo in mapa)
-                    if (Normalizar(campo.Key) == Normalizar(candidato)) return campo.Value;
+            foreach (string Candidato in Nombres)
+                foreach (KeyValuePair<string, string> Campo in Mapa)
+                    if (VentasFuncNormalizar(Campo.Key) == VentasFuncNormalizar(Candidato)) return Campo.Value;
             return null;
         }
-        private static string Normalizar(string valor) { return new string((valor ?? "").Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant).ToArray()); }
-        private static string Q(string identificador) { return "\"" + (identificador ?? "").Replace("\"", "\"\"") + "\""; }
-        private static string TablaSql(TablaPrecio t) { return string.IsNullOrWhiteSpace(t.Esquema) ? Q(t.Nombre) : Q(t.Esquema) + "." + Q(t.Nombre); }
+        private static string VentasFuncNormalizar(string Valor) { return new string((Valor ?? "").Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant).ToArray()); }
+        private static string VentasFuncDelimitarIdentificador(string Identificador) { return "\"" + (Identificador ?? "").Replace("\"", "\"\"") + "\""; }
+        private static string VentasFuncTablaSql(ClsTablaPrecio TablaPrecios) { return string.IsNullOrWhiteSpace(TablaPrecios.Esquema) ? VentasFuncDelimitarIdentificador(TablaPrecios.Nombre) : VentasFuncDelimitarIdentificador(TablaPrecios.Esquema) + "." + VentasFuncDelimitarIdentificador(TablaPrecios.Nombre); }
 
-        private static List<ClsPrecioCliente> ConsultarTabla(OdbcConnection conexion, TablaPrecio t)
+        private static List<ClsPrecioCliente> VentasFuncConsultarTabla(OdbcConnection Conexion, ClsTablaPrecio TablaPrecios)
         {
-            string sql = "SELECT " + Q(t.ColumnaCliente) + "," + Q(t.ColumnaProducto) + "," + Q(t.ColumnaDescuento) + "," + Q(t.ColumnaBase) +
-                (t.ColumnaFinal == null ? "" : "," + Q(t.ColumnaFinal)) + " FROM " + TablaSql(t);
-            List<ClsPrecioCliente> resultado = new List<ClsPrecioCliente>();
-            using (OdbcCommand cmd = new OdbcCommand(sql, conexion))
-            using (OdbcDataReader lector = cmd.ExecuteReader())
+            string SentenciaSql = "SELECT " + VentasFuncDelimitarIdentificador(TablaPrecios.ColumnaCliente) + "," + VentasFuncDelimitarIdentificador(TablaPrecios.ColumnaProducto) + "," + VentasFuncDelimitarIdentificador(TablaPrecios.ColumnaDescuento) + "," + VentasFuncDelimitarIdentificador(TablaPrecios.ColumnaBase) +
+                (TablaPrecios.ColumnaFinal == null ? "" : "," + VentasFuncDelimitarIdentificador(TablaPrecios.ColumnaFinal)) + " FROM " + VentasFuncTablaSql(TablaPrecios);
+            List<ClsPrecioCliente> Resultado = new List<ClsPrecioCliente>();
+            using (OdbcCommand Comando = new OdbcCommand(SentenciaSql, Conexion))
+            using (OdbcDataReader Lector = Comando.ExecuteReader())
             {
-                while (lector.Read())
+                while (Lector.Read())
                 {
-                    decimal descuento = DecimalSeguro(lector[2]);
-                    decimal basePrecio = DecimalSeguro(lector[3]);
-                    decimal final = t.ColumnaFinal == null || lector.IsDBNull(4) ? CalcularPrecioFinal(basePrecio, descuento) : DecimalSeguro(lector[4]);
-                    resultado.Add(new ClsPrecioCliente { TipoCliente = Convert.ToString(lector[0]), TipoProducto = Convert.ToString(lector[1]), PorcentajeDescuento = descuento, PrecioBase = basePrecio, PrecioFinal = final });
+                    decimal Descuento = VentasFuncDecimalSeguro(Lector[2]);
+                    decimal BasePrecio = VentasFuncDecimalSeguro(Lector[3]);
+                    decimal Final = TablaPrecios.ColumnaFinal == null || Lector.IsDBNull(4) ? VentasFuncCalcularPrecioFinal(BasePrecio, Descuento) : VentasFuncDecimalSeguro(Lector[4]);
+                    Resultado.Add(new ClsPrecioCliente { TipoCliente = Convert.ToString(Lector[0]), TipoProducto = Convert.ToString(Lector[1]), PorcentajeDescuento = Descuento, PrecioBase = BasePrecio, PrecioFinal = Final });
                 }
             }
-            return resultado;
+            return Resultado;
         }
 
-        private static void GuardarEnTabla(OdbcConnection conexion, TablaPrecio t, ClsPrecioCliente r)
+        private static void VentasMetGuardarEnTabla(OdbcConnection Conexion, ClsTablaPrecio TablaPrecios, ClsPrecioCliente PrecioCliente)
         {
-            string tabla = TablaSql(t);
-            string sqlBuscar = "SELECT COUNT(*) FROM " + tabla + " WHERE " + Q(t.ColumnaCliente) + "=? AND " + Q(t.ColumnaProducto) + "=?";
-            bool existe;
-            using (OdbcCommand cmd = new OdbcCommand(sqlBuscar, conexion))
+            string Tabla = VentasFuncTablaSql(TablaPrecios);
+            string SqlBuscar = "SELECT COUNT(*) FROM " + Tabla + " WHERE " + VentasFuncDelimitarIdentificador(TablaPrecios.ColumnaCliente) + "=? AND " + VentasFuncDelimitarIdentificador(TablaPrecios.ColumnaProducto) + "=?";
+            bool Existe;
+            using (OdbcCommand Comando = new OdbcCommand(SqlBuscar, Conexion))
             {
-                cmd.Parameters.Add("p1", OdbcType.VarChar).Value = r.TipoCliente;
-                cmd.Parameters.Add("p2", OdbcType.VarChar).Value = r.TipoProducto;
-                existe = Convert.ToInt32(cmd.ExecuteScalar(), CultureInfo.InvariantCulture) > 0;
+                Comando.Parameters.Add("p1", OdbcType.VarChar).Value = PrecioCliente.TipoCliente;
+                Comando.Parameters.Add("p2", OdbcType.VarChar).Value = PrecioCliente.TipoProducto;
+                Existe = Convert.ToInt32(Comando.ExecuteScalar(), CultureInfo.InvariantCulture) > 0;
             }
-            List<string> campos = new List<string> { t.ColumnaDescuento, t.ColumnaBase };
-            List<object> valores = new List<object> { r.PorcentajeDescuento, r.PrecioBase };
-            if (t.ColumnaFinal != null) { campos.Add(t.ColumnaFinal); valores.Add(r.PrecioFinal); }
-            string sql;
-            if (existe)
-                sql = "UPDATE " + tabla + " SET " + string.Join(",", campos.Select(c => Q(c) + "=?")) + " WHERE " + Q(t.ColumnaCliente) + "=? AND " + Q(t.ColumnaProducto) + "=?";
+            List<string> Campos = new List<string> { TablaPrecios.ColumnaDescuento, TablaPrecios.ColumnaBase };
+            List<object> Valores = new List<object> { PrecioCliente.PorcentajeDescuento, PrecioCliente.PrecioBase };
+            if (TablaPrecios.ColumnaFinal != null) { Campos.Add(TablaPrecios.ColumnaFinal); Valores.Add(PrecioCliente.PrecioFinal); }
+            string SentenciaSql;
+            if (Existe)
+                SentenciaSql = "UPDATE " + Tabla + " SET " + string.Join(",", Campos.Select(NombreColumna => VentasFuncDelimitarIdentificador(NombreColumna) + "=?")) + " WHERE " + VentasFuncDelimitarIdentificador(TablaPrecios.ColumnaCliente) + "=? AND " + VentasFuncDelimitarIdentificador(TablaPrecios.ColumnaProducto) + "=?";
             else
             {
-                campos.Insert(0, t.ColumnaProducto); campos.Insert(0, t.ColumnaCliente);
-                valores.Insert(0, r.TipoProducto); valores.Insert(0, r.TipoCliente);
-                sql = "INSERT INTO " + tabla + " (" + string.Join(",", campos.Select(Q)) + ") VALUES (" + string.Join(",", campos.Select(c => "?")) + ")";
+                Campos.Insert(0, TablaPrecios.ColumnaProducto); Campos.Insert(0, TablaPrecios.ColumnaCliente);
+                Valores.Insert(0, PrecioCliente.TipoProducto); Valores.Insert(0, PrecioCliente.TipoCliente);
+                SentenciaSql = "INSERT INTO " + Tabla + " (" + string.Join(",", Campos.Select(VentasFuncDelimitarIdentificador)) + ") VALUES (" + string.Join(",", Campos.Select(NombreColumna => "?")) + ")";
             }
-            using (OdbcCommand cmd = new OdbcCommand(sql, conexion))
+            using (OdbcCommand Comando2 = new OdbcCommand(SentenciaSql, Conexion))
             {
-                foreach (object valor in valores) cmd.Parameters.Add("p", valor is decimal ? OdbcType.Decimal : OdbcType.VarChar).Value = valor;
-                if (existe)
+                foreach (object Valor in Valores) Comando2.Parameters.Add("p", Valor is decimal ? OdbcType.Decimal : OdbcType.VarChar).Value = Valor;
+                if (Existe)
                 {
-                    cmd.Parameters.Add("pCliente", OdbcType.VarChar).Value = r.TipoCliente;
-                    cmd.Parameters.Add("pProducto", OdbcType.VarChar).Value = r.TipoProducto;
+                    Comando2.Parameters.Add("pCliente", OdbcType.VarChar).Value = PrecioCliente.TipoCliente;
+                    Comando2.Parameters.Add("pProducto", OdbcType.VarChar).Value = PrecioCliente.TipoProducto;
                 }
-                cmd.ExecuteNonQuery();
+                Comando2.ExecuteNonQuery();
             }
         }
 
-        private static decimal DecimalSeguro(object valor)
+        private static decimal VentasFuncDecimalSeguro(object Valor)
         {
-            if (valor == null || valor == DBNull.Value) return 0m;
-            decimal d;
-            if (decimal.TryParse(Convert.ToString(valor, CultureInfo.InvariantCulture), NumberStyles.Any, CultureInfo.InvariantCulture, out d)) return d;
-            if (decimal.TryParse(Convert.ToString(valor), NumberStyles.Any, CultureInfo.GetCultureInfo("es-GT"), out d)) return d;
+            if (Valor == null || Valor == DBNull.Value) return 0m;
+            decimal ValorDecimal;
+            if (decimal.TryParse(Convert.ToString(Valor, CultureInfo.InvariantCulture), NumberStyles.Any, CultureInfo.InvariantCulture, out ValorDecimal)) return ValorDecimal;
+            if (decimal.TryParse(Convert.ToString(Valor), NumberStyles.Any, CultureInfo.GetCultureInfo("es-GT"), out ValorDecimal)) return ValorDecimal;
             return 0m;
         }
-        private static bool Igual(string a, string b) { return string.Equals(a, b, StringComparison.OrdinalIgnoreCase); }
-        private static ClsPrecioCliente Clonar(ClsPrecioCliente x)
-        { return new ClsPrecioCliente { TipoCliente = x.TipoCliente, TipoProducto = x.TipoProducto, PorcentajeDescuento = x.PorcentajeDescuento, PrecioBase = x.PrecioBase, PrecioFinal = x.PrecioFinal }; }
+        private static bool VentasFuncIgual(string ValorIzquierdo, string ValorDerecho) { return string.Equals(ValorIzquierdo, ValorDerecho, StringComparison.OrdinalIgnoreCase); }
+        private static ClsPrecioCliente VentasFuncClonar(ClsPrecioCliente Elemento)
+        { return new ClsPrecioCliente { TipoCliente = Elemento.TipoCliente, TipoProducto = Elemento.TipoProducto, PorcentajeDescuento = Elemento.PorcentajeDescuento, PrecioBase = Elemento.PrecioBase, PrecioFinal = Elemento.PrecioFinal }; }
 
-        private sealed class TablaPrecio
+        private sealed class ClsTablaPrecio
         {
             public string Esquema, Nombre, ColumnaCliente, ColumnaProducto, ColumnaDescuento, ColumnaBase, ColumnaFinal;
         }

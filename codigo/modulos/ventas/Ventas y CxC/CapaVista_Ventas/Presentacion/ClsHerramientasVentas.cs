@@ -34,18 +34,21 @@ namespace VentasPresentacion
 
         internal static DataRow VentasFuncObtenerFila(ComboBox Control)
         {
-            var F = Control.SelectedItem as DataRowView;
-            return F == null ? null : F.Row;
+            var FilaSeleccionada = Control.SelectedItem as DataRowView;
+            return FilaSeleccionada == null ? null : FilaSeleccionada.Row;
         }
 
         internal static void VentasMetFormatearFechas(DataGridView Grid)
         {
-            Grid.CellFormatting += (s, e) =>
+            var Estilo = Grid.DefaultCellStyle;
+            Estilo.FormatProvider = Cultura;
+            Grid.DefaultCellStyle = Estilo;
+            Grid.CellFormatting += (Origen, Evento) =>
             {
-                if (e.Value is DateTime)
+                if (Evento.Value is DateTime)
                 {
-                    e.Value = ((DateTime)e.Value).ToString("dd/MM/yyyy");
-                    e.FormattingApplied = true;
+                    Evento.Value = ((DateTime)Evento.Value).ToString("dd/MM/yyyy");
+                    Evento.FormattingApplied = true;
                 }
             };
         }
@@ -114,29 +117,29 @@ namespace VentasPresentacion
             )
             {
                 Documento.DocumentName = Titulo;
-                Documento.BeginPrint += (s, e) => Posicion = 0;
-                Documento.PrintPage += (s, e) =>
+                Documento.BeginPrint += (Origen, Evento) => Posicion = 0;
+                Documento.PrintPage += (Origen, Evento) =>
                 {
-                    float Y = e.MarginBounds.Top;
+                    float PosicionVertical = Evento.MarginBounds.Top;
                     while (Posicion < Lineas.Count)
                     {
                         string Texto = Lineas[Posicion];
-                        SizeF Medida = e.Graphics.MeasureString(Texto.Length == 0 ? " " : Texto, Fuente, e.MarginBounds.Width);
-                        if (Y + Medida.Height > e.MarginBounds.Bottom)
+                        SizeF Medida = Evento.Graphics.MeasureString(Texto.Length == 0 ? " " : Texto, Fuente, Evento.MarginBounds.Width);
+                        if (PosicionVertical + Medida.Height > Evento.MarginBounds.Bottom)
                             break;
-                        e.Graphics.DrawString(Texto, Fuente, Brushes.Black, new RectangleF(e.MarginBounds.Left, Y, e.MarginBounds.Width, Medida.Height));
-                        Y += Medida.Height + 3;
+                        Evento.Graphics.DrawString(Texto, Fuente, Brushes.Black, new RectangleF(Evento.MarginBounds.Left, PosicionVertical, Evento.MarginBounds.Width, Medida.Height));
+                        PosicionVertical += Medida.Height + 3;
                         Posicion++;
                     }
 
-                    e.HasMorePages = Posicion < Lineas.Count;
+                    Evento.HasMorePages = Posicion < Lineas.Count;
                 };
                 Vista.ShowDialog(Ventana);
             }
         }
 
         // SeleccionVentas.
-        internal static DataRow VentasMetSeleccionar(Form Padre, string Titulo, DataTable Datos)
+        internal static DataRow VentasFuncSeleccionar(Form Padre, string Titulo, DataTable Datos)
         {
             using (var Ventana = new Form
             {
@@ -151,7 +154,7 @@ namespace VentasPresentacion
             }
 
             )
-            using (var Buscar = new TextBox
+            using (var VentasTxtBuscar = new TextBox
             {
                 Name = "VentasTxtBuscar",
                 Dock = DockStyle.Top,
@@ -159,7 +162,7 @@ namespace VentasPresentacion
             }
 
             )
-            using (var Grid = new DataGridView
+            using (var VentasDgvSeleccion = new DataGridView
             {
                 Name = "VentasDgvSeleccion",
                 Dock = DockStyle.Fill,
@@ -176,15 +179,16 @@ namespace VentasPresentacion
             }
 
             )
-            using (var Pie = new FlowLayoutPanel
+            using (var VentasFlpPie = new FlowLayoutPanel
             {
+                Name = "VentasFlpPie",
                 Dock = DockStyle.Bottom,
                 Height = 44,
                 FlowDirection = FlowDirection.RightToLeft
             }
 
             )
-            using (var Aceptar = new Button
+            using (var VentasBtnSeleccionar = new Button
             {
                 Name = "VentasBtnSeleccionar",
                 Text = "Seleccionar",
@@ -196,8 +200,9 @@ namespace VentasPresentacion
             }
 
             )
-            using (var Cancelar = new Button
+            using (var VentasBtnCancelar = new Button
             {
+                Name = "VentasBtnCancelar",
                 Text = "Cancelar",
                 Width = 100,
                 Height = 32,
@@ -206,52 +211,52 @@ namespace VentasPresentacion
 
             )
             {
-                Grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(59, 29, 74);
-                Grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-                Grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(228, 212, 234);
-                Grid.DefaultCellStyle.SelectionForeColor = Color.FromArgb(59, 29, 74);
-                Grid.DataSource = Datos;
-                foreach (DataGridViewColumn C in Grid.Columns)
-                    if (C.Name == "Id" || C.Name.StartsWith("id"))
-                        C.Visible = false;
+                VentasDgvSeleccion.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(59, 29, 74);
+                VentasDgvSeleccion.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                VentasDgvSeleccion.DefaultCellStyle.SelectionBackColor = Color.FromArgb(228, 212, 234);
+                VentasDgvSeleccion.DefaultCellStyle.SelectionForeColor = Color.FromArgb(59, 29, 74);
+                VentasDgvSeleccion.DataSource = Datos;
+                foreach (DataGridViewColumn Columna in VentasDgvSeleccion.Columns)
+                    if (Columna.Name == "Id" || Columna.Name.StartsWith("id"))
+                        Columna.Visible = false;
                 DataRow Elegida = null;
                 Action Elegir = () =>
                 {
-                    var F = Grid.CurrentRow == null ? null : Grid.CurrentRow.DataBoundItem as DataRowView;
-                    if (F != null)
+                    var FilaSeleccionada = VentasDgvSeleccion.CurrentRow == null ? null : VentasDgvSeleccion.CurrentRow.DataBoundItem as DataRowView;
+                    if (FilaSeleccionada != null)
                     {
-                        Elegida = F.Row;
+                        Elegida = FilaSeleccionada.Row;
                         Ventana.DialogResult = DialogResult.OK;
                     }
                 };
-                Aceptar.Click += (a, b) => Elegir();
-                Grid.CellDoubleClick += (a, b) =>
+                VentasBtnSeleccionar.Click += (Origen, Evento) => Elegir();
+                VentasDgvSeleccion.CellDoubleClick += (Origen, Evento) =>
                 {
-                    if (b.RowIndex >= 0)
+                    if (Evento.RowIndex >= 0)
                         Elegir();
                 };
-                Buscar.TextChanged += (a, b) =>
+                VentasTxtBuscar.TextChanged += (Origen, Evento) =>
                 {
                     var Filtro = Datos.Clone();
-                    string Texto = Buscar.Text.Trim();
-                    foreach (DataRow F in Datos.Rows)
-                        if (Texto.Length == 0 || Array.Exists(F.ItemArray, Valor => Convert.ToString(Valor).IndexOf(Texto, StringComparison.OrdinalIgnoreCase) >= 0))
-                            Filtro.ImportRow(F);
-                    Grid.DataSource = Filtro;
+                    string Texto = VentasTxtBuscar.Text.Trim();
+                    foreach (DataRow Fila in Datos.Rows)
+                        if (Texto.Length == 0 || Array.Exists(Fila.ItemArray, Valor => Convert.ToString(Valor).IndexOf(Texto, StringComparison.OrdinalIgnoreCase) >= 0))
+                            Filtro.ImportRow(Fila);
+                    VentasDgvSeleccion.DataSource = Filtro;
                 };
-                Pie.Controls.Add(Aceptar);
-                Pie.Controls.Add(Cancelar);
-                Ventana.Controls.Add(Grid);
-                Ventana.Controls.Add(Buscar);
-                Ventana.Controls.Add(Pie);
-                Ventana.AcceptButton = Aceptar;
-                Ventana.CancelButton = Cancelar;
+                VentasFlpPie.Controls.Add(VentasBtnSeleccionar);
+                VentasFlpPie.Controls.Add(VentasBtnCancelar);
+                Ventana.Controls.Add(VentasDgvSeleccion);
+                Ventana.Controls.Add(VentasTxtBuscar);
+                Ventana.Controls.Add(VentasFlpPie);
+                Ventana.AcceptButton = VentasBtnSeleccionar;
+                Ventana.CancelButton = VentasBtnCancelar;
                 Ventana.ShowDialog(Padre);
                 return Elegida;
             }
         }
 
-        internal static string VentasMetMotivo(Form Padre, string Titulo)
+        internal static string VentasFuncMotivo(Form Padre, string Titulo)
         {
             using (var Ventana = new Form
             {
@@ -267,8 +272,9 @@ namespace VentasPresentacion
             }
 
             )
-            using (var Etiqueta = new Label
+            using (var VentasLblMotivo = new Label
             {
+                Name = "VentasLblMotivo",
                 Text = "Motivo de anulacion",
                 Left = 16,
                 Top = 16,
@@ -276,7 +282,7 @@ namespace VentasPresentacion
             }
 
             )
-            using (var Texto = new TextBox
+            using (var VentasTxtMotivo = new TextBox
             {
                 Name = "VentasTxtMotivo",
                 Left = 16,
@@ -288,7 +294,7 @@ namespace VentasPresentacion
             }
 
             )
-            using (var Aceptar = new Button
+            using (var VentasBtnAceptarMotivo = new Button
             {
                 Name = "VentasBtnAceptarMotivo",
                 Text = "Anular",
@@ -301,8 +307,9 @@ namespace VentasPresentacion
             }
 
             )
-            using (var Cancelar = new Button
+            using (var VentasBtnCancelar = new Button
             {
+                Name = "VentasBtnCancelar",
                 Text = "Cancelar",
                 Left = 380,
                 Top = 112,
@@ -312,10 +319,10 @@ namespace VentasPresentacion
 
             )
             {
-                Ventana.Controls.AddRange(new Control[] { Etiqueta, Texto, Aceptar, Cancelar });
-                Ventana.AcceptButton = Aceptar;
-                Ventana.CancelButton = Cancelar;
-                return Ventana.ShowDialog(Padre) == DialogResult.OK ? Texto.Text.Trim() : null;
+                Ventana.Controls.AddRange(new Control[] { VentasLblMotivo, VentasTxtMotivo, VentasBtnAceptarMotivo, VentasBtnCancelar });
+                Ventana.AcceptButton = VentasBtnAceptarMotivo;
+                Ventana.CancelButton = VentasBtnCancelar;
+                return Ventana.ShowDialog(Padre) == DialogResult.OK ? VentasTxtMotivo.Text.Trim() : null;
             }
         }
     }

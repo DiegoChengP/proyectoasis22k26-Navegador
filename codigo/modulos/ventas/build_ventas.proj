@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0" DefaultTargets="Compilar">
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
@@ -36,9 +36,9 @@
     <BibliotecaVentas Include="Mantenimientos\CapaControlador_Mantenimientos\bin\$(Configuration)\CapaControlador_Mantenimientos.dll" />
     <BibliotecaVentas Include="Mantenimientos\CapaModelo_Mantenimientos\bin\$(Configuration)\CapaModelo_Mantenimientos.dll" />
     <BibliotecaVentas Include="Mantenimientos\CapaVista_Mantenimientos\bin\$(Configuration)\CapaVista_Mantenimientos.dll" />
-    <BibliotecaVentas Include="ComisionVendedores\CapaControlador_ComisionVendedores\bin\$(Configuration)\ComisionVendedoresControlador.dll" />
-    <BibliotecaVentas Include="ComisionVendedores\CapaModelo_ComisionVendedores\bin\$(Configuration)\ComisionVendedoresModelo.dll" />
-    <BibliotecaVentas Include="ComisionVendedores\CapaVista_ComisionVendedores\bin\$(Configuration)\ComisionVendedoresVista.dll" />
+    <BibliotecaVentas Include="ComisionVendedores\CapaControlador_ComisionVendedores\bin\$(Configuration)\CapaControlador_ComisionVendedores.dll" />
+    <BibliotecaVentas Include="ComisionVendedores\CapaModelo_ComisionVendedores\bin\$(Configuration)\CapaModelo_ComisionVendedores.dll" />
+    <BibliotecaVentas Include="ComisionVendedores\CapaVista_ComisionVendedores\bin\$(Configuration)\CapaVista_ComisionVendedores.dll" />
     <BibliotecaVentas Include="Pedidos\CapaControlador_Pedidos\bin\$(Configuration)\CapaControlador_Pedidos.dll" />
     <BibliotecaVentas Include="Pedidos\CapaModelo_Pedidos\bin\$(Configuration)\CapaModelo_Pedidos.dll" />
     <BibliotecaVentas Include="Pedidos\CapaVista_Pedidos\bin\$(Configuration)\CapaVista_Pedidos.dll" />
@@ -66,9 +66,9 @@
     <SimboloVentas Include="Mantenimientos\CapaControlador_Mantenimientos\bin\$(Configuration)\CapaControlador_Mantenimientos.pdb" />
     <SimboloVentas Include="Mantenimientos\CapaModelo_Mantenimientos\bin\$(Configuration)\CapaModelo_Mantenimientos.pdb" />
     <SimboloVentas Include="Mantenimientos\CapaVista_Mantenimientos\bin\$(Configuration)\CapaVista_Mantenimientos.pdb" />
-    <SimboloVentas Include="ComisionVendedores\CapaControlador_ComisionVendedores\bin\$(Configuration)\ComisionVendedoresControlador.pdb" />
-    <SimboloVentas Include="ComisionVendedores\CapaModelo_ComisionVendedores\bin\$(Configuration)\ComisionVendedoresModelo.pdb" />
-    <SimboloVentas Include="ComisionVendedores\CapaVista_ComisionVendedores\bin\$(Configuration)\ComisionVendedoresVista.pdb" />
+    <SimboloVentas Include="ComisionVendedores\CapaControlador_ComisionVendedores\bin\$(Configuration)\CapaControlador_ComisionVendedores.pdb" />
+    <SimboloVentas Include="ComisionVendedores\CapaModelo_ComisionVendedores\bin\$(Configuration)\CapaModelo_ComisionVendedores.pdb" />
+    <SimboloVentas Include="ComisionVendedores\CapaVista_ComisionVendedores\bin\$(Configuration)\CapaVista_ComisionVendedores.pdb" />
     <SimboloVentas Include="Pedidos\CapaControlador_Pedidos\bin\$(Configuration)\CapaControlador_Pedidos.pdb" />
     <SimboloVentas Include="Pedidos\CapaModelo_Pedidos\bin\$(Configuration)\CapaModelo_Pedidos.pdb" />
     <SimboloVentas Include="Pedidos\CapaVista_Pedidos\bin\$(Configuration)\CapaVista_Pedidos.pdb" />

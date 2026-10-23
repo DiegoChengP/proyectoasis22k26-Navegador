@@ -1,4 +1,4 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — Jose Torres
  * Carné: 0901-23-1091 | Fecha: 15/10/2026
  * Área: Ventas y cuentas por cobrar
@@ -10,13 +10,13 @@ namespace CapaVista_Ventas
     {
         private System.ComponentModel.IContainer components = null;
 
-        protected override void Dispose(bool disposing)
+        protected override void Dispose(bool Disposing)
         {
-            if (disposing && (components != null))
+            if (Disposing && (components != null))
             {
                 components.Dispose();
             }
-            base.Dispose(disposing);
+            base.Dispose(Disposing);
         }
 
         #region Windows Form Designer generated code
@@ -24,7 +24,7 @@ namespace CapaVista_Ventas
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMdiVentas));
+            System.ComponentModel.ComponentResourceManager Resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMdiVentas));
             this.VentasImlMantenimientos = new System.Windows.Forms.ImageList(this.components);
             this.VentasTtpAccionesOriginales = new System.Windows.Forms.ToolTip(this.components);
             this.VentasBtnAyuda = new System.Windows.Forms.Button();
@@ -132,7 +132,7 @@ namespace CapaVista_Ventas
             // 
             // VentasImlMantenimientos
             // 
-            this.VentasImlMantenimientos.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("VentasImlMantenimientos.ImageStream")));
+            this.VentasImlMantenimientos.ImageStream = ((System.Windows.Forms.ImageListStreamer)(Resources.GetObject("VentasImlMantenimientos.ImageStream")));
             this.VentasImlMantenimientos.TransparentColor = System.Drawing.Color.Transparent;
             this.VentasImlMantenimientos.Images.SetKeyName(0, "Mantenimientos");
             // 
@@ -157,7 +157,7 @@ namespace CapaVista_Ventas
             this.VentasBtnAyuda.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.VentasTtpAccionesOriginales.SetToolTip(this.VentasBtnAyuda, "Ayuda");
             this.VentasBtnAyuda.UseVisualStyleBackColor = false;
-            this.VentasBtnAyuda.Click += new System.EventHandler(this.VentasBtnAyuda_Click);
+            this.VentasBtnAyuda.Click += new System.EventHandler(this.VentasMetBtnAyudaClick);
             // 
             // VentasLblBienvenido
             // 
@@ -572,9 +572,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnInicio, "Inicio");
             this.VentasBtnInicio.UseCompatibleTextRendering = true;
             this.VentasBtnInicio.UseVisualStyleBackColor = false;
-            this.VentasBtnInicio.Click += new System.EventHandler(this.VentasBtnInicio_Click);
-            this.VentasBtnInicio.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnInicio.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnInicio.Click += new System.EventHandler(this.VentasMetBtnInicioClick);
+            this.VentasBtnInicio.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnInicio.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasBtnListadoPrecios
             // 
@@ -605,9 +605,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnListadoPrecios, "Listado de precios");
             this.VentasBtnListadoPrecios.UseCompatibleTextRendering = true;
             this.VentasBtnListadoPrecios.UseVisualStyleBackColor = false;
-            this.VentasBtnListadoPrecios.Click += new System.EventHandler(this.VentasBtnListadoPrecios_Click);
-            this.VentasBtnListadoPrecios.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnListadoPrecios.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnListadoPrecios.Click += new System.EventHandler(this.VentasMetBtnListadoPreciosClick);
+            this.VentasBtnListadoPrecios.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnListadoPrecios.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasBtnMovimientosClientes
             // 
@@ -638,9 +638,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnMovimientosClientes, "Movimientos de clientes");
             this.VentasBtnMovimientosClientes.UseCompatibleTextRendering = true;
             this.VentasBtnMovimientosClientes.UseVisualStyleBackColor = false;
-            this.VentasBtnMovimientosClientes.Click += new System.EventHandler(this.VentasBtnMovimientosClientes_Click);
-            this.VentasBtnMovimientosClientes.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnMovimientosClientes.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnMovimientosClientes.Click += new System.EventHandler(this.VentasMetBtnMovimientosClientesClick);
+            this.VentasBtnMovimientosClientes.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnMovimientosClientes.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasBtnRecepcionPagos
             // 
@@ -671,9 +671,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnRecepcionPagos, "Recepción de pagos");
             this.VentasBtnRecepcionPagos.UseCompatibleTextRendering = true;
             this.VentasBtnRecepcionPagos.UseVisualStyleBackColor = false;
-            this.VentasBtnRecepcionPagos.Click += new System.EventHandler(this.VentasBtnRecepcionPagos_Click);
-            this.VentasBtnRecepcionPagos.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnRecepcionPagos.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnRecepcionPagos.Click += new System.EventHandler(this.VentasMetBtnRecepcionPagosClick);
+            this.VentasBtnRecepcionPagos.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnRecepcionPagos.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasBtnReportes
             // 
@@ -704,9 +704,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnReportes, "Reportes");
             this.VentasBtnReportes.UseCompatibleTextRendering = true;
             this.VentasBtnReportes.UseVisualStyleBackColor = false;
-            this.VentasBtnReportes.Click += new System.EventHandler(this.VentasBtnReportes_Click);
-            this.VentasBtnReportes.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnReportes.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnReportes.Click += new System.EventHandler(this.VentasMetBtnReportesClick);
+            this.VentasBtnReportes.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnReportes.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasBtnCotizaciones
             // 
@@ -737,9 +737,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnCotizaciones, "Cotizaciones");
             this.VentasBtnCotizaciones.UseCompatibleTextRendering = true;
             this.VentasBtnCotizaciones.UseVisualStyleBackColor = false;
-            this.VentasBtnCotizaciones.Click += new System.EventHandler(this.VentasBtnCotizaciones_Click);
-            this.VentasBtnCotizaciones.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnCotizaciones.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnCotizaciones.Click += new System.EventHandler(this.VentasMetBtnCotizacionesClick);
+            this.VentasBtnCotizaciones.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnCotizaciones.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasBtnPedidos
             // 
@@ -770,9 +770,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnPedidos, "Pedidos");
             this.VentasBtnPedidos.UseCompatibleTextRendering = true;
             this.VentasBtnPedidos.UseVisualStyleBackColor = false;
-            this.VentasBtnPedidos.Click += new System.EventHandler(this.VentasBtnPedidos_Click);
-            this.VentasBtnPedidos.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnPedidos.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnPedidos.Click += new System.EventHandler(this.VentasMetBtnPedidosClick);
+            this.VentasBtnPedidos.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnPedidos.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasBtnFacturas
             // 
@@ -803,9 +803,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnFacturas, "Facturas");
             this.VentasBtnFacturas.UseCompatibleTextRendering = true;
             this.VentasBtnFacturas.UseVisualStyleBackColor = false;
-            this.VentasBtnFacturas.Click += new System.EventHandler(this.VentasBtnFacturas_Click);
-            this.VentasBtnFacturas.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnFacturas.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnFacturas.Click += new System.EventHandler(this.VentasMetBtnFacturasClick);
+            this.VentasBtnFacturas.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnFacturas.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasBtnComisionesVendedores
             // 
@@ -836,9 +836,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnComisionesVendedores, "Comisiones de vendedores");
             this.VentasBtnComisionesVendedores.UseCompatibleTextRendering = true;
             this.VentasBtnComisionesVendedores.UseVisualStyleBackColor = false;
-            this.VentasBtnComisionesVendedores.Click += new System.EventHandler(this.VentasBtnComisionesVendedores_Click);
-            this.VentasBtnComisionesVendedores.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnComisionesVendedores.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnComisionesVendedores.Click += new System.EventHandler(this.VentasMetBtnComisionesVendedoresClick);
+            this.VentasBtnComisionesVendedores.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnComisionesVendedores.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasBtnMantenimientos
             // 
@@ -870,9 +870,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnMantenimientos, "Mantenimientos");
             this.VentasBtnMantenimientos.UseCompatibleTextRendering = true;
             this.VentasBtnMantenimientos.UseVisualStyleBackColor = false;
-            this.VentasBtnMantenimientos.Click += new System.EventHandler(this.VentasBtnMantenimientos_Click);
-            this.VentasBtnMantenimientos.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnMantenimientos.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnMantenimientos.Click += new System.EventHandler(this.VentasMetBtnMantenimientosClick);
+            this.VentasBtnMantenimientos.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnMantenimientos.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasBtnCierreMovimientos
             // 
@@ -903,9 +903,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnCierreMovimientos, "Cierre de movimientos");
             this.VentasBtnCierreMovimientos.UseCompatibleTextRendering = true;
             this.VentasBtnCierreMovimientos.UseVisualStyleBackColor = false;
-            this.VentasBtnCierreMovimientos.Click += new System.EventHandler(this.VentasBtnCierreMovimientos_Click);
-            this.VentasBtnCierreMovimientos.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnCierreMovimientos.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnCierreMovimientos.Click += new System.EventHandler(this.VentasMetBtnCierreMovimientosClick);
+            this.VentasBtnCierreMovimientos.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnCierreMovimientos.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasBtnSalir
             // 
@@ -936,9 +936,9 @@ namespace CapaVista_Ventas
             this.VentasTtpMenu.SetToolTip(this.VentasBtnSalir, "Salir");
             this.VentasBtnSalir.UseCompatibleTextRendering = true;
             this.VentasBtnSalir.UseVisualStyleBackColor = false;
-            this.VentasBtnSalir.Click += new System.EventHandler(this.VentasBtnSalir_Click);
-            this.VentasBtnSalir.MouseEnter += new System.EventHandler(this.VentasBtnOpcion_MouseEnter);
-            this.VentasBtnSalir.MouseLeave += new System.EventHandler(this.VentasBtnOpcion_MouseLeave);
+            this.VentasBtnSalir.Click += new System.EventHandler(this.VentasMetBtnSalirClick);
+            this.VentasBtnSalir.MouseEnter += new System.EventHandler(this.VentasMetBtnOpcionMouseEnter);
+            this.VentasBtnSalir.MouseLeave += new System.EventHandler(this.VentasMetBtnOpcionMouseLeave);
             // 
             // VentasTlpContenido
             // 
@@ -992,7 +992,7 @@ namespace CapaVista_Ventas
             this.VentasBtnBurger.TabIndex = 0;
             this.VentasBtnBurger.UseCompatibleTextRendering = true;
             this.VentasBtnBurger.UseVisualStyleBackColor = false;
-            this.VentasBtnBurger.Click += new System.EventHandler(this.VentasBtnBurger_Click);
+            this.VentasBtnBurger.Click += new System.EventHandler(this.VentasMetBtnBurgerClick);
             // 
             // VentasLblUsuario
             // 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -8,7 +8,7 @@ using CapaControlador_ComisionVendedores.Controladores;
 using CapaControlador_ComisionVendedores.DTO;
 using CapaControlador_ComisionVendedores.Enumeraciones;
 
-namespace ComisionVendedoresVista
+namespace CapaVista_ComisionVendedores
 {
     public partial class FrmMdiComisionVendedores : Form
     {
@@ -36,105 +36,105 @@ namespace ComisionVendedoresVista
             _ProductosPorcentaje = new List<ClsProductoPorcentaje>();
         }
 
-        private void ComisionVendedoresMetCalcularClick(object Sender, EventArgs Argumentos)
+        private void VentasMetCalcularClick(object Origen, EventArgs Argumentos)
         {
             try
             {
-                ComisionVendedoresMetRestablecerEstado(ComisionVendedoresLblEstado,
-                    ComisionVendedoresDtpFechaInicio, ComisionVendedoresDtpFechaFin, ComisionVendedoresCboMetodo);
-                _MetodoCalculado = ComisionVendedoresMetObtenerMetodo(ComisionVendedoresCboMetodo.SelectedItem.ToString());
-                if (ComisionVendedoresDtpFechaInicio.Value.Date > ComisionVendedoresDtpFechaFin.Value.Date)
+                VentasMetRestablecerEstado(VentasLblEstado,
+                    VentasDtpFechaInicio, VentasDtpFechaFin, VentasCboMetodo);
+                _MetodoCalculado = VentasFuncObtenerMetodo(VentasCboMetodo.SelectedItem.ToString());
+                if (VentasDtpFechaInicio.Value.Date > VentasDtpFechaFin.Value.Date)
                     throw new ArgumentException("La fecha inicial debe ser anterior o igual a la fecha final.");
-                _Resultados = _ControladorComision.ComisionVendedoresMetCalcular(_MetodoCalculado, EnumBaseComision.Ventas,
-                    ComisionVendedoresDtpFechaInicio.Value.Date, ComisionVendedoresDtpFechaFin.Value.Date);
+                _Resultados = _ControladorComision.VentasFuncCalcular(_MetodoCalculado, EnumBaseComision.Ventas,
+                    VentasDtpFechaInicio.Value.Date, VentasDtpFechaFin.Value.Date);
                 _PaginaResultados = 0;
-                ComisionVendedoresMetMostrarPaginaResultados();
-                ComisionVendedoresMetActualizarBoton(ComisionVendedoresBtnGuardar, _Resultados.Count > 0,
+                VentasMetMostrarPaginaResultados();
+                VentasMetActualizarBoton(VentasBtnGuardar, _Resultados.Count > 0,
                     System.Drawing.Color.FromArgb(201, 162, 74));
-                ComisionVendedoresLblEstado.Text = _Resultados.Count == 0 ? "No se encontraron facturas para el periodo." : "Cálculo completado. Base: VENTAS.";
+                VentasLblEstado.Text = _Resultados.Count == 0 ? "No se encontraron facturas para el periodo." : "Cálculo completado. Base: VENTAS.";
             }
             catch (Exception Excepcion)
             {
-                ComisionVendedoresMetActualizarBoton(ComisionVendedoresBtnGuardar, false,
+                VentasMetActualizarBoton(VentasBtnGuardar, false,
                     System.Drawing.Color.FromArgb(201, 162, 74));
-                ComisionVendedoresMetMostrarError(ComisionVendedoresLblEstado, Excepcion.Message,
-                    ComisionVendedoresDtpFechaInicio, ComisionVendedoresDtpFechaFin, ComisionVendedoresCboMetodo);
+                VentasMetMostrarError(VentasLblEstado, Excepcion.Message,
+                    VentasDtpFechaInicio, VentasDtpFechaFin, VentasCboMetodo);
                 MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void ComisionVendedoresMetGuardarClick(object Sender, EventArgs Argumentos)
+        private void VentasMetGuardarClick(object Origen, EventArgs Argumentos)
         {
             try
             {
-                ComisionVendedoresMetRestablecerEstado(ComisionVendedoresLblEstado);
-                int Guardados = _ControladorComision.ComisionVendedoresMetGuardar(_Resultados,
-                    ComisionVendedoresDtpFechaInicio.Value.Date, ComisionVendedoresDtpFechaFin.Value.Date,
+                VentasMetRestablecerEstado(VentasLblEstado);
+                int Guardados = _ControladorComision.VentasFuncGuardar(_Resultados,
+                    VentasDtpFechaInicio.Value.Date, VentasDtpFechaFin.Value.Date,
                     _MetodoCalculado, EnumBaseComision.Ventas);
-                ComisionVendedoresLblEstado.Text = "Resultados guardados en ComisionCalculada.";
-                ComisionVendedoresMetActualizarBoton(ComisionVendedoresBtnGuardar, false,
+                VentasLblEstado.Text = "Resultados guardados en ComisionCalculada.";
+                VentasMetActualizarBoton(VentasBtnGuardar, false,
                     System.Drawing.Color.FromArgb(201, 162, 74));
                 MessageBox.Show("Se guardaron " + Guardados + " resultados.", "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception Excepcion)
             {
-                ComisionVendedoresMetMostrarError(ComisionVendedoresLblEstado, Excepcion.Message);
+                VentasMetMostrarError(VentasLblEstado, Excepcion.Message);
                 MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void ComisionVendedoresMetBuscarClick(object Sender, EventArgs Argumentos)
+        private void VentasMetBuscarClick(object Origen, EventArgs Argumentos)
         {
             try
             {
-                ComisionVendedoresMetRestablecerEstado(ComisionVendedoresLblMantenimientoEstado, ComisionVendedoresCboAlcance);
-                List<ClsProductoPorcentaje> Productos = ComisionVendedoresMetCargarPorcentajes();
-                ComisionVendedoresLblMantenimientoEstado.Text = Productos.Count + " producto(s) encontrados.";
+                VentasMetRestablecerEstado(VentasLblMantenimientoEstado, VentasCboAlcance);
+                List<ClsProductoPorcentaje> Productos = VentasFuncCargarPorcentajes();
+                VentasLblMantenimientoEstado.Text = Productos.Count + " producto(s) encontrados.";
             }
             catch (Exception Excepcion)
             {
-                ComisionVendedoresMetMostrarError(ComisionVendedoresLblMantenimientoEstado, Excepcion.Message, ComisionVendedoresCboAlcance);
+                VentasMetMostrarError(VentasLblMantenimientoEstado, Excepcion.Message, VentasCboAlcance);
                 MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void ComisionVendedoresMetCargarCatalogosClick(object Sender, EventArgs Argumentos)
+        private void VentasMetCargarCatalogosClick(object Origen, EventArgs Argumentos)
         {
             try
             {
-                ComisionVendedoresMetRestablecerEstado(ComisionVendedoresLblEstadoFactura,
-                    ComisionVendedoresCboFactura, ComisionVendedoresCboVendedorFactura, ComisionVendedoresCboMetodoFactura);
-                ComisionVendedoresCboFactura.DataSource = null;
-                ComisionVendedoresCboVendedorFactura.DataSource = null;
-                ComisionVendedoresCboFactura.DataSource = _ControladorComision.ComisionVendedoresMetObtenerFacturas();
-                ComisionVendedoresCboVendedorFactura.DataSource = _ControladorComision.ComisionVendedoresMetObtenerVendedores();
-                ComisionVendedoresLblEstadoFactura.Text = "Seleccione una factura y el vendedor responsable.";
+                VentasMetRestablecerEstado(VentasLblEstadoFactura,
+                    VentasCboFactura, VentasCboVendedorFactura, VentasCboMetodoFactura);
+                VentasCboFactura.DataSource = null;
+                VentasCboVendedorFactura.DataSource = null;
+                VentasCboFactura.DataSource = _ControladorComision.VentasFuncObtenerFacturas();
+                VentasCboVendedorFactura.DataSource = _ControladorComision.VentasFuncObtenerVendedores();
+                VentasLblEstadoFactura.Text = "Seleccione una factura y el vendedor responsable.";
             }
             catch (Exception Excepcion)
             {
-                ComisionVendedoresMetMostrarError(ComisionVendedoresLblEstadoFactura, Excepcion.Message,
-                    ComisionVendedoresCboFactura, ComisionVendedoresCboVendedorFactura);
+                VentasMetMostrarError(VentasLblEstadoFactura, Excepcion.Message,
+                    VentasCboFactura, VentasCboVendedorFactura);
                 MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void ComisionVendedoresMetCalcularFacturaClick(object Sender, EventArgs Argumentos)
+        private void VentasMetCalcularFacturaClick(object Origen, EventArgs Argumentos)
         {
             try
             {
-                ComisionVendedoresMetRestablecerEstado(ComisionVendedoresLblEstadoFactura,
-                    ComisionVendedoresCboFactura, ComisionVendedoresCboVendedorFactura, ComisionVendedoresCboMetodoFactura);
-                if (ComisionVendedoresCboFactura.SelectedValue == null || ComisionVendedoresCboVendedorFactura.SelectedValue == null)
+                VentasMetRestablecerEstado(VentasLblEstadoFactura,
+                    VentasCboFactura, VentasCboVendedorFactura, VentasCboMetodoFactura);
+                if (VentasCboFactura.SelectedValue == null || VentasCboVendedorFactura.SelectedValue == null)
                     throw new ArgumentException("Cargue las facturas y vendedores, y seleccione ambos.");
 
-                int IdFactura = Convert.ToInt32(ComisionVendedoresCboFactura.SelectedValue, CultureInfo.InvariantCulture);
-                int IdVendedor = Convert.ToInt32(ComisionVendedoresCboVendedorFactura.SelectedValue, CultureInfo.InvariantCulture);
-                EnumMetodoComision Metodo = ComisionVendedoresMetObtenerMetodo(ComisionVendedoresCboMetodoFactura.SelectedItem.ToString());
-                List<ClsComisionFacturaDetalle> DetalleFacturaCalculado = _ControladorComision.ComisionVendedoresMetCalcularFactura(IdFactura, IdVendedor, Metodo);
-                ComisionVendedoresDgvDetalleFactura.DataSource = null;
+                int IdFactura = Convert.ToInt32(VentasCboFactura.SelectedValue, CultureInfo.InvariantCulture);
+                int IdVendedor = Convert.ToInt32(VentasCboVendedorFactura.SelectedValue, CultureInfo.InvariantCulture);
+                EnumMetodoComision Metodo = VentasFuncObtenerMetodo(VentasCboMetodoFactura.SelectedItem.ToString());
+                List<ClsComisionFacturaDetalle> DetalleFacturaCalculado = _ControladorComision.VentasFuncCalcularFactura(IdFactura, IdVendedor, Metodo);
+                VentasDgvDetalleFactura.DataSource = null;
                 _DetallesFactura = DetalleFacturaCalculado;
                 _PaginaFactura = 0;
-                ComisionVendedoresMetMostrarPaginaFactura();
+                VentasMetMostrarPaginaFactura();
 
                 decimal TotalComision = 0m, Disponible = 0m, Pendiente = 0m, ComisionUltimoAbono = 0m;
                 foreach (ClsComisionFacturaDetalle Detalle in DetalleFacturaCalculado)
@@ -144,10 +144,10 @@ namespace ComisionVendedoresVista
                     Pendiente += Detalle.ComisionPendiente;
                     ComisionUltimoAbono += Detalle.ComisionUltimoAbono;
                 }
-                ClsFacturaComisionVista Factura = ComisionVendedoresCboFactura.SelectedItem as ClsFacturaComisionVista;
-                ClsVendedorComisionVista Vendedor = ComisionVendedoresCboVendedorFactura.SelectedItem as ClsVendedorComisionVista;
+                ClsFacturaComisionVista Factura = VentasCboFactura.SelectedItem as ClsFacturaComisionVista;
+                ClsVendedorComisionVista Vendedor = VentasCboVendedorFactura.SelectedItem as ClsVendedorComisionVista;
                 decimal PagadoFactura = Factura == null ? 0m : Factura.TotalPagado;
-                ComisionVendedoresLblEstadoFactura.Text = "Factura " + IdFactura + " · " + (Vendedor == null ? "" : Vendedor.NombreVendedor) +
+                VentasLblEstadoFactura.Text = "Factura " + IdFactura + " · " + (Vendedor == null ? "" : Vendedor.NombreVendedor) +
                     " · Cobrado Q " + PagadoFactura.ToString("N2", CultureInfo.GetCultureInfo("es-GT")) +
                     " · Comisión total Q " + TotalComision.ToString("N2", CultureInfo.GetCultureInfo("es-GT")) +
                     " · Disponible Q " + Disponible.ToString("N2", CultureInfo.GetCultureInfo("es-GT")) +
@@ -157,31 +157,31 @@ namespace ComisionVendedoresVista
             }
             catch (Exception Excepcion)
             {
-                ComisionVendedoresMetMostrarError(ComisionVendedoresLblEstadoFactura, Excepcion.Message,
-                    ComisionVendedoresCboFactura, ComisionVendedoresCboVendedorFactura, ComisionVendedoresCboMetodoFactura);
+                VentasMetMostrarError(VentasLblEstadoFactura, Excepcion.Message,
+                    VentasCboFactura, VentasCboVendedorFactura, VentasCboMetodoFactura);
                 MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void ComisionVendedoresMetActualizarClick(object Sender, EventArgs Argumentos)
+        private void VentasMetActualizarClick(object Origen, EventArgs Argumentos)
         {
             try
             {
-                ComisionVendedoresMetRestablecerEstado(ComisionVendedoresLblMantenimientoEstado, ComisionVendedoresTxtPorcentaje);
+                VentasMetRestablecerEstado(VentasLblMantenimientoEstado, VentasTxtPorcentaje);
                 decimal Porcentaje;
-                if (!decimal.TryParse(ComisionVendedoresTxtPorcentaje.Text, NumberStyles.Number,
+                if (!decimal.TryParse(VentasTxtPorcentaje.Text, NumberStyles.Number,
                     CultureInfo.GetCultureInfo("es-GT"), out Porcentaje))
                 {
-                    ComisionVendedoresMetMostrarError(ComisionVendedoresLblMantenimientoEstado,
-                        "Ingrese un porcentaje válido entre 0 y 100.", ComisionVendedoresTxtPorcentaje);
+                    VentasMetMostrarError(VentasLblMantenimientoEstado,
+                        "Ingrese un porcentaje válido entre 0 y 100.", VentasTxtPorcentaje);
                     throw new ArgumentException("Ingrese un porcentaje válido entre 0 y 100.");
                 }
-                if (ComisionVendedoresDgvPorcentajes.SelectedRows.Count == 0)
+                if (VentasDgvPorcentajes.SelectedRows.Count == 0)
                     throw new ArgumentException("Busque y seleccione al menos un elemento para actualizar.");
 
-                EnumMetodoComision Metodo = ComisionVendedoresMetObtenerMetodo(ComisionVendedoresCboAlcance.SelectedItem.ToString());
+                EnumMetodoComision Metodo = VentasFuncObtenerMetodo(VentasCboAlcance.SelectedItem.ToString());
                 HashSet<int> IdsProducto = new HashSet<int>();
-                foreach (DataGridViewRow Fila in ComisionVendedoresDgvPorcentajes.SelectedRows)
+                foreach (DataGridViewRow Fila in VentasDgvPorcentajes.SelectedRows)
                 {
                     ClsProductoPorcentaje Producto = Fila.DataBoundItem as ClsProductoPorcentaje;
                     if (Producto == null) continue;
@@ -189,65 +189,65 @@ namespace ComisionVendedoresVista
                 }
 
                 if (IdsProducto.Count == 0) throw new ArgumentException("Seleccione una fila válida para actualizar.");
-                int Actualizados = _ControladorComision.ComisionVendedoresMetActualizarPorcentaje(Metodo, IdsProducto.ToList(), Porcentaje);
+                int Actualizados = _ControladorComision.VentasFuncActualizarPorcentaje(Metodo, IdsProducto.ToList(), Porcentaje);
 
-                _ProductosPorcentaje = _ControladorComision.ComisionVendedoresMetConsultarPorcentajes(Metodo);
-                _PaginaPorcentajes = Math.Min(_PaginaPorcentajes, ComisionVendedoresMetObtenerUltimaPagina(_ProductosPorcentaje.Count));
-                ComisionVendedoresMetMostrarPaginaPorcentajes();
-                ComisionVendedoresLblMantenimientoEstado.Text = Actualizados + " producto(s) actualizado(s).";
+                _ProductosPorcentaje = _ControladorComision.VentasFuncConsultarPorcentajes(Metodo);
+                _PaginaPorcentajes = Math.Min(_PaginaPorcentajes, VentasFuncObtenerUltimaPagina(_ProductosPorcentaje.Count));
+                VentasMetMostrarPaginaPorcentajes();
+                VentasLblMantenimientoEstado.Text = Actualizados + " producto(s) actualizado(s).";
             }
             catch (Exception Excepcion)
             {
-                ComisionVendedoresMetMostrarError(ComisionVendedoresLblMantenimientoEstado, Excepcion.Message);
+                VentasMetMostrarError(VentasLblMantenimientoEstado, Excepcion.Message);
                 MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private List<ClsProductoPorcentaje> ComisionVendedoresMetCargarPorcentajes()
+        private List<ClsProductoPorcentaje> VentasFuncCargarPorcentajes()
         {
-            _ProductosPorcentaje = _ControladorComision.ComisionVendedoresMetConsultarPorcentajes(
-                ComisionVendedoresMetObtenerMetodo(ComisionVendedoresCboAlcance.SelectedItem.ToString()));
+            _ProductosPorcentaje = _ControladorComision.VentasFuncConsultarPorcentajes(
+                VentasFuncObtenerMetodo(VentasCboAlcance.SelectedItem.ToString()));
             _PaginaPorcentajes = 0;
-            ComisionVendedoresMetMostrarPaginaPorcentajes();
+            VentasMetMostrarPaginaPorcentajes();
             return _ProductosPorcentaje;
         }
 
-        private void ComisionVendedoresMetMostrarPaginaResultados()
+        private void VentasMetMostrarPaginaResultados()
         {
-            ComisionVendedoresDgvResultados.DataSource = _Resultados.Skip(_PaginaResultados * _FilasPorPagina).Take(_FilasPorPagina).ToList();
-            ComisionVendedoresLblPaginaResultados.Text = ComisionVendedoresMetObtenerTextoPagina(_PaginaResultados, _Resultados.Count);
-            ComisionVendedoresMetActualizarBoton(ComisionVendedoresBtnAnteriorResultados, _PaginaResultados > 0,
+            VentasDgvResultados.DataSource = _Resultados.Skip(_PaginaResultados * _FilasPorPagina).Take(_FilasPorPagina).ToList();
+            VentasLblPaginaResultados.Text = VentasFuncObtenerTextoPagina(_PaginaResultados, _Resultados.Count);
+            VentasMetActualizarBoton(VentasBtnAnteriorResultados, _PaginaResultados > 0,
                 System.Drawing.Color.FromArgb(228, 212, 234));
-            ComisionVendedoresMetActualizarBoton(ComisionVendedoresBtnSiguienteResultados,
-                _PaginaResultados < ComisionVendedoresMetObtenerUltimaPagina(_Resultados.Count), System.Drawing.Color.FromArgb(228, 212, 234));
+            VentasMetActualizarBoton(VentasBtnSiguienteResultados,
+                _PaginaResultados < VentasFuncObtenerUltimaPagina(_Resultados.Count), System.Drawing.Color.FromArgb(228, 212, 234));
         }
 
-        private void ComisionVendedoresMetMostrarPaginaFactura()
+        private void VentasMetMostrarPaginaFactura()
         {
-            ComisionVendedoresDgvDetalleFactura.DataSource = _DetallesFactura.Skip(_PaginaFactura * _FilasPorPagina).Take(_FilasPorPagina).ToList();
-            ComisionVendedoresLblPaginaFactura.Text = ComisionVendedoresMetObtenerTextoPagina(_PaginaFactura, _DetallesFactura.Count);
-            ComisionVendedoresMetActualizarBoton(ComisionVendedoresBtnAnteriorFactura, _PaginaFactura > 0,
+            VentasDgvDetalleFactura.DataSource = _DetallesFactura.Skip(_PaginaFactura * _FilasPorPagina).Take(_FilasPorPagina).ToList();
+            VentasLblPaginaFactura.Text = VentasFuncObtenerTextoPagina(_PaginaFactura, _DetallesFactura.Count);
+            VentasMetActualizarBoton(VentasBtnAnteriorFactura, _PaginaFactura > 0,
                 System.Drawing.Color.FromArgb(228, 212, 234));
-            ComisionVendedoresMetActualizarBoton(ComisionVendedoresBtnSiguienteFactura,
-                _PaginaFactura < ComisionVendedoresMetObtenerUltimaPagina(_DetallesFactura.Count), System.Drawing.Color.FromArgb(228, 212, 234));
+            VentasMetActualizarBoton(VentasBtnSiguienteFactura,
+                _PaginaFactura < VentasFuncObtenerUltimaPagina(_DetallesFactura.Count), System.Drawing.Color.FromArgb(228, 212, 234));
         }
 
-        private void ComisionVendedoresMetMostrarPaginaPorcentajes()
+        private void VentasMetMostrarPaginaPorcentajes()
         {
-            ComisionVendedoresDgvPorcentajes.DataSource = _ProductosPorcentaje.Skip(_PaginaPorcentajes * _FilasPorPagina).Take(_FilasPorPagina).ToList();
-            ComisionVendedoresLblPaginaPorcentajes.Text = ComisionVendedoresMetObtenerTextoPagina(_PaginaPorcentajes, _ProductosPorcentaje.Count);
-            ComisionVendedoresMetActualizarBoton(ComisionVendedoresBtnAnteriorPorcentajes, _PaginaPorcentajes > 0,
+            VentasDgvPorcentajes.DataSource = _ProductosPorcentaje.Skip(_PaginaPorcentajes * _FilasPorPagina).Take(_FilasPorPagina).ToList();
+            VentasLblPaginaPorcentajes.Text = VentasFuncObtenerTextoPagina(_PaginaPorcentajes, _ProductosPorcentaje.Count);
+            VentasMetActualizarBoton(VentasBtnAnteriorPorcentajes, _PaginaPorcentajes > 0,
                 System.Drawing.Color.FromArgb(228, 212, 234));
-            ComisionVendedoresMetActualizarBoton(ComisionVendedoresBtnSiguientePorcentajes,
-                _PaginaPorcentajes < ComisionVendedoresMetObtenerUltimaPagina(_ProductosPorcentaje.Count), System.Drawing.Color.FromArgb(228, 212, 234));
+            VentasMetActualizarBoton(VentasBtnSiguientePorcentajes,
+                _PaginaPorcentajes < VentasFuncObtenerUltimaPagina(_ProductosPorcentaje.Count), System.Drawing.Color.FromArgb(228, 212, 234));
         }
 
-        private int ComisionVendedoresMetObtenerUltimaPagina(int TotalRegistros)
+        private int VentasFuncObtenerUltimaPagina(int TotalRegistros)
         {
             return Math.Max(0, (int)Math.Ceiling(TotalRegistros / (double)_FilasPorPagina) - 1);
         }
 
-        private void ComisionVendedoresMetMostrarError(Label EtiquetaEstado, string Mensaje, params Control[] Controles)
+        private void VentasMetMostrarError(Label EtiquetaEstado, string Mensaje, params Control[] Controles)
         {
             EtiquetaEstado.ForeColor = System.Drawing.Color.Firebrick;
             EtiquetaEstado.Text = Mensaje;
@@ -255,45 +255,45 @@ namespace ComisionVendedoresVista
                 ControlValidado.BackColor = System.Drawing.Color.MistyRose;
         }
 
-        private void ComisionVendedoresMetActualizarBoton(Button Boton, bool Habilitado, System.Drawing.Color ColorActivo)
+        private void VentasMetActualizarBoton(Button Boton, bool Habilitado, System.Drawing.Color ColorActivo)
         {
             Boton.Enabled = Habilitado;
             Boton.BackColor = Habilitado ? ColorActivo : System.Drawing.Color.LightGray;
             Boton.ForeColor = Habilitado ? System.Drawing.Color.FromArgb(59, 29, 74) : System.Drawing.SystemColors.GrayText;
         }
 
-        private void ComisionVendedoresMetRestablecerEstado(Label EtiquetaEstado, params Control[] Controles)
+        private void VentasMetRestablecerEstado(Label EtiquetaEstado, params Control[] Controles)
         {
             EtiquetaEstado.ForeColor = System.Drawing.Color.FromArgb(59, 29, 74);
             foreach (Control ControlValidado in Controles)
                 ControlValidado.BackColor = System.Drawing.SystemColors.Window;
         }
 
-        private string ComisionVendedoresMetObtenerTextoPagina(int Pagina, int TotalRegistros)
+        private string VentasFuncObtenerTextoPagina(int Pagina, int TotalRegistros)
         {
-            int TotalPaginas = TotalRegistros == 0 ? 0 : ComisionVendedoresMetObtenerUltimaPagina(TotalRegistros) + 1;
+            int TotalPaginas = TotalRegistros == 0 ? 0 : VentasFuncObtenerUltimaPagina(TotalRegistros) + 1;
             return "Página " + (TotalPaginas == 0 ? 0 : Pagina + 1) + " de " + TotalPaginas + " · " + TotalRegistros + " registros";
         }
 
-        private void ComisionVendedoresMetCambiarPaginaResultados(object Sender, EventArgs Argumentos)
+        private void VentasMetCambiarPaginaResultados(object Origen, EventArgs Argumentos)
         {
-            _PaginaResultados += Sender == ComisionVendedoresBtnAnteriorResultados ? -1 : 1;
-            ComisionVendedoresMetMostrarPaginaResultados();
+            _PaginaResultados += Origen == VentasBtnAnteriorResultados ? -1 : 1;
+            VentasMetMostrarPaginaResultados();
         }
 
-        private void ComisionVendedoresMetCambiarPaginaFactura(object Sender, EventArgs Argumentos)
+        private void VentasMetCambiarPaginaFactura(object Origen, EventArgs Argumentos)
         {
-            _PaginaFactura += Sender == ComisionVendedoresBtnAnteriorFactura ? -1 : 1;
-            ComisionVendedoresMetMostrarPaginaFactura();
+            _PaginaFactura += Origen == VentasBtnAnteriorFactura ? -1 : 1;
+            VentasMetMostrarPaginaFactura();
         }
 
-        private void ComisionVendedoresMetCambiarPaginaPorcentajes(object Sender, EventArgs Argumentos)
+        private void VentasMetCambiarPaginaPorcentajes(object Origen, EventArgs Argumentos)
         {
-            _PaginaPorcentajes += Sender == ComisionVendedoresBtnAnteriorPorcentajes ? -1 : 1;
-            ComisionVendedoresMetMostrarPaginaPorcentajes();
+            _PaginaPorcentajes += Origen == VentasBtnAnteriorPorcentajes ? -1 : 1;
+            VentasMetMostrarPaginaPorcentajes();
         }
 
-        private EnumMetodoComision ComisionVendedoresMetObtenerMetodo(string Texto)
+        private EnumMetodoComision VentasFuncObtenerMetodo(string Texto)
         {
             switch (Texto)
             {

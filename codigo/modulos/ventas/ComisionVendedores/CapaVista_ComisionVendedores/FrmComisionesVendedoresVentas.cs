@@ -1,4 +1,4 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — Ventas y cuentas por cobrar
  * Roger Yankhel de Jesús Herrera Alcántara | Carné: 0901-23-2429
  * Fecha de actualización: 15/10/2026
@@ -6,7 +6,7 @@
  */
 using System.Windows.Forms;
 
-namespace ComisionVendedoresVista
+namespace CapaVista_ComisionVendedores
 {
     public partial class FrmComisionesVendedoresVentas : Form
     {

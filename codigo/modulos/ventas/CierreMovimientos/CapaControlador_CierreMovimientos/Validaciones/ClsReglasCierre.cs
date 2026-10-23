@@ -8,24 +8,24 @@ namespace CapaControlador_CierreMovimientos.Validaciones
     {
         internal static void VentasMetUsuario(this ClsCierreRepositorio Repositorio, int Usuario)
         {
-            ClsValidacionesVentas.VentasMetExigir(Usuario > 0 && Repositorio.VentasMetUsuarioActivo(Usuario), "Seleccione un responsable activo de Seguridad.");
+            ClsValidacionesVentas.VentasMetExigir(Usuario > 0 && Repositorio.VentasFuncUsuarioActivo(Usuario), "Seleccione un responsable activo de Seguridad.");
         }
 
         internal static void VentasMetBloquearMoneda(this ClsCierreRepositorio Repositorio, int Moneda)
         {
             ClsValidacionesVentas.VentasMetExigir(Repositorio.EnTransaccion, "La operacion requiere una transaccion.");
-            ClsValidacionesVentas.VentasMetExigir(Moneda > 0 && Repositorio.VentasMetMonedaActiva(Moneda), "Seleccione una moneda activa.");
+            ClsValidacionesVentas.VentasMetExigir(Moneda > 0 && Repositorio.VentasFuncMonedaActiva(Moneda), "Seleccione una moneda activa.");
             Repositorio.VentasMetAsegurarBloqueoMoneda(Moneda);
         }
 
         internal static void VentasMetPeriodoAbierto(this ClsCierreRepositorio Repositorio, int Moneda, DateTime Fecha)
         {
             Repositorio.VentasMetBloquearMoneda(Moneda);
-            object Ultimo = Repositorio.VentasMetUltimoCierre(Moneda);
+            object Ultimo = Repositorio.VentasFuncUltimoCierre(Moneda);
             ClsValidacionesVentas.VentasMetExigir(Ultimo == null || Ultimo == DBNull.Value || Fecha.Date > Convert.ToDateTime(Ultimo).Date, "La fecha pertenece a un periodo cerrado. Registre el movimiento en un periodo abierto.");
         }
 
-        internal static DateTime[] VentasMetPeriodo(int Anio, int Mes, bool Anual)
+        internal static DateTime[] VentasFuncPeriodo(int Anio, int Mes, bool Anual)
         {
             ClsValidacionesVentas.VentasMetExigir(Anio >= 2000 && Anio <= 9998 && Mes >= 1 && Mes <= 12, "Seleccione un anio y mes validos.");
             DateTime Desde = new DateTime(Anio, Anual ? 1 : Mes, 1);

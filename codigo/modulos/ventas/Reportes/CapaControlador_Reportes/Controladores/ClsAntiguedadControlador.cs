@@ -7,9 +7,9 @@ namespace CapaControlador_Reportes
 {
     public sealed class ClsAntiguedadControlador
     {
-        public DataTable VentasMetClientes()
+        public DataTable VentasFuncClientes()
         {
-            DataTable Clientes = new ClsAntiguedadDatos().VentasMetClientes();
+            DataTable Clientes = new ClsAntiguedadDatos().VentasFuncClientes();
             DataRow Todos = Clientes.NewRow();
             Todos["idCliente"] = 0;
             Todos["Cliente"] = "Todos los clientes";
@@ -17,16 +17,16 @@ namespace CapaControlador_Reportes
             return Clientes;
         }
 
-        public DataTable VentasMetConsultar(DateTime Corte, int Cliente, string Estado)
+        public DataTable VentasFuncConsultar(DateTime Corte, int Cliente, string Estado)
         {
             if (Cliente < 0)
                 throw new ArgumentException("Seleccione un cliente valido.");
             if (Estado != "Todos" && Estado != "Vencidos" && Estado != "Vigentes")
                 throw new ArgumentException("Seleccione un estado valido.");
-            return VentasMetClasificar(new ClsAntiguedadDatos().VentasMetConsultar(Corte, Cliente), Corte, Estado);
+            return VentasFuncClasificar(new ClsAntiguedadDatos().VentasFuncConsultar(Corte, Cliente), Corte, Estado);
         }
 
-        public DataTable VentasMetClasificar(DataTable Saldos, DateTime Corte, string Estado)
+        public DataTable VentasFuncClasificar(DataTable Saldos, DateTime Corte, string Estado)
         {
             DataTable Resultado = new DataTable("DsAntiguedad");
             Resultado.Columns.Add("Cliente", typeof(string));

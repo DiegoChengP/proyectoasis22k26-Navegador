@@ -1,4 +1,4 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — ComisionVendedores
  * Fecha de actualización: 18/10/2026
  * Propósito: Ejecutar el formulario principal de comisiones de vendedores.
@@ -15,7 +15,7 @@ namespace ComisionVendedores
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ComisionVendedoresVista.FrmMdiComisionVendedores());
+            Application.Run(new CapaVista_ComisionVendedores.FrmMdiComisionVendedores());
         }
     }
 }

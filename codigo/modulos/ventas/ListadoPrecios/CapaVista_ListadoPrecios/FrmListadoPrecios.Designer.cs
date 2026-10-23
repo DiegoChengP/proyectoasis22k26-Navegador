@@ -1,4 +1,4 @@
-/*
+﻿/*
  * INICIO DEL CÓDIGO — Ventas y cuentas por cobrar
  * Asignación: Matthew, Diego
  * Matthew Andreé Juárez Xoy | Carné: 0901-23-4250
@@ -20,13 +20,13 @@ namespace CapaVista_ListadoPrecios
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
+        protected override void Dispose(bool Disposing)
         {
-            if (disposing && (components != null))
+            if (Disposing && (components != null))
             {
                 components.Dispose();
             }
-            base.Dispose(disposing);
+            base.Dispose(Disposing);
         }
 
         #region Windows Form Designer generated code
@@ -38,8 +38,8 @@ namespace CapaVista_ListadoPrecios
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.VentasTtpAccionesOriginales = new System.Windows.Forms.ToolTip(this.components);
             this.VentasBtnGuardar = new System.Windows.Forms.Button();
             this.VentasBtnCancelar = new System.Windows.Forms.Button();
@@ -59,7 +59,7 @@ namespace CapaVista_ListadoPrecios
             this.VentasLblListadoClientes = new System.Windows.Forms.Label();
             this.VentasDgvListadoClientes = new System.Windows.Forms.DataGridView();
             this.VentasLblTipoProducto = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.VentasCboTipoProducto = new System.Windows.Forms.ComboBox();
             this.VentasClmTipoCliente = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VentasClmTipoProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VentasClmPorcentaje = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -222,7 +222,7 @@ namespace CapaVista_ListadoPrecios
             this.VentasLblSimboloPorcentaje.Size = new System.Drawing.Size(46, 40);
             this.VentasLblSimboloPorcentaje.TabIndex = 10;
             this.VentasLblSimboloPorcentaje.Text = "%";
-            this.VentasLblSimboloPorcentaje.Click += new System.EventHandler(this.VentasLblSimboloPorcentaje_Click);
+            this.VentasLblSimboloPorcentaje.Click += new System.EventHandler(this.VentasMetLblSimboloPorcentajeClick);
             // 
             // VentasLblPrecioBase
             // 
@@ -283,10 +283,10 @@ namespace CapaVista_ListadoPrecios
             this.VentasDgvListadoClientes.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.VentasDgvListadoClientes.BackgroundColor = System.Drawing.Color.White;
             this.VentasDgvListadoClientes.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.VentasDgvListadoClientes.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            DataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            DataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            DataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.VentasDgvListadoClientes.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1;
             this.VentasDgvListadoClientes.ColumnHeadersHeight = 34;
             this.VentasDgvListadoClientes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.VentasDgvListadoClientes.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -296,14 +296,14 @@ namespace CapaVista_ListadoPrecios
             this.VentasClmPrecioBase,
             this.VentasClmPrecioFinal,
             this.VentasClmAcciones});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(228)))), ((int)(((byte)(212)))), ((int)(((byte)(234)))));
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.VentasDgvListadoClientes.DefaultCellStyle = dataGridViewCellStyle2;
+            DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            DataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 10F);
+            DataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            DataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(228)))), ((int)(((byte)(212)))), ((int)(((byte)(234)))));
+            DataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
+            DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.VentasDgvListadoClientes.DefaultCellStyle = DataGridViewCellStyle2;
             this.VentasDgvListadoClientes.EnableHeadersVisualStyles = false;
             this.VentasDgvListadoClientes.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.VentasDgvListadoClientes.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(228)))), ((int)(((byte)(212)))), ((int)(((byte)(234)))));
@@ -331,17 +331,17 @@ namespace CapaVista_ListadoPrecios
             // 
             // comboBox1
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.VentasCboTipoProducto.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VentasCboTipoProducto.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.VentasCboTipoProducto.FormattingEnabled = true;
+            this.VentasCboTipoProducto.Items.AddRange(new object[] {
             "Producto A",
             "Producto B",
             "Producto C"});
-            this.comboBox1.Location = new System.Drawing.Point(387, 114);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(292, 38);
-            this.comboBox1.TabIndex = 19;
+            this.VentasCboTipoProducto.Location = new System.Drawing.Point(387, 114);
+            this.VentasCboTipoProducto.Name = "VentasCboTipoProducto";
+            this.VentasCboTipoProducto.Size = new System.Drawing.Size(292, 38);
+            this.VentasCboTipoProducto.TabIndex = 19;
             // 
             // VentasClmTipoCliente
             // 
@@ -412,7 +412,7 @@ namespace CapaVista_ListadoPrecios
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.ClientSize = new System.Drawing.Size(1112, 512);
             this.Controls.Add(this.VentasBtnConsultar);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.VentasCboTipoProducto);
             this.Controls.Add(this.VentasLblTipoProducto);
             this.Controls.Add(this.VentasBtnCancelar);
             this.Controls.Add(this.VentasBtnGuardar);
@@ -436,7 +436,7 @@ namespace CapaVista_ListadoPrecios
             this.Name = "FrmListadoPrecios";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "7002 – Listado de precios";
+            this.Text = "7002 – ListadoDePrecios";
             this.VentasPnlEncabezado.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.VentasPbMarca)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.VentasNudPorcentajeDescuento)).EndInit();
@@ -467,7 +467,7 @@ namespace CapaVista_ListadoPrecios
         private System.Windows.Forms.Button VentasBtnCancelar;
         private System.Windows.Forms.ToolTip VentasTtpAccionesOriginales;
         private System.Windows.Forms.Label VentasLblTipoProducto;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox VentasCboTipoProducto;
         private System.Windows.Forms.DataGridViewTextBoxColumn VentasClmTipoCliente;
         private System.Windows.Forms.DataGridViewTextBoxColumn VentasClmTipoProducto;
         private System.Windows.Forms.DataGridViewTextBoxColumn VentasClmPorcentaje;

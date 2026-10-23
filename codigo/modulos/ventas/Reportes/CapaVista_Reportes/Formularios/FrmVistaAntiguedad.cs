@@ -9,25 +9,30 @@ namespace CapaVista_Reportes
 {
     public sealed class FrmVistaAntiguedad : Form
     {
-        private readonly ReportViewer _VentasRpvAntiguedad;
+        private readonly ReportViewer _VentasUsrAntiguedad;
         public FrmVistaAntiguedad(DataTable Datos, DateTime Corte, string Cliente, string Estado)
         {
-            Text = "7006 - Ventas | Antigüedad de saldos";
+            Name = "FrmVistaAntiguedad";
+            Text = "7006 – AntiguedadDeSaldos";
             Icon = Properties.Resources.IconoVentas;
             Size = new Size(1200, 800);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            MinimizeBox = true;
             StartPosition = FormStartPosition.CenterParent;
-            _VentasRpvAntiguedad = new ReportViewer
+            _VentasUsrAntiguedad = new ReportViewer
             {
+                Name = "VentasUsrAntiguedad",
                 Dock = DockStyle.Fill,
                 ProcessingMode = ProcessingMode.Local
             };
-            Controls.Add(_VentasRpvAntiguedad);
-            ClsDocumentoAntiguedad.VentasMetConfigurar(_VentasRpvAntiguedad.LocalReport, Datos, Corte, Cliente, Estado);
+            Controls.Add(_VentasUsrAntiguedad);
+            ClsDocumentoAntiguedad.VentasMetConfigurar(_VentasUsrAntiguedad.LocalReport, Datos, Corte, Cliente, Estado);
             Shown += (Origen, Evento) =>
             {
-                _VentasRpvAntiguedad.SetDisplayMode(DisplayMode.PrintLayout);
-                _VentasRpvAntiguedad.ZoomMode = ZoomMode.PageWidth;
-                _VentasRpvAntiguedad.RefreshReport();
+                _VentasUsrAntiguedad.SetDisplayMode(DisplayMode.PrintLayout);
+                _VentasUsrAntiguedad.ZoomMode = ZoomMode.PageWidth;
+                _VentasUsrAntiguedad.RefreshReport();
             };
         }
     }

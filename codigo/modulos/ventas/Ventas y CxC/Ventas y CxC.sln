@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapaControlador_Ventas", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapaVista_Ventas", "CapaVista_Ventas\CapaVista_Ventas.csproj", "{9496BD61-6249-436E-B168-BB5C8C6ABFB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestVentas", "TestVentas\TestVentas.csproj", "{8CCC19EC-F122-4462-9CEC-CBA27995091B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,8 +28,15 @@ Global
 		{9496BD61-6249-436E-B168-BB5C8C6ABFB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9496BD61-6249-436E-B168-BB5C8C6ABFB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9496BD61-6249-436E-B168-BB5C8C6ABFB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CCC19EC-F122-4462-9CEC-CBA27995091B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CCC19EC-F122-4462-9CEC-CBA27995091B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CCC19EC-F122-4462-9CEC-CBA27995091B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CCC19EC-F122-4462-9CEC-CBA27995091B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13920044-FFAB-4D80-93EA-2C141850C6B7}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,4 @@
-using System.Data.Odbc;
+﻿using System.Data.Odbc;
 
 namespace CapaModelo_ComisionVendedores.Repositorios
 {
@@ -11,7 +11,7 @@ namespace CapaModelo_ComisionVendedores.Repositorios
             _ConnectionString = CapaModelo_Ventas.ClsConexion.CadenaConexion;
         }
 
-        protected OdbcConnection ComisionVendedoresMetObtenerConexion()
+        protected OdbcConnection VentasFuncObtenerConexion()
         {
             return new OdbcConnection(_ConnectionString);
         }

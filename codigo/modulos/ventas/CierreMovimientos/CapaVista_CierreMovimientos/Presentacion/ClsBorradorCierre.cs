@@ -25,20 +25,20 @@ namespace CapaVista_CierreMovimientos
                 return;
             }
 
-            DataRow F = ClsHerramientasVentas.VentasMetSeleccionar(_Estado.Vista, "Consultar cierres y borradores", _Estado.Controlador.VentasMetListar(_Estado.Moneda));
-            if (F == null)
+            DataRow Fila = ClsHerramientasVentas.VentasFuncSeleccionar(_Estado.Vista, "Consultar cierres y borradores", _Estado.Controlador.VentasFuncListar(_Estado.Moneda));
+            if (Fila == null)
                 return;
             _Estado.Cargando = true;
             try
             {
-                _Estado.Vista.VentasCboMonedaCierre.SelectedValue = F["idMoneda"];
-                DateTime Desde = Convert.ToDateTime(F["Desde"]);
-                _Estado.Vista.VentasCboTipoCierre.SelectedIndex = Convert.ToString(F["Tipo"]) == "ANUAL" ? 1 : 0;
+                _Estado.Vista.VentasCboMonedaCierre.SelectedValue = Fila["idMoneda"];
+                DateTime Desde = Convert.ToDateTime(Fila["Desde"]);
+                _Estado.Vista.VentasCboTipoCierre.SelectedIndex = Convert.ToString(Fila["Tipo"]) == "ANUAL" ? 1 : 0;
                 _Estado.Vista.VentasNudAnioCierre.Value = Desde.Year;
                 _Estado.Vista.VentasCboMesCierre.SelectedIndex = Desde.Month - 1;
                 _Estado.VentasMetPeriodoCambio();
-                _Estado.IdBorrador = Convert.ToString(F["Estado"]) == "BORRADOR" ? Convert.ToInt32(F["Id"]) : 0;
-                _Estado.Vista.VentasTxtObservacionesCierre.Text = Convert.ToString(F["Observaciones"]);
+                _Estado.IdBorrador = Convert.ToString(Fila["Estado"]) == "BORRADOR" ? Convert.ToInt32(Fila["Id"]) : 0;
+                _Estado.Vista.VentasTxtObservacionesCierre.Text = Convert.ToString(Fila["Observaciones"]);
                 _Estado.EditandoBorrador = false;
             }
             finally
@@ -46,10 +46,10 @@ namespace CapaVista_CierreMovimientos
                 _Estado.Cargando = false;
             }
 
-            if (Convert.ToString(F["Estado"]) == "ANULADO")
+            if (Convert.ToString(Fila["Estado"]) == "ANULADO")
             {
                 _Estado.VentasMetLimpiarRevision();
-                _Estado.Vista.VentasTxtEstadoCierre.Text = "Anulado: " + F["Numero"];
+                _Estado.Vista.VentasTxtEstadoCierre.Text = "Anulado: " + Fila["Numero"];
             }
             else
                 _Estado.VentasMetRevisar();
@@ -75,8 +75,8 @@ namespace CapaVista_CierreMovimientos
 
         internal void VentasMetPersistirBorrador()
         {
-            string Numero = _Estado.Controlador.VentasMetGuardarBorrador(_Estado.IdBorrador, _Estado.Moneda, _Estado.VentasIdUsuario, _Estado.Tipo, _Estado.Vista.VentasDtpDesdeCierre.Value, _Estado.Vista.VentasDtpHastaCierre.Value, _Estado.Vista.VentasTxtObservacionesCierre.Text);
-            _Estado.IdBorrador = Convert.ToInt32(_Estado.Controlador.VentasMetListar(_Estado.Moneda).AsEnumerable().Single(F => Convert.ToString(F["Numero"]) == Numero)["Id"]);
+            string Numero = _Estado.Controlador.VentasFuncGuardarBorrador(_Estado.IdBorrador, _Estado.Moneda, _Estado.VentasIdUsuario, _Estado.Tipo, _Estado.Vista.VentasDtpDesdeCierre.Value, _Estado.Vista.VentasDtpHastaCierre.Value, _Estado.Vista.VentasTxtObservacionesCierre.Text);
+            _Estado.IdBorrador = Convert.ToInt32(_Estado.Controlador.VentasFuncListar(_Estado.Moneda).AsEnumerable().Single(Registro => Convert.ToString(Registro["Numero"]) == Numero)["Id"]);
             _Estado.EditandoBorrador = false;
             VentasMetActualizarAccionesCierre();
         }
@@ -86,7 +86,7 @@ namespace CapaVista_CierreMovimientos
             if (_Estado.IdBorrador == 0)
                 VentasMetConsultarCierre();
             _Estado.Controlador.VentasMetValidarCaptura(_Estado.IdBorrador > 0, "Seleccione un borrador para anular. Los cierres confirmados se conservan.");
-            string Motivo = ClsHerramientasVentas.VentasMetMotivo(_Estado.Vista, "Anular borrador de cierre");
+            string Motivo = ClsHerramientasVentas.VentasFuncMotivo(_Estado.Vista, "Anular borrador de cierre");
             if (Motivo == null)
                 return;
             _Estado.Controlador.VentasMetEliminarBorrador(_Estado.IdBorrador, _Estado.VentasIdUsuario, Motivo);
@@ -111,7 +111,7 @@ namespace CapaVista_CierreMovimientos
                 return;
             if (_Estado.IdBorrador == 0 || _Estado.EditandoBorrador)
                 VentasMetPersistirBorrador();
-            string Numero = _Estado.Controlador.VentasMetConfirmar(_Estado.Moneda, _Estado.VentasIdUsuario, _Estado.Tipo, _Estado.Vista.VentasDtpDesdeCierre.Value, _Estado.Vista.VentasDtpHastaCierre.Value, _Estado.Vista.VentasChkRevisionDocumentos.Checked);
+            string Numero = _Estado.Controlador.VentasFuncConfirmar(_Estado.Moneda, _Estado.VentasIdUsuario, _Estado.Tipo, _Estado.Vista.VentasDtpDesdeCierre.Value, _Estado.Vista.VentasDtpHastaCierre.Value, _Estado.Vista.VentasChkRevisionDocumentos.Checked);
             _Estado.VentasMetRevisar();
             ClsHerramientasVentas.VentasMetInformar(_Estado.Vista, "Cierre confirmado: " + Numero + ". Se conservaron los saldos historicos por cliente y factura.");
         }

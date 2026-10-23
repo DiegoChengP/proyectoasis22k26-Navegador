@@ -7,39 +7,39 @@ namespace CapaControlador_Cotizaciones
     public sealed class ClsCotizacionesControlador
     {
         private readonly Servicios.ClsCotizacionesServicio _Servicio = new Servicios.ClsCotizacionesServicio();
-        public DataTable VentasMetListar(string Buscar)
+        public DataTable VentasFuncListar(string Buscar)
         {
-            return _Servicio.VentasMetListar(Buscar);
+            return _Servicio.VentasFuncListar(Buscar);
         }
 
-        public DataTable VentasMetCatalogo(string Nombre)
+        public DataTable VentasFuncCatalogo(string Nombre)
         {
-            return _Servicio.VentasMetCatalogo(Nombre);
+            return _Servicio.VentasFuncCatalogo(Nombre);
         }
 
-        public DataTable VentasMetListaCliente(int Cliente, int Moneda, DateTime Fecha)
+        public DataTable VentasFuncListaCliente(int Cliente, int Moneda, DateTime Fecha)
         {
-            return _Servicio.VentasMetListaCliente(Cliente, Moneda, Fecha);
+            return _Servicio.VentasFuncListaCliente(Cliente, Moneda, Fecha);
         }
 
-        public DataTable VentasMetProductos(int Cliente, int Moneda, DateTime Fecha)
+        public DataTable VentasFuncProductos(int Cliente, int Moneda, DateTime Fecha)
         {
-            return _Servicio.VentasMetProductos(Cliente, Moneda, Fecha);
+            return _Servicio.VentasFuncProductos(Cliente, Moneda, Fecha);
         }
 
-        public DataSet VentasMetConsultar(string Numero)
+        public DataSet VentasFuncConsultar(string Numero)
         {
-            return _Servicio.VentasMetConsultar(Numero);
+            return _Servicio.VentasFuncConsultar(Numero);
         }
 
-        public string VentasMetGuardar(int IdCotizacion, string Numero, int Cliente, int Vendedor, int Moneda, int Usuario, DateTime Fecha, DateTime Vigencia, decimal TipoCambio, string Estado, DataTable Lineas)
+        public string VentasFuncGuardar(int IdCotizacion, string Numero, int Cliente, int Vendedor, int Moneda, int Usuario, DateTime Fecha, DateTime Vigencia, decimal TipoCambio, string Estado, DataTable Lineas)
         {
-            return _Servicio.VentasMetGuardar(IdCotizacion, Numero, Cliente, Vendedor, Moneda, Usuario, Fecha, Vigencia, TipoCambio, Estado, Lineas);
+            return _Servicio.VentasFuncGuardar(IdCotizacion, Numero, Cliente, Vendedor, Moneda, Usuario, Fecha, Vigencia, TipoCambio, Estado, Lineas);
         }
 
-        public string VentasMetConvertir(int IdCotizacion, bool AFactura, int Establecimiento, int Usuario)
+        public string VentasFuncConvertir(int IdCotizacion, bool AFactura, int Establecimiento, int Usuario)
         {
-            return _Servicio.VentasMetConvertir(IdCotizacion, AFactura, Establecimiento, Usuario);
+            return _Servicio.VentasFuncConvertir(IdCotizacion, AFactura, Establecimiento, Usuario);
         }
 
         public void VentasMetAnular(int IdCotizacion, int Usuario)
@@ -57,9 +57,9 @@ namespace CapaControlador_Cotizaciones
             return VentasValidaciones.ClsValidacionesVentas.VentasFuncImporteCelda(Valor);
         }
 
-        public bool VentasMetPuedeEditar(int Id, string Estado, DateTime Vigencia)
+        public bool VentasFuncPuedeEditar(int Id, string Estado, DateTime Vigencia)
         {
-            return Validaciones.ClsReglasCotizaciones.VentasMetPuedeEditar(Id, Estado, Vigencia);
+            return Validaciones.ClsReglasCotizaciones.VentasFuncPuedeEditar(Id, Estado, Vigencia);
         }
 
         public void VentasMetValidarEdicion(int Id, string Estado, DateTime Vigencia)
@@ -67,9 +67,9 @@ namespace CapaControlador_Cotizaciones
             Validaciones.ClsReglasCotizaciones.VentasMetValidarEdicion(Id, Estado, Vigencia);
         }
 
-        public object[] VentasMetCalcularLinea(DataRow Producto, decimal Cantidad, decimal Descuento)
+        public object[] VentasFuncCalcularLinea(DataRow Producto, decimal Cantidad, decimal Descuento)
         {
-            return Validaciones.ClsReglasCotizaciones.VentasMetCalcularLinea(Producto, Cantidad, Descuento);
+            return Validaciones.ClsReglasCotizaciones.VentasFuncCalcularLinea(Producto, Cantidad, Descuento);
         }
     }
 }

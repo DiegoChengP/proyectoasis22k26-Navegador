@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,17 +15,17 @@ namespace CapaVista_Pedidos
             VentasCboProductoPedido.DisplayMember = "Descripcion";
             VentasCboProductoPedido.Location = new Point(255, 18);
             VentasCboProductoPedido.Size = new Size(390, 25);
-            VentasNumCantidadProducto.Name = "VentasNumCantidadProducto";
-            VentasNumCantidadProducto.Location = new Point(655, 18);
-            VentasNumCantidadProducto.Size = new Size(95, 25);
-            VentasNumCantidadProducto.DecimalPlaces = 0;
-            VentasNumCantidadProducto.Minimum = 1m;
-            VentasNumCantidadProducto.Maximum = 1000000m;
-            VentasNumCantidadProducto.Value = 1m;
+            VentasNudCantidadProducto.Name = "VentasNudCantidadProducto";
+            VentasNudCantidadProducto.Location = new Point(655, 18);
+            VentasNudCantidadProducto.Size = new Size(95, 25);
+            VentasNudCantidadProducto.DecimalPlaces = 0;
+            VentasNudCantidadProducto.Minimum = 1m;
+            VentasNudCantidadProducto.Maximum = 1000000m;
+            VentasNudCantidadProducto.Value = 1m;
             VentasPnlEncabezadoDetalle.Controls.Add(VentasCboProductoPedido);
-            VentasPnlEncabezadoDetalle.Controls.Add(VentasNumCantidadProducto);
+            VentasPnlEncabezadoDetalle.Controls.Add(VentasNudCantidadProducto);
             VentasCboProductoPedido.BringToFront();
-            VentasNumCantidadProducto.BringToFront();
+            VentasNudCantidadProducto.BringToFront();
         }
 
         private void VentasMetAgregarProducto()
@@ -35,7 +35,7 @@ namespace CapaVista_Pedidos
             var Linea = new ClsLineaPedido {
                 ProductoId = Producto.ProductoId, Codigo = Producto.Codigo,
                 Descripcion = Producto.Descripcion, Tipo = Producto.Tipo,
-                Cantidad = Decimal.ToInt32(VentasNumCantidadProducto.Value), Precio = Producto.Precio,
+                Cantidad = Decimal.ToInt32(VentasNudCantidadProducto.Value), Precio = Producto.Precio,
                 PorcentajeImpuesto = Producto.PorcentajeImpuesto
             };
             ClsPedidoControlador.VentasMetCalcular(Linea);
@@ -67,7 +67,7 @@ namespace CapaVista_Pedidos
         {
             bool Independiente = VentasChkPedidoIndependiente.Checked;
             bool PuedeEditar = Independiente && !_Cargando && _CatalogosDisponibles;
-            VentasCboProductoPedido.Enabled = VentasNumCantidadProducto.Enabled = PuedeEditar;
+            VentasCboProductoPedido.Enabled = VentasNudCantidadProducto.Enabled = PuedeEditar;
             VentasBtnIngresarProducto.Enabled = PuedeEditar && VentasCboProductoPedido.SelectedItem is ClsLineaPedido;
             VentasBtnEliminarProducto.Enabled = PuedeEditar &&
                 VentasDgvDetalle.CurrentRow != null && VentasDgvDetalle.CurrentRow.Index < _Lineas.Count;

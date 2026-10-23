@@ -67,7 +67,7 @@
             this.Name = "FrmMantenimientosVentas";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "7009 - Mantenimientos";
+            this.Text = "7009 – Mantenimientos";
             this.VentasPnlCabecera.ResumeLayout(false);
             this.ResumeLayout(false);
         }

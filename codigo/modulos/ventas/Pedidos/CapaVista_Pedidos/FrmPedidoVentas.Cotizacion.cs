@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -26,7 +26,7 @@ namespace CapaVista_Pedidos
             VentasTxtReferenciaIndependiente.Visible = !Cotizacion;
             VentasBtnIngresarProducto.Visible = !Cotizacion;
             VentasBtnEliminarProducto.Visible = !Cotizacion;
-            VentasCboProductoPedido.Visible = VentasNumCantidadProducto.Visible = !Cotizacion;
+            VentasCboProductoPedido.Visible = VentasNudCantidadProducto.Visible = !Cotizacion;
             VentasLblDetalleAyuda.Text = Cotizacion
                 ? "Los productos y precios se cargan de la cotización seleccionada"
                 : "";

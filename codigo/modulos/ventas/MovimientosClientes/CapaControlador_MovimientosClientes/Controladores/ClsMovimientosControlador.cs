@@ -7,14 +7,14 @@ namespace CapaControlador_MovimientosClientes
     public sealed class ClsMovimientosControlador
     {
         private readonly Servicios.ClsMovimientosServicio _Servicio = new Servicios.ClsMovimientosServicio();
-        public DataTable VentasMetListarDocumentos(int Cliente, int Moneda)
+        public DataTable VentasFuncListarDocumentos(int Cliente, int Moneda)
         {
-            return _Servicio.VentasMetListarDocumentos(Cliente, Moneda);
+            return _Servicio.VentasFuncListarDocumentos(Cliente, Moneda);
         }
 
-        public DataTable VentasMetListarRecibos(int Cliente, int Moneda)
+        public DataTable VentasFuncListarRecibos(int Cliente, int Moneda)
         {
-            return _Servicio.VentasMetListarRecibos(Cliente, Moneda);
+            return _Servicio.VentasFuncListarRecibos(Cliente, Moneda);
         }
 
         public void VentasMetModificarDocumento(int Id, string Clase, int Usuario, string Descripcion, DateTime Vencimiento)
@@ -32,59 +32,59 @@ namespace CapaControlador_MovimientosClientes
             _Servicio.VentasMetModificarRecibo(Id, Usuario, Observaciones);
         }
 
-        public DataTable VentasMetCatalogo(string Nombre)
+        public DataTable VentasFuncCatalogo(string Nombre)
         {
-            return _Servicio.VentasMetCatalogo(Nombre);
+            return _Servicio.VentasFuncCatalogo(Nombre);
         }
 
-        public DataSet VentasMetEstadoCuenta(int Cliente, int Moneda, DateTime Desde, DateTime Hasta)
+        public DataSet VentasFuncEstadoCuenta(int Cliente, int Moneda, DateTime Desde, DateTime Hasta)
         {
-            return _Servicio.VentasMetEstadoCuenta(Cliente, Moneda, Desde, Hasta);
+            return _Servicio.VentasFuncEstadoCuenta(Cliente, Moneda, Desde, Hasta);
         }
 
-        public DataTable VentasMetPendientes(int Cliente, int Moneda)
+        public DataTable VentasFuncPendientes(int Cliente, int Moneda)
         {
-            return _Servicio.VentasMetPendientes(Cliente, Moneda);
+            return _Servicio.VentasFuncPendientes(Cliente, Moneda);
         }
 
-        public string VentasMetRegistrarDocumento(int Cliente, int Moneda, int Usuario, int Establecimiento, string Numero, int Tipo, DateTime Fecha, DateTime Vencimiento, decimal Importe, string Referencia, string Motivo)
+        public string VentasFuncRegistrarDocumento(int Cliente, int Moneda, int Usuario, int Establecimiento, string Numero, int Tipo, DateTime Fecha, DateTime Vencimiento, decimal Importe, string Referencia, string Motivo)
         {
-            return _Servicio.VentasMetRegistrarDocumento(Cliente, Moneda, Usuario, Establecimiento, Numero, Tipo, Fecha, Vencimiento, Importe, Referencia, Motivo);
+            return _Servicio.VentasFuncRegistrarDocumento(Cliente, Moneda, Usuario, Establecimiento, Numero, Tipo, Fecha, Vencimiento, Importe, Referencia, Motivo);
         }
 
-        public string VentasMetRegistrarRecibo(int Cliente, int Moneda, int Usuario, string Numero, DateTime Fecha, decimal Monto, decimal TipoCambio, string Forma, string Referencia, string Observaciones, DataTable Aplicaciones)
+        public string VentasFuncRegistrarRecibo(int Cliente, int Moneda, int Usuario, string Numero, DateTime Fecha, decimal Monto, decimal TipoCambio, string Forma, string Referencia, string Observaciones, DataTable Aplicaciones)
         {
-            return _Servicio.VentasMetRegistrarRecibo(Cliente, Moneda, Usuario, Numero, Fecha, Monto, TipoCambio, Forma, Referencia, Observaciones, Aplicaciones);
+            return _Servicio.VentasFuncRegistrarRecibo(Cliente, Moneda, Usuario, Numero, Fecha, Monto, TipoCambio, Forma, Referencia, Observaciones, Aplicaciones);
         }
 
-        public DataTable VentasMetConsultarRecibos(string Recibo, string Deposito)
+        public DataTable VentasFuncConsultarRecibos(string Recibo, string Deposito)
         {
-            return _Servicio.VentasMetConsultarRecibos(Recibo, Deposito);
+            return _Servicio.VentasFuncConsultarRecibos(Recibo, Deposito);
         }
 
-        public DataTable VentasMetAplicaciones(int Pago)
+        public DataTable VentasFuncAplicaciones(int Pago)
         {
-            return _Servicio.VentasMetAplicaciones(Pago);
+            return _Servicio.VentasFuncAplicaciones(Pago);
         }
 
-        public DataTable VentasMetDocumento(int Cliente, int Moneda, int Establecimiento, string Numero, bool Factura)
+        public DataTable VentasFuncDocumento(int Cliente, int Moneda, int Establecimiento, string Numero, bool Factura)
         {
-            return _Servicio.VentasMetDocumento(Cliente, Moneda, Establecimiento, Numero, Factura);
+            return _Servicio.VentasFuncDocumento(Cliente, Moneda, Establecimiento, Numero, Factura);
         }
 
-        public DataSet VentasMetDeposito(string Numero)
+        public DataSet VentasFuncDeposito(string Numero)
         {
-            return _Servicio.VentasMetDeposito(Numero);
+            return _Servicio.VentasFuncDeposito(Numero);
         }
 
-        public DataTable VentasMetRecibosDisponibles(int Moneda)
+        public DataTable VentasFuncRecibosDisponibles(int Moneda)
         {
-            return _Servicio.VentasMetRecibosDisponibles(Moneda);
+            return _Servicio.VentasFuncRecibosDisponibles(Moneda);
         }
 
-        public string VentasMetPrepararDeposito(int Moneda, int Usuario, DateTime Fecha, string Numero, string Empresa, string Banco, string Cuenta, string Concepto, string Referencia, DataTable Recibos)
+        public string VentasFuncPrepararDeposito(int Moneda, int Usuario, DateTime Fecha, string Numero, string Empresa, string Banco, string Cuenta, string Concepto, string Referencia, DataTable Recibos)
         {
-            return _Servicio.VentasMetPrepararDeposito(Moneda, Usuario, Fecha, Numero, Empresa, Banco, Cuenta, Concepto, Referencia, Recibos);
+            return _Servicio.VentasFuncPrepararDeposito(Moneda, Usuario, Fecha, Numero, Empresa, Banco, Cuenta, Concepto, Referencia, Recibos);
         }
 
         public void VentasMetAnularRecibo(int Pago, DateTime Fecha, int Usuario, string Motivo)
@@ -102,19 +102,19 @@ namespace CapaControlador_MovimientosClientes
             return VentasValidaciones.ClsValidacionesVentas.VentasFuncImporteCelda(Valor);
         }
 
-        public DataRow VentasMetLeerDocumento(int Id, string Clase)
+        public DataRow VentasFuncLeerDocumento(int Id, string Clase)
         {
-            return _Servicio.VentasMetLeerDocumento(Id, Clase);
+            return _Servicio.VentasFuncLeerDocumento(Id, Clase);
         }
 
-        public DataSet VentasMetLeerRecibo(int Id)
+        public DataSet VentasFuncLeerRecibo(int Id)
         {
-            return _Servicio.VentasMetLeerRecibo(Id);
+            return _Servicio.VentasFuncLeerRecibo(Id);
         }
 
-        public DataRow VentasMetLeerMovimiento(int Id)
+        public DataRow VentasFuncLeerMovimiento(int Id)
         {
-            return _Servicio.VentasMetLeerMovimiento(Id);
+            return _Servicio.VentasFuncLeerMovimiento(Id);
         }
     }
 }

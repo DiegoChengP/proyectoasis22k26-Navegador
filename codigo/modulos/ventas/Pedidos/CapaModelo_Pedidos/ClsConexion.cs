@@ -1,4 +1,4 @@
-using System.Data.Odbc;
+﻿using System.Data.Odbc;
 
 namespace CapaModelo_Pedidos
 {
@@ -11,7 +11,7 @@ namespace CapaModelo_Pedidos
             _ConnectionString = CapaModelo_Ventas.ClsConexion.CadenaConexion;
         }
 
-        protected OdbcConnection VentasMetObtenerConexion()
+        protected OdbcConnection VentasFuncObtenerConexion()
         {
             return new OdbcConnection(_ConnectionString);
         }

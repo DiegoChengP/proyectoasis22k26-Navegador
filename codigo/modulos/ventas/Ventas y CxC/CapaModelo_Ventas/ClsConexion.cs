@@ -25,12 +25,12 @@ namespace CapaModelo_Ventas
             _ConnectionString = CadenaConexion;
         }
 
-        protected OdbcConnection SeguridadMetObtenerConexion()
+        protected OdbcConnection VentasFuncObtenerConexion()
         {
             return new OdbcConnection(_ConnectionString);
         }
 
-        public void SeguridadMetDesconexion(OdbcConnection ConexionOdbc)
+        public void VentasMetDesconectar(OdbcConnection ConexionOdbc)
         {
             try
             {

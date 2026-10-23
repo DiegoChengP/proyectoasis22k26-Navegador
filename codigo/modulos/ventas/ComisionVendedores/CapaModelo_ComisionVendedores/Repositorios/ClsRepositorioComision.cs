@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
@@ -9,7 +9,7 @@ namespace CapaModelo_ComisionVendedores.Repositorios
 {
     public class ClsRepositorioComision : ClsSentencias, IRepositorioComision
     {
-        public List<ClsFacturaComision> ComisionVendedoresMetObtenerFacturas()
+        public List<ClsFacturaComision> VentasFuncObtenerFacturas()
         {
             string Comando = @"SELECT f.id, f.fecha, c.nombre AS cliente, f.total,
                 COALESCE(SUM(CASE WHEN UPPER(mc.tipo) IN ('PAGO', 'ABONO') THEN mc.monto ELSE 0 END), 0) AS total_pagado,
@@ -17,23 +17,23 @@ namespace CapaModelo_ComisionVendedores.Repositorios
                 FROM Facturas f INNER JOIN Clientes c ON c.id = f.id_cliente
                 LEFT JOIN MovimientosCliente mc ON mc.id_factura = f.id
                 GROUP BY f.id, f.fecha, c.nombre, f.total ORDER BY f.fecha DESC, f.id DESC";
-            DataTable Datos = ComisionVendedoresMetEjecucionConsulta(Comando, new List<OdbcParameter>());
+            DataTable Datos = VentasFuncEjecucionConsulta(Comando, new List<OdbcParameter>());
             List<ClsFacturaComision> Resultado = new List<ClsFacturaComision>();
             foreach (DataRow Fila in Datos.Rows)
                 Resultado.Add(new ClsFacturaComision { IdFactura = Convert.ToInt32(Fila["id"]), Fecha = Convert.ToDateTime(Fila["fecha"]), Cliente = Convert.ToString(Fila["cliente"]), Total = Convert.ToDecimal(Fila["total"]), TotalPagado = Convert.ToDecimal(Fila["total_pagado"]), UltimoAbono = Convert.ToDecimal(Fila["ultimo_abono"]) });
             return Resultado;
         }
 
-        public List<ClsVendedorComision> ComisionVendedoresMetObtenerVendedores()
+        public List<ClsVendedorComision> VentasFuncObtenerVendedores()
         {
-            DataTable Datos = ComisionVendedoresMetEjecucionConsulta("SELECT id, nombre, porcentaje FROM Vendedores ORDER BY nombre", new List<OdbcParameter>());
+            DataTable Datos = VentasFuncEjecucionConsulta("SELECT id, nombre, porcentaje FROM Vendedores ORDER BY nombre", new List<OdbcParameter>());
             List<ClsVendedorComision> Resultado = new List<ClsVendedorComision>();
             foreach (DataRow Fila in Datos.Rows)
                 Resultado.Add(new ClsVendedorComision { IdVendedor = Convert.ToInt32(Fila["id"]), NombreVendedor = Convert.ToString(Fila["nombre"]), Porcentaje = Convert.ToDecimal(Fila["porcentaje"]) });
             return Resultado;
         }
 
-        public ClsFacturaComision ComisionVendedoresMetObtenerFactura(int IdFactura)
+        public ClsFacturaComision VentasFuncObtenerFactura(int IdFactura)
         {
             string Comando = @"SELECT f.id, f.fecha, c.nombre AS cliente, f.total,
                 COALESCE(SUM(CASE WHEN UPPER(mc.tipo) IN ('PAGO', 'ABONO') THEN mc.monto ELSE 0 END), 0) AS total_pagado,
@@ -41,29 +41,29 @@ namespace CapaModelo_ComisionVendedores.Repositorios
                 FROM Facturas f INNER JOIN Clientes c ON c.id = f.id_cliente
                 LEFT JOIN MovimientosCliente mc ON mc.id_factura = f.id
                 WHERE f.id = ? GROUP BY f.id, f.fecha, c.nombre, f.total";
-            DataTable Datos = ComisionVendedoresMetEjecucionConsulta(Comando,
+            DataTable Datos = VentasFuncEjecucionConsulta(Comando,
                 new List<OdbcParameter> { new OdbcParameter("IdFactura", OdbcType.Int) { Value = IdFactura } });
             if (Datos.Rows.Count == 0) return null;
             DataRow Fila = Datos.Rows[0];
             return new ClsFacturaComision { IdFactura = Convert.ToInt32(Fila["id"]), Fecha = Convert.ToDateTime(Fila["fecha"]), Cliente = Convert.ToString(Fila["cliente"]), Total = Convert.ToDecimal(Fila["total"]), TotalPagado = Convert.ToDecimal(Fila["total_pagado"]), UltimoAbono = Convert.ToDecimal(Fila["ultimo_abono"]) };
         }
 
-        public ClsVendedorComision ComisionVendedoresMetObtenerVendedor(int IdVendedor)
+        public ClsVendedorComision VentasFuncObtenerVendedor(int IdVendedor)
         {
-            DataTable Datos = ComisionVendedoresMetEjecucionConsulta("SELECT id, nombre, porcentaje FROM Vendedores WHERE id = ?",
+            DataTable Datos = VentasFuncEjecucionConsulta("SELECT id, nombre, porcentaje FROM Vendedores WHERE id = ?",
                 new List<OdbcParameter> { new OdbcParameter("IdVendedor", OdbcType.Int) { Value = IdVendedor } });
             if (Datos.Rows.Count == 0) return null;
             DataRow Fila = Datos.Rows[0];
             return new ClsVendedorComision { IdVendedor = Convert.ToInt32(Fila["id"]), NombreVendedor = Convert.ToString(Fila["nombre"]), Porcentaje = Convert.ToDecimal(Fila["porcentaje"]) };
         }
 
-        public List<ClsDetalleProductoComision> ComisionVendedoresMetObtenerDetallesFactura(int IdFactura)
+        public List<ClsDetalleProductoComision> VentasFuncObtenerDetallesFactura(int IdFactura)
         {
             string Comando = @"SELECT p.id AS id_producto, p.nombre, p.marca, p.linea, p.categoria,
                 df.cantidad, df.precio_unitario, p.porcentaje
                 FROM DetalleFactura df INNER JOIN Productos p ON p.id = df.id_producto
                 WHERE df.id_factura = ? ORDER BY p.nombre";
-            DataTable Datos = ComisionVendedoresMetEjecucionConsulta(Comando,
+            DataTable Datos = VentasFuncEjecucionConsulta(Comando,
                 new List<OdbcParameter> { new OdbcParameter("IdFactura", OdbcType.Int) { Value = IdFactura } });
             List<ClsDetalleProductoComision> Resultado = new List<ClsDetalleProductoComision>();
             foreach (DataRow Fila in Datos.Rows)
@@ -71,7 +71,7 @@ namespace CapaModelo_ComisionVendedores.Repositorios
             return Resultado;
         }
 
-        public List<ClsVentaVendedorBase> ComisionVendedoresMetObtenerVentasPorMetodo(
+        public List<ClsVentaVendedorBase> VentasFuncObtenerVentasPorMetodo(
             string Metodo, DateTime FechaInicio, DateTime FechaFinExclusiva)
         {
             string Campo = "";
@@ -108,7 +108,7 @@ namespace CapaModelo_ComisionVendedores.Repositorios
                 new OdbcParameter("FechaFin", OdbcType.DateTime) { Value = FechaFinExclusiva }
             };
 
-            DataTable TablaDatos = ComisionVendedoresMetEjecucionConsulta(ComandoTexto, Parametros);
+            DataTable TablaDatos = VentasFuncEjecucionConsulta(ComandoTexto, Parametros);
             List<ClsVentaVendedorBase> Resultados = new List<ClsVentaVendedorBase>();
 
             foreach (DataRow Fila in TablaDatos.Rows)
@@ -126,24 +126,24 @@ namespace CapaModelo_ComisionVendedores.Repositorios
             return Resultados;
         }
 
-        public List<ClsProductoComision> ComisionVendedoresMetConsultarPorcentajes()
+        public List<ClsProductoComision> VentasFuncConsultarPorcentajes()
         {
             string Comando = "SELECT id, nombre, marca, linea, categoria, porcentaje FROM Productos ORDER BY nombre";
-            DataTable Datos = ComisionVendedoresMetEjecucionConsulta(Comando, new List<OdbcParameter>());
+            DataTable Datos = VentasFuncEjecucionConsulta(Comando, new List<OdbcParameter>());
             List<ClsProductoComision> Lista = new List<ClsProductoComision>();
             foreach (DataRow Fila in Datos.Rows)
                 Lista.Add(new ClsProductoComision { IdProducto = Convert.ToInt32(Fila["id"]), NombreProducto = Convert.ToString(Fila["nombre"]), Marca = Convert.ToString(Fila["marca"]), Linea = Convert.ToString(Fila["linea"]), Categoria = Convert.ToString(Fila["categoria"]), Porcentaje = Convert.ToDecimal(Fila["porcentaje"]) });
             return Lista;
         }
 
-        public int ComisionVendedoresMetActualizarPorcentaje(List<int> IdsProducto, decimal Porcentaje)
+        public int VentasFuncActualizarPorcentaje(List<int> IdsProducto, decimal Porcentaje)
         {
             if (IdsProducto == null || IdsProducto.Count == 0)
                 return 0;
 
             string Marcadores = string.Join(", ", IdsProducto.ConvertAll(IdProducto => "?"));
             string ComandoTexto = "UPDATE Productos SET porcentaje = ? WHERE id IN (" + Marcadores + ")";
-            using (OdbcConnection Conexion = ComisionVendedoresMetObtenerConexion())
+            using (OdbcConnection Conexion = VentasFuncObtenerConexion())
             {
                 Conexion.Open();
                 using (OdbcCommand Comando = new OdbcCommand(ComandoTexto, Conexion))
@@ -156,7 +156,7 @@ namespace CapaModelo_ComisionVendedores.Repositorios
             }
         }
 
-        public int ComisionVendedoresMetGuardarComisiones(List<ClsComisionCalculada> Comisiones)
+        public int VentasFuncGuardarComisiones(List<ClsComisionCalculada> Comisiones)
         {
             if (Comisiones == null || Comisiones.Count == 0)
                 return 0;
@@ -171,7 +171,7 @@ namespace CapaModelo_ComisionVendedores.Repositorios
                     (id_vendedor, fecha_ini, fecha_fin, metodo, `base`, monto)
                 VALUES (?, ?, ?, ?, ?, ?)";
 
-            using (OdbcConnection ConexionActiva = ComisionVendedoresMetObtenerConexion())
+            using (OdbcConnection ConexionActiva = VentasFuncObtenerConexion())
             {
                 ConexionActiva.Open();
                 using (OdbcTransaction Transaccion = ConexionActiva.BeginTransaction())
@@ -180,17 +180,17 @@ namespace CapaModelo_ComisionVendedores.Repositorios
                     {
                         foreach (ClsComisionCalculada Comision in Comisiones)
                         {
-                            int RegistrosActualizados = ComisionVendedoresMetEjecucionNonQuery(
+                            int RegistrosActualizados = VentasFuncEjecucionNonQuery(
                                 ComandoActualizar,
-                                ComisionVendedoresMetParametrosActualizar(Comision),
+                                VentasFuncParametrosActualizar(Comision),
                                 ConexionActiva,
                                 Transaccion);
 
                             if (RegistrosActualizados == 0)
                             {
-                                ComisionVendedoresMetEjecucionNonQuery(
+                                VentasFuncEjecucionNonQuery(
                                     ComandoInsertar,
-                                    ComisionVendedoresMetParametrosInsertar(Comision),
+                                    VentasFuncParametrosInsertar(Comision),
                                     ConexionActiva,
                                     Transaccion);
                             }
@@ -208,38 +208,38 @@ namespace CapaModelo_ComisionVendedores.Repositorios
             }
         }
 
-        private List<OdbcParameter> ComisionVendedoresMetParametrosActualizar(ClsComisionCalculada Comision)
+        private List<OdbcParameter> VentasFuncParametrosActualizar(ClsComisionCalculada Comision)
         {
             return new List<OdbcParameter>
             {
-                ComisionVendedoresMetParametroMonto(Comision.Monto),
+                VentasFuncParametroMonto(Comision.Monto),
                 new OdbcParameter("IdVendedor", OdbcType.Int) { Value = Comision.IdVendedor },
-                ComisionVendedoresMetParametroFecha("FechaInicio", Comision.FechaInicio),
-                ComisionVendedoresMetParametroFecha("FechaFin", Comision.FechaFin),
+                VentasFuncParametroFecha("FechaInicio", Comision.FechaInicio),
+                VentasFuncParametroFecha("FechaFin", Comision.FechaFin),
                 new OdbcParameter("Metodo", OdbcType.VarChar, 30) { Value = Comision.Metodo },
                 new OdbcParameter("BaseCalculo", OdbcType.VarChar, 20) { Value = Comision.BaseCalculo }
             };
         }
 
-        private List<OdbcParameter> ComisionVendedoresMetParametrosInsertar(ClsComisionCalculada Comision)
+        private List<OdbcParameter> VentasFuncParametrosInsertar(ClsComisionCalculada Comision)
         {
             return new List<OdbcParameter>
             {
                 new OdbcParameter("IdVendedor", OdbcType.Int) { Value = Comision.IdVendedor },
-                ComisionVendedoresMetParametroFecha("FechaInicio", Comision.FechaInicio),
-                ComisionVendedoresMetParametroFecha("FechaFin", Comision.FechaFin),
+                VentasFuncParametroFecha("FechaInicio", Comision.FechaInicio),
+                VentasFuncParametroFecha("FechaFin", Comision.FechaFin),
                 new OdbcParameter("Metodo", OdbcType.VarChar, 30) { Value = Comision.Metodo },
                 new OdbcParameter("BaseCalculo", OdbcType.VarChar, 20) { Value = Comision.BaseCalculo },
-                ComisionVendedoresMetParametroMonto(Comision.Monto)
+                VentasFuncParametroMonto(Comision.Monto)
             };
         }
 
-        private OdbcParameter ComisionVendedoresMetParametroFecha(string Nombre, DateTime Fecha)
+        private OdbcParameter VentasFuncParametroFecha(string Nombre, DateTime Fecha)
         {
             return new OdbcParameter(Nombre, OdbcType.Date) { Value = Fecha.Date };
         }
 
-        private OdbcParameter ComisionVendedoresMetParametroMonto(decimal Monto)
+        private OdbcParameter VentasFuncParametroMonto(decimal Monto)
         {
             return new OdbcParameter("Monto", OdbcType.Decimal) { Precision = 18, Scale = 2, Value = Monto };
         }

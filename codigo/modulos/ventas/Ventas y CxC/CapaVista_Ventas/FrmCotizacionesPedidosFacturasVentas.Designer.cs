@@ -30,7 +30,7 @@ namespace CapaVista_Ventas
             this.label3 = new System.Windows.Forms.Label();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.VentasCboTipoProducto = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
@@ -122,16 +122,16 @@ namespace CapaVista_Ventas
             // 
             // comboBox1
             // 
-            this.comboBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.VentasCboTipoProducto.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.VentasCboTipoProducto.FormattingEnabled = true;
+            this.VentasCboTipoProducto.Items.AddRange(new object[] {
             "Factura",
             "Factura Cambiaria",
             "Factura Especial"});
-            this.comboBox1.Location = new System.Drawing.Point(395, 295);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(268, 28);
-            this.comboBox1.TabIndex = 6;
+            this.VentasCboTipoProducto.Location = new System.Drawing.Point(395, 295);
+            this.VentasCboTipoProducto.Name = VentasCboTipoProducto;
+            this.VentasCboTipoProducto.Size = new System.Drawing.Size(268, 28);
+            this.VentasCboTipoProducto.TabIndex = 6;
             // 
             // label5
             // 
@@ -433,7 +433,7 @@ namespace CapaVista_Ventas
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.VentasCboTipoProducto);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.label3);
@@ -448,7 +448,7 @@ namespace CapaVista_Ventas
             this.Name = "FrmCotizacionesPedidosFacturasVentas";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "7007 – Cotizaciones, pedidos y facturas";
+            this.Text = "7007 – CotizacionesPedidosYFacturas";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
@@ -465,7 +465,7 @@ namespace CapaVista_Ventas
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox VentasCboTipoProducto;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.RadioButton radioButton1;

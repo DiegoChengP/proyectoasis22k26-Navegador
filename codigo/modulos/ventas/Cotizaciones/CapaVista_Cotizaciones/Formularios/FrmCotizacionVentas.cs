@@ -32,7 +32,7 @@ namespace CapaVista_Cotizaciones
             }
         }
 
-        private void VentasCotVigencia_Changed(object sender, EventArgs e)
+        private void VentasMetCotVigenciaChanged(object Origen, EventArgs Evento)
         {
             if (_Presentador != null)
                 _Presentador.VentasMetMostrarVigencia();
