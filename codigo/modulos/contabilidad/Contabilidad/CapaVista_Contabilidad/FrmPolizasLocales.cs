@@ -6,28 +6,24 @@
  * Propósito: prototipo no funcional de pólizas locales de Embutidos de Calidad,
  * basado en tblCuenta, tblPolizaEncabezado y tblPolizaDetalle de dbContabilidad.
  */
-using CapaControlador_Contabilidad;
-using CapaControlador_Contabilidad.Modelos;
-using CapaVista_Contabilidad.Componentes;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using CapaControlador_Contabilidad;
+using CapaVista_Contabilidad.Componentes;
 
 namespace CapaVista_Contabilidad
 {
     // Ventana de pólizas locales.
     public partial class FrmPolizasLocales : Form
     {
+        // Módulo ERP desde el que se abre la ventana: filtra las cuentas del combo.
+        private readonly int _IdModulo;
         // Permisos del usuario en esta pantalla.
         private ClsPermisosPantallaContabilidad _Permisos;
-        // Oskar Cermeño:
-        // Atributo por modulo ERP
-        private readonly int _idModulo;
-
         // Controlador de pólizas.
         private readonly ClsControladorPolizasContabilidad _Controlador = new ClsControladorPolizasContabilidad();
         // Líneas del detalle.
@@ -42,17 +38,21 @@ namespace CapaVista_Contabilidad
         {
         }
 
-        // Abre la ventana para un módulo ERP con los permisos que dio Seguridad.
-        public FrmPolizasLocales(ClsPermisosPantallaContabilidad Permisos, int idModulo)
+        // Abre la ventana del módulo Contabilidad con los permisos que dio Seguridad.
+        public FrmPolizasLocales(ClsPermisosPantallaContabilidad Permisos) : this(Permisos, 1)
         {
+        }
+
+        // Abre la ventana para un módulo ERP con los permisos que dio Seguridad.
+        public FrmPolizasLocales(ClsPermisosPantallaContabilidad Permisos, int IdModulo)
+        {
+            _IdModulo = IdModulo;
             InitializeComponent();
-            _idModulo = idModulo;
             _Permisos = Permisos;
             ContabilidadMetAplicarPermisos(Permisos);
             ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Pólizas locales", new Size(1180, 688));
-            ContabilidadLblTitulo.Text = "Póliza " + ContabilidadFuncNombreModulo(_idModulo);
+            ContabilidadLblTitulo.Text = "Póliza " + _Controlador.ContabilidadFuncObtenerNombreModulo(_IdModulo);
             foreach (Control Campo in new Control[] { ContabilidadTxtDescripcion, ContabilidadDtpFecha, ContabilidadCboEstado, ContabilidadCboOrigen, ContabilidadCboCuenta })
-
                 _Validacion.ContabilidadMetObligatorio(Campo);
             Disposed += (Remitente, Argumentos) => _Validacion.Dispose();
             ContabilidadColDebe.DefaultCellStyle.FormatProvider = _Cultura;
@@ -73,21 +73,6 @@ namespace CapaVista_Contabilidad
             ContabilidadDgvDetalle.SizeChanged += ContabilidadMetAlinearTotales;
             _Lineas.ListChanged += ContabilidadMetCambiarDetalle;
             ContabilidadMetNueva(this, EventArgs.Empty);
-
-        }
-
-        // Nombre del módulo ERP según su id.
-        private static string ContabilidadFuncNombreModulo(int idModulo)
-        {
-            switch (idModulo)
-            {
-                case 1: return "Logística";
-                case 2: return "Ventas";
-                case 3: return "Compras";
-                case 4: return "Recursos Humanos";
-                case 5: return "Bancos";
-                default: return "Encabezado";
-            }
         }
 
         // Deshabilita los botones que el usuario no puede usar.
@@ -103,51 +88,50 @@ namespace CapaVista_Contabilidad
         // Llena cuentas, estados y orígenes.
         private void ContabilidadMetCargarCatalogos()
         {
-            ContabilidadCboCuenta.DisplayMember = "Nombre";
+            ContabilidadCboCuenta.DisplayMember = "Descripcion";
             ContabilidadCboCuenta.ValueMember = "IdCuenta";
-            var controladorCuentas = new ClsModeloCuentaContabilidad();
-            ContabilidadCboCuenta.DataSource = controladorCuentas.ContabilidadFuncObtenerTodos(_idModulo);
-            // ContabilidadCboCuenta.DataSource = _Controlador.ContabilidadFuncObtenerCuentas(_idModulo);
+            try
+            {
+                ContabilidadCboCuenta.DataSource = _Controlador.ContabilidadFuncObtenerCuentas(_IdModulo);
+            }
+            catch (Exception Excepcion)
+            {
+                // Sin base de datos el combo queda vacío.
+                ClsDialogosContabilidad.ContabilidadMetError(this, "No se pudieron cargar las cuentas: " + Excepcion.Message);
+            }
             ContabilidadCboEstado.DataSource = _Controlador.ContabilidadFuncObtenerEstados();
             ContabilidadCboOrigen.DataSource = _Controlador.ContabilidadFuncObtenerOrigenes();
         }
 
+        // Muestra el período de la fecha.
         private void ContabilidadMetActualizarPeriodo(object Remitente, EventArgs Argumentos)
         {
             ContabilidadTxtPeriodo.Text = _Controlador.ContabilidadFuncObtenerPeriodo(ContabilidadDtpFecha.Value);
         }
 
+        // Agrega la cuenta elegida al detalle.
         private void ContabilidadMetAgregarCuenta(object Remitente, EventArgs Argumentos)
         {
             ContabilidadDgvDetalle.EndEdit();
             string Nombre = ContabilidadCboCuenta.Text.Trim();
-
-            ClsModeloCuentaContabilidad Cuenta = ContabilidadCboCuenta.Items
-                .Cast<ClsModeloCuentaContabilidad>()
-                .FirstOrDefault(Elemento => string.Equals(Elemento.Nombre, Nombre, StringComparison.CurrentCultureIgnoreCase));
-
+            ClsCuentaPolizaContabilidad Cuenta = ContabilidadCboCuenta.Items.Cast<ClsCuentaPolizaContabilidad>().FirstOrDefault(Elemento =>
+                string.Equals(Elemento.Descripcion, Nombre, StringComparison.CurrentCultureIgnoreCase));
             if (Cuenta == null)
             {
                 _Validacion.ContabilidadFuncValidar(ContabilidadCboCuenta, "Seleccione una cuenta válida del catálogo.");
                 ContabilidadCboCuenta.Focus();
                 return;
             }
-
             int IdCuenta = Cuenta.IdCuenta;
             if (_Lineas.Any(Linea => Linea.IdCuenta == IdCuenta))
             {
                 _Validacion.ContabilidadFuncValidar(ContabilidadCboCuenta, "La cuenta ya está agregada al detalle.");
                 return;
             }
-
             _Lineas.Add(new ClsLineaPolizaContabilidad
             {
-                IdCuenta = IdCuenta,
-                Cuenta = Cuenta.Nombre,
-                Debe = 0m,
-                Haber = 0m
+                IdCuenta = IdCuenta, Cuenta = Cuenta.Descripcion, Debe = 0m, Haber = 0m
             });
-
             int Indice = _Lineas.Count - 1;
             ContabilidadDgvDetalle.CurrentCell = ContabilidadDgvDetalle.Rows[Indice].Cells[ContabilidadColDebe.Index];
             ContabilidadDgvDetalle.Focus();

@@ -1,21 +1,36 @@
-﻿using CapaModelo_Contabilidad.Entidades;
-using System;
+﻿/*
+ * ==================================================================
+ * Área : Contabilidad
+ * Autor : Gabriel André Guillén Pocón
+ * Carné : 0901-23-1998
+ * Fecha : 21/10/2026
+ * ==================================================================
+ * Propósito :
+ *  Contrato del repositorio de cuentas contables. Es de solo lectura:
+ *  el mantenimiento de cuentas lo hace el control Navegador.
+ * Reglas especificas:
+ *  Contrato creado por Oskar Cermeño; se quitaron las operaciones de
+ *  escritura y se agregó la consulta de cuentas imputables.
+ * ===================================================================
+*/
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CapaModelo_Contabilidad.Entidades;
 
 namespace CapaModelo_Contabilidad.Contratos
 {
     public interface IRepositorioCuentasContabilidad
     {
-
-        int ContabilidadFuncAgregar(ClsCuentaContabilidad entidad);
-        int ContabilidadFuncAgregar(ClsCuentaContabilidad entidad, int idModulo, int idPais);
-        int ContabilidadFuncEditar(ClsCuentaContabilidad entidad);
-        int ContabilidadFuncEliminar(ClsCuentaContabilidad entidad);
-        IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerPadres (ClsCuentaContabilidad entidad);
+        // Todas las cuentas del catálogo.
         IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerTodos();
-        IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerTodos(int idModulo);
+
+        // Cuentas asignadas a un módulo ERP.
+        IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerTodos(int IdModulo);
+
+        // Cuentas de un módulo que se pueden usar en una póliza (activas y de último nivel).
+        IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerImputables(int IdModulo);
+
+        // La cuenta y todos sus ancestros hasta la raíz.
+        IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerPadres(ClsCuentaContabilidad Entidad);
     }
 }

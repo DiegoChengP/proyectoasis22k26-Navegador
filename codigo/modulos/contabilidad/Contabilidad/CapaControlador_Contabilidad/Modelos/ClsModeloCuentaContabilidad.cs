@@ -1,144 +1,103 @@
-﻿using System;
+﻿/*
+ * ==================================================================
+ * Área : Contabilidad
+ * Autor : Gabriel André Guillén Pocón
+ * Carné : 0901-23-1998
+ * Fecha : 21/10/2026
+ * ==================================================================
+ * Propósito :
+ *  Modelo de una cuenta contable para la Vista: sus datos y las
+ *  consultas por módulo ERP, de cuentas imputables, de ancestros y
+ *  la búsqueda por texto.
+ * Reglas especificas:
+ *  Clase creada por Oskar Cermeño. Quedó de solo lectura porque el
+ *  mantenimiento de cuentas lo hace el control Navegador; el filtro de
+ *  cuentas por módulo se conserva para las pólizas.
+ * ===================================================================
+*/
+
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using CapaModelo_Contabilidad.Contratos;
 using CapaModelo_Contabilidad.Entidades;
 using CapaModelo_Contabilidad.Repositorios;
 
-namespace CapaControlador_Contabilidad.Modelos
+namespace CapaControlador_Contabilidad
 {
     public class ClsModeloCuentaContabilidad
     {
-        private int _idCuenta;
-        private string _nombre;
-        private string _tipo;
-        private int _idPadre;
-        private int _estado;
-        private int _idModulo; 
+        // Repositorio de cuentas (consulta a la base).
+        private readonly IRepositorioCuentasContabilidad _Repositorio;
+        // Última lista consultada, para la búsqueda.
+        private List<ClsModeloCuentaContabilidad> _ListaCuentas;
 
-        private IRepositorioCuentasContabilidad _repositorioCuentas;
-        private List<ClsModeloCuentaContabilidad> _listaCuentas;
+        // Llave de la cuenta.
+        public int IdCuenta { get; set; }
+        // Código de la cuenta.
+        public string Codigo { get; set; }
+        // Nombre de la cuenta.
+        public string Nombre { get; set; }
+        // Naturaleza: DEUDORA o ACREEDORA.
+        public string Tipo { get; set; }
+        // Cuenta padre; 0 si es raíz.
+        public int IdPadre { get; set; }
+        // Indica si está activa.
+        public bool Activo { get; set; }
+        // Código y nombre juntos, para mostrar en los combos.
+        public string Descripcion { get { return Codigo + " - " + Nombre; } }
 
-        public EstadoEntidadContabilidad EstadoOperacion { private get; set; }
-
-        public int IdCuenta { get => _idCuenta; set => _idCuenta = value; }
-
-        [Required(ErrorMessage = "El nombre de la cuenta es requerido.")]
-        [StringLength(maximumLength: 150, MinimumLength = 3, ErrorMessage = "El nombre debe tener entre 3 y 150 caracteres.")]
-        [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\.\-\(\)]+$", ErrorMessage = "El nombre contiene caracteres no válidos.")]
-        public string Nombre { get => _nombre; set => _nombre = value; }
-
-        [Required(ErrorMessage = "El tipo de cuenta es requerido.")]
-        [StringLength(maximumLength: 20, MinimumLength = 3, ErrorMessage = "El tipo de cuenta no puede exceder los 20 caracteres.")]
-        public string Tipo { get => _tipo; set => _tipo = value; }
-
-        public int IdPadre { get => _idPadre; set => _idPadre = value; }
-
-        [Range(0, 1, ErrorMessage = "El estado debe ser 0 (Inactivo) o 1 (Activo).")]
-        public int Estado { get => _estado; set => _estado = value; }
-
-        public int IdModulo { get => _idModulo; set => _idModulo = value; }
-
+        // Usa el repositorio de la base de datos.
         public ClsModeloCuentaContabilidad()
         {
-            _repositorioCuentas = new ClsRepositorioCuentasContabilidad();
+            _Repositorio = new ClsRepositorioCuentasContabilidad();
         }
 
-        public string ContabilidadFuncGrabarCambios()
-        {
-            try
-            {
-                if (EstadoOperacion == EstadoEntidadContabilidad.Agregar || EstadoOperacion == EstadoEntidadContabilidad.Modificar)
-                {
-                    string errorValidacion = ClsValidacionDatosContabilidad.ContabilidadFuncPrimerError(this);
-                    if (!string.IsNullOrEmpty(errorValidacion))
-                    {
-                        return errorValidacion;
-                    }
-                }
-                var entidadCuenta = new ClsCuentaContabilidad
-                {
-                    IdCuenta = _idCuenta,
-                    Nombre = _nombre,
-                    Tipo = _tipo,
-                    IdPadre = _idPadre,
-                    Estado = _estado
-                };
-
-                switch (EstadoOperacion)
-                {
-                    case EstadoEntidadContabilidad.Agregar:
-                        if (_idModulo > 0)
-                            _repositorioCuentas.ContabilidadFuncAgregar(entidadCuenta, _idModulo, 1);
-                        else
-                            _repositorioCuentas.ContabilidadFuncAgregar(entidadCuenta);
-                        return "Grabacion exitosa";
-
-                    case EstadoEntidadContabilidad.Modificar:
-                        _repositorioCuentas.ContabilidadFuncEditar(entidadCuenta);
-                        return "Actualizacion exitosa";
-
-                    case EstadoEntidadContabilidad.Borrar:
-                        _repositorioCuentas.ContabilidadFuncEliminar(entidadCuenta);
-                        return "Eliminacion exitosa";
-                }
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-            return string.Empty;
-        }
-
+        // Todas las cuentas del catálogo.
         public List<ClsModeloCuentaContabilidad> ContabilidadFuncObtenerTodos()
         {
-            var datosCuentas = _repositorioCuentas.ContabilidadFuncObtenerTodos();
-            _listaCuentas = new List<ClsModeloCuentaContabilidad>();
-
-            foreach (ClsCuentaContabilidad item in datosCuentas)
-            {
-                _listaCuentas.Add(new ClsModeloCuentaContabilidad
-                {
-                    _idCuenta = item.IdCuenta,
-                    _nombre = item.Nombre,
-                    _tipo = item.Tipo,
-                    _idPadre = item.IdPadre,
-                    _estado = item.Estado
-                });
-            }
-            return _listaCuentas;
+            _ListaCuentas = ContabilidadFuncConvertir(_Repositorio.ContabilidadFuncObtenerTodos());
+            return _ListaCuentas;
         }
 
-        public List<ClsModeloCuentaContabilidad> ContabilidadFuncObtenerTodos(int idModulo)
+        // Cuentas asignadas a un módulo ERP.
+        public List<ClsModeloCuentaContabilidad> ContabilidadFuncObtenerTodos(int IdModulo)
         {
-            var datosCuentas = _repositorioCuentas.ContabilidadFuncObtenerTodos(idModulo);
-            _listaCuentas = new List<ClsModeloCuentaContabilidad>();
-
-            foreach (ClsCuentaContabilidad item in datosCuentas)
-            {
-                _listaCuentas.Add(new ClsModeloCuentaContabilidad
-                {
-                    _idCuenta = item.IdCuenta,
-                    _nombre = item.Nombre,
-                    _tipo = item.Tipo,
-                    _idPadre = item.IdPadre,
-                    _estado = item.Estado
-                });
-            }
-            return _listaCuentas;
+            _ListaCuentas = ContabilidadFuncConvertir(_Repositorio.ContabilidadFuncObtenerTodos(IdModulo));
+            return _ListaCuentas;
         }
 
-        public IEnumerable<ClsModeloCuentaContabilidad> ContabilidadFuncBuscar(string filtro)
+        // Cuentas del módulo que se pueden usar en una póliza.
+        public List<ClsModeloCuentaContabilidad> ContabilidadFuncObtenerImputables(int IdModulo)
         {
-            if (_listaCuentas == null)
-            {
-                ContabilidadFuncObtenerTodos();
-            }
+            _ListaCuentas = ContabilidadFuncConvertir(_Repositorio.ContabilidadFuncObtenerImputables(IdModulo));
+            return _ListaCuentas;
+        }
 
-            return _listaCuentas.FindAll(c =>
-                c.IdCuenta.ToString().Contains(filtro) ||
-                c.Nombre.IndexOf(filtro, StringComparison.OrdinalIgnoreCase) >= 0 ||
-                c.Tipo.IndexOf(filtro, StringComparison.OrdinalIgnoreCase) >= 0);
+        // La cuenta y sus ancestros hasta la raíz.
+        public List<ClsModeloCuentaContabilidad> ContabilidadFuncObtenerPadres()
+        {
+            return ContabilidadFuncConvertir(_Repositorio.ContabilidadFuncObtenerPadres(new ClsCuentaContabilidad { IdCuenta = IdCuenta }));
+        }
+
+        // Busca por código, nombre o naturaleza dentro de la última lista consultada.
+        public IEnumerable<ClsModeloCuentaContabilidad> ContabilidadFuncBuscar(string Filtro)
+        {
+            if (_ListaCuentas == null) ContabilidadFuncObtenerTodos();
+            return _ListaCuentas.FindAll(Cuenta =>
+                Cuenta.Codigo.IndexOf(Filtro, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                Cuenta.Nombre.IndexOf(Filtro, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                Cuenta.Tipo.IndexOf(Filtro, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
+        // Pasa de entidades del Modelo a modelos del Controlador.
+        private static List<ClsModeloCuentaContabilidad> ContabilidadFuncConvertir(IEnumerable<ClsCuentaContabilidad> Entidades)
+        {
+            return Entidades.Select(Entidad => new ClsModeloCuentaContabilidad
+            {
+                IdCuenta = Entidad.IdCuenta, Codigo = Entidad.Codigo, Nombre = Entidad.Nombre,
+                Tipo = Entidad.Tipo, IdPadre = Entidad.IdPadre, Activo = Entidad.Activo
+            }).ToList();
         }
     }
 }

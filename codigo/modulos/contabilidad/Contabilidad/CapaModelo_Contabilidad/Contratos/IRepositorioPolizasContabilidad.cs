@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ==================================================================
  * Área : Contabilidad
  * Autor : Gabriel André Guillén Pocón
@@ -26,5 +26,8 @@ namespace CapaModelo_Contabilidad.Contratos
 
         // Orígenes posibles de una póliza.
         string[] ContabilidadFuncObtenerOrigenes();
+
+        // Nombre de un módulo ERP según el catálogo (vacío si no existe).
+        string ContabilidadFuncObtenerNombreModulo(int IdModulo);
     }
 }

@@ -1,35 +1,43 @@
+﻿/*
+ * ==================================================================
+ * Área : Contabilidad
+ * Autor : Gabriel André Guillén Pocón
+ * Carné : 0901-23-1998
+ * Fecha : 21/10/2026
+ * ==================================================================
+ * Propósito :
+ *  Entidad del encabezado de la póliza (tblPolizaEncabezado) con su
+ *  lista de líneas de detalle.
+ * Reglas especificas:
+ *  Los campos CodigoPoliza y PeriodoContable los agregó Oskar
+ *  Cermeño. El código lo genera la base con fnGenerarCodigoPoliza.
+ * ===================================================================
+*/
+
 using System;
 using System.Collections.Generic;
-
-
-// Oskar Cermeño
 
 namespace CapaModelo_Contabilidad.Entidades
 {
     public class ClsPolizaContabilidad
     {
-        // id_poliza INT AUTO_INCREMENT PRIMARY KEY
+        // Número de la póliza (Pk_PolizaEncabezado).
         public int IdPoliza { get; set; }
-
-        // codigo_poliza VARCHAR(40) NOT NULL
+        // Correlativo POL-AAAA-MM-#### (lo genera la base).
         public string CodigoPoliza { get; set; }
-
-        // fecha DATE NOT NULL
+        // Fecha de la póliza.
         public DateTime Fecha { get; set; }
-
-        // estado ENUM('BORRADOR','APLICADA','ANULADA') NOT NULL DEFAULT 'BORRADOR'
-        public string Estado { get; set; } = "BORRADOR";
-
-        // periodo_contable CHAR(7) NOT NULL (Formato 'YYYY-MM')
+        // Período con formato yyyy-MM.
         public string PeriodoContable { get; set; }
-
-        // origen VARCHAR(50) NOT NULL DEFAULT 'MANUAL' (MANUAL, ACTIVOS_FIJOS, PRESUPUESTO, etc.)
+        // BORRADOR, APLICADA o ANULADA.
+        public string Estado { get; set; } = "BORRADOR";
+        // MANUAL, BANCOS, ACTIVOS_FIJOS, PRESUPUESTO, NOMINA, VENTAS o COMPRAS.
         public string Origen { get; set; } = "MANUAL";
-
-        // descripcion VARCHAR(255) NULL
+        // Documento del módulo origen (evita traslados duplicados); vacío si es manual.
+        public string DocumentoOrigen { get; set; }
+        // Descripción libre.
         public string Descripcion { get; set; }
-
-        // Líneas del detalle asociadas a la póliza
+        // Líneas del detalle.
         public List<ClsPolizaDetalleContabilidad> Detalle { get; set; } = new List<ClsPolizaDetalleContabilidad>();
     }
 }

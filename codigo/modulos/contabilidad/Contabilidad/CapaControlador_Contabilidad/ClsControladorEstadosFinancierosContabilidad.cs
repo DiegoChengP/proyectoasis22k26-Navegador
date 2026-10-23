@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ==================================================================
  * Área : Contabilidad
  * Autor : Gabriel André Guillén Pocón
@@ -26,7 +26,7 @@ namespace CapaControlador_Contabilidad
 {
     public class ClsControladorEstadosFinancierosContabilidad
     {
-        // Repositorio de pólizas (hoy en memoria).
+        // Repositorio de pólizas (base de datos).
         private readonly IRepositorioPolizasContabilidad _Repositorio = new ClsRepositorioPolizasContabilidad();
 
         // Error del rango de fechas, vacío si es correcto.

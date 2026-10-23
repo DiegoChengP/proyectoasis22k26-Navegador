@@ -35,7 +35,8 @@ namespace CapaVista_Contabilidad
         // Las coordenadas y tamaños son Int32 porque la API de WinForms los exige.
         // Las proporciones se calculan en Double; no hay cálculos monetarios en la Vista.
 
-        private readonly int _idModulo;
+        // Módulo ERP dueño de las pólizas: filtra las cuentas que se pueden usar (1 = Contabilidad).
+        private readonly int _IdModulo;
         private const int _AnchoMenuExpandido = 270;
         private const int _AnchoMenuContraido = 64;
         private const int _MargenMenu = 32;      // 16 px a cada lado del panel del menú
@@ -53,14 +54,15 @@ namespace CapaVista_Contabilidad
         // Botón de cada código de ventana.
         private readonly Dictionary<int, Button> _BotonesMenu;
 
-        // Constructor sin parámetro: lo usa Seguridad al abrir el MDI.
+        // Constructor sin parámetro: lo usa Seguridad al abrir el MDI y el diseñador.
         public FrmMDIContabilidad() : this(1)
         {
         }
 
-        // Prepara el menú, los paneles y los eventos.
-        public FrmMDIContabilidad(int idModulo)
+        // Prepara el menú, los paneles y los eventos para un módulo ERP.
+        public FrmMDIContabilidad(int IdModulo)
         {
+            _IdModulo = IdModulo;
             InitializeComponent();
             ClsPresentacionContabilidad.ContabilidadMetAplicarTipografia(this);
             _BotonesMenu = new Dictionary<int, Button>
@@ -89,7 +91,6 @@ namespace CapaVista_Contabilidad
             ContabilidadMetConfigurarEstadosMenu();
             ContabilidadPnlDashboard.Resize += (Remitente, Evento) => ContabilidadMetAcomodarDashboard();
             ContabilidadPnlInfo.Resize += (Remitente, Evento) => ContabilidadMetAcomodarInfo();
-            _idModulo = idModulo;
         }
 
         // Carga la seguridad y acomoda el dashboard.
@@ -289,7 +290,7 @@ namespace CapaVista_Contabilidad
         // Abre Pólizas locales.
         private void ContabilidadMetAbrirPolizasLocales(object Remitente, EventArgs Evento)
         {
-            ContabilidadMetAbrirPantalla(10001, (Button)Remitente, Permisos => new FrmPolizasLocales(Permisos, _idModulo));
+            ContabilidadMetAbrirPantalla(10001, (Button)Remitente, Permisos => new FrmPolizasLocales(Permisos, _IdModulo));
         }
 
         // Abre Presupuestos.

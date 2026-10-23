@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Área: Contabilidad
  * Autor: Gabriel André Guillén Pocón
  * Carné: 0901-23-1998
@@ -28,6 +28,8 @@ namespace CapaVista_Contabilidad
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyleDebe = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyleHaber = new System.Windows.Forms.DataGridViewCellStyle();
             this.ContabilidadPnlEncabezado = new CapaVista_Contabilidad.Componentes.ClsPanelRedondeadoContabilidad();
             this.ContabilidadLblTitulo = new System.Windows.Forms.Label();
             this.ContabilidadLblFecha = new System.Windows.Forms.Label();
@@ -262,6 +264,7 @@ namespace CapaVista_Contabilidad
             this.ContabilidadDgvDetalle.AllowUserToDeleteRows = false;
             this.ContabilidadDgvDetalle.AllowUserToResizeColumns = false;
             this.ContabilidadDgvDetalle.AllowUserToResizeRows = false;
+            this.ContabilidadDgvDetalle.AutoGenerateColumns = false;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(247)))), ((int)(((byte)(248)))));
             this.ContabilidadDgvDetalle.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.ContabilidadDgvDetalle.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -318,16 +321,24 @@ namespace CapaVista_Contabilidad
             // ContabilidadColDebe
             // 
             this.ContabilidadColDebe.DataPropertyName = "Debe";
+            dataGridViewCellStyleDebe.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyleDebe.Format = "N2";
+            dataGridViewCellStyleDebe.NullValue = "0.00";
+            this.ContabilidadColDebe.DefaultCellStyle = dataGridViewCellStyleDebe;
             this.ContabilidadColDebe.FillWeight = 80F;
-            this.ContabilidadColDebe.HeaderText = "Debe";
+            this.ContabilidadColDebe.HeaderText = "Debe (Q)";
             this.ContabilidadColDebe.MinimumWidth = 6;
             this.ContabilidadColDebe.Name = "ContabilidadColDebe";
             // 
             // ContabilidadColHaber
             // 
             this.ContabilidadColHaber.DataPropertyName = "Haber";
+            dataGridViewCellStyleHaber.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyleHaber.Format = "N2";
+            dataGridViewCellStyleHaber.NullValue = "0.00";
+            this.ContabilidadColHaber.DefaultCellStyle = dataGridViewCellStyleHaber;
             this.ContabilidadColHaber.FillWeight = 80F;
-            this.ContabilidadColHaber.HeaderText = "Haber";
+            this.ContabilidadColHaber.HeaderText = "Haber (Q)";
             this.ContabilidadColHaber.MinimumWidth = 6;
             this.ContabilidadColHaber.Name = "ContabilidadColHaber";
             // 

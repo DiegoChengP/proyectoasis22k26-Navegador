@@ -1,4 +1,4 @@
-/* Área: Contabilidad. Autor: Gabriel André Guillén Pocón. Carné: 0901-23-1998.
+﻿/* Área: Contabilidad. Autor: Gabriel André Guillén Pocón. Carné: 0901-23-1998.
  * Fecha: 14/10/2026. Propósito: revisión de cierre sin cambiar períodos. Responsable: Oskar. */
 using System;
 using System.Data;
@@ -56,7 +56,16 @@ namespace CapaVista_Contabilidad
         private void ContabilidadMetRevisar()
         {
             DataTable Anterior = _Polizas;
-            _Polizas = _Controlador.ContabilidadFuncPolizas(ContabilidadDtpPeriodo.Value);
+            try
+            {
+                _Polizas = _Controlador.ContabilidadFuncPolizas(ContabilidadDtpPeriodo.Value);
+            }
+            catch (Exception Excepcion)
+            {
+                // Sin base de datos no hay pólizas que revisar.
+                _Polizas = new DataTable();
+                ClsDialogosContabilidad.ContabilidadMetError(this, "No se pudieron consultar las pólizas: " + Excepcion.Message);
+            }
             _Paginacion.ContabilidadMetCargar(_Polizas);
             if (Anterior != null) Anterior.Dispose();
             string Error = _Controlador.ContabilidadFuncValidarCierre(_Polizas);

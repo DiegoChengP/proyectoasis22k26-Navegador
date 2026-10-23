@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ==================================================================
  * Área : Contabilidad
  * Autor : Gabriel André Guillén Pocón
@@ -39,17 +39,19 @@ namespace CapaControlador_Contabilidad
             _Repositorio = Repositorio ?? throw new ArgumentNullException(nameof(Repositorio));
         }
 
-        // Cuentas del catálogo. Si la cuenta trae código se valida el formato C.GG.CC.SSS.
-        public List<ClsCuentaPolizaContabilidad> ContabilidadFuncObtenerCuentas()
+        // Cuentas que un módulo ERP puede usar en una póliza (activas y de último nivel).
+        public List<ClsCuentaPolizaContabilidad> ContabilidadFuncObtenerCuentas(int IdModulo)
         {
-            List<ClsCuentaPolizaContabilidad> Cuentas = _Repositorio.ContabilidadFuncObtenerCuentas()
+            return new ClsModeloCuentaContabilidad().ContabilidadFuncObtenerImputables(IdModulo)
                 .Select(Cuenta => new ClsCuentaPolizaContabilidad { IdCuenta = Cuenta.IdCuenta, Codigo = Cuenta.Codigo, Nombre = Cuenta.Nombre })
                 .ToList();
-            List<ClsCuentaPolizaContabilidad> ConCodigo = Cuentas.Where(Cuenta => !string.IsNullOrWhiteSpace(Cuenta.Codigo)).ToList();
-            if (ConCodigo.Any(Cuenta => !ClsCodigoCuentaContabilidad.ContabilidadFuncEsValido(Cuenta.Codigo)) ||
-                ConCodigo.GroupBy(Cuenta => Cuenta.Codigo).Any(Grupo => Grupo.Count() > 1))
-                throw new InvalidOperationException("El catálogo contiene códigos contables inválidos o duplicados.");
-            return Cuentas;
+        }
+
+        // Nombre del módulo ERP (catálogo tblModuloContable); "Encabezado" si no existe.
+        public string ContabilidadFuncObtenerNombreModulo(int IdModulo)
+        {
+            string Nombre = _Repositorio.ContabilidadFuncObtenerNombreModulo(IdModulo);
+            return string.IsNullOrWhiteSpace(Nombre) ? "Encabezado" : Nombre;
         }
 
         // Estados posibles.
@@ -68,12 +70,6 @@ namespace CapaControlador_Contabilidad
         public string ContabilidadFuncObtenerPeriodo(DateTime Fecha)
         {
             return Fecha.ToString("yyyy-MM");
-        }
-
-        // Código automático cuando la Vista no envía uno: POL-yyyyMMdd-HHmmssfff (24 caracteres).
-        public string ContabilidadFuncGenerarCodigo(DateTime Fecha)
-        {
-            return "POL-" + Fecha.ToString("yyyyMMdd") + "-" + DateTime.Now.ToString("HHmmssfff");
         }
 
         // Suma del debe.
@@ -152,9 +148,7 @@ namespace CapaControlador_Contabilidad
             // Se pasa del modelo validado a la entidad del Modelo.
             ClsPolizaContabilidad Entidad = new ClsPolizaContabilidad
             {
-                IdPoliza = Modelo.IdPoliza,
-                CodigoPoliza = string.IsNullOrWhiteSpace(Modelo.CodigoPoliza) ? ContabilidadFuncGenerarCodigo(Modelo.Fecha) : Modelo.CodigoPoliza.Trim(),
-                Fecha = Modelo.Fecha.Date, Estado = EstadoPoliza, Origen = OrigenPoliza,
+                IdPoliza = Modelo.IdPoliza, Fecha = Modelo.Fecha.Date, Estado = EstadoPoliza, Origen = OrigenPoliza,
                 PeriodoContable = ContabilidadFuncObtenerPeriodo(Modelo.Fecha), Descripcion = Modelo.Descripcion.Trim(),
                 Detalle = Modelo.Lineas.Select(Linea => new ClsPolizaDetalleContabilidad
                     { IdCuenta = Linea.IdCuenta, Cuenta = Linea.Cuenta, Debe = Linea.Debe, Haber = Linea.Haber }).ToList()

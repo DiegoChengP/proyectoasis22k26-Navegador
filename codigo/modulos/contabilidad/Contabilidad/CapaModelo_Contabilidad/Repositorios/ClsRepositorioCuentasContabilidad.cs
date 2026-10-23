@@ -1,195 +1,119 @@
-﻿// Funcion Implementada por Oskar Cernmeño
-// Utilidad: CRUD de consultas, filtro por modulos ERP, obtencion de cuentas padres.
-// Pendiente: Nada por el momento.
+﻿/*
+ * ==================================================================
+ * Área : Contabilidad
+ * Autor : Gabriel André Guillén Pocón
+ * Carné : 0901-23-1998
+ * Fecha : 21/10/2026
+ * ==================================================================
+ * Propósito :
+ *  Consulta el catálogo de cuentas (tblCuenta): todas, las asignadas
+ *  a un módulo ERP, las imputables de un módulo y los ancestros de
+ *  una cuenta.
+ * Reglas especificas:
+ *  Repositorio creado por Oskar Cermeño (filtro por módulo y consulta
+ *  recursiva de padres). Se reescribió para las tablas de EST-01 y
+ *  quedó de solo lectura: altas, cambios y bajas de cuentas se hacen
+ *  con el control Navegador. Imputable = activa y sin hijas activas.
+ * ===================================================================
+*/
 
-using CapaModelo_Contabilidad.Contratos;
-using CapaModelo_Contabilidad.Entidades;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
-using System.Runtime.InteropServices;
+using CapaModelo_Contabilidad.Contratos;
+using CapaModelo_Contabilidad.Entidades;
 
 namespace CapaModelo_Contabilidad.Repositorios
 {
     public class ClsRepositorioCuentasContabilidad : ClsRepositorioMaestroContabilidad, IRepositorioCuentasContabilidad
     {
-        private readonly string selectAll;
-        private readonly string selectAllWithModulo;
-        private readonly string insertModuloCuenta;
-        private readonly string insert;
-        private readonly string update;
-        private readonly string delete;
-        private readonly string deleteModuloCuenta;
-        public readonly string selectRecursivo;
+        // Columnas que se leen siempre, en este orden.
+        private const string _Columnas = "c.Pk_Cuenta, c.codigoCuenta, c.nombreCuenta, c.tipoCuenta, c.Fk_Cuenta_Padre, c.is_active";
 
+        // Todas las cuentas.
+        private readonly string _SelectTodas;
+        // Cuentas asignadas a un módulo (sin repetir por país).
+        private readonly string _SelectPorModulo;
+        // Cuentas del módulo que no tienen hijas activas.
+        private readonly string _SelectImputables;
+        // La cuenta y sus ancestros.
+        private readonly string _SelectPadres;
+
+        // Arma las sentencias SQL.
         public ClsRepositorioCuentasContabilidad()
         {
-            selectAll = "SELECT id_cuenta, nombre, tipo, id_padre, estado FROM cuenta;";
+            _SelectTodas = "SELECT " + _Columnas + " FROM tblCuenta c ORDER BY c.codigoCuenta";
 
-            selectAllWithModulo = @"SELECT c.id_cuenta, c.nombre, c.tipo, c.id_padre, c.estado 
-                                    FROM modulo_cuenta mc 
-                                    INNER JOIN modulo m ON mc.id_modulo = m.id_modulo 
-                                    INNER JOIN cuenta c ON mc.id_cuenta = c.id_cuenta 
-                                    INNER JOIN pais p ON mc.id_pais = p.id_pais 
-                                    WHERE m.id_modulo = ? 
-                                    ORDER BY m.id_modulo, c.id_cuenta;";
+            _SelectPorModulo =
+                "SELECT DISTINCT " + _Columnas + " FROM tblModuloCuentaPais mc " +
+                "INNER JOIN tblModuloContable m ON m.Pk_Modulo = mc.Fk_Modulo " +
+                "INNER JOIN tblCuenta c ON c.Pk_Cuenta = mc.Fk_Cuenta " +
+                "WHERE mc.Fk_Modulo = ? AND mc.is_active = TRUE AND m.is_active = TRUE AND c.is_active = TRUE " +
+                "ORDER BY c.codigoCuenta";
 
-            selectRecursivo = @"
-                        WITH RECURSIVE JerarquiaPadres AS (
-                                SELECT id_cuenta, nombre, tipo, id_padre, estado
-                                FROM cuenta
-                                WHERE id_cuenta = ?
-                                UNION ALL
-                                SELECT c.id_cuenta, c.nombre, c.tipo, c.id_padre, c.estado
-                                FROM cuenta c
-                                INNER JOIN JerarquiaPadres jp ON c.id_cuenta = jp.id_padre
-                            )
-                            SELECT id_cuenta, nombre, tipo, id_padre, estado 
-                            FROM JerarquiaPadres; ";
+            _SelectImputables =
+                "SELECT DISTINCT " + _Columnas + " FROM tblModuloCuentaPais mc " +
+                "INNER JOIN tblModuloContable m ON m.Pk_Modulo = mc.Fk_Modulo " +
+                "INNER JOIN tblCuenta c ON c.Pk_Cuenta = mc.Fk_Cuenta " +
+                "WHERE mc.Fk_Modulo = ? AND mc.is_active = TRUE AND m.is_active = TRUE AND c.is_active = TRUE " +
+                "AND NOT EXISTS (SELECT 1 FROM tblCuenta h WHERE h.Fk_Cuenta_Padre = c.Pk_Cuenta AND h.is_active = TRUE) " +
+                "ORDER BY c.codigoCuenta";
 
-            insert = "INSERT INTO cuenta (nombre, tipo, id_padre, estado) VALUES (?, ?, ?, ?);";
-            insertModuloCuenta = "INSERT INTO modulo_cuenta (id_cuenta, id_modulo, id_pais) VALUES (?, ?, ?);";
-            update = "UPDATE cuenta SET nombre = ?, tipo = ?, id_padre = ?, estado = ? WHERE id_cuenta = ?;";
-            delete = "DELETE FROM cuenta WHERE id_cuenta = ?;";
-            deleteModuloCuenta = "DELETE FROM modulo_cuenta WHERE id_cuenta = ?;";
+            _SelectPadres =
+                "WITH RECURSIVE jerarquiaPadres AS (" +
+                "SELECT Pk_Cuenta, codigoCuenta, nombreCuenta, tipoCuenta, Fk_Cuenta_Padre, is_active FROM tblCuenta WHERE Pk_Cuenta = ? " +
+                "UNION ALL " +
+                "SELECT c.Pk_Cuenta, c.codigoCuenta, c.nombreCuenta, c.tipoCuenta, c.Fk_Cuenta_Padre, c.is_active " +
+                "FROM tblCuenta c INNER JOIN jerarquiaPadres jp ON c.Pk_Cuenta = jp.Fk_Cuenta_Padre) " +
+                "SELECT Pk_Cuenta, codigoCuenta, nombreCuenta, tipoCuenta, Fk_Cuenta_Padre, is_active FROM jerarquiaPadres";
         }
 
-        public int ContabilidadFuncAgregar(ClsCuentaContabilidad entidad)
-        {
-            var _parametros = new List<OdbcParameter>
-            {
-                new OdbcParameter("nombre", entidad.Nombre),
-                new OdbcParameter("tipo", entidad.Tipo),
-                new OdbcParameter("id_padre", entidad.IdPadre == 0 ? (object)DBNull.Value : entidad.IdPadre),
-                new OdbcParameter("estado", entidad.Estado)
-            };
-
-            return ContabilidadFuncEjecutarNonQuery(insert, _parametros, CommandType.Text);
-        }
-
-        // 1 = Guatemala
-        public int ContabilidadFuncAgregar(ClsCuentaContabilidad entidad, int idModulo, int idPais =1)
-        {
-
-            var _parametros = new List<OdbcParameter>
-            {
-                new OdbcParameter("id_cuenta", entidad.IdCuenta),
-                new OdbcParameter("id_modulo", idModulo),
-                new OdbcParameter("id_pais", idPais)
-            };
-
-            return ContabilidadFuncEjecutarNonQuery(insertModuloCuenta, _parametros, CommandType.Text);
-        }
-
-        public int ContabilidadFuncEditar(ClsCuentaContabilidad entidad)
-        {
-            var _parametros = new List<OdbcParameter>
-            {
-                new OdbcParameter("nombre", entidad.Nombre),
-                new OdbcParameter("tipo", entidad.Tipo),
-                new OdbcParameter("id_padre", entidad.IdPadre == 0 ? (object)DBNull.Value : entidad.IdPadre),
-                new OdbcParameter("estado", entidad.Estado),
-                new OdbcParameter("id_cuenta", entidad.IdCuenta) 
-            };
-
-            return ContabilidadFuncEjecutarNonQuery(update, _parametros, CommandType.Text);
-        }
-
-        public int ContabilidadFuncEliminarModuloAyuda(ClsCuentaContabilidad entidad)
-        {
-            var _parametros = new List<OdbcParameter>
-            {
-                new OdbcParameter("id_cuenta", entidad.IdCuenta)
-            };
-            return ContabilidadFuncEjecutarNonQuery(deleteModuloCuenta, _parametros, CommandType.Text);
-        }
-
-        public int ContabilidadFuncEliminar(ClsCuentaContabilidad entidad)
-        {
-            ContabilidadFuncEliminarModuloAyuda(entidad);
-
-            var _parametros = new List<OdbcParameter>
-            {
-                new OdbcParameter("id_cuenta", entidad.IdCuenta)
-            };
-            return ContabilidadFuncEjecutarNonQuery(delete, _parametros, CommandType.Text);
-        }
-
-        public IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerTodos(int idModulo)
-        {
-            var lstCuentas = new List<ClsCuentaContabilidad>();
-            var _parametros = new List<OdbcParameter>
-            {
-                new OdbcParameter("id_modulo", idModulo)
-            };
-
-            var tblCuentas = ContabilidadFuncEjecutarConsulta(selectAllWithModulo, CommandType.Text, _parametros);
-
-            foreach (DataRow row in tblCuentas.Rows)
-            {
-                var cuenta = new ClsCuentaContabilidad
-                {
-                    IdCuenta = Convert.ToInt32(row[0]),
-                    Nombre = row[1].ToString(),
-                    Tipo = row[2].ToString(),
-                    IdPadre = row[3] == DBNull.Value ? 0 : Convert.ToInt32(row[3]),
-                    Estado = row[4] == DBNull.Value ? 0 : Convert.ToInt32(row[4])
-                };
-                lstCuentas.Add(cuenta);
-            }
-
-            tblCuentas.Clear();
-            return lstCuentas;
-        }
-
+        // Todas las cuentas del catálogo.
         public IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerTodos()
         {
-            var lstCuentas = new List<ClsCuentaContabilidad>();
-            var tblCuentas = ContabilidadFuncEjecutarConsulta(selectAll, CommandType.Text);
-
-            foreach (DataRow row in tblCuentas.Rows)
-            {
-                var cuenta = new ClsCuentaContabilidad
-                {
-                    IdCuenta = Convert.ToInt32(row[0]),
-                    Nombre = row[1].ToString(),
-                    Tipo = row[2].ToString(),
-                    IdPadre = row[3] == DBNull.Value ? 0 : Convert.ToInt32(row[3]),
-                    Estado = row[4] == DBNull.Value ? 0 : Convert.ToInt32(row[4])
-                };
-                lstCuentas.Add(cuenta);
-            }
-
-            tblCuentas.Clear();
-            return lstCuentas;
+            return ContabilidadFuncMapear(ContabilidadFuncEjecutarConsulta(_SelectTodas, CommandType.Text));
         }
 
-        public IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerPadres(ClsCuentaContabilidad entidad)
+        // Cuentas asignadas a un módulo ERP.
+        public IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerTodos(int IdModulo)
         {
-            var lstPadres = new List<ClsCuentaContabilidad>();
-            var _parametros = new List<OdbcParameter>();
-
-            _parametros.Add(new OdbcParameter("id_cuenta", entidad.IdCuenta));
-
-            var tblPadres = ContabilidadFuncEjecutarConsulta(selectRecursivo, CommandType.Text, _parametros);
-
-            foreach(DataRow row in tblPadres.Rows)
-            {
-                var cuenta = new ClsCuentaContabilidad
-                {
-                    IdCuenta = Convert.ToInt32(row[0]),
-                    Nombre = row[1].ToString(),
-                    Tipo = row[2].ToString(),
-                    IdPadre = row[3] == DBNull.Value ? 0 : Convert.ToInt32(row[3]),
-                    Estado = row[4] == DBNull.Value ? 0 : Convert.ToInt32(row[4])
-                };
-                lstPadres.Add(cuenta);
-            }
-            tblPadres.Clear();
-            return lstPadres;
-
+            return ContabilidadFuncMapear(ContabilidadFuncEjecutarConsulta(_SelectPorModulo, CommandType.Text,
+                new List<OdbcParameter> { new OdbcParameter("Modulo", IdModulo) }));
         }
 
+        // Cuentas del módulo que se pueden usar en una póliza.
+        public IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerImputables(int IdModulo)
+        {
+            return ContabilidadFuncMapear(ContabilidadFuncEjecutarConsulta(_SelectImputables, CommandType.Text,
+                new List<OdbcParameter> { new OdbcParameter("Modulo", IdModulo) }));
+        }
+
+        // La cuenta y todos sus ancestros hasta la raíz.
+        public IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerPadres(ClsCuentaContabilidad Entidad)
+        {
+            return ContabilidadFuncMapear(ContabilidadFuncEjecutarConsulta(_SelectPadres, CommandType.Text,
+                new List<OdbcParameter> { new OdbcParameter("Cuenta", Entidad.IdCuenta) }));
+        }
+
+        // Convierte las filas en entidades.
+        private static List<ClsCuentaContabilidad> ContabilidadFuncMapear(DataTable Tabla)
+        {
+            List<ClsCuentaContabilidad> Cuentas = new List<ClsCuentaContabilidad>();
+            foreach (DataRow Fila in Tabla.Rows)
+            {
+                Cuentas.Add(new ClsCuentaContabilidad
+                {
+                    IdCuenta = Convert.ToInt32(Fila[0]),
+                    Codigo = Convert.ToString(Fila[1]),
+                    Nombre = Convert.ToString(Fila[2]),
+                    Tipo = Convert.ToString(Fila[3]),
+                    IdPadre = Fila[4] == DBNull.Value ? 0 : Convert.ToInt32(Fila[4]),
+                    Activo = Convert.ToInt32(Fila[5]) == 1
+                });
+            }
+            Tabla.Dispose();
+            return Cuentas;
+        }
     }
 }

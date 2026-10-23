@@ -1,4 +1,4 @@
-/* Área: Contabilidad. Autor: Gabriel André Guillén Pocón. Carné: 0901-23-1998.
+﻿/* Área: Contabilidad. Autor: Gabriel André Guillén Pocón. Carné: 0901-23-1998.
  * Fecha: 14/10/2026. Propósito: informe de ejemplo de solo lectura sin conexión a base. */
 using System;
 using System.Data;
@@ -72,7 +72,18 @@ namespace CapaVista_Contabilidad
                 return;
             }
             DataTable Anterior = _Resultado;
-            _Resultado = _Controlador.ContabilidadFuncResultados(ContabilidadDtpDesde.Value, ContabilidadDtpHasta.Value);
+            try
+            {
+                _Resultado = _Controlador.ContabilidadFuncResultados(ContabilidadDtpDesde.Value, ContabilidadDtpHasta.Value);
+            }
+            catch (Exception Excepcion)
+            {
+                // Sin base de datos no hay movimientos que mostrar.
+                _Resultado = null;
+                ContabilidadMetInvalidar();
+                ClsDialogosContabilidad.ContabilidadMetError(this, "No se pudo consultar el estado de resultados: " + Excepcion.Message);
+                return;
+            }
             _Paginacion.ContabilidadMetCargar(_Resultado);
             if (Anterior != null) Anterior.Dispose();
             ContabilidadLblPeriodo.Text = "Estado de resultados del " + ContabilidadDtpDesde.Value.ToString("dd/MM/yyyy")
