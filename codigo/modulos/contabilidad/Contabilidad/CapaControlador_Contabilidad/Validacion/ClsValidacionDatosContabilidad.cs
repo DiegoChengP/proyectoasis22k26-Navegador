@@ -23,15 +23,12 @@ namespace CapaControlador_Contabilidad
 {
     public static class ClsValidacionDatosContabilidad
     {
-        // Devuelve un diccionario campo -> primer error del campo.
         public static Dictionary<string, string> ContabilidadFuncErrores(object Modelo)
         {
             List<ValidationResult> Resultados = new List<ValidationResult>();
             ValidationContext Contexto = new ValidationContext(Modelo);
-            // Primero los atributos de cada propiedad.
             bool TodoValido = Validator.TryValidateObject(Modelo, Contexto, Resultados, true);
             IValidatableObject Reglas = Modelo as IValidatableObject;
-            // Luego las reglas entre campos, aunque los atributos hayan fallado.
             if (!TodoValido && Reglas != null) Resultados.AddRange(Reglas.Validate(Contexto));
 
             Dictionary<string, string> Errores = new Dictionary<string, string>();
@@ -43,13 +40,11 @@ namespace CapaControlador_Contabilidad
             return Errores;
         }
 
-        // Devuelve el primer error o cadena vacía si el modelo es válido.
         public static string ContabilidadFuncPrimerError(object Modelo)
         {
             return ContabilidadFuncErrores(Modelo).Values.FirstOrDefault() ?? string.Empty;
         }
 
-        // Error de un rango de fechas, vacío si es correcto.
         public static string ContabilidadFuncErrorRangoFechas(DateTime Inicio, DateTime Fin)
         {
             return Fin.Date < Inicio.Date ? "La fecha final no puede ser anterior a la inicial." : string.Empty;

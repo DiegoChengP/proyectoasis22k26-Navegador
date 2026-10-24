@@ -26,44 +26,32 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using CapaControlador_Contabilidad;
+using CapaVista_Contabilidad.Properties;
 
 namespace CapaVista_Contabilidad
 {
-    // Ventana principal del módulo.
     public partial class FrmMDIContabilidad : Form
     {
-        // Las coordenadas y tamaños son Int32 porque la API de WinForms los exige.
-        // Las proporciones se calculan en Double; no hay cálculos monetarios en la Vista.
 
-        // Módulo ERP dueño de las pólizas: filtra las cuentas que se pueden usar (1 = Contabilidad).
         private readonly int _IdModulo;
         private const int _AnchoMenuExpandido = 270;
         private const int _AnchoMenuContraido = 64;
-        private const int _MargenMenu = 32;      // 16 px a cada lado del panel del menú
+        private const int _MargenMenu = 32;
         private const int _MargenDashboard = 44;
         private const int _AltoKpiBase = 189;
         private const int _AnchoKpiBase = 172;
-        // Botón de la ventana abierta.
         private Button _BotonActivo;
-        // Botón bajo el mouse.
         private Button _BotonSobre;
-        // Último estado de sesión y permisos.
         private ClsEstadoSeguridadContabilidad _Estado;
-        // Maneja el acceso del menú.
         private readonly ClsPermisosMenuContabilidad _PermisosMenu = new ClsPermisosMenuContabilidad();
-        // Botones del submenú Catálogos (códigos 10011 a 10015).
         private Button[] _BotonesCatalogos;
-        // Indica si el submenú Catálogos está desplegado.
         private bool _CatalogosAbierto;
-        // Botón de cada código de ventana.
         private readonly Dictionary<int, Button> _BotonesMenu;
 
-        // Constructor sin parámetro: lo usa Seguridad al abrir el MDI y el diseñador.
         public FrmMDIContabilidad() : this(1)
         {
         }
 
-        // Prepara el menú, los paneles y los eventos para un módulo ERP.
         public FrmMDIContabilidad(int IdModulo)
         {
             _IdModulo = IdModulo;
@@ -100,14 +88,12 @@ namespace CapaVista_Contabilidad
             ContabilidadPnlInfo.Resize += (Remitente, Evento) => ContabilidadMetAcomodarInfo();
         }
 
-        // Carga la seguridad y acomoda el dashboard.
         private void ContabilidadMetCargarFormulario(object Remitente, EventArgs Evento)
         {
             ContabilidadMetActualizarSeguridad(true);
             ContabilidadMetAcomodarDashboard();
         }
 
-        // Seguridad lo llama al abrir el MDI con el empleado y los roles de la sesión.
         public void ContabilidadMetActualizarInfoUsuario(string NombreEmpleado, string Roles)
         {
             ContabilidadLblUsuario.Text = "Usuario: " + NombreEmpleado;
@@ -115,7 +101,6 @@ namespace CapaVista_Contabilidad
             ContabilidadMetAcomodarEncabezado();
         }
 
-        // Vuelve a consultar la sesión y los permisos de Seguridad.
         public void ContabilidadMetActualizarSeguridad(bool MostrarAviso = false)
         {
             ClsEstadoSeguridadContabilidad Estado = new ClsControladorSeguridadContabilidad().ContabilidadFuncObtenerEstado();
@@ -136,7 +121,6 @@ namespace CapaVista_Contabilidad
                 MessageBox.Show(this, Estado.Mensaje, "Seguridad de Contabilidad", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        // Reparte el ancho del encabezado.
         private void ContabilidadMetAcomodarEncabezado()
         {
             int AnchoDisponible = Math.Max(0, ContabilidadPnlPrincipal.ClientSize.Width - ContabilidadLblUsuario.Left - 24);
@@ -150,8 +134,6 @@ namespace CapaVista_Contabilidad
             ContabilidadLblUsuarioRol.Width = Math.Max(0, AnchoDisponible - AnchoUsuario - 24);
         }
 
-        // Reacomoda el contenido del dashboard cuando cambia el tamaño de la ventana: Don Buti, el
-        // resumen y la fila de KPIs se reparten según el espacio disponible.
         private void ContabilidadMetAcomodarDashboard()
         {
             int Ancho = ContabilidadPnlDashboard.ClientSize.Width;
@@ -167,8 +149,6 @@ namespace CapaVista_Contabilidad
 
             bool Compacto = Alto < 720;
             int AnchoKpi = Math.Max(100, Math.Min(190, (Ancho - 2 * _MargenDashboard - 5 * 12) / 6));
-            // Al colapsar el menú en una laptop, el ancho adicional no debe hacer
-            // crecer las tarjetas hacia la bienvenida y el botón de Ayuda.
             if (Compacto)
             {
                 AnchoKpi = Math.Min(140, AnchoKpi);
@@ -206,7 +186,6 @@ namespace CapaVista_Contabilidad
             ContabilidadMetAcomodarInfo();
         }
 
-        // Divide el panel inferior: información relevante a la izquierda, nota de integración a la derecha.
         private void ContabilidadMetAcomodarInfo()
         {
             int Divisor = (int)(ContabilidadPnlInfo.Width * 0.60);
@@ -221,7 +200,6 @@ namespace CapaVista_Contabilidad
             ContabilidadPnlInfo.Invalidate();
         }
 
-        // Fondo blanco con esquinas redondeadas y borde suave del panel de información.
         private void ContabilidadMetPintarInformacion(object Remitente, PaintEventArgs Evento)
         {
             Graphics Lienzo = Evento.Graphics;
@@ -237,7 +215,6 @@ namespace CapaVista_Contabilidad
             }
         }
 
-        // Ruta con esquinas redondeadas.
         private GraphicsPath ContabilidadFuncRedondearEsquinas(Rectangle Rectangulo, int Radio)
         {
             GraphicsPath RutaGrafica = new GraphicsPath();
@@ -252,14 +229,12 @@ namespace CapaVista_Contabilidad
             return RutaGrafica;
         }
 
-        // Evita el parpadeo al redimensionar (DoubleBuffered es protegida en Control).
         private static void ContabilidadMetDobleBuffer(Control Objetivo)
         {
             typeof(Control).GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)
                 .SetValue(Objetivo, true, null);
         }
 
-        // Contrae/expande el menú lateral; el resto del MDI se reacomoda solo por el Dock/Anchor.
         private void ContabilidadMetAlternarMenu(object Remitente, EventArgs Evento)
         {
             bool Expandido = ContabilidadPnlNavegador.Width == _AnchoMenuExpandido;
@@ -270,14 +245,12 @@ namespace CapaVista_Contabilidad
             ContabilidadMetAcomodarCatalogos();
         }
 
-        // Despliega o recoge el submenú de catálogos.
         private void ContabilidadMetAlternarCatalogos(object Remitente, EventArgs Evento)
         {
             _CatalogosAbierto = !_CatalogosAbierto;
             ContabilidadMetAcomodarCatalogos();
         }
 
-        // Muestra u oculta los catálogos; con el menú contraído se alinean a la izquierda para ver su ícono.
         private void ContabilidadMetAcomodarCatalogos()
         {
             int Izquierda = ContabilidadPnlNavegador.Width == _AnchoMenuExpandido ? 21 : 3;
@@ -289,68 +262,56 @@ namespace CapaVista_Contabilidad
             ContabilidadBtnCatalogos.Invalidate();
         }
 
-        // Abre Mantenimiento de países.
         private void ContabilidadMetAbrirPaises(object Remitente, EventArgs Evento)
         {
             ContabilidadMetAbrirPantalla(10011, (Button)Remitente, Permisos => new FrmMantenimientoPais(Permisos));
         }
 
-        // Abre Mantenimiento de módulos contables.
         private void ContabilidadMetAbrirModulosContables(object Remitente, EventArgs Evento)
         {
             ContabilidadMetAbrirPantalla(10012, (Button)Remitente, Permisos => new FrmMantenimientoModuloContable(Permisos));
         }
 
-        // Abre Mantenimiento de vida útil.
         private void ContabilidadMetAbrirVidaUtil(object Remitente, EventArgs Evento)
         {
             ContabilidadMetAbrirPantalla(10013, (Button)Remitente, Permisos => new FrmMantenimientoVidaUtil(Permisos));
         }
 
-        // Abre Mantenimiento de cuentas.
         private void ContabilidadMetAbrirCuentas(object Remitente, EventArgs Evento)
         {
             ContabilidadMetAbrirPantalla(10014, (Button)Remitente, Permisos => new FrmMantenimientoCuenta(Permisos));
         }
 
-        // Abre Asignación de cuentas por módulo.
         private void ContabilidadMetAbrirCuentasModulo(object Remitente, EventArgs Evento)
         {
             ContabilidadMetAbrirPantalla(10015, (Button)Remitente, Permisos => new FrmAsignacionCuentaModulo(Permisos));
         }
 
-        // Abre Pólizas locales.
         private void ContabilidadMetAbrirPolizasLocales(object Remitente, EventArgs Evento)
         {
-            ContabilidadMetAbrirPantalla(10001, (Button)Remitente, Permisos => new FrmPolizasLocales(Permisos, _IdModulo));
+            ContabilidadMetAbrirPantalla(10001, (Button)Remitente, Permisos => new CapaVista_PolizasCuentas_Contabilidad.FrmPolizasLocales(Permisos, _IdModulo));
         }
 
-        // Abre Presupuestos.
         private void ContabilidadMetAbrirPresupuestos(object Remitente, EventArgs Evento)
         {
-            ContabilidadMetAbrirPantalla(10002, (Button)Remitente, Permisos => new FrmPresupuestos(Permisos));
+            ContabilidadMetAbrirPantalla(10002, (Button)Remitente, Permisos => new CapaVista_Presupuestos_Contabilidad.FrmPresupuestos(Permisos));
         }
 
-        // Abre Activos fijos.
         private void ContabilidadMetAbrirActivosFijos(object Remitente, EventArgs Evento)
         {
-            ContabilidadMetAbrirPantalla(10003, (Button)Remitente, Permisos => new FrmActivosFijos(Permisos));
+            ContabilidadMetAbrirPantalla(10003, (Button)Remitente, Permisos => new CapaVista_ActivosFijos_Contabilidad.FrmActivosFijos(Permisos));
         }
 
-        // Abre Cierre contable.
         private void ContabilidadMetAbrirCierreContable(object Remitente, EventArgs Evento)
         {
-            ContabilidadMetAbrirPantalla(10004, (Button)Remitente, Permisos => new FrmCierreContable(Permisos));
+            ContabilidadMetAbrirPantalla(10004, (Button)Remitente, Permisos => new CapaVista_CierreContable_Contabilidad.FrmCierreContable(Permisos));
         }
 
-        // Abre Estados financieros.
         private void ContabilidadMetAbrirEstadosFinancieros(object Remitente, EventArgs Evento)
         {
-            ContabilidadMetAbrirPantalla(10005, (Button)Remitente, Permisos => new FrmEstadosFinancieros(Permisos));
+            ContabilidadMetAbrirPantalla(10005, (Button)Remitente, Permisos => new CapaVista_EstadosFinancieros_Contabilidad.FrmEstadosFinancieros(Permisos));
         }
 
-
-        // Estados visuales de presentación (EST-10, Parte I §11.3).
         private void ContabilidadMetConfigurarEstadosMenu()
         {
             Button[] Botones = { ContabilidadBtnPolizasLocales, ContabilidadBtnPresupuestos,
@@ -381,11 +342,9 @@ namespace CapaVista_Contabilidad
             }
         }
 
-        // Dibuja el hover, el estado activo y la etiqueta.
         private void ContabilidadMetPintarEstadoMenu(object Remitente, PaintEventArgs Evento)
         {
             Button Boton = (Button)Remitente;
-            // Catálogos queda marcado mientras esté abierto alguno de sus mantenimientos.
             bool Activo = Boton == _BotonActivo || (Boton == ContabilidadBtnCatalogos && _BotonActivo != null && Array.IndexOf(_BotonesCatalogos, _BotonActivo) >= 0);
             if (Boton.Enabled && (Boton == _BotonSobre || Activo))
             {
@@ -397,8 +356,6 @@ namespace CapaVista_Contabilidad
                 using (SolidBrush Acento = new SolidBrush(Color.FromArgb(197, 143, 62)))
                     Evento.Graphics.FillRectangle(Acento, 0, 0, 4, Boton.Height);
             }
-            // La etiqueta se presenta en Tahoma y con solo la primera letra mayúscula
-            // (EST-10 §2.3 y §9), conservando el dibujo y el archivo PNG originales.
             Rectangle Etiqueta = new Rectangle(60, 4, Boton.Width - 64, Boton.Height - 8);
             using (SolidBrush Fondo = new SolidBrush(Boton.Enabled ? Color.FromArgb(70, 104, 125) : Color.FromArgb(96, 96, 96)))
                 Evento.Graphics.FillRectangle(Fondo, Etiqueta);
@@ -408,7 +365,6 @@ namespace CapaVista_Contabilidad
                 Etiqueta, Texto, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
             if (Boton == ContabilidadBtnCatalogos)
             {
-                // Flecha de desplegado (hacia abajo) o recogido (hacia la derecha).
                 int X = Boton.Width - 26, Y = Boton.Height / 2;
                 Point[] Flecha = _CatalogosAbierto
                     ? new[] { new Point(X, Y - 3), new Point(X + 10, Y - 3), new Point(X + 5, Y + 4) }
@@ -417,10 +373,8 @@ namespace CapaVista_Contabilidad
             }
         }
 
-        // Consulta los permisos y abre la pantalla si el usuario tiene acceso.
         private void ContabilidadMetAbrirPantalla(int Codigo, Button Boton, Func<ClsPermisosPantallaContabilidad, Form> Crear)
         {
-            // Volver a consultar evita usar un acceso anterior si cambió la sesión.
             ContabilidadMetActualizarSeguridad(true);
             if (!_Estado.Permisos[Codigo].TieneAcceso) return;
             Button Anterior = _BotonActivo;
@@ -433,7 +387,6 @@ namespace CapaVista_Contabilidad
             }
         }
 
-        // Avisa que la ayuda aún no está disponible.
         private void ContabilidadMetMostrarAyuda(object Remitente, EventArgs Evento)
         {
             MessageBox.Show("La ayuda del módulo de Contabilidad aún no está disponible.",

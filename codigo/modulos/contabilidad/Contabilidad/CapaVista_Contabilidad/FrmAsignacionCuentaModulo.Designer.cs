@@ -1,8 +1,8 @@
 /*
  * ==================================================================
  * Área : Contabilidad
- * Autor : Gabriel André Guillén Pocón
- * Carné : 0901-23-1998
+ * Autor : Mario Taracena
+ * Carné : 0901-23-9335
  * Fecha : 21/10/2026
  * ==================================================================
  * Propósito :
@@ -31,9 +31,6 @@ namespace CapaVista_Contabilidad
         {
             this.ContabilidadUsrNavegador = new CapaVista_Navegador.Navegador();
             this.SuspendLayout();
-            // 
-            // ContabilidadUsrNavegador
-            // 
             this.ContabilidadUsrNavegador.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ContabilidadUsrNavegador.Location = new System.Drawing.Point(11, 11);
@@ -41,9 +38,6 @@ namespace CapaVista_Contabilidad
             this.ContabilidadUsrNavegador.Name = "ContabilidadUsrNavegador";
             this.ContabilidadUsrNavegador.Size = new System.Drawing.Size(1158, 90);
             this.ContabilidadUsrNavegador.TabIndex = 0;
-            // 
-            // FrmAsignacionCuentaModulo
-            // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1180, 688);
@@ -56,7 +50,6 @@ namespace CapaVista_Contabilidad
 
         #endregion
 
-        // Control Navegador del componente Navegador.
         private CapaVista_Navegador.Navegador ContabilidadUsrNavegador;
     }
 }

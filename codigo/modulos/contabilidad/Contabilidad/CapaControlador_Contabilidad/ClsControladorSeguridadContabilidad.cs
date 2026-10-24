@@ -29,16 +29,13 @@ namespace CapaControlador_Contabilidad
 {
     public class ClsControladorSeguridadContabilidad
     {
-        // Nombre del módulo registrado en Seguridad.
         private const string _NombreModulo = "Contabilidad";
 
-        // Código de ventana y nombre de cada aplicación registrada en Seguridad.
         private readonly Dictionary<int, string> _Aplicaciones = new Dictionary<int, string>
         {
             { 10001, "Pólizas locales" }, { 10002, "Presupuestos" },
             { 10003, "Activos fijos" }, { 10004, "Cierre contable" },
             { 10005, "Estados financieros" },
-            // Mantenimientos (usan el control Navegador).
             { 10011, "Mantenimiento de países" },
             { 10012, "Mantenimiento de módulos contables" },
             { 10013, "Mantenimiento de vida útil" },
@@ -46,7 +43,6 @@ namespace CapaControlador_Contabilidad
             { 10014, "Mantenimiento de cuentas" }
         };
 
-        // Arma el estado de la sesión y los permisos de cada pantalla.
         public ClsEstadoSeguridadContabilidad ContabilidadFuncObtenerEstado()
         {
             ClsEstadoSeguridadContabilidad Estado = new ClsEstadoSeguridadContabilidad
@@ -65,11 +61,9 @@ namespace CapaControlador_Contabilidad
 
             try
             {
-                // Aplicaciones del módulo Contabilidad según Seguridad.
                 List<ClsModeloMantenimientoApp> Registradas = new ClsModeloMantenimientoApp().SeguridadMetObtenerTodos()
                     .Where(Aplicacion => Aplicacion.IsActive && ContabilidadFuncNormalizarNombre(Aplicacion.NombreModulo) == ContabilidadFuncNormalizarNombre(_NombreModulo))
                     .ToList();
-                // Permisos por rol, igual que ClsNavegadorPermisos.
                 ClsModeloAsigAppPerf Permisos = new ClsModeloAsigAppPerf();
                 Permisos.SeguridadMetObtenerTodos();
 
@@ -98,21 +92,18 @@ namespace CapaControlador_Contabilidad
             }
             catch (Exception Excepcion)
             {
-                // Un fallo de consulta nunca conserva permisos parciales o anteriores.
                 foreach (int Codigo in _Aplicaciones.Keys) Estado.Permisos[Codigo] = ClsPermisosPantallaContabilidad.Ninguno;
                 Estado.Mensaje = "No se pudieron consultar los permisos de Contabilidad. " + Excepcion.Message;
             }
             return Estado;
         }
 
-        // Permisos de una sola pantalla por su código de ventana.
         public ClsPermisosPantallaContabilidad ContabilidadFuncObtenerPermisos(int CodigoVentana)
         {
             ClsPermisosPantallaContabilidad Permisos;
             return ContabilidadFuncObtenerEstado().Permisos.TryGetValue(CodigoVentana, out Permisos) ? Permisos : ClsPermisosPantallaContabilidad.Ninguno;
         }
 
-        // Quita tildes y espacios para comparar nombres.
         private static string ContabilidadFuncNormalizarNombre(string Nombre)
         {
             if (Nombre == null) return string.Empty;

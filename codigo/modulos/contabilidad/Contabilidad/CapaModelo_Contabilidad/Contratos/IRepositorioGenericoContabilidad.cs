@@ -17,16 +17,12 @@ namespace CapaModelo_Contabilidad.Contratos
 {
     public interface IRepositorioGenericoContabilidad<TEntidad> where TEntidad : class
     {
-        // Agrega la entidad y devuelve las filas afectadas.
         int ContabilidadFuncAgregar(TEntidad Entidad);
 
-        // Modifica la entidad y devuelve las filas afectadas.
         int ContabilidadFuncEditar(TEntidad Entidad);
 
-        // Elimina la entidad y devuelve las filas afectadas.
         int ContabilidadFuncEliminar(TEntidad Entidad);
 
-        // Devuelve todas las entidades.
         IEnumerable<TEntidad> ContabilidadFuncObtenerTodos();
     }
 }

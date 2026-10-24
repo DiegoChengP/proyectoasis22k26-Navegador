@@ -17,15 +17,10 @@ namespace CapaControlador_Contabilidad
 {
     public sealed class ClsEstadoSeguridadContabilidad
     {
-        // Indica si hay sesión.
         public bool HaySesion { get; internal set; }
-        // Nombre que se muestra.
         public string NombreUsuario { get; internal set; }
-        // Roles como texto.
         public string Roles { get; internal set; }
-        // Aviso para el usuario.
         public string Mensaje { get; internal set; }
-        // Permisos de cada código de ventana.
         public Dictionary<int, ClsPermisosPantallaContabilidad> Permisos { get; } = new Dictionary<int, ClsPermisosPantallaContabilidad>
         {
             { 10001, ClsPermisosPantallaContabilidad.Ninguno }, { 10002, ClsPermisosPantallaContabilidad.Ninguno },

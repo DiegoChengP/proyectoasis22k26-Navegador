@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ==================================================================
  * Área : Contabilidad
  * Autor : Gabriel André Guillén Pocón
@@ -15,18 +15,16 @@
 using System.Drawing;
 using System.Windows.Forms;
 using CapaControlador_Contabilidad;
+using CapaVista_Contabilidad.Properties;
 
 namespace CapaVista_Contabilidad
 {
-    // Ventana de mantenimiento con el control Navegador.
     public partial class FrmMantenimientoPais : Form
     {
-        // Constructor para el diseñador y las pruebas: todos los permisos.
         public FrmMantenimientoPais() : this(ClsPermisosPantallaContabilidad.Total)
         {
         }
 
-        // Abre la ventana con los IDs y permisos que dio Seguridad.
         public FrmMantenimientoPais(ClsPermisosPantallaContabilidad Permisos)
         {
             InitializeComponent();

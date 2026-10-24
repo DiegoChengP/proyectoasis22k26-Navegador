@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -45,26 +45,13 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClsEstadoSeguridadContabilidad.cs" />
     <Compile Include="ClsControladorSeguridadContabilidad.cs" />
-    <Compile Include="ClsControladorPolizasContabilidad.cs" />
-    <Compile Include="ClsControladorPresupuestosContabilidad.cs" />
-    <Compile Include="ClsControladorActivosFijosContabilidad.cs" />
-    <Compile Include="ClsControladorCierreContabilidad.cs" />
-    <Compile Include="ClsControladorEstadosFinancierosContabilidad.cs" />
-    <Compile Include="ClsCodigoCuentaContabilidad.cs" />
+    <Compile Include="ClsEstadoSeguridadContabilidad.cs" />
     <Compile Include="Modelos\ClsPermisosPantallaContabilidad.cs" />
-    <Compile Include="Modelos\ClsCuentaPolizaContabilidad.cs" />
-    <Compile Include="Modelos\ClsLineaPolizaContabilidad.cs" />
-    <Compile Include="Modelos\ClsModeloCuentaContabilidad.cs" />
-    <Compile Include="Modelos\ClsModeloPolizaContabilidad.cs" />
-    <Compile Include="Modelos\ClsModeloPresupuestoContabilidad.cs" />
-    <Compile Include="Modelos\ClsModeloActivoFijoContabilidad.cs" />
-    <Compile Include="Modelos\ClsResumenCierreContabilidad.cs" />
-    <Compile Include="Validacion\EstadoEntidadContabilidad.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validacion\ClsLimitesContabilidad.cs" />
     <Compile Include="Validacion\ClsValidacionDatosContabilidad.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validacion\EstadoEntidadContabilidad.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
