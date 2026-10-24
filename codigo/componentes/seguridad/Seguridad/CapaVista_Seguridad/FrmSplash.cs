@@ -75,13 +75,13 @@ namespace CapaVista_Seguridad
                         principal = new FrmMDISeguridad();
                         break;
                     
-                    //case "Logistica":
-                        //var MDILogistica = new FrmMDILogistica();
-                        //MDILogistica.LogisticaMetActualizarInfoUsuario(
-                        //ClsSesionSeguridad.NombreEmpleado,
-                        //ClsSesionSeguridad.SeguridadMetRolesComoTexto());
-                        //principal = MDILogistica;
-                        //break;
+                    case "Logistica":
+                        var MDILogistica = new FrmMDILogistica();
+                        MDILogistica.LogisticaMetActualizarInfoUsuario(
+                        ClsSesionSeguridad.NombreEmpleado,
+                        ClsSesionSeguridad.SeguridadMetRolesComoTexto());
+                        principal = MDILogistica;
+                        break;
 
                     //case "Compras":
                         //var MDICompras = new FrmMDICompras();
