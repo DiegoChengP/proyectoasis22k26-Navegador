@@ -9,18 +9,21 @@ USE dbContabilidad;
 --  1. DATOS DE CATÁLOGOS
 -- =============================================================================
 
-INSERT INTO tblPais (Pk_Pais, nombrePais) VALUES
-(1, 'Guatemala'), (2, 'El Salvador'), (3, 'Honduras');
+INSERT INTO tblPais (idPais, nombrePais) VALUES
+(1, 'Guatemala'),
+(2, 'El Salvador'),
+(3, 'Honduras');
 
-INSERT INTO tblModuloContable (Pk_ModuloContable, nombreModuloContable, codigoModuloContable) VALUES
-(1, 'Contabilidad',  'MOD-CONTA'),
-(2, 'Presupuesto',   'MOD-PRESU'),
-(3, 'Activos Fijos', 'MOD-ACTFI'),
-(4, 'Nomina',        'MOD-NOMIN'),
-(5, 'Ventas',        'MOD-VENTA');
+INSERT INTO tblModuloContable (idModuloContable, nombreModuloContable, codigoModuloContable) VALUES
+(1, 'Contabilidad',    'MOD-CONTA'),
+(2, 'Logística',       'MOD-LOGIS'),
+(3, 'Compras',         'MOD-COMPR'),
+(4, 'Recursos Humanos','MOD-RRHH'),
+(5, 'Ventas',          'MOD-VENTA'),
+(6, 'Bancos',          'MOD-BANCO');
 
 INSERT INTO tblMaestroVidaUtil
-    (Pk_MaestroVidaUtil, codigoMaestroVidaUtil, nombreMaestroVidaUtil,
+    (idMaestroVidaUtil, codigoMaestroVidaUtil, nombreMaestroVidaUtil,
      cantidadMesesMaestroVidaUtil, tasaDepreciacionMaestroVidaUtil) VALUES
 (1, 'EDIFICIO',    'Edificios e instalaciones',        240, 0.05),
 (2, 'MAQUINARIA',  'Maquinaria y equipo de planta',    120, 0.20),
@@ -29,7 +32,7 @@ INSERT INTO tblMaestroVidaUtil
 (5, 'EQ_COMPUTO',  'Equipo electronico de computo',     36, 0.33);
 
 -- Catálogo de cuentas contables (254 registros)
-INSERT INTO tblCuenta (Pk_Cuenta, codigoCuenta, nombreCuenta, tipoCuenta, Fk_Cuenta_Padre_Cuenta, is_active) VALUES
+INSERT INTO tblCuenta (idCuenta, codigoCuenta, nombreCuenta, tipoCuenta, idCuentaPadre, is_active) VALUES
 (1, '0', 'Padre', 'DEUDORA', NULL, TRUE),
 (2, '1', 'Activo', 'DEUDORA', 1, TRUE),
 (3, '1.01', 'Activo Corriente', 'DEUDORA', 2, TRUE),
@@ -285,112 +288,153 @@ INSERT INTO tblCuenta (Pk_Cuenta, codigoCuenta, nombreCuenta, tipoCuenta, Fk_Cue
 (253, '7.02.01', 'Contrapartida de Documentos en Custodia', 'ACREEDORA', 252, TRUE),
 (254, '7.02.02', 'Contrapartida de Valores en Garantía', 'ACREEDORA', 252, TRUE);
 
+-- Clasificación de las cuentas: MAYOR si tiene cuentas hijas, DETALLE si es de último nivel
+UPDATE tblCuenta
+   SET clasificacionCuenta = 'MAYOR'
+ WHERE idCuenta IN (SELECT idPadre
+                       FROM (SELECT DISTINCT idCuentaPadre AS idPadre
+                               FROM tblCuenta
+                              WHERE idCuentaPadre IS NOT NULL) AS padres);
+
+-- =============================================================================
+--  1.1 ASIGNACIÓN INICIAL MÓDULO - CUENTA - PAÍS
+-- =============================================================================
+
+INSERT INTO tblModuloCuentaPais (idModuloContable, idCuenta, idPais)
+SELECT m.idModuloContable, c.idCuenta, 1
+FROM   tblModuloContable m
+JOIN   tblCuenta c ON c.is_active = TRUE AND c.clasificacionCuenta = 'DETALLE'
+WHERE  m.codigoModuloContable = 'MOD-CONTA'
+   OR (m.codigoModuloContable = 'MOD-LOGIS' AND (c.codigoCuenta LIKE '1.01.06.%' OR c.codigoCuenta LIKE '1.02.04.%'
+                                         OR c.codigoCuenta = '1.02.07.003' OR c.codigoCuenta LIKE '5.01.02.%'))
+   OR (m.codigoModuloContable = 'MOD-COMPR' AND (c.codigoCuenta LIKE '1.01.06.%' OR c.codigoCuenta = '1.01.05.003'
+                                         OR c.codigoCuenta LIKE '1.01.07.%' OR c.codigoCuenta LIKE '2.01.01.%'
+                                         OR c.codigoCuenta LIKE '2.01.05.%' OR c.codigoCuenta LIKE '5.01.%'
+                                         OR c.codigoCuenta LIKE '4.04.%'))
+   OR (m.codigoModuloContable = 'MOD-RRHH' AND (c.codigoCuenta LIKE '5.03.01.%' OR c.codigoCuenta LIKE '5.04.01.%'
+                                        OR c.codigoCuenta LIKE '2.01.02.%' OR c.codigoCuenta LIKE '2.01.03.%'))
+   OR (m.codigoModuloContable = 'MOD-VENTA' AND (c.codigoCuenta LIKE '1.01.01.%' OR c.codigoCuenta LIKE '1.01.02.%'
+                                         OR c.codigoCuenta LIKE '1.01.04.%' OR c.codigoCuenta LIKE '4.01.%'
+                                         OR c.codigoCuenta LIKE '5.02.01.%' OR c.codigoCuenta = '1.01.06.003'
+                                         OR c.codigoCuenta = '2.01.03.002'))
+   OR (m.codigoModuloContable = 'MOD-BANCO' AND (c.codigoCuenta LIKE '1.01.01.%' OR c.codigoCuenta LIKE '1.01.02.%'
+                                         OR c.codigoCuenta LIKE '1.01.03.%' OR c.codigoCuenta LIKE '1.01.04.%'
+                                         OR c.codigoCuenta LIKE '2.01.01.%' OR c.codigoCuenta LIKE '2.01.04.%'
+                                         OR c.codigoCuenta LIKE '2.02.01.%' OR c.codigoCuenta LIKE '4.02.%'
+                                         OR c.codigoCuenta LIKE '5.05.%'));
+
+-- =============================================================================
+--  1.2 BITÁCORA DE ACTUALIZACIÓN DE SALDOS
+-- =============================================================================
+
+INSERT INTO tblActualizacionSaldos
+    (idActualizacionSaldos, modoActualizacionSaldos, tipoPeriodoActualizacionSaldos,
+     fechaDesdeActualizacionSaldos, fechaHastaActualizacionSaldos, polizasProcesadasActualizacionSaldos, usuarioActualizacionSaldos) VALUES
+(1, 'BATCH', 'MENSUAL', '2026-10-01', '2026-10-31', 5, 'Administrador');
+
 -- =============================================================================
 --  2. DATOS: PÓLIZAS — ENCABEZADOS
 -- =============================================================================
 
 INSERT INTO tblPolizaEncabezado
-    (Pk_PolizaEncabezado, codigoPolizaEncabezado, fechaPolizaEncabezado, periodoContablePolizaEncabezado,
-     estadoPolizaEncabezado, origenPolizaEncabezado, documentoOrigenPolizaEncabezado, descripcionPolizaEncabezado) VALUES
-(1, 'POL-2026-10-0001', '2026-10-02', '2026-10', 'BORRADOR', 'VENTAS', 'FAC-A-1045',
-    'Venta de embutidos al crédito, líneas Res y Cerdo, factura serie A-1045'),
-(2, 'POL-2026-10-0002', '2026-10-02', '2026-10', 'BORRADOR', 'VENTAS', 'FAC-A-1045-CV',
-    'Registro del costo de ventas de la factura serie A-1045'),
-(3, 'POL-2026-10-0003', '2026-10-05', '2026-10', 'BORRADOR', 'COMPRAS', 'FAC-B-7781',
-    'Compra de materia prima al crédito a proveedor nacional, factura B-7781'),
-(4, 'POL-2026-10-0004', '2026-10-15', '2026-10', 'BORRADOR', 'NOMINA', 'PLA-2026-10-Q2',
-    'Planilla quincenal del personal administrativo, segunda quincena'),
-(5, 'POL-2026-10-0005', '2026-10-20', '2026-10', 'BORRADOR', 'MANUAL', 'CHQ-004521',
-    'Pago a proveedor nacional mediante cheque de Banco Industrial'),
-(6, 'POL-2026-10-0006', '2026-10-31', '2026-10', 'BORRADOR', 'ACTIVOS_FIJOS', 'DEP-2026-10',
-    'Depreciación mensual de maquinaria de planta y equipo de cómputo'),
-(7, 'POL-2026-10-0007', '2026-10-31', '2026-10', 'BORRADOR', 'PRESUPUESTO', NULL,
-    'Provisión de campaña publicitaria impresa, pendiente de aprobación'),
-(8, 'POL-2026-10-0008', '2026-10-28', '2026-10', 'BORRADOR', 'VENTAS', 'REC-0098',
-    'Venta de contado anulada por error de digitación en el monto');
+    (idPolizaEncabezado, idModuloContable, idActualizacionSaldos, codigoPolizaEncabezado, fechaPolizaEncabezado, periodoContablePolizaEncabezado,
+     estadoPolizaEncabezado, documentoOrigenPolizaEncabezado, descripcionPolizaEncabezado, is_active) VALUES
+(1, 5, 1,    'POL-2026-10-0001', '2026-10-02', '2026-10', 'APLICADA', 'FAC-A-1045',
+    'Venta de embutidos al crédito, líneas Res y Cerdo, factura serie A-1045', TRUE),
+(2, 5, 1,    'POL-2026-10-0002', '2026-10-02', '2026-10', 'APLICADA', 'FAC-A-1045-CV',
+    'Registro del costo de ventas de la factura serie A-1045', TRUE),
+(3, 3, 1,    'POL-2026-10-0003', '2026-10-05', '2026-10', 'APLICADA', 'FAC-B-7781',
+    'Compra de materia prima al crédito a proveedor nacional, factura B-7781', TRUE),
+(4, 4, NULL, 'POL-2026-10-0004', '2026-10-15', '2026-10', 'VALIDADA', 'PLA-2026-10-Q2',
+    'Planilla quincenal del personal administrativo, segunda quincena', TRUE),
+(5, 1, 1,    'POL-2026-10-0005', '2026-10-20', '2026-10', 'APLICADA', 'CHQ-004521',
+    'Pago a proveedor nacional mediante cheque de Banco Industrial', TRUE),
+(6, 1, NULL, 'POL-2026-10-0006', '2026-10-31', '2026-10', 'VALIDADA', 'DEP-2026-10',
+    'Depreciación mensual de maquinaria de planta y equipo de cómputo', TRUE),
+(7, 1, NULL, 'POL-2026-10-0007', '2026-10-31', '2026-10', 'BORRADOR', NULL,
+    'Provisión de campaña publicitaria impresa, pendiente de aprobación', TRUE),
+(8, 5, NULL, 'POL-2026-10-0008', '2026-10-28', '2026-10', 'ANULADA', 'REC-0098',
+    'Venta de contado anulada por error de digitación en el monto', FALSE),
+(9, 6, 1,    'POL-2026-10-0009', '2026-10-22', '2026-10', 'APLICADA', 'BOL-2026-9912',
+    'Deposito por cobro de factura A-1045', TRUE),
+(10, 6, NULL, 'POL-2026-10-0010', '2026-10-30', '2026-10', 'VALIDADA', 'NDB-2026-0451',
+    'Nota de debito por comisiones bancarias del mes', TRUE);
 
 -- =============================================================================
 --  3. DATOS: PÓLIZAS — DETALLES
 -- =============================================================================
 
 INSERT INTO tblPolizaDetalle
-    (Fk_PolizaEncabezado_Pk_PolizaEncabezado, Fk_Cuenta_Pk_Cuenta, lineaPolizaDetalle, debePolizaDetalle, haberPolizaDetalle, descripcionPolizaDetalle) VALUES
--- Póliza 1: venta al crédito Q50,000.00 + IVA 12%
+    (idPolizaEncabezado, idCuenta, lineaPolizaDetalle, debePolizaDetalle, haberPolizaDetalle, descripcionPolizaDetalle) VALUES
 (1,  16, 1, 56000.0000,     0.0000, 'Clientes Nacionales - factura A-1045'),
 (1, 134, 2,     0.0000, 30000.0000, 'Ventas de Embutidos - Línea Res'),
 (1, 135, 3,     0.0000, 20000.0000, 'Ventas de Embutidos - Línea Cerdo'),
 (1,  91, 4,     0.0000,  6000.0000, 'IVA Trasladado 12% sobre la venta'),
-
--- Póliza 2: costo de ventas asociado a la factura A-1045
 (2, 170, 1, 18000.0000,     0.0000, 'Costo de Ventas - Línea Res'),
 (2, 171, 2, 12000.0000,     0.0000, 'Costo de Ventas - Línea Cerdo'),
 (2,  26, 3,     0.0000, 30000.0000, 'Salida de Inventario de Productos Terminados'),
-
--- Póliza 3: compra de materia prima al crédito
 (3,  24, 1, 40000.0000,     0.0000, 'Inventario de Materias Primas - carne y especias'),
 (3,  29, 2,  4800.0000,     0.0000, 'IVA Acreditable 12% sobre la compra'),
 (3,  83, 3,     0.0000, 44800.0000, 'Proveedores Nacionales - factura B-7781'),
-
--- Póliza 4: planilla quincenal administrativa
 (4, 207, 1, 25000.0000,     0.0000, 'Sueldos Normales - personal administrativo'),
 (4, 210, 2,  3167.5000,     0.0000, 'Cuota patronal IGSS 12.67%'),
 (4,  92, 3,     0.0000,  4375.0000, 'Cuotas Obrero-Patronales IGSS por pagar'),
 (4,  86, 4,     0.0000, 23792.5000, 'Sueldos por Pagar (Personal Administrativo)'),
-
--- Póliza 5: pago a proveedor
 (5,  83, 1, 44800.0000,     0.0000, 'Cancelación de factura B-7781'),
 (5,   8, 2,     0.0000, 44800.0000, 'Banco Industrial (MN) - cheque 004521'),
-
--- Póliza 6: depreciación mensual (muestra el uso de 4 decimales)
 (6, 176, 1,  4166.6667,     0.0000, 'Depreciación de Maquinaria de Producción'),
 (6, 222, 2,   833.3333,     0.0000, 'Depreciación de Equipo Electrónico de Cómputo'),
 (6,  51, 3,     0.0000,  4166.6667, 'Depreciación Acumulada de Maquinaria y Equipo'),
 (6,  54, 4,     0.0000,   833.3333, 'Depreciación Acumulada de Equipo de Cómputo'),
-
--- Póliza 7: provisión de publicidad (BORRADOR)
 (7, 201, 1,  7500.0000,     0.0000, 'Propaganda Impresa - campaña noviembre'),
 (7,  29, 2,   900.0000,     0.0000, 'IVA Acreditable 12%'),
 (7, 103, 3,     0.0000,  8400.0000, 'Acreedores Diversos - agencia publicitaria'),
-
--- Póliza 8: venta de contado anulada
 (8,   5, 1,  1120.0000,     0.0000, 'Caja General - recibo 0098 (anulado)'),
 (8, 136, 2,     0.0000,  1000.0000, 'Ventas de Embutidos - Línea Pollo (anulado)'),
-(8,  91, 3,     0.0000,   120.0000, 'IVA Trasladado (anulado)');
+(8,  91, 3,     0.0000,   120.0000, 'IVA Trasladado (anulado)'),
+(9,   8, 1, 25000.0000,     0.0000, 'Ingreso bancario doc. BOL-2026-9912'),
+(9,  16, 2,     0.0000, 25000.0000, 'Contrapartida doc. BOL-2026-9912'),
+(10, 228, 1,   350.0000,     0.0000, 'Contrapartida doc. NDB-2026-0451'),
+(10,   8, 2,     0.0000,   350.0000, 'Egreso bancario doc. NDB-2026-0451');
 
 -- =============================================================================
---  4. ESTADO FINAL DE LAS PÓLIZAS
+--  4. SALDOS DEL PERÍODO 2026-10
 -- =============================================================================
 
-UPDATE tblPolizaEncabezado SET estadoPolizaEncabezado = 'APLICADA'
- WHERE Pk_PolizaEncabezado IN (1, 2, 3, 4, 5, 6);
+INSERT INTO tblSaldoCuentaPeriodo
+    (idCuenta, idActualizacionSaldos, periodoContableSaldoCuentaPeriodo, saldoInicialSaldoCuentaPeriodo,
+     cargoSaldoCuentaPeriodo, abonoSaldoCuentaPeriodo, saldoFinalSaldoCuentaPeriodo, estadoSaldoCuentaPeriodo)
+WITH RECURSIVE movimiento AS (
+    SELECT pd.idCuenta AS idCuenta, SUM(pd.debePolizaDetalle) AS debe, SUM(pd.haberPolizaDetalle) AS haber
+      FROM tblPolizaDetalle pd
+      JOIN tblPolizaEncabezado pe ON pe.idPolizaEncabezado = pd.idPolizaEncabezado
+     WHERE pe.estadoPolizaEncabezado = 'APLICADA' AND pe.periodoContablePolizaEncabezado = '2026-10'
+       AND pe.is_active = TRUE AND pd.is_active = TRUE
+     GROUP BY pd.idCuenta
+), ascenso AS (
+    SELECT idCuenta, debe, haber FROM movimiento
+    UNION ALL
+    SELECT c.idCuentaPadre, a.debe, a.haber
+      FROM ascenso a
+      JOIN tblCuenta c ON c.idCuenta = a.idCuenta
+     WHERE c.idCuentaPadre IS NOT NULL
+)
+SELECT c.idCuenta, 1, '2026-10', 0.0000, SUM(a.debe), SUM(a.haber),
+       CASE WHEN c.tipoCuenta = 'DEUDORA' THEN SUM(a.debe) - SUM(a.haber)
+            ELSE SUM(a.haber) - SUM(a.debe) END,
+       'ABIERTO'
+  FROM ascenso a
+  JOIN tblCuenta c ON c.idCuenta = a.idCuenta
+ WHERE c.codigoCuenta <> '0'
+ GROUP BY c.idCuenta, c.tipoCuenta;
 
-UPDATE tblPolizaEncabezado SET estadoPolizaEncabezado = 'ANULADA'
- WHERE Pk_PolizaEncabezado = 8;
-
--- =============================================================================
---  5. PRUEBAS DEL TRASLADO DESDE BANCOS
--- =============================================================================
-
--- 5.1 Cobro de cliente depositado en Banco Industrial (INGRESO)
-CALL spInsertarPolizaBancos('BOL-2026-9912', '2026-10-22',
-     'Deposito por cobro de factura A-1045', 8, 16, 25000.0000, 'INGRESO',
-     @codigoPoliza, @resultado);
-SELECT @codigoPoliza AS codigoPoliza, @resultado AS resultado;
-
--- 5.2 Mismo documento trasladado otra vez: el control anti-duplicado lo detiene
-CALL spInsertarPolizaBancos('BOL-2026-9912', '2026-10-22',
-     'Deposito por cobro de factura A-1045 (reintento)', 8, 16, 25000.0000, 'INGRESO',
-     @codigoPoliza, @resultado);
-SELECT @codigoPoliza AS codigoPoliza, @resultado AS resultado;
-
--- 5.3 Pago de comisiones bancarias (EGRESO)
-CALL spInsertarPolizaBancos('NDB-2026-0451', '2026-10-30',
-     'Nota de debito por comisiones bancarias del mes', 8, 228, 350.0000, 'EGRESO',
-     @codigoPoliza, @resultado);
-SELECT @codigoPoliza AS codigoPoliza, @resultado AS resultado;
-
--- 5.4 Intento sobre una cuenta de agrupación (no imputable): se rechaza
-CALL spInsertarPolizaBancos('BOL-2026-9999', '2026-10-30',
-     'Movimiento con cuenta de agrupacion', 7, 16, 100.0000, 'INGRESO',
-     @codigoPoliza, @resultado);
-SELECT @codigoPoliza AS codigoPoliza, @resultado AS resultado;
+-- Saldos vigentes en el catálogo de cuentas (período 2026-10)
+UPDATE tblCuenta c
+  JOIN tblSaldoCuentaPeriodo s ON s.idCuenta = c.idCuenta AND s.periodoContableSaldoCuentaPeriodo = '2026-10'
+   SET c.saldoInicialCuenta = s.saldoInicialSaldoCuentaPeriodo,
+       c.cargoPeriodoCuenta = s.cargoSaldoCuentaPeriodo,
+       c.abonoPeriodoCuenta = s.abonoSaldoCuentaPeriodo,
+       c.saldoActualCuenta  = s.saldoFinalSaldoCuentaPeriodo,
+       c.cargoActualCuenta  = s.cargoSaldoCuentaPeriodo,
+       c.abonoActualCuenta  = s.abonoSaldoCuentaPeriodo,
+       c.periodoSaldoCuenta = '2026-10';
