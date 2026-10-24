@@ -103,6 +103,48 @@ namespace CapaVista_Contabilidad.Properties {
             }
         }
 
+        internal static System.Drawing.Bitmap botonmdi6 {
+            get {
+                object obj = ResourceManager.GetObject("botonmdi6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap botonmdi7 {
+            get {
+                object obj = ResourceManager.GetObject("botonmdi7", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap botonmdi8 {
+            get {
+                object obj = ResourceManager.GetObject("botonmdi8", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap botonmdi9 {
+            get {
+                object obj = ResourceManager.GetObject("botonmdi9", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap botonmdi10 {
+            get {
+                object obj = ResourceManager.GetObject("botonmdi10", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap botonmdi11 {
+            get {
+                object obj = ResourceManager.GetObject("botonmdi11", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
         internal static System.Drawing.Bitmap kpi1 {
             get {
                 object obj = ResourceManager.GetObject("kpi1", resourceCulture);
@@ -163,13 +205,6 @@ namespace CapaVista_Contabilidad.Properties {
             get {
                 object obj = ResourceManager.GetObject("info", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-
-        internal static System.Drawing.Icon Icono_Contabilidad {
-            get {
-                object obj = ResourceManager.GetObject("Icono_Contabilidad", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
             }
         }
 

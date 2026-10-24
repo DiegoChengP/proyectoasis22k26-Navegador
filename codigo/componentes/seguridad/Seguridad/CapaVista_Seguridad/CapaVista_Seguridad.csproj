@@ -38,6 +38,9 @@
     </Reference>
     <Reference Include="CapaModelo_Navegador, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="CapaVista_Consultas, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="CapaVista_Contabilidad">
+      <HintPath>..\..\..\..\modulos\contabilidad\Contabilidad\CapaVista_Contabilidad\bin\Debug\CapaVista_Contabilidad.dll</HintPath>
+    </Reference>
     <Reference Include="CapaVista_Navegador">
       <HintPath>..\..\..\navegador\Navegador\CapaVista_Navegador\bin\Debug\CapaVista_Navegador.dll</HintPath>
     </Reference>

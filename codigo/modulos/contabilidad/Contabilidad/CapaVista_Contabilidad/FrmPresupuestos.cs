@@ -1,26 +1,141 @@
-﻿/*
- * ==================================================================
- * Área : Contabilidad
- * Autor : Gabriel André Guillén Pocón
- * Carné : 0901-23-1998
- * Fecha : 22/10/2026
- * ==================================================================
- * Propósito :
- *  Diseño de la pantalla de presupuestos del prototipo no funcional. Sin lógica.
- * ===================================================================
-*/
-
+/* Área: Contabilidad. Autor: Gabriel André Guillén Pocón. Carné: 0901-23-1998.
+ * Fecha: 14/10/2026. Propósito: presupuesto de ejemplo sin persistencia. Responsable: Mario. */
+using System;
+using System.Data;
+using System.Drawing;
 using System.Windows.Forms;
+using CapaControlador_Contabilidad;
+using CapaVista_Contabilidad.Componentes;
+using Diseno = CapaVista_Contabilidad.Componentes.ClsDisenoContabilidad;
 
 namespace CapaVista_Contabilidad
 {
-    // Ventana de presupuestos (solo diseño).
+    // Ventana de presupuestos.
     public partial class FrmPresupuestos : Form
     {
-        // Crea los controles del diseño.
-        public FrmPresupuestos()
+        // Controlador de presupuestos.
+        private readonly ClsControladorPresupuestosContabilidad _Controlador = new ClsControladorPresupuestosContabilidad();
+        // Partidas del presupuesto.
+        private DataTable _Detalle;
+        // Errores por campo.
+        private readonly ClsValidacionContabilidad _Validacion = new ClsValidacionContabilidad();
+        // Paginación de las partidas.
+        private readonly ClsPaginacionContabilidad _Paginacion;
+        // Evita marcar cambios mientras se carga.
+        private bool _CargandoDatos;
+        // Indica si hay cambios sin guardar.
+        private bool _HayCambios;
+
+        // Constructor para el diseñador y las pruebas: todos los permisos.
+        public FrmPresupuestos() : this(ClsPermisosPantallaContabilidad.Total)
+        {
+        }
+
+        // Abre la ventana con los permisos que dio Seguridad.
+        public FrmPresupuestos(ClsPermisosPantallaContabilidad Permisos)
         {
             InitializeComponent();
+            ContabilidadMetAplicarPermisos(Permisos);
+            ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Presupuestos", new Size(1180, 688));
+            _Paginacion = new ClsPaginacionContabilidad(ContabilidadDgvDetalle);
+            foreach (Control Campo in new Control[] { ContabilidadDtpInicio, ContabilidadTxtNombre, ContabilidadCboModulo, ContabilidadNudCantidad })
+                _Validacion.ContabilidadMetObligatorio(Campo);
+            Disposed += (Remitente, Argumentos) => { _Paginacion.Dispose(); _Validacion.Dispose(); };
+            ContabilidadCboModulo.DataSource = _Controlador.ContabilidadFuncModulos();
+            ContabilidadNudGastado.ValueChanged += ContabilidadMetCambiarEncabezado;
+            ContabilidadDtpInicio.ValueChanged += ContabilidadMetCambiarEncabezado;
+            ContabilidadDtpCierre.ValueChanged += ContabilidadMetCambiarEncabezado;
+            ContabilidadBtnAgregar.Click += ContabilidadMetAgregar;
+            ContabilidadBtnQuitar.Click += (Remitente, Argumentos) =>
+            {
+                if (ContabilidadDgvDetalle.CurrentRow == null) return;
+                DataRow Fila = _Paginacion.ContabilidadFuncFilaActual();
+                if (Fila != null) _Detalle.Rows.Remove(Fila);
+                _HayCambios = true;
+                ContabilidadMetActualizar();
+            };
+            ContabilidadBtnNueva.Click += (Remitente, Argumentos) => ContabilidadMetCargar(false);
+            ContabilidadBtnEjemplo.Click += (Remitente, Argumentos) => ContabilidadMetCargar(true);
+            ContabilidadBtnGuardar.Click += (Remitente, Argumentos) =>
+            {
+                DateTime? Cierre = ContabilidadDtpCierre.Checked ? (DateTime?)ContabilidadDtpCierre.Value : null;
+                string ErrorFecha = ContabilidadDtpCierre.Checked ? _Controlador.ContabilidadFuncErrorFechas(ContabilidadDtpInicio.Value, ContabilidadDtpCierre.Value) : string.Empty;
+                if (!_Validacion.ContabilidadFuncValidar(ContabilidadDtpCierre, ErrorFecha)) return;
+                // El Controlador valida y graba; la Vista solo muestra el mensaje.
+                string Mensaje;
+                bool Grabado = _Controlador.ContabilidadFuncGrabarCambios(EstadoEntidadContabilidad.Agregar, ContabilidadDtpInicio.Value,
+                    Cierre, ContabilidadNudGastado.Value, _Detalle, out Mensaje);
+                Diseno.ContabilidadMetAviso(this, Grabado ? string.Empty : Mensaje, Mensaje);
+            };
+            ContabilidadMetCargar(true);
+        }
+
+        // Deshabilita los botones que el usuario no puede usar.
+        private void ContabilidadMetAplicarPermisos(ClsPermisosPantallaContabilidad Permisos)
+        {
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnNueva, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnEjemplo, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnAgregar, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnGuardar, Permisos.PuedeInsertar);
+            ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnQuitar, Permisos.PuedeEliminar);
+        }
+
+        // Carga un presupuesto nuevo o de ejemplo.
+        private void ContabilidadMetCargar(bool Ejemplo)
+        {
+            _CargandoDatos = true;
+            _Validacion.ContabilidadMetLimpiar();
+            DataTable Anterior = _Detalle;
+            _Detalle = _Controlador.ContabilidadFuncPresupuesto();
+            if (!Ejemplo) _Detalle.Clear();
+            _Paginacion.ContabilidadMetCargar(_Detalle);
+            if (Anterior != null) Anterior.Dispose();
+            ContabilidadDtpInicio.Value = new DateTime(2026, 10, 1);
+            ContabilidadDtpCierre.Value = new DateTime(2026, 10, 31);
+            ContabilidadDtpCierre.Checked = Ejemplo;
+            ContabilidadNudGastado.Value = Ejemplo ? 21500m : 0m;
+            ContabilidadTxtNombre.Clear();
+            ContabilidadNudCantidad.Value = 0m;
+            _CargandoDatos = false;
+            _HayCambios = false;
+            ContabilidadMetActualizar();
+        }
+
+        // Marca que hay cambios en el encabezado.
+        private void ContabilidadMetCambiarEncabezado(object Remitente, EventArgs Argumentos)
+        {
+            if (!_CargandoDatos) _HayCambios = true;
+            ContabilidadMetActualizar();
+        }
+
+        // Agrega una partida al detalle.
+        private void ContabilidadMetAgregar(object Remitente, EventArgs Argumentos)
+        {
+            var Errores = _Controlador.ContabilidadFuncErroresPartida(ContabilidadTxtNombre.Text, ContabilidadCboModulo.Text, ContabilidadNudCantidad.Value, _Detalle);
+            _Validacion.ContabilidadFuncValidar(ContabilidadTxtNombre, Errores.ContainsKey("Nombre") ? Errores["Nombre"] : null);
+            _Validacion.ContabilidadFuncValidar(ContabilidadCboModulo, Errores.ContainsKey("Modulo") ? Errores["Modulo"] : null);
+            _Validacion.ContabilidadFuncValidar(ContabilidadNudCantidad, Errores.ContainsKey("Cantidad") ? Errores["Cantidad"] : null);
+            if (Errores.Count > 0) return;
+            _Detalle.Rows.Add(ContabilidadTxtNombre.Text.Trim(), ContabilidadCboModulo.Text, ContabilidadNudCantidad.Value);
+            _HayCambios = true;
+            ContabilidadTxtNombre.Clear();
+            ContabilidadNudCantidad.Value = 0m;
+            ContabilidadMetActualizar();
+        }
+
+        // Recalcula totales y botones.
+        private void ContabilidadMetActualizar()
+        {
+            if (_Detalle == null) return;
+            decimal Total = _Controlador.ContabilidadFuncTotalPresupuesto(_Detalle);
+            decimal Restante = _Controlador.ContabilidadFuncRestante(_Detalle, ContabilidadNudGastado.Value);
+            ContabilidadLblResumen.Text = "Total: " + Diseno.ContabilidadFuncMoneda(Total)
+                + "     Gastado: " + Diseno.ContabilidadFuncMoneda(ContabilidadNudGastado.Value)
+                + "     Restante: " + Diseno.ContabilidadFuncMoneda(Restante) + (Restante < 0m ? " · Presupuesto excedido" : "");
+            ContabilidadLblResumen.ForeColor = Restante < 0m ? Color.FromArgb(197, 143, 62) : Color.FromArgb(35, 50, 61);
+            ContabilidadBtnQuitar.Enabled = _Detalle.Rows.Count > 0;
+            ContabilidadBtnGuardar.Enabled = _HayCambios && _Detalle.Rows.Count > 0;
+            _Paginacion.ContabilidadMetActualizar();
         }
     }
 }
