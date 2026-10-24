@@ -48,14 +48,8 @@
     <Reference Include="CapaModelo_Navegador">
       <HintPath>..\CapaModelo_Navegador\bin\Debug\CapaModelo_Navegador.dll</HintPath>
     </Reference>
-    <Reference Include="CapaVista_Componentes">
-      <HintPath>..\..\..\consultas\Consultas_Componentes\CapaVista_Componentes\bin\Debug\CapaVista_Componentes.dll</HintPath>
-    </Reference>
     <Reference Include="CapaVista_Consultas">
       <HintPath>..\..\..\consultas\Consultas\CapaVista_Consultas\bin\Debug\CapaVista_Consultas.dll</HintPath>
-    </Reference>
-    <Reference Include="CapaVista_Mantenimiento">
-      <HintPath>..\..\..\consultas\Consultas_Mantenimiento\CapaVista_Mantenimiento\bin\Debug\CapaVista_Mantenimiento.dll</HintPath>
     </Reference>
     <Reference Include="CapaVista_Reporteador">
       <HintPath>..\..\..\reporteador\Reporteador\CapaVista_Reporteador\bin\Debug\CapaVista_Reporteador.dll</HintPath>

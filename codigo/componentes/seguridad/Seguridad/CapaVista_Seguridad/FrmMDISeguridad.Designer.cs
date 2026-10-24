@@ -46,6 +46,7 @@
             this.SeguridadPbLogo = new System.Windows.Forms.PictureBox();
             this.SeguridadBtnCerrarSesion = new System.Windows.Forms.Button();
             this.SeguridadPnlDashboard = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.SeguridadBtnAyudas = new System.Windows.Forms.Button();
             this.SeguridadPnlKPI6 = new System.Windows.Forms.Panel();
             this.SeguridadLblKPIResp6 = new System.Windows.Forms.Label();
@@ -300,6 +301,7 @@
             this.SeguridadPnlDashboard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(244)))), ((int)(((byte)(238)))), ((int)(((byte)(225)))));
             this.SeguridadPnlDashboard.BackgroundImage = global::CapaVista_Seguridad.Properties.Resources.dashboardSeguridad;
             this.SeguridadPnlDashboard.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.SeguridadPnlDashboard.Controls.Add(this.button1);
             this.SeguridadPnlDashboard.Controls.Add(this.SeguridadBtnAyudas);
             this.SeguridadPnlDashboard.Controls.Add(this.SeguridadPnlKPI6);
             this.SeguridadPnlDashboard.Controls.Add(this.SeguridadPnlKPI5);
@@ -315,6 +317,13 @@
             this.SeguridadPnlDashboard.Name = "SeguridadPnlDashboard";
             this.SeguridadPnlDashboard.Size = new System.Drawing.Size(1208, 711);
             this.SeguridadPnlDashboard.TabIndex = 1;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(0, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 0;
             // 
             // SeguridadBtnAyudas
             // 
@@ -596,10 +605,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1028, 806);
+            this.ClientSize = new System.Drawing.Size(1028, 749);
             this.Controls.Add(this.SeguridadPnlFondo);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmMDISeguridad";
+            this.Text = "S";
             this.Text = "2003 - MDI Principal de Seguridad";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.SeguridadPnlFondo.ResumeLayout(false);
@@ -667,5 +677,6 @@
         private System.Windows.Forms.Label SeguridadLblUsuarioRol;
         private System.Windows.Forms.Label SeguridadLblUsuario;
         private System.Windows.Forms.Button SeguridadBtnCerrarSesion;
+        private System.Windows.Forms.Button button1;
     }
 }

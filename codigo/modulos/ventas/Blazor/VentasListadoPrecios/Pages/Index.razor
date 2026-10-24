@@ -1,0 +1,248 @@
+﻿@page "/ventas-listado-precios"
+
+<style>
+    :root {
+        --color-principal: #3B1D4A;    /* Principal Navegador */
+        --color-acento: #7B3F93;       /* Acento Navegador */
+        --color-etiquetas: #C9A24A;    /* Fondo Etiquetas */
+        --color-fondo: #F8F5F9;        /* Fondo General */
+        --color-botones: #E4D4EA;      /* Botones */
+    }
+
+    body { 
+        background-color: var(--color-fondo); 
+        font-family: 'Segoe UI', Tahoma, sans-serif; 
+        margin: 0; 
+        color: var(--color-principal); 
+    }
+
+    .header-compacto { 
+        background-color: var(--color-principal); 
+        color: white; 
+        padding: 0.8rem 1.5rem; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        border-bottom: 4px solid var(--color-etiquetas); 
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-compacto h2 { 
+        margin: 0; 
+        font-size: 1.3rem; 
+    }
+
+    .badge-header {
+        background-color: var(--color-etiquetas); 
+        color: white;
+        padding: 2px 8px; 
+        border-radius: 12px; 
+        font-size: 0.75rem; 
+        font-weight: bold;
+        margin-left: 10px;
+    }
+
+    /* Estilo para mostrar el logo completo en su proporción original */
+    .logo-img {
+        max-height: 55px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .layout-grid { 
+        display: grid; 
+        grid-template-columns: 1fr 320px; 
+        gap: 15px; 
+        padding: 1rem; 
+        max-width: 1200px; 
+        margin: 0 auto; 
+    }
+
+    .panel { 
+        background: white; 
+        border-radius: 8px; 
+        border: 1px solid var(--color-botones); 
+        padding: 1rem; 
+        box-shadow: 0 1px 4px rgba(59,29,74,0.05); 
+    }
+
+    .tabla-precios { 
+        width: 100%; 
+        border-collapse: collapse; 
+        font-size: 0.9rem; 
+    }
+
+    .tabla-precios th { 
+        background-color: var(--color-botones); 
+        color: var(--color-principal); 
+        text-align: left; 
+        padding: 8px; 
+    }
+
+    .tabla-precios td { 
+        padding: 8px; 
+        border-bottom: 1px solid var(--color-fondo); 
+    }
+
+    .btn-action { 
+        background-color: var(--color-botones); 
+        color: var(--color-principal); 
+        border: 1px solid var(--color-acento);
+        padding: 4px 10px; 
+        border-radius: 4px; 
+        cursor: pointer; 
+        font-size: 0.85rem; 
+        font-weight: bold;
+    }
+
+    .btn-action:hover { 
+        background-color: var(--color-acento); 
+        color: white;
+    }
+
+    .carrito-item { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 6px 0; 
+        border-bottom: 1px dashed var(--color-botones); 
+        font-size: 0.85rem; 
+    }
+
+    .total-bar { 
+        background-color: var(--color-principal); 
+        color: white; 
+        padding: 0.8rem; 
+        border-radius: 6px; 
+        margin-top: 1rem; 
+        display: flex; 
+        justify-content: space-between; 
+        font-weight: bold; 
+    }
+
+    .total-bar span.monto-total { 
+        color: var(--color-etiquetas); 
+    }
+
+    .btn-pagar { 
+        width: 100%; 
+        background-color: var(--color-etiquetas); 
+        color: white; 
+        border: none; 
+        padding: 8px; 
+        border-radius: 6px; 
+        margin-top: 0.8rem; 
+        font-weight: bold; 
+        cursor: pointer; 
+    }
+
+    .btn-pagar:hover {
+        opacity: 0.9;
+    }
+</style>
+
+<div class="header-compacto">
+    <div class="header-left">
+        <div>
+            <h2>Embutidos de Calidad S.A. - Listado de Precios</h2>
+        </div>
+        <span class="badge-header">Ventas</span>
+    </div>
+    <div>
+        <img src="images/logoEmpresa.png" alt="Logo Empresa" class="logo-img" />
+    </div>
+</div>
+
+<div class="layout-grid">
+    <!-- Catálogo -->
+    <div class="panel">
+        <h3 style="margin-top:0; color:var(--color-principal); font-size: 1.1rem;">Productos Disponibles</h3>
+        <table class="tabla-precios">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th>Unidad</th>
+                    <th>Precio</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in productos)
+                {
+                    <tr>
+                        <td><strong>@p.Codigo</strong></td>
+                        <td>@p.Nombre</td>
+                        <td>@p.UnidadMedida</td>
+                        <td>Q@(p.Precio.ToString("F2"))</td>
+                        <td><button class="btn-action" @onclick="() => Agregar(p)">+</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Carrito -->
+    <div class="panel">
+        <h3 style="margin-top:0; color:var(--color-principal); font-size: 1.1rem; border-bottom: 2px solid var(--color-botones); padding-bottom: 5px;">🛒 Carrito</h3>
+        @if (carrito.Count == 0)
+        {
+            <p style="color: #777; font-size: 0.85rem; text-align: center; margin: 1.5rem 0;">Vacío</p>
+        }
+        else
+        {
+            @foreach (var item in carrito)
+            {
+                <div class="carrito-item">
+                    <div>
+                        <strong>@item.Producto.Nombre</strong><br/>
+                        <span style="color:var(--color-acento);">Q@(item.Producto.Precio) x @item.Cantidad</span>
+                    </div>
+                    <div>
+                        <button style="border:1px solid var(--color-acento); background:var(--color-botones); color:var(--color-principal); padding:1px 6px; border-radius:3px; cursor:pointer;" @onclick="() => CambiarCant(item, -1)">-</button>
+                        <span style="margin: 0 4px; font-weight:bold;">@item.Cantidad</span>
+                        <button style="border:1px solid var(--color-acento); background:var(--color-botones); color:var(--color-principal); padding:1px 6px; border-radius:3px; cursor:pointer;" @onclick="() => CambiarCant(item, 1)">+</button>
+                    </div>
+                </div>
+            }
+            <div class="total-bar">
+                <span>Total:</span>
+                <span class="monto-total">Q@(Total.ToString("F2"))</span>
+            </div>
+            <button class="btn-pagar" @onclick="Confirmar">Generar Pedido</button>
+        }
+    </div>
+</div>
+
+@code {
+    public class Prod { public string Codigo { get; set; } = ""; public string Nombre { get; set; } = ""; public string UnidadMedida { get; set; } = ""; public decimal Precio { get; set; } }
+    public class ItemC { public Prod Producto { get; set; } = new(); public int Cantidad { get; set; } }
+
+    private List<Prod> productos = new() {
+        new Prod { Codigo = "EMB-001", Nombre = "Jamón Horneado Especial", UnidadMedida = "Lb", Precio = 45.00m },
+        new Prod { Codigo = "EMB-002", Nombre = "Salchicha Alemana", UnidadMedida = "Paq", Precio = 55.00m },
+        new Prod { Codigo = "EMB-003", Nombre = "Chorizo Riojano Tradicional", UnidadMedida = "Pieza", Precio = 85.00m },
+        new Prod { Codigo = "EMB-004", Nombre = "Salami Madurado", UnidadMedida = "Pieza", Precio = 42.00m }
+    };
+
+    private List<ItemC> carrito = new();
+    private decimal Total => carrito.Sum(i => i.Producto.Precio * i.Cantidad);
+
+    private void Agregar(Prod p) {
+        var item = carrito.FirstOrDefault(c => c.Producto.Codigo == p.Codigo);
+        if (item != null) item.Cantidad++;
+        else carrito.Add(new ItemC { Producto = p, Cantidad = 1 });
+    }
+
+    private void CambiarCant(ItemC item, int val) {
+        item.Cantidad += val;
+        if (item.Cantidad <= 0) carrito.Remove(item);
+    }
+
+    private void Confirmar() => carrito.Clear();
+}

@@ -17,5 +17,7 @@ namespace CapaVista_Seguridad
             InitializeComponent();
             navegador1.NavegadorMetConfigurar("tblempleado", 4, 4);
         }
+
+        
     }
 }

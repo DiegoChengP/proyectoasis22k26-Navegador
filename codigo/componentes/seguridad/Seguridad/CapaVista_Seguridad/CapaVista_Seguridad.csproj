@@ -31,13 +31,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CapaControlador_Navegador, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="CapaControlador_Navegador, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\navegador\Navegador\CapaVista_Navegador\bin\Debug\CapaControlador_Navegador.dll</HintPath>
+    </Reference>
     <Reference Include="CapaControlador_Seguridad, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\CapaControlador_Seguridad\bin\Debug\CapaControlador_Seguridad.dll</HintPath>
     </Reference>
-    <Reference Include="CapaModelo_Navegador, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-    <Reference Include="CapaVista_Consultas, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="CapaModelo_Navegador, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\navegador\Navegador\CapaVista_Navegador\bin\Debug\CapaModelo_Navegador.dll</HintPath>
+    </Reference>
+    <Reference Include="CapaVista_Consultas, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\consultas\Consultas\CapaVista_Consultas\bin\Debug\CapaVista_Consultas.dll</HintPath>
+    </Reference>
+    <Reference Include="CapaVista_Logistica">
+      <HintPath>..\..\..\..\modulos\Logistica\Logistica\CapaVista_Logistica\bin\Debug\CapaVista_Logistica.dll</HintPath>
+    </Reference>
     <Reference Include="CapaVista_Contabilidad">
       <HintPath>..\..\..\..\modulos\contabilidad\Contabilidad\CapaVista_Contabilidad\bin\Debug\CapaVista_Contabilidad.dll</HintPath>
     </Reference>

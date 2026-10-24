@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{879E3F73-E1AD-49E4-926F-904827E4FD01}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CapaVista_Inventario_Logistica</RootNamespace>
+    <AssemblyName>CapaVista_Inventario_Logistica</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CapaControlador_Inventario_Logistica">
+      <HintPath>..\CapaControlador_Inventario_Logistica\bin\Debug\CapaControlador_Inventario_Logistica.dll</HintPath>
+    </Reference>
+    <Reference Include="CapaVista_Navegador">
+      <HintPath>..\..\..\..\componentes\navegador\Navegador\CapaVista_Navegador\bin\Debug\CapaVista_Navegador.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Formas\FrmMantenimientoBodegas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoBodegas.Designer.cs">
+      <DependentUpon>FrmMantenimientoBodegas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoCategoria.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoCategoria.Designer.cs">
+      <DependentUpon>FrmMantenimientoCategoria.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoDetalleMovimiento.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoDetalleMovimiento.Designer.cs">
+      <DependentUpon>FrmMantenimientoDetalleMovimiento.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoLinea.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoLinea.Designer.cs">
+      <DependentUpon>FrmMantenimientoLinea.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoMarca.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoMarca.Designer.cs">
+      <DependentUpon>FrmMantenimientoMarca.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoMovimientoInventario.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoMovimientoInventario.Designer.cs">
+      <DependentUpon>FrmMantenimientoMovimientoInventario.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoProducto.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoProducto.Designer.cs">
+      <DependentUpon>FrmMantenimientoProducto.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoStock.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoStock.Designer.cs">
+      <DependentUpon>FrmMantenimientoStock.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoSucursales.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoSucursales.Designer.cs">
+      <DependentUpon>FrmMantenimientoSucursales.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoTipoMovimiento.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formas\FrmMantenimientoTipoMovimiento.Designer.cs">
+      <DependentUpon>FrmMantenimientoTipoMovimiento.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Formas\FrmMantenimientoBodegas.resx">
+      <DependentUpon>FrmMantenimientoBodegas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formas\FrmMantenimientoCategoria.resx">
+      <DependentUpon>FrmMantenimientoCategoria.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formas\FrmMantenimientoDetalleMovimiento.resx">
+      <DependentUpon>FrmMantenimientoDetalleMovimiento.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formas\FrmMantenimientoLinea.resx">
+      <DependentUpon>FrmMantenimientoLinea.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formas\FrmMantenimientoMarca.resx">
+      <DependentUpon>FrmMantenimientoMarca.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formas\FrmMantenimientoMovimientoInventario.resx">
+      <DependentUpon>FrmMantenimientoMovimientoInventario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formas\FrmMantenimientoProducto.resx">
+      <DependentUpon>FrmMantenimientoProducto.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formas\FrmMantenimientoStock.resx">
+      <DependentUpon>FrmMantenimientoStock.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formas\FrmMantenimientoSucursales.resx">
+      <DependentUpon>FrmMantenimientoSucursales.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formas\FrmMantenimientoTipoMovimiento.resx">
+      <DependentUpon>FrmMantenimientoTipoMovimiento.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_guardar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_ingresar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_modificar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_ayuda.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_eliminar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_consultar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_estructuraN.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_estructuraN_sintexto.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\panelestandarizado.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\FondoLogistica.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\FondoLogistica1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\FondoLogica2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PanelTabla.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\FondoDatagriedview.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_refrescar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_consultar1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_cancelar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_cancelar1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_inicio.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_anterior.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_siguiente.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_fin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_salir.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_imprimir.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_bodega.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

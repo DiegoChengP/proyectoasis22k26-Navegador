@@ -1,0 +1,24 @@
+ASIGNACIÓN DE FORMULARIOS — VENTAS Y CUENTAS POR COBRAR
+Fecha: 14/10/2026
+
+INTEGRANTES
+Jose Javier Torres Martínez | 0901-23-1091
+Roger Yankhel de Jesús Herrera Alcántara | 0901-23-2429
+Natali Sofía Montenegro Portillo | 0901-23-10017
+Matthew Andreé Juárez Xoy | 0901-23-4250
+Julio Roberto Rosales Mejía | 0901-23-1426
+Diego Alejandro Cheng Peña | 0901-22-8091
+
+2.1 Listado de precios: Matthew y Diego. Encargado: Diego.
+2.2 Movimientos de clientes: Jose y Diego. Encargado: Jose.
+2.3 Enlace Contabilidad y otros módulos: Natali y Roger. Encargada: Natali.
+2.4 Recepción de pagos de clientes: Todos (según la corrección solicitada).
+2.5 Reportes — Balances de antigüedad de saldos: Todos.
+2.6 Cotizaciones, pedidos y facturas: Matthew, Jose y Natali. Encargado: Matthew.
+2.7 Comisiones de vendedores: Roger.
+2.8 Mantenimientos: Todos.
+2.9 Cierre de movimientos: Todos.
+
+Todos incluye a los seis integrantes.
+La asignación se refleja en los comentarios de los formularios existentes.
+No se crea un formulario de Enlace Contabilidad ni se agrega lógica de negocio.
