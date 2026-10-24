@@ -53,7 +53,7 @@ set "VENTAS_EJECUTABLE=%VENTAS_SALIDA%\Ejecucion_Seguridad.exe"
 call :ENCABEZADO
 echo   %VENTAS_DORADO%PERFIL%VENTAS_RESET%  %VENTAS_CONFIG%       %VENTAS_DORADO%MODO%VENTAS_RESET%  Paralelo + incremental
 echo.
-echo   %VENTAS_GRIS%Consultas / Navegador / Seguridad / Reporteador + sus 8 botones
+echo   %VENTAS_GRIS%Consultas / Navegador / Logistica / Seguridad / Reporteador + sus 8 botones
 echo.
 echo   Facturas                 Listado de precios        Cotizaciones
 echo   Movimientos y pagos      Cierre de movimientos     Reportes
