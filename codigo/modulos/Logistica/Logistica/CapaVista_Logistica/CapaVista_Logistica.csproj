@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{62834C9F-33C8-4408-B7C3-16F87E47065A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CapaVista_Logistica</RootNamespace>
+    <AssemblyName>CapaVista_Logistica</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CapaControlador_Logistica">
+      <HintPath>..\CapaControlador_Logistica\bin\Debug\CapaControlador_Logistica.dll</HintPath>
+    </Reference>
+    <Reference Include="CapaVista_CierreInventario">
+      <HintPath>..\..\Cierre_Inventario\CapaVista_CierreInventario\bin\Debug\CapaVista_CierreInventario.dll</HintPath>
+    </Reference>
+    <Reference Include="CapaVista_Inventario_Logistica">
+      <HintPath>..\..\Inventario_Logistica\CapaVista_Inventario_Logistica\bin\Debug\CapaVista_Inventario_Logistica.dll</HintPath>
+    </Reference>
+    <Reference Include="CapaVista_MuestreoAuditoria_Logistica">
+      <HintPath>..\..\MuestreoAuditoria_Logistica\CapaVista_MuestreoAuditoria_Logistica\bin\Debug\CapaVista_MuestreoAuditoria_Logistica.dll</HintPath>
+    </Reference>
+    <Reference Include="CapaVista_TransporteExterno_Logistica, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TransporteExterno_Logistica\CapaVista_TransporteExterno_Logistica\bin\Debug\CapaVista_TransporteExterno_Logistica.dll</HintPath>
+    </Reference>
+    <Reference Include="CapaVista_TransporteInterno_Logistica">
+      <HintPath>..\..\TransporteInterno_Logistica\CapaVista_TransporteInterno_Logistica\bin\Debug\CapaVista_TransporteInterno_Logistica.dll</HintPath>
+    </Reference>
+    <Reference Include="CapaVista_Traslados_Logistica">
+      <HintPath>..\..\Traslados_Logistica\CapaVista_Traslados_Logistica\bin\Debug\CapaVista_Traslados_Logistica.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FrmMDILogistica.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMDILogistica.Designer.cs">
+      <DependentUpon>FrmMDILogistica.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Ayudas\" />
+    <Folder Include="frmReportes\" />
+    <Folder Include="Reportes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FrmMDILogistica.resx">
+      <DependentUpon>FrmMDILogistica.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\FondoNavegado2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\FondoNavegador1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\banner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\panel_fondo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\banner_radio.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BannerRedimensionado.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Catalogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ubicaciones.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Inventario.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Gestion_de_Transporte.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Gestion_de_Traslado.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Auditoria.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cierre_de_inventario.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Enlace_de_integracion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cerrar_sesion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_menuN.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnEstructurayUbicaciones.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnCatalogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnInventario.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnTransporte.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnTraslado.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnEstructurayUbicaciones1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnAuditoria.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnCierre.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnEnlace.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnCerrarSesion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\FondoNavegador.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\FondoPanel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Hamburguesa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nota.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ResumenAuditoria.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenCatalogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenCierreInventario.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenEnlace.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenTransporte.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenTraslado.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenUbi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenInventario.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\panelestandarizado.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnhamburguesa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnhamburguesa2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_ayuda.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnhamburguesa3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenUbi1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenCatalogo1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenInventario1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenTransporte1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenTraslado1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ResumenAuditoria1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenCierreInventario1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resumenEnlace1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\imgnota.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_hamburguesa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_menuN1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btnhamburguesa_menu.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

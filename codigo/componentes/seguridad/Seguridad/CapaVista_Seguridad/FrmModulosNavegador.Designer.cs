@@ -34,6 +34,7 @@
             // 
             // navegador1
             // 
+            this.navegador1.Location = new System.Drawing.Point(2, 21);
             this.navegador1.Location = new System.Drawing.Point(11, 11);
             this.navegador1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.navegador1.Name = "navegador1";
@@ -44,6 +45,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(1028, 364);
+            this.Controls.Add(this.navegador1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Name = "FrmNavegador";
+            this.Text = "2001 - FrmNavegador";
             this.ClientSize = new System.Drawing.Size(1099, 711);
             this.Controls.Add(this.navegador1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
