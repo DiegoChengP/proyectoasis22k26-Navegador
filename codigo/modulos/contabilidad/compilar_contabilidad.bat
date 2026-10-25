@@ -8,12 +8,31 @@
 ::   Seguridad (modelo y controlador), Consultas, Reporteador, Navegador,
 ::   base de Contabilidad, las 5 soluciones, el MDI y Ejecucion_Contabilidad.
 :: Se detiene en el primer error.
+:: Funciona desde cualquier carpeta: busca el repositorio en la ruta que se le
+:: pase, subiendo desde el bat o desde la carpeta actual, y en C:\proyectoasis22k26.
+:: Si no lo encuentra, pide la ruta.
 :: ============================================================================
 @echo off
 setlocal EnableDelayedExpansion
 chcp 65001 >nul
 
-for %%I in ("%~dp0..\..\..") do set "RAIZ=%%~fI"
+set "MARCA=codigo\modulos\contabilidad\Contabilidad\Contabilidad.sln"
+set "RAIZ="
+if not "%~1"=="" if exist "%~f1\%MARCA%" set "RAIZ=%~f1"
+if not defined RAIZ call :subir "%~dp0."
+if not defined RAIZ call :subir "%CD%"
+if not defined RAIZ if exist "C:\proyectoasis22k26\%MARCA%" set "RAIZ=C:\proyectoasis22k26"
+if not defined RAIZ for /d %%D in ("C:\proyectoasis22k26\*") do (
+    if not defined RAIZ if exist "%%~fD\%MARCA%" set "RAIZ=%%~fD"
+)
+:pedir
+if not defined RAIZ (
+    set /p "RUTA=No se encontro el repositorio. Escriba su ruta: "
+    if "!RUTA!"=="" exit /b 1
+    for %%I in ("!RUTA!") do if exist "%%~fI\%MARCA%" set "RAIZ=%%~fI"
+    goto :pedir
+)
+
 set "C=%RAIZ%\codigo\componentes"
 set "M=%RAIZ%\codigo\modulos\contabilidad"
 
@@ -82,6 +101,18 @@ if errorlevel 1 (
 )
 echo [OK]    %~n1
 exit /b 0
+
+:subir
+set "D=%~f1"
+:subir_siguiente
+if exist "%D%\%MARCA%" (
+    set "RAIZ=%D%"
+    exit /b 0
+)
+for %%P in ("%D%\..") do set "P=%%~fP"
+if /i "%P%"=="%D%" exit /b 0
+set "D=%P%"
+goto :subir_siguiente
 
 :fallo
 echo.
