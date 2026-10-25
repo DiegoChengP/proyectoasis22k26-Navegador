@@ -1,8 +1,8 @@
 ﻿/*
  * ==================================================================
  * Área : Contabilidad
- * Autor : Gabriel André Guillén Pocón
- * Carné : 0901-23-1998
+ * Autor : Oskar Cermeño
+ * Carné : 0901-23-15379
  * Fecha : 17/10/2026
  * ==================================================================
  * Propósito :
@@ -18,28 +18,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CapaModelo_Contabilidad.Contratos;
-using CapaModelo_Contabilidad.Entidades;
-using CapaModelo_Contabilidad.Repositorios;
+using CapaModelo_PolizasCuentas_Contabilidad.Contratos;
+using CapaModelo_PolizasCuentas_Contabilidad.Entidades;
+using CapaModelo_PolizasCuentas_Contabilidad.Repositorios;
+using EstadoEntidadContabilidad = CapaControlador_Contabilidad.EstadoEntidadContabilidad;
+using ClsValidacionDatosContabilidad = CapaControlador_Contabilidad.ClsValidacionDatosContabilidad;
 
-namespace CapaControlador_Contabilidad
+namespace CapaControlador_PolizasCuentas_Contabilidad
 {
     public class ClsControladorPolizasContabilidad
     {
-        // Repositorio de pólizas (base de datos por ODBC).
         private readonly IRepositorioPolizasContabilidad _Repositorio;
 
         public ClsControladorPolizasContabilidad() : this(new ClsRepositorioPolizasContabilidad())
         {
         }
 
-        // Permite inyectar otro repositorio (pruebas).
         public ClsControladorPolizasContabilidad(IRepositorioPolizasContabilidad Repositorio)
         {
             _Repositorio = Repositorio ?? throw new ArgumentNullException(nameof(Repositorio));
         }
 
-        // Cuentas que un módulo ERP puede usar en una póliza (activas y de último nivel).
         public List<ClsCuentaPolizaContabilidad> ContabilidadFuncObtenerCuentas(int IdModulo)
         {
             return new ClsModeloCuentaContabilidad().ContabilidadFuncObtenerImputables(IdModulo)
@@ -47,58 +46,49 @@ namespace CapaControlador_Contabilidad
                 .ToList();
         }
 
-        // Nombre del módulo ERP (catálogo tblModuloContable); "Encabezado" si no existe.
         public string ContabilidadFuncObtenerNombreModulo(int IdModulo)
         {
             string Nombre = _Repositorio.ContabilidadFuncObtenerNombreModulo(IdModulo);
             return string.IsNullOrWhiteSpace(Nombre) ? "Encabezado" : Nombre;
         }
 
-        // Estados posibles.
         public string[] ContabilidadFuncObtenerEstados()
         {
             return _Repositorio.ContabilidadFuncObtenerEstados();
         }
 
-        // Orígenes posibles.
         public string[] ContabilidadFuncObtenerOrigenes()
         {
             return _Repositorio.ContabilidadFuncObtenerOrigenes();
         }
 
-        // Período con formato yyyy-MM.
         public string ContabilidadFuncObtenerPeriodo(DateTime Fecha)
         {
             return Fecha.ToString("yyyy-MM");
         }
 
-        // Suma del debe.
         public decimal ContabilidadFuncTotalDebe(IEnumerable<ClsLineaPolizaContabilidad> Lineas)
         {
             return Lineas.Sum(Linea => Linea.Debe);
         }
 
-        // Suma del haber.
         public decimal ContabilidadFuncTotalHaber(IEnumerable<ClsLineaPolizaContabilidad> Lineas)
         {
             return Lineas.Sum(Linea => Linea.Haber);
         }
 
-        // Cuadra si el debe es mayor que cero e igual al haber.
         public bool ContabilidadFuncEstaCuadrada(IEnumerable<ClsLineaPolizaContabilidad> Lineas)
         {
             decimal Debe = ContabilidadFuncTotalDebe(Lineas);
             return Debe > 0 && Debe == ContabilidadFuncTotalHaber(Lineas);
         }
 
-        // Devuelve "" si la póliza es válida; si no, el motivo en español.
         public string ContabilidadFuncValidar(string Descripcion, IList<ClsLineaPolizaContabilidad> Lineas)
         {
             return ClsValidacionDatosContabilidad.ContabilidadFuncPrimerError(
                 new ClsModeloPolizaContabilidad { Descripcion = Descripcion, Lineas = Lineas });
         }
 
-        // Todas las pólizas existentes con su detalle, como modelos del Controlador.
         public List<ClsModeloPolizaContabilidad> ContabilidadFuncObtenerPolizas()
         {
             return _Repositorio.ContabilidadFuncObtenerTodos()
@@ -112,7 +102,6 @@ namespace CapaControlador_Contabilidad
                 .ToList();
         }
 
-        // Valida el modelo y lo graba, modifica o borra según el estado.
         public bool ContabilidadFuncGrabarCambios(EstadoEntidadContabilidad Estado, ClsModeloPolizaContabilidad Modelo, out string Mensaje)
         {
             if (Modelo == null)
@@ -124,7 +113,6 @@ namespace CapaControlador_Contabilidad
             Mensaje = ClsValidacionDatosContabilidad.ContabilidadFuncPrimerError(Modelo);
             if (Mensaje != string.Empty) return false;
 
-            // Estado y origen deben existir en los catálogos.
             string EstadoPoliza = string.IsNullOrWhiteSpace(Modelo.Estado) ? "BORRADOR" : Modelo.Estado.Trim().ToUpperInvariant();
             string OrigenPoliza = string.IsNullOrWhiteSpace(Modelo.Origen) ? "MANUAL" : Modelo.Origen.Trim().ToUpperInvariant();
             if (!ContabilidadFuncObtenerEstados().Contains(EstadoPoliza))
@@ -138,14 +126,12 @@ namespace CapaControlador_Contabilidad
                 return false;
             }
 
-            // Una cuenta solo puede aparecer una vez en el detalle.
             if (Modelo.Lineas.GroupBy(Linea => Linea.IdCuenta).Any(Grupo => Grupo.Count() > 1))
             {
                 Mensaje = "Una cuenta no puede repetirse en el detalle de la póliza.";
                 return false;
             }
 
-            // Se pasa del modelo validado a la entidad del Modelo.
             ClsPolizaContabilidad Entidad = new ClsPolizaContabilidad
             {
                 IdPoliza = Modelo.IdPoliza, Fecha = Modelo.Fecha.Date, Estado = EstadoPoliza, Origen = OrigenPoliza,
@@ -163,7 +149,6 @@ namespace CapaControlador_Contabilidad
                             Mensaje = "No se pudo registrar la póliza.";
                             return false;
                         }
-                        // Se devuelven al modelo los datos generados al grabar.
                         Modelo.IdPoliza = Entidad.IdPoliza;
                         Modelo.CodigoPoliza = Entidad.CodigoPoliza;
                         Modelo.Periodo = Entidad.PeriodoContable;

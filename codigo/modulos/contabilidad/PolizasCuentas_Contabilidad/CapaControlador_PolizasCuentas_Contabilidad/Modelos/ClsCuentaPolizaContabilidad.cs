@@ -1,8 +1,8 @@
-/*
+﻿/*
  * ==================================================================
  * Área : Contabilidad
- * Autor : Gabriel André Guillén Pocón
- * Carné : 0901-23-1998
+ * Autor : Oskar Cermeño
+ * Carné : 0901-23-15379
  * Fecha : 14/10/2026
  * ==================================================================
  * Propósito :
@@ -12,21 +12,18 @@
  * ===================================================================
 */
 
-namespace CapaControlador_Contabilidad
+using CapaModelo_PolizasCuentas_Contabilidad.Contratos;
+using CapaModelo_PolizasCuentas_Contabilidad.Entidades;
+using CapaModelo_PolizasCuentas_Contabilidad.Repositorios;
+namespace CapaControlador_PolizasCuentas_Contabilidad
 {
-    // Cuenta que la Vista elige en una póliza.
     public class ClsCuentaPolizaContabilidad
     {
-        // Id de la cuenta.
         public int IdCuenta { get; set; }
-        // Código de la cuenta.
         public string Codigo { get; set; }
-        // Nombre de la cuenta.
         public string Nombre { get; set; }
-        // Código y nombre juntos.
         public string Descripcion { get { return Codigo + " - " + Nombre; } }
 
-        // Se muestra la descripción.
         public override string ToString()
         {
             return Descripcion;

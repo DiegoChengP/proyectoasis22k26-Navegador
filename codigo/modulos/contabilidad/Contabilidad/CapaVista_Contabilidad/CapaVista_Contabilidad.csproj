@@ -40,6 +40,10 @@
       <HintPath>..\CapaControlador_Contabilidad\bin\$(Configuration)\CapaControlador_Contabilidad.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="CapaVista_PolizasCuentas_Contabilidad">
+      <HintPath>..\..\PolizasCuentas_Contabilidad\CapaVista_PolizasCuentas_Contabilidad\bin\$(Configuration)\CapaVista_PolizasCuentas_Contabilidad.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="CapaVista_Navegador">
       <HintPath>..\..\..\..\componentes\navegador\Navegador\CapaVista_Navegador\bin\Debug\CapaVista_Navegador.dll</HintPath>
     </Reference>
@@ -78,12 +82,6 @@
     </Compile>
     <Compile Include="FrmMDIContabilidad.Designer.cs">
       <DependentUpon>FrmMDIContabilidad.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FrmPolizasLocales.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmPolizasLocales.Designer.cs">
-      <DependentUpon>FrmPolizasLocales.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmPresupuestos.cs">
       <SubType>Form</SubType>
@@ -144,9 +142,6 @@
     </Compile>
     <EmbeddedResource Include="FrmMDIContabilidad.resx">
       <DependentUpon>FrmMDIContabilidad.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FrmPolizasLocales.resx">
-      <DependentUpon>FrmPolizasLocales.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -1,8 +1,8 @@
-/*
+﻿/*
  * ==================================================================
  * Área : Contabilidad
- * Autor : Gabriel André Guillén Pocón
- * Carné : 0901-23-1998
+ * Autor : Oskar Cermeño
+ * Carné : 0901-23-15379
  * Fecha : 17/10/2026
  * ==================================================================
  * Propósito :
@@ -18,39 +18,33 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using CapaModelo_PolizasCuentas_Contabilidad.Contratos;
+using CapaModelo_PolizasCuentas_Contabilidad.Entidades;
+using CapaModelo_PolizasCuentas_Contabilidad.Repositorios;
 
-namespace CapaControlador_Contabilidad
+namespace CapaControlador_PolizasCuentas_Contabilidad
 {
     public class ClsModeloPolizaContabilidad : IValidatableObject
     {
-        // Número de la póliza, 0 si es nueva.
         public int IdPoliza { get; set; }
 
-        // Código de la póliza; si llega vacío el Controlador lo genera.
         [MaxLength(40, ErrorMessage = "El código de la póliza admite hasta 40 caracteres.")]
         public string CodigoPoliza { get; set; }
 
-        // Período yyyy-MM; lo llena el Controlador a partir de la fecha.
         public string Periodo { get; set; }
 
-        // Descripción de la póliza.
         [Required(ErrorMessage = "Escriba la descripción de la póliza.")]
         [MaxLength(255, ErrorMessage = "La descripción admite hasta 255 caracteres.")]
         public string Descripcion { get; set; }
 
-        // Fecha de la póliza.
         public DateTime Fecha { get; set; }
 
-        // BORRADOR, APLICADA o ANULADA.
         public string Estado { get; set; } = "BORRADOR";
 
-        // MANUAL, ACTIVOS_FIJOS o PRESUPUESTO.
         public string Origen { get; set; } = "MANUAL";
 
-        // Líneas del detalle.
         public IList<ClsLineaPolizaContabilidad> Lineas { get; set; } = new List<ClsLineaPolizaContabilidad>();
 
-        // Reglas del detalle y del cuadre.
         public IEnumerable<ValidationResult> Validate(ValidationContext Contexto)
         {
             if (Lineas.Count < 2)

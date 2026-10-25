@@ -47,17 +47,12 @@
   <ItemGroup>
     <Compile Include="ClsEstadoSeguridadContabilidad.cs" />
     <Compile Include="ClsControladorSeguridadContabilidad.cs" />
-    <Compile Include="ClsControladorPolizasContabilidad.cs" />
     <Compile Include="ClsControladorPresupuestosContabilidad.cs" />
     <Compile Include="ClsControladorActivosFijosContabilidad.cs" />
     <Compile Include="ClsControladorCierreContabilidad.cs" />
     <Compile Include="ClsControladorEstadosFinancierosContabilidad.cs" />
     <Compile Include="ClsCodigoCuentaContabilidad.cs" />
     <Compile Include="Modelos\ClsPermisosPantallaContabilidad.cs" />
-    <Compile Include="Modelos\ClsCuentaPolizaContabilidad.cs" />
-    <Compile Include="Modelos\ClsLineaPolizaContabilidad.cs" />
-    <Compile Include="Modelos\ClsModeloCuentaContabilidad.cs" />
-    <Compile Include="Modelos\ClsModeloPolizaContabilidad.cs" />
     <Compile Include="Modelos\ClsModeloPresupuestoContabilidad.cs" />
     <Compile Include="Modelos\ClsModeloActivoFijoContabilidad.cs" />
     <Compile Include="Modelos\ClsResumenCierreContabilidad.cs" />
