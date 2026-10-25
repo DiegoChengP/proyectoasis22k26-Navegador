@@ -1,4 +1,5 @@
-﻿using CapaVista_Navegador;
+﻿
+using CapaVista_Navegador;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,10 +14,14 @@ namespace CapaVista_Seguridad
 {
     public partial class FrmPerfilesNavegador : Form
     {
+
         public FrmPerfilesNavegador()
+
+
         {
+
             InitializeComponent();
-            navegador2.NavegadorMetConfigurar("tblrol", 4, 8);
+            navegador1.NavegadorMetConfigurar("tblaplicacion", 4, 8);
         }
     }
 }
