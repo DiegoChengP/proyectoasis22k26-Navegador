@@ -41,9 +41,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Contabilidad\CapaVista_Contabilidad\bin\$(Configuration)\CapaVista_Contabilidad.dll</HintPath>
     </Reference>
-    <Reference Include="CapaVista_Seguridad">
+    <Reference Include="CapaControlador_Seguridad">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\componentes\seguridad\Seguridad\CapaVista_Seguridad\bin\Debug\CapaVista_Seguridad.dll</HintPath>
+      <HintPath>..\..\..\..\componentes\seguridad\Seguridad\CapaControlador_Seguridad\bin\Debug\CapaControlador_Seguridad.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

@@ -5,12 +5,15 @@
  * Carné : 0901-23-1998
  * Fecha : 17/10/2026
  * ==================================================================
- * Propósito : arranca con el login de Seguridad, que abre el MDI de Contabilidad al elegirlo.
+ * Propósito : abre el MDI de Contabilidad con una sesión de Administrador.
  * ===================================================================
 */
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using CapaControlador_Seguridad.Objetos_de_valor;
+using CapaVista_Contabilidad;
 
 namespace Ejecucion_Contabilidad
 {
@@ -21,7 +24,11 @@ namespace Ejecucion_Contabilidad
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new CapaVista_Seguridad.FrmLogin());
+            List<ClsRolInfo> Roles = new List<ClsRolInfo> { new ClsRolInfo { IdRol = 1, NombreRol = "Administrador" } };
+            ClsSesionSeguridad.SeguridadMetIniciarSesion(1, "admin", "Administrador", Roles);
+            FrmMDIContabilidad MDIContabilidad = new FrmMDIContabilidad();
+            MDIContabilidad.ContabilidadMetActualizarInfoUsuario(ClsSesionSeguridad.NombreEmpleado, ClsSesionSeguridad.SeguridadMetRolesComoTexto());
+            Application.Run(MDIContabilidad);
         }
     }
 }

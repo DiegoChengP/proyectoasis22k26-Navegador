@@ -11,7 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaVista_Logistica;
-using CapaVista_Contabilidad;
 
 /*
  * ============================================================
@@ -109,14 +108,13 @@ namespace CapaVista_Seguridad
                         //principal = MdiBancos;
                         //break;
 
-                    case "Contabilidad":
-                        var MDIContabilidad = new FrmMDIContabilidad();
-                        MDIContabilidad.ContabilidadMetActualizarInfoUsuario(
-                        ClsSesionSeguridad.NombreEmpleado,
-                        ClsSesionSeguridad.SeguridadMetRolesComoTexto());
-                        principal = MDIContabilidad;
-                        break;
-
+                    //case "Contabilidad":
+                        //var MDIContabilidad = new FrmMDIContabilidad();
+                        //MDIContabilidad.ContabilidadMetActualizarInfoUsuario(
+                        //ClsSesionSeguridad.NombreEmpleado,
+                        //ClsSesionSeguridad.SeguridadMetRolesComoTexto());
+                        //principal = MDIContabilidad;
+                        //break;
 
                     //case "RRHH":
                         //var MdiRrhh = now FrmMDIRrhh();
