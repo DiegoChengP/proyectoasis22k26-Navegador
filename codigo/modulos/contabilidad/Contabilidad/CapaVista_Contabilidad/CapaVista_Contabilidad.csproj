@@ -40,6 +40,10 @@
       <HintPath>..\CapaControlador_Contabilidad\bin\$(Configuration)\CapaControlador_Contabilidad.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="CapaVista_PolizasCuentas_Contabilidad">
+      <HintPath>..\..\PolizasCuentas_Contabilidad\CapaVista_PolizasCuentas_Contabilidad\bin\$(Configuration)\CapaVista_PolizasCuentas_Contabilidad.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="CapaVista_Navegador">
       <HintPath>..\..\..\..\componentes\navegador\Navegador\CapaVista_Navegador\bin\Debug\CapaVista_Navegador.dll</HintPath>
     </Reference>
@@ -90,13 +94,7 @@
     <Compile Include="FrmMDIContabilidad.Designer.cs">
       <DependentUpon>FrmMDIContabilidad.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmMDIContabilidad.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmMantenimientoCuenta.Designer.cs">
-      <DependentUpon>FrmMantenimientoCuenta.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FrmMantenimientoCuenta.cs">
+    <Compile Include="FrmPresupuestos.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmMantenimientoModuloContable.Designer.cs">
