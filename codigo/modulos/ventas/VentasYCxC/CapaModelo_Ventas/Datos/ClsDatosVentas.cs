@@ -110,15 +110,16 @@ namespace VentasDatos
             switch (Nombre)
             {
                 case "Clientes":
-                    return this.VentasFuncTabla("SELECT idCliente Id,CONCAT(codigoCliente,' - ',nombreCliente) Nombre,numeroIdentificacion,direccionCliente,contactoCliente,diasCredito,limiteCredito,idMonedaCredito FROM tblcliente WHERE is_active=1 ORDER BY nombreCliente");
+                    return this.VentasFuncTabla("SELECT Pk_Cliente Id,CONCAT(codigoCliente,' - ',nombreCliente) Nombre,COALESCE(nitCliente,dpiCliente,identificacionExtranjeraCliente,'CF') numeroIdentificacion,direccionCliente,nombreContactoCliente contactoCliente,diasCreditoCliente diasCredito,limiteCreditoCliente limiteCredito,Fk_Moneda_Credito idMonedaCredito FROM tblCliente WHERE activoCliente=1 ORDER BY nombreCliente");
                 case "Monedas":
-                    return this.VentasFuncTabla("SELECT idMoneda Id,CONCAT(codigoMoneda,' - ',nombreMoneda) Nombre,codigoMoneda,simboloMoneda FROM tblmonedaventas WHERE is_active=1 ORDER BY codigoMoneda");
+                    return this.VentasFuncTabla("SELECT Pk_Moneda Id,CONCAT(codigoMoneda,' - ',nombreMoneda) Nombre,codigoMoneda,simboloMoneda FROM tblMoneda WHERE is_active=1 ORDER BY codigoMoneda");
                 case "Usuarios":
-                    return this.VentasFuncTabla("SELECT idUsuario Id,nombreUsuario Nombre FROM tblusuario WHERE is_active=1 ORDER BY nombreUsuario");
+                    return this.VentasFuncTabla("SELECT idUsuario Id,nombreUsuario Nombre FROM tblUsuario WHERE is_active=1 ORDER BY nombreUsuario");
                 case "Vendedores":
-                    return this.VentasFuncTabla("SELECT v.idVendedor Id,CONCAT(v.codigoVendedor,' - ',e.nombresEmpleado,' ',e.apellidosEmpleado) Nombre FROM tblvendedor v JOIN tblempleado e ON e.idEmpleado=v.idEmpleado WHERE v.is_active=1 ORDER BY v.codigoVendedor");
+                    return this.VentasFuncTabla("SELECT v.Pk_Vendedor Id,CONCAT(v.codigoVendedor,' - ',e.nombresEmpleado,' ',e.apellidosEmpleado) Nombre FROM tblVendedor v JOIN tblEmpleado e ON e.idEmpleado=v.Fk_Empleado_Codigo WHERE v.activoVendedor=1 ORDER BY v.codigoVendedor");
                 case "Establecimientos":
-                    return this.VentasFuncTabla("SELECT idEstablecimiento Id,CONCAT(codigoEstablecimiento,' - ',nombreEstablecimiento) Nombre FROM tblestablecimientoventas WHERE is_active=1 ORDER BY nombreEstablecimiento");
+                    // Las facturas del esquema actual se asignan a una sucursal.
+                    return this.VentasFuncTabla("SELECT Pk_Sucursal Id,nombreSucursal Nombre FROM tblSucursal ORDER BY nombreSucursal");
                 default:
                     throw new ArgumentException("Catalogo no reconocido.");
             }
@@ -127,34 +128,34 @@ namespace VentasDatos
         internal string VentasFuncNumero(string Prefijo)
         {
             // Se llama dentro de la transaccion; la fila serializa los correlativos por prefijo.
-            this.VentasFuncEjecutar("INSERT INTO tblcorrelativoventas(prefijo,ultimoNumero) VALUES (?,0) ON DUPLICATE KEY UPDATE prefijo=VALUES(prefijo)", Prefijo);
-            long UltimoNumero = Convert.ToInt64(this.VentasFuncEscalar("SELECT ultimoNumero FROM tblcorrelativoventas WHERE prefijo=? FOR UPDATE", Prefijo));
+            this.VentasFuncEjecutar("INSERT INTO tblCorrelativoVenta(prefijoCorrelativoVenta,ultimoNumeroCorrelativoVenta) VALUES (?,0) ON DUPLICATE KEY UPDATE prefijoCorrelativoVenta=VALUES(prefijoCorrelativoVenta)", Prefijo);
+            long UltimoNumero = Convert.ToInt64(this.VentasFuncEscalar("SELECT ultimoNumeroCorrelativoVenta FROM tblCorrelativoVenta WHERE prefijoCorrelativoVenta=? FOR UPDATE", Prefijo));
             string Buscar;
             switch (Prefijo)
             {
                 case "COT":
-                    Buscar = "SELECT COUNT(*) FROM tblcotizacion WHERE numeroCotizacion=?";
+                    Buscar = "SELECT COUNT(*) FROM tblCotizacionEncabezado WHERE numeroCotizacionEncabezado=?";
                     break;
                 case "REC":
-                    Buscar = "SELECT COUNT(*) FROM tblpago WHERE numeroRecibo=?";
+                    Buscar = "SELECT COUNT(*) FROM tblReciboPago WHERE numeroReciboPago=?";
                     break;
                 case "CXC":
-                    Buscar = "SELECT COUNT(*) FROM tblfactura WHERE serieFactura='CXC' AND numeroFactura=?";
+                    Buscar = "SELECT COUNT(*) FROM tblFacturaEncabezado WHERE serieFacturaEncabezado='CXC' AND numeroFacturaEncabezado=?";
                     break;
                 case "NOT":
-                    Buscar = "SELECT COUNT(*) FROM tblnotacxc WHERE numeroNota=?";
+                    Buscar = "SELECT COUNT(*) FROM tblNotaCxC WHERE numeroNotaCxC=?";
                     break;
                 case "DEP":
-                    Buscar = "SELECT COUNT(*) FROM tbldepositoventas WHERE codigoDeposito=?";
+                    Buscar = "SELECT COUNT(*) FROM tblDepositoVentaEncabezado WHERE codigoDepositoVentaEncabezado=?";
                     break;
                 case "CIE":
-                    Buscar = "SELECT COUNT(*) FROM tblcierremovimientos WHERE numeroCierre=?";
+                    Buscar = "SELECT COUNT(*) FROM tblCierreMovimientoCxCEncabezado WHERE numeroCierreMovimientoCxCEncabezado=?";
                     break;
                 case "PCOT":
-                    Buscar = "SELECT COUNT(*) FROM tblpedido WHERE numeroPedido=?";
+                    Buscar = "SELECT COUNT(*) FROM tblPedidoEncabezado WHERE numeroPedidoEncabezado=?";
                     break;
                 case "FCOT":
-                    Buscar = "SELECT COUNT(*) FROM tblfactura WHERE serieFactura='COT' AND numeroFactura=?";
+                    Buscar = "SELECT COUNT(*) FROM tblFacturaEncabezado WHERE serieFacturaEncabezado='COT' AND numeroFacturaEncabezado=?";
                     break;
                 default:
                     throw new ArgumentException("Correlativo no reconocido.");
@@ -166,7 +167,7 @@ namespace VentasDatos
                 Numero = Prefijo + "-" + (++UltimoNumero).ToString("D8", CultureInfo.InvariantCulture);
             }
             while (Convert.ToInt32(this.VentasFuncEscalar(Buscar, Numero)) > 0);
-            this.VentasFuncEjecutar("UPDATE tblcorrelativoventas SET ultimoNumero=? WHERE prefijo=?", UltimoNumero, Prefijo);
+            this.VentasFuncEjecutar("UPDATE tblCorrelativoVenta SET ultimoNumeroCorrelativoVenta=? WHERE prefijoCorrelativoVenta=?", UltimoNumero, Prefijo);
             return Numero;
         }
 
@@ -174,7 +175,19 @@ namespace VentasDatos
         {
             if (_Transaccion == null)
                 throw new InvalidOperationException("La auditoria requiere una transaccion.");
-            VentasFuncEjecutar("INSERT INTO tblbitacoracrudventas(entidad,idRegistro,accion,detalle,idUsuario) VALUES (?,?,?,?,?)", Entidad, Id, Accion, Detalle ?? "", Usuario);
+            string Direccion = "127.0.0.1";
+            try
+            {
+                foreach (System.Net.IPAddress DireccionLocal in System.Net.Dns.GetHostAddresses(System.Net.Dns.GetHostName()))
+                    if (DireccionLocal.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    {
+                        Direccion = DireccionLocal.ToString();
+                        break;
+                    }
+            }
+            catch (System.Net.Sockets.SocketException) { }
+            VentasFuncEjecutar("INSERT INTO tblbitacora(idUsuario,accionBitacora,tablaBitacora,idRegistroBitacora,detallesBitacora,ipBitacora) VALUES (?,?,?,?,?,?)",
+                Usuario > 0 ? (object)Usuario : DBNull.Value, Accion, Entidad, Id, Detalle ?? "", Direccion);
         }
 
         public void Dispose()

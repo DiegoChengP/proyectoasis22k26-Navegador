@@ -94,7 +94,7 @@ namespace CapaControlador_ComisionVendedores.Controladores
         {
             VentasMetValidarMetodoMantenimiento(Metodo);
             List<ClsProductoPorcentaje> Resultado = new List<ClsProductoPorcentaje>();
-            foreach (ClsProductoComision Producto in _RepositorioComision.VentasFuncConsultarPorcentajes())
+            foreach (ClsProductoComision Producto in _RepositorioComision.VentasFuncConsultarPorcentajes(Metodo.ToString()))
                 Resultado.Add(new ClsProductoPorcentaje { IdProducto = Producto.IdProducto, NombreProducto = Producto.NombreProducto, Marca = Producto.Marca, Linea = Producto.Linea, Categoria = Producto.Categoria, Porcentaje = Producto.Porcentaje });
             return Resultado;
         }
@@ -104,7 +104,7 @@ namespace CapaControlador_ComisionVendedores.Controladores
             VentasMetValidarMetodoMantenimiento(Metodo);
             if (IdsProducto == null || IdsProducto.Count == 0) throw new ArgumentException("Seleccione al menos un producto para actualizar.");
             if (Porcentaje < 0 || Porcentaje > 100) throw new ArgumentOutOfRangeException("Porcentaje", "El porcentaje debe estar entre 0 y 100.");
-            return _RepositorioComision.VentasFuncActualizarPorcentaje(IdsProducto, Porcentaje);
+            return _RepositorioComision.VentasFuncActualizarPorcentaje(Metodo.ToString(), IdsProducto, Porcentaje);
         }
 
         private void VentasMetValidarMetodoMantenimiento(EnumMetodoComision Metodo)
@@ -140,8 +140,8 @@ namespace CapaControlador_ComisionVendedores.Controladores
         public List<ClsComisionFacturaDetalle> VentasFuncCalcularFactura(int IdFactura, int IdVendedor, EnumMetodoComision Metodo)
         {
             ClsFacturaComision Factura = _RepositorioComision.VentasFuncObtenerFactura(IdFactura);
-            ClsVendedorComision Vendedor = _RepositorioComision.VentasFuncObtenerVendedor(IdVendedor);
             if (Factura == null) throw new ArgumentException("La factura seleccionada no existe.");
+            ClsVendedorComision Vendedor = _RepositorioComision.VentasFuncObtenerVendedor(IdVendedor, Factura.Fecha);
             if (Vendedor == null) throw new ArgumentException("El vendedor seleccionado no existe.");
 
             decimal ProporcionPagada = Factura.Total <= 0 ? 0 : Math.Min(1m, Math.Max(0m, Factura.TotalPagado / Factura.Total));
@@ -149,9 +149,9 @@ namespace CapaControlador_ComisionVendedores.Controladores
             decimal UltimoAbonoAplicable = Math.Min(Factura.UltimoAbono, Math.Max(0m, Factura.Total - PagoPrevioAlUltimo));
             decimal ProporcionUltimoAbono = Factura.Total <= 0 ? 0 : UltimoAbonoAplicable / Factura.Total;
             List<ClsComisionFacturaDetalle> Resultado = new List<ClsComisionFacturaDetalle>();
-            foreach (ClsDetalleProductoComision Detalle in _RepositorioComision.VentasFuncObtenerDetallesFactura(IdFactura))
+            foreach (ClsDetalleProductoComision Detalle in _RepositorioComision.VentasFuncObtenerDetallesFactura(IdFactura, Metodo.ToString()))
             {
-                decimal BaseVenta = Detalle.Cantidad * Detalle.PrecioUnitario;
+                decimal BaseVenta = Detalle.Cantidad * Detalle.PrecioUnitario - Detalle.Descuento;
                 decimal Porcentaje = Metodo == EnumMetodoComision.Vendedor ? Vendedor.Porcentaje : Detalle.Porcentaje;
                 decimal ComisionTotal = Math.Round(BaseVenta * Porcentaje / 100m, 2, MidpointRounding.AwayFromZero);
                 Resultado.Add(new ClsComisionFacturaDetalle

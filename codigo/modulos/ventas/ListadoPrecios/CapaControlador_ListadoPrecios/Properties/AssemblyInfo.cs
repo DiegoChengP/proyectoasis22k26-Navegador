@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("CapaControlador_ListadoPrecios")]
 [assembly: AssemblyDescription("Biblioteca de clases del punto 2.1 Listado de Precios")]
-[assembly: AssemblyCompany("Proyecto Ventas y CxC")]
+[assembly: AssemblyCompany("Proyecto VentasYCxC")]
 [assembly: AssemblyProduct("CapaControlador_ListadoPrecios")]
 [assembly: ComVisible(false)]
 [assembly: Guid("c0e7f76a-6d2b-4c0b-91f0-bc02d7e8f112")]

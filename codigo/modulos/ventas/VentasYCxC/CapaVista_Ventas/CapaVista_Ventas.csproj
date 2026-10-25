@@ -116,41 +116,32 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CapaVista_ListadoPrecios">
-      <HintPath>..\..\ListadoPrecios\CapaVista_ListadoPrecios\bin\$(Configuration)\CapaVista_ListadoPrecios.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CapaVista_MovimientosClientes">
-      <HintPath>..\..\MovimientosClientes\CapaVista_MovimientosClientes\bin\$(Configuration)\CapaVista_MovimientosClientes.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CapaVista_Reportes">
-      <HintPath>..\..\Reportes\CapaVista_Reportes\bin\$(Configuration)\CapaVista_Reportes.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CapaVista_Cotizaciones">
-      <HintPath>..\..\Cotizaciones\CapaVista_Cotizaciones\bin\$(Configuration)\CapaVista_Cotizaciones.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CapaVista_Pedidos">
-      <HintPath>..\..\Pedidos\CapaVista_Pedidos\bin\$(Configuration)\CapaVista_Pedidos.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CapaVista_Facturas">
-      <HintPath>..\..\Facturas\CapaVista_Facturas\bin\$(Configuration)\CapaVista_Facturas.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CapaVista_ComisionVendedores">
-      <HintPath>..\..\ComisionVendedores\CapaVista_ComisionVendedores\bin\$(Configuration)\CapaVista_ComisionVendedores.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CapaVista_Mantenimientos">
-      <HintPath>..\..\Mantenimientos\CapaVista_Mantenimientos\bin\$(Configuration)\CapaVista_Mantenimientos.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CapaVista_CierreMovimientos">
-      <HintPath>..\..\CierreMovimientos\CapaVista_CierreMovimientos\bin\$(Configuration)\CapaVista_CierreMovimientos.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <ProjectReference Include="..\..\ListadoPrecios\CapaVista_ListadoPrecios\CapaVista_ListadoPrecios.csproj">
+      <Project>{C0E7F76A-6D2B-4C0B-91F0-BC02D7E8F103}</Project><Name>CapaVista_ListadoPrecios</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MovimientosClientes\CapaVista_MovimientosClientes\CapaVista_MovimientosClientes.csproj">
+      <Project>{CA58125E-5D1D-5AA2-ADC8-3CA21B85F13B}</Project><Name>CapaVista_MovimientosClientes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reportes\CapaVista_Reportes\CapaVista_Reportes.csproj">
+      <Project>{8A6E2013-3AF1-517A-A230-DD2858326CBC}</Project><Name>CapaVista_Reportes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Cotizaciones\CapaVista_Cotizaciones\CapaVista_Cotizaciones.csproj">
+      <Project>{4FF67251-5E74-51E8-9CFD-0BBFB813F10C}</Project><Name>CapaVista_Cotizaciones</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Pedidos\CapaVista_Pedidos\CapaVista_Pedidos.csproj">
+      <Project>{14AE1E47-92A9-4C24-9B97-1EB0ACB85CA2}</Project><Name>CapaVista_Pedidos</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Facturas\CapaVista_Facturas\CapaVista_Facturas.csproj">
+      <Project>{056F52B0-306E-4338-87F2-2A87316D176F}</Project><Name>CapaVista_Facturas</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ComisionVendedores\CapaVista_ComisionVendedores\CapaVista_ComisionVendedores.csproj">
+      <Project>{4B8C99AE-F6B2-44DD-8B6F-777890A63A2E}</Project><Name>CapaVista_ComisionVendedores</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mantenimientos\CapaVista_Mantenimientos\CapaVista_Mantenimientos.csproj">
+      <Project>{533FE7FC-D355-5D64-AA7E-82DBA2D506C3}</Project><Name>CapaVista_Mantenimientos</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CierreMovimientos\CapaVista_CierreMovimientos\CapaVista_CierreMovimientos.csproj">
+      <Project>{2AC893AF-20AB-5159-BF28-32D0AA59D794}</Project><Name>CapaVista_CierreMovimientos</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 {
     partial class FrmMantenimientosVentas
     {
-        private System.ComponentModel.IContainer components;
+        private System.ComponentModel.IContainer components = null;
 
         protected override void Dispose(bool Disposing)
         {

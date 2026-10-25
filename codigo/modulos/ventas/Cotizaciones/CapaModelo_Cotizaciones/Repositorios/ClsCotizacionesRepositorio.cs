@@ -59,18 +59,18 @@ namespace CapaModelo_Cotizaciones
 
         public bool VentasFuncMonedaActiva(int Moneda)
         {
-            return Convert.ToInt32(_Datos.VentasFuncEscalar("SELECT COUNT(*) FROM tblmonedaventas WHERE idMoneda=? AND is_active=1", Moneda)) == 1;
+            return Convert.ToInt32(_Datos.VentasFuncEscalar("SELECT COUNT(*) FROM tblMoneda WHERE Pk_Moneda=? AND is_active=1", Moneda)) == 1;
         }
 
         public void VentasMetAsegurarBloqueoMoneda(int Moneda)
         {
-            _Datos.VentasFuncEjecutar("INSERT INTO tblcontrolperiodocxc(idMoneda) VALUES (?) ON DUPLICATE KEY UPDATE idMoneda=VALUES(idMoneda)", Moneda);
-            _Datos.VentasFuncTabla("SELECT idMoneda FROM tblcontrolperiodocxc WHERE idMoneda=? FOR UPDATE", Moneda);
+            _Datos.VentasFuncEjecutar("INSERT INTO tblControlPeriodoCxC(Fk_Moneda_Codigo) VALUES (?) ON DUPLICATE KEY UPDATE Fk_Moneda_Codigo=VALUES(Fk_Moneda_Codigo)", Moneda);
+            _Datos.VentasFuncTabla("SELECT Fk_Moneda_Codigo FROM tblControlPeriodoCxC WHERE Fk_Moneda_Codigo=? FOR UPDATE", Moneda);
         }
 
         public object VentasFuncUltimoCierre(int Moneda)
         {
-            return _Datos.VentasFuncEscalar("SELECT fechaUltimoCierre FROM tblcontrolperiodocxc WHERE idMoneda=?", Moneda);
+            return _Datos.VentasFuncEscalar("SELECT fechaUltimoCierreControlPeriodoCxC FROM tblControlPeriodoCxC WHERE Fk_Moneda_Codigo=?", Moneda);
         }
 
         public void VentasMetAuditar(string Entidad, int Id, string Accion, string Detalle, int Usuario)
@@ -87,102 +87,88 @@ namespace CapaModelo_Cotizaciones
         public object VentasFuncGuardarConsultarCliente(params object[] Parametros)
         {
             const string Consulta = @"SELECT COUNT(*)
-    FROM tblcliente
-    WHERE idCliente=?
-      AND is_active=1";
+    FROM tblCliente
+    WHERE Pk_Cliente=?
+      AND activoCliente=1";
             return _Datos.VentasFuncEscalar(Consulta, Parametros);
         }
 
         public object VentasFuncGuardarConsultarVendedor(params object[] Parametros)
         {
             const string Consulta = @"SELECT COUNT(*)
-    FROM tblvendedor
-    WHERE idVendedor=?
-      AND is_active=1";
+    FROM tblVendedor
+    WHERE Pk_Vendedor=?
+      AND activoVendedor=1";
             return _Datos.VentasFuncEscalar(Consulta, Parametros);
         }
 
         public DataTable VentasFuncGuardarConsultarCotizacion(params object[] Parametros)
         {
-            const string Consulta = @"SELECT estadoCotizacion,numeroCotizacion,vigenteHasta
-    FROM tblcotizacion
-    WHERE idCotizacion=?
+            const string Consulta = @"SELECT estadoCotizacionEncabezado estadoCotizacion,numeroCotizacionEncabezado numeroCotizacion,vigenteHastaCotizacionEncabezado vigenteHasta
+    FROM tblCotizacionEncabezado
+    WHERE Pk_CotizacionEncabezado=?
     FOR UPDATE";
             return _Datos.VentasFuncTabla(Consulta, Parametros);
         }
 
         public DataTable VentasFuncGuardarConsultarProductoventas(params object[] Parametros)
         {
-            const string Consulta = @"SELECT p.nombreProducto,p.tipoItem,p.porcentajeImpuesto,d.precioUnitario
-    FROM tblproductoventas p
-    JOIN tbllistapreciosdetalle d ON d.idProducto=p.idProducto
-    WHERE p.idProducto=?
-      AND d.idListaPrecio=?
-      AND p.is_active=1
-      AND d.is_active=1";
+            const string Consulta = @"SELECT pr.nombreProducto,p.tipoItemProductoVenta tipoItem,p.tasaImpuestoProductoVenta*100 porcentajeImpuesto,d.precioUnitarioListaPrecioDetalle precioUnitario
+    FROM tblProductoVenta p
+    JOIN tblProducto pr ON pr.Pk_Producto=p.Pk_ProductoVenta
+    JOIN tblListaPrecioDetalle d ON d.Fk_Producto_Codigo=p.Pk_ProductoVenta
+    WHERE p.Pk_ProductoVenta=?
+      AND d.Fk_ListaPrecioEncabezado_Codigo=?
+      AND p.activoProductoVenta=1
+      AND d.activoListaPrecioDetalle=1";
             return _Datos.VentasFuncTabla(Consulta, Parametros);
         }
 
         public int VentasFuncGuardarInsertarCotizacion(params object[] Parametros)
         {
-            const string Consulta = @"INSERT INTO tblcotizacion(numeroCotizacion,idCliente,idVendedor,idMoneda,fechaEmision,vigenteHasta,tipoCambio,estadoCotizacion,subtotal,descuentoTotal,impuestoTotal,total,idUsuarioRegistro)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
-            return _Datos.VentasFuncEjecutar(Consulta, Parametros);
-        }
-
-        public int VentasFuncGuardarInsertarCotizacioncontrol(params object[] Parametros)
-        {
-            const string Consulta = @"INSERT INTO tblcotizacioncontrol(idCotizacion,idListaPrecio)
-    VALUES (?,?)";
+            const string Consulta = @"INSERT INTO tblCotizacionEncabezado(numeroCotizacionEncabezado,Fk_Cliente_Codigo,Fk_Vendedor_Codigo,Fk_Moneda_Codigo,fechaEmisionCotizacionEncabezado,vigenteHastaCotizacionEncabezado,estadoCotizacionEncabezado,Fk_Usuario_Registro,Fk_ListaPrecioEncabezado_Codigo)
+    VALUES (?,?,?,?,?,?,?,?,?)";
             return _Datos.VentasFuncEjecutar(Consulta, Parametros);
         }
 
         public int VentasFuncGuardarActualizarCotizacion(params object[] Parametros)
         {
-            const string Consulta = @"UPDATE tblcotizacion
-    SET idCliente=?,idVendedor=?,idMoneda=?,fechaEmision=?,vigenteHasta=?,tipoCambio=?,estadoCotizacion=?,subtotal=?,descuentoTotal=?,impuestoTotal=?,total=?
-    WHERE idCotizacion=?";
-            return _Datos.VentasFuncEjecutar(Consulta, Parametros);
-        }
-
-        public int VentasFuncGuardarActualizarCotizacioncontrol(params object[] Parametros)
-        {
-            const string Consulta = @"UPDATE tblcotizacioncontrol
-    SET idListaPrecio=?
-    WHERE idCotizacion=?";
+            const string Consulta = @"UPDATE tblCotizacionEncabezado
+    SET Fk_Cliente_Codigo=?,Fk_Vendedor_Codigo=?,Fk_Moneda_Codigo=?,fechaEmisionCotizacionEncabezado=?,vigenteHastaCotizacionEncabezado=?,estadoCotizacionEncabezado=?,Fk_ListaPrecioEncabezado_Codigo=?
+    WHERE Pk_CotizacionEncabezado=?";
             return _Datos.VentasFuncEjecutar(Consulta, Parametros);
         }
 
         public int VentasFuncGuardarEliminarCotizaciondetalle(params object[] Parametros)
         {
             const string Consulta = @"DELETE
-    FROM tblcotizaciondetalle
-    WHERE idCotizacion=?";
+    FROM tblCotizacionDetalle
+    WHERE Fk_CotizacionEncabezado_Codigo=?";
             return _Datos.VentasFuncEjecutar(Consulta, Parametros);
         }
 
         public int VentasFuncGuardarInsertarCotizaciondetalle(params object[] Parametros)
         {
-            const string Consulta = @"INSERT INTO tblcotizaciondetalle(idCotizacion,numeroLinea,idProducto,descripcionItem,tipoItem,cantidad,precioUnitario,descuentoMonto,porcentajeImpuesto,impuestoMonto,totalLinea)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+            const string Consulta = @"INSERT INTO tblCotizacionDetalle(Fk_CotizacionEncabezado_Codigo,numeroLineaCotizacionDetalle,Fk_Producto_Codigo,descripcionItemCotizacionDetalle,cantidadCotizacionDetalle,precioUnitarioCotizacionDetalle,descuentoMontoCotizacionDetalle,tasaImpuestoCotizacionDetalle)
+    VALUES (?,?,?,?,?,?,?,?)";
             return _Datos.VentasFuncEjecutar(Consulta, Parametros);
         }
 
         // Anular: consultas parametrizadas.
         public DataTable VentasFuncAnularConsultarCotizacion(params object[] Parametros)
         {
-            const string Consulta = @"SELECT estadoCotizacion
-    FROM tblcotizacion
-    WHERE idCotizacion=?
+            const string Consulta = @"SELECT estadoCotizacionEncabezado
+    FROM tblCotizacionEncabezado
+    WHERE Pk_CotizacionEncabezado=?
     FOR UPDATE";
             return _Datos.VentasFuncTabla(Consulta, Parametros);
         }
 
         public int VentasFuncAnularActualizarCotizacion(params object[] Parametros)
         {
-            const string Consulta = @"UPDATE tblcotizacion
-    SET estadoCotizacion='ANULADA'
-    WHERE idCotizacion=?";
+            const string Consulta = @"UPDATE tblCotizacionEncabezado
+    SET estadoCotizacionEncabezado='ANULADA'
+    WHERE Pk_CotizacionEncabezado=?";
             return _Datos.VentasFuncEjecutar(Consulta, Parametros);
         }
     }

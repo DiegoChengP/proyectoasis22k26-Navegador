@@ -34,7 +34,7 @@ namespace CapaVista_Reportes
 
         internal static void VentasMetConfigurar(LocalReport Reporte, DataTable Datos, DateTime Corte, string Cliente, string Estado)
         {
-            Reporte.ReportEmbeddedResource = "CapaVista_Reportes.Reportes.ReporteAntiguedad.rdlc";
+            Reporte.ReportEmbeddedResource = "CapaVista_Reportes.Reportes.RpReporteAntiguedad.rdlc";
             Reporte.DataSources.Clear();
             Reporte.DataSources.Add(new ReportDataSource("DsAntiguedad", Datos));
             Reporte.SetParameters(new[] { new ReportParameter("FechaCorte", Corte.ToString("dd/MM/yyyy")), new ReportParameter("Cliente", Cliente), new ReportParameter("Estado", Estado) });

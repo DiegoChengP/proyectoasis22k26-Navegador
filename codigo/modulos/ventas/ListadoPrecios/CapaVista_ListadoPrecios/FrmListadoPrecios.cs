@@ -42,6 +42,7 @@ namespace CapaVista_ListadoPrecios
             VentasCboTipoCliente.SelectedItem = "Todos";
             VentasCboTipoProducto.SelectedItem = "Todos";
             VentasTxtPrecioFinal.ReadOnly = true;
+            VentasTxtPrecioBase.ReadOnly = true;
             VentasTxtPrecioBase.Text = "0.00";
             VentasTxtPrecioFinal.Text = "0.00";
             VentasMetCargarListado();

@@ -16,7 +16,7 @@ namespace CapaControlador_MovimientosClientes.Servicios
             ClsValidacionesVentas.VentasMetExigir(Monto > 0 && Monto <= ClsValidacionesVentas.ImporteMaximo && Monto == ClsValidacionesVentas.VentasFuncRedondear(Monto) && TipoCambio > 0 && TipoCambio <= 999999999999.999999m && TipoCambio == Math.Round(TipoCambio, 6), "Monto o tipo de cambio invalido.");
             ClsValidacionesVentas.VentasMetExigir(new[] { "EFECTIVO", "TRANSFERENCIA", "DEPOSITO", "CHEQUE", "TARJETA" }.Contains(Forma), "Seleccione la forma de pago.");
             Referencia = ClsValidacionesVentas.VentasFuncTexto(Referencia, 100, "referencia", Forma != "EFECTIVO");
-            Numero = ClsValidacionesVentas.VentasFuncTexto(Numero, 40, "numero de recibo", false);
+            Numero = ClsValidacionesVentas.VentasFuncTexto(Numero, 30, "numero de recibo", false);
             Observaciones = ClsValidacionesVentas.VentasFuncTexto(Observaciones, 500, "observaciones", false);
             ClsValidacionesVentas.VentasMetExigir(Aplicaciones != null && Aplicaciones.Rows.Count > 0, "Seleccione las facturas a pagar.");
             var Filas = Aplicaciones.AsEnumerable().OrderBy(Registro => Convert.ToInt32(Registro["idFactura"])).ToList();
@@ -42,7 +42,8 @@ namespace CapaControlador_MovimientosClientes.Servicios
                     ClsValidacionesVentas.VentasMetExigir(Importe <= VentasFuncDisponible(Repositorio, Factura, Fecha), "El saldo de una factura cambio o el importe lo supera. Consulte nuevamente.");
                 }
 
-                Repositorio.Recibos.VentasFuncRegistrarReciboInsertarPago(Numero, Cliente, Moneda, Fecha.Date, Monto, TipoCambio, Forma, Referencia, Observaciones, Usuario);
+                ClsValidacionesVentas.VentasMetExigir(Repositorio.Recibos.VentasFuncRegistrarReciboInsertarPago(Numero, Cliente, Moneda, Fecha.Date, Monto, Referencia, Observaciones, Usuario, Forma) == 1,
+                    "La forma de pago no está configurada en el catálogo de Ventas.");
                 int Pago = Repositorio.VentasFuncObtenerId();
                 foreach (DataRow Fila in Filas)
                 {
@@ -153,7 +154,7 @@ namespace CapaControlador_MovimientosClientes.Servicios
         {
             ClsValidacionesVentas.VentasMetExigir(Tipo >= 0 && Tipo <= 4, "Seleccione el tipo de documento.");
             ClsValidacionesVentas.VentasMetExigir(Importe > 0 && Importe <= ClsValidacionesVentas.ImporteMaximo && Importe == ClsValidacionesVentas.VentasFuncRedondear(Importe), "El importe debe ser positivo, estar dentro del rango y tener hasta dos decimales.");
-            Numero = ClsValidacionesVentas.VentasFuncTexto(Numero, 40, "numero de documento", false);
+            Numero = ClsValidacionesVentas.VentasFuncTexto(Numero, 30, "numero de documento", false);
             Motivo = ClsValidacionesVentas.VentasFuncTexto(Motivo, 255, "descripcion / motivo");
             using (var Repositorio = new ClsMovimientosRepositorio())
             {
@@ -169,8 +170,9 @@ namespace CapaControlador_MovimientosClientes.Servicios
                 {
                     ClsValidacionesVentas.VentasMetExigir(Vencimiento.Date >= Fecha.Date, "El vencimiento es anterior a la emision.");
                     ClsValidacionesVentas.VentasMetExigir(Convert.ToInt32(Repositorio.VentasFuncRegistrarDocumentoConsultarEstablecimientoventas(Establecimiento)) == 1, "Seleccione un establecimiento emisor activo.");
-                    DataRow ClienteSeleccionado = Clientes.Rows[0];
-                    Repositorio.VentasFuncRegistrarDocumentoInsertarFactura(Numero, Establecimiento, Cliente, Moneda, Fecha.Date, Vencimiento.Date, Vencimiento.Date == Fecha.Date ? "CONTADO" : "CREDITO", (Vencimiento.Date - Fecha.Date).Days, ClienteSeleccionado["tipoIdentificacion"], ClienteSeleccionado["numeroIdentificacion"] == DBNull.Value ? "CF" : ClienteSeleccionado["numeroIdentificacion"], ClienteSeleccionado["nombreCliente"], ClienteSeleccionado["direccionCliente"], Importe, Importe, Motivo, Usuario);
+                    int VersionCliente = Repositorio.VentasFuncCrearVersionCliente(Cliente);
+                    Repositorio.VentasFuncRegistrarDocumentoInsertarFactura(Numero, Establecimiento, Moneda, Fecha.Date, Vencimiento.Date,
+                        Vencimiento.Date == Fecha.Date ? "CONTADO" : "CREDITO", Motivo, Usuario, VersionCliente);
                     Factura = Repositorio.VentasFuncObtenerId();
                     VentasMetMovimiento(Repositorio, Factura, Fecha, "FACTURA", Motivo, Importe, 0, Usuario);
                 }
@@ -318,7 +320,7 @@ namespace CapaControlador_MovimientosClientes.Servicios
             Cuenta = ClsValidacionesVentas.VentasFuncTexto(Cuenta, 100, "cuenta de la empresa");
             Concepto = ClsValidacionesVentas.VentasFuncTexto(Concepto, 100, "concepto bancario");
             Referencia = ClsValidacionesVentas.VentasFuncTexto(Referencia, 100, "referencia", false);
-            Numero = ClsValidacionesVentas.VentasFuncTexto(Numero, 40, "codigo de deposito", false);
+            Numero = ClsValidacionesVentas.VentasFuncTexto(Numero, 30, "codigo de deposito", false);
             ClsValidacionesVentas.VentasMetExigir(Recibos != null && Recibos.Rows.Count > 0, "Seleccione recibos para preparar el deposito.");
             var Filas = Recibos.AsEnumerable().OrderBy(Registro => Convert.ToInt32(Registro["idPago"])).ToList();
             ClsValidacionesVentas.VentasMetExigir(Filas.Select(Registro => Convert.ToInt32(Registro["idPago"])).Distinct().Count() == Filas.Count, "No repita un recibo.");
@@ -341,7 +343,9 @@ namespace CapaControlador_MovimientosClientes.Servicios
                 if (Numero.Length == 0)
                     Numero = Repositorio.VentasFuncNumero("DEP");
                 ClsValidacionesVentas.VentasMetExigir(Total <= ClsValidacionesVentas.ImporteMaximo, "El deposito supera la capacidad del documento.");
-                Repositorio.Recibos.VentasFuncPrepararDepositoInsertarDepositoventas(Numero, Fecha.Date, Empresa, Banco, Cuenta, Concepto, Referencia, Moneda, Total, Usuario);
+                ClsValidacionesVentas.VentasMetExigir(Repositorio.Recibos.VentasFuncPrepararDepositoInsertarDepositoventas(
+                    Numero, Fecha.Date, Referencia, Moneda, Total, Usuario, Cuenta, Cuenta, Banco, Banco, Banco, Concepto, Concepto, Concepto, Moneda) == 1,
+                    "La cuenta bancaria o el tipo de transacción no está configurado para esta moneda.");
                 int Id = Repositorio.VentasFuncObtenerId();
                 foreach (DataRow Fila in Filas)
                     Repositorio.Recibos.VentasFuncPrepararDepositoInsertarDepositoventasdetalle(Id, Fila["idPago"], Fila["Importe"]);

@@ -13,7 +13,7 @@ namespace CapaControlador_Cotizaciones.Servicios
         // RegistroCotizaciones.
         public string VentasFuncGuardar(int IdCotizacion, string Numero, int Cliente, int Vendedor, int Moneda, int Usuario, DateTime Fecha, DateTime Vigencia, decimal TipoCambio, string Estado, DataTable Lineas)
         {
-            Numero = ClsValidacionesVentas.VentasFuncTexto(Numero, 40, "numero de cotizacion", false);
+            Numero = ClsValidacionesVentas.VentasFuncTexto(Numero, 30, "numero de cotizacion", false);
             ClsValidacionesVentas.VentasMetExigir(Fecha.Date <= Vigencia.Date && Vigencia.Date >= DateTime.Today && Fecha.Date <= DateTime.Today, "Revise la emision y vigencia; una vencida requiere una nueva cotizacion.");
             ClsValidacionesVentas.VentasMetExigir(Estado == "BORRADOR" || Estado == "EMITIDA", "Solo puede guardar como Borrador o Vigente.");
             ClsValidacionesVentas.VentasMetExigir(TipoCambio > 0 && TipoCambio <= 999999999999.999999m && TipoCambio == Math.Round(TipoCambio, 6), "El tipo de cambio debe ser positivo y tener hasta seis decimales.");
@@ -75,20 +75,18 @@ namespace CapaControlador_Cotizaciones.Servicios
                 ClsValidacionesVentas.VentasMetExigir(Subtotal <= ClsValidacionesVentas.ImporteMaximo && Total <= ClsValidacionesVentas.ImporteMaximo, "El total supera la capacidad del documento.");
                 if (IdCotizacion == 0)
                 {
-                    Repositorio.VentasFuncGuardarInsertarCotizacion(Numero, Cliente, Vendedor, Moneda, Fecha.Date, Vigencia.Date, TipoCambio, Estado, Subtotal, Descuento, Impuesto, Total, Usuario);
+                    Repositorio.VentasFuncGuardarInsertarCotizacion(Numero, Cliente, Vendedor, Moneda, Fecha.Date, Vigencia.Date, Estado, Usuario, ListaPrecios.Rows[0]["idListaPrecio"]);
                     IdCotizacion = Repositorio.VentasFuncObtenerId();
-                    Repositorio.VentasFuncGuardarInsertarCotizacioncontrol(IdCotizacion, ListaPrecios.Rows[0]["idListaPrecio"]);
                 }
                 else
                 {
-                    Repositorio.VentasFuncGuardarActualizarCotizacion(Cliente, Vendedor, Moneda, Fecha.Date, Vigencia.Date, TipoCambio, Estado, Subtotal, Descuento, Impuesto, Total, IdCotizacion);
-                    Repositorio.VentasFuncGuardarActualizarCotizacioncontrol(ListaPrecios.Rows[0]["idListaPrecio"], IdCotizacion);
+                    Repositorio.VentasFuncGuardarActualizarCotizacion(Cliente, Vendedor, Moneda, Fecha.Date, Vigencia.Date, Estado, ListaPrecios.Rows[0]["idListaPrecio"], IdCotizacion);
                     Repositorio.VentasFuncGuardarEliminarCotizaciondetalle(IdCotizacion);
                 }
 
                 int NumeroLinea = 0;
                 foreach (DataRow Fila in Detalle.Rows)
-                    Repositorio.VentasFuncGuardarInsertarCotizaciondetalle(IdCotizacion, ++NumeroLinea, Fila["idProducto"], Fila["Descripcion"], Fila["Tipo"], Fila["Cantidad"], Fila["Precio"], Fila["Descuento"], Fila["Tasa"], Fila["Impuesto"], Fila["Total"]);
+                    Repositorio.VentasFuncGuardarInsertarCotizaciondetalle(IdCotizacion, ++NumeroLinea, Fila["idProducto"], Fila["Descripcion"], Fila["Cantidad"], Fila["Precio"], Fila["Descuento"], Convert.ToDecimal(Fila["Tasa"]) / 100m);
                 Repositorio.VentasMetAuditar("COTIZACION", IdCotizacion, "GUARDAR", Numero, Usuario);
                 Repositorio.VentasMetConfirmar();
                 return Numero;
@@ -112,7 +110,7 @@ namespace CapaControlador_Cotizaciones.Servicios
         // OperacionCotizaciones.
         private static DataTable VentasFuncLista(ClsCotizacionesRepositorio Repositorio, int Cliente, int Moneda, DateTime Fecha)
         {
-            return Repositorio.Consultas.VentasFuncListaConsultarClientelistaprecios(Cliente, Moneda, Moneda, Fecha.Date, Fecha.Date);
+            return Repositorio.Consultas.VentasFuncListaConsultarClientelistaprecios(Cliente, Moneda, Fecha.Date, Fecha.Date);
         }
 
         // ConversionCotizaciones.
@@ -142,7 +140,7 @@ namespace CapaControlador_Cotizaciones.Servicios
                 int Id;
                 if (!AFactura)
                 {
-                    Repositorio.Conversion.VentasFuncConvertirInsertarPedido(Numero, IdCotizacion, CabeceraCotizacion["idCliente"], CabeceraCotizacion["idVendedor"], CabeceraCotizacion["idMoneda"], DateTime.Today, CabeceraCotizacion["tipoCambio"], CabeceraCotizacion["subtotal"], CabeceraCotizacion["descuentoTotal"], CabeceraCotizacion["impuestoTotal"], CabeceraCotizacion["total"], Usuario);
+                    Repositorio.Conversion.VentasFuncConvertirInsertarPedido(Numero, IdCotizacion, CabeceraCotizacion["idCliente"], CabeceraCotizacion["idVendedor"], CabeceraCotizacion["idMoneda"], DateTime.Today, Usuario);
                     Id = Repositorio.VentasFuncObtenerId();
                     Repositorio.Conversion.VentasFuncConvertirInsertarPedidodetalle(Id, IdCotizacion);
                 }
@@ -152,16 +150,13 @@ namespace CapaControlador_Cotizaciones.Servicios
                     DataTable Clientes = Repositorio.Conversion.VentasFuncConvertirConsultarCliente(CabeceraCotizacion["idCliente"]);
                     DataRow Cliente = Clientes.Rows[0];
                     int Dias = Convert.ToInt32(Cliente["diasCredito"]);
+                    int VersionCliente = Repositorio.Conversion.VentasFuncConvertirCrearVersionCliente(Convert.ToInt32(CabeceraCotizacion["idCliente"]));
                     // Borrador con precios congelados: emitir, certificar y afectar inventarios corresponde a Facturas.
-                    Repositorio.Conversion.VentasFuncConvertirInsertarFactura(Numero, Establecimiento, CabeceraCotizacion["idCliente"], CabeceraCotizacion["idVendedor"], CabeceraCotizacion["idMoneda"], DateTime.Today, DateTime.Today.AddDays(Dias), Dias == 0 ? "CONTADO" : "CREDITO", Dias, CabeceraCotizacion["tipoCambio"], Cliente["tipoIdentificacion"], Cliente["numeroIdentificacion"] == DBNull.Value ? "CF" : Cliente["numeroIdentificacion"], Cliente["nombreCliente"], Cliente["direccionCliente"], CabeceraCotizacion["subtotal"], CabeceraCotizacion["descuentoTotal"], CabeceraCotizacion["impuestoTotal"], CabeceraCotizacion["total"], "Origen cotizacion " + CabeceraCotizacion["numeroCotizacion"], Usuario);
+                    Repositorio.Conversion.VentasFuncConvertirInsertarFactura(Numero, Establecimiento, CabeceraCotizacion["idVendedor"], CabeceraCotizacion["idMoneda"], DateTime.Today, DateTime.Today.AddDays(Dias), Dias == 0 ? "CONTADO" : "CREDITO", "Origen cotizacion " + CabeceraCotizacion["numeroCotizacion"], Usuario, VersionCliente, IdCotizacion);
                     Id = Repositorio.VentasFuncObtenerId();
                     Repositorio.Conversion.VentasFuncConvertirInsertarFacturadetalle(Id, IdCotizacion);
                 }
 
-                if (AFactura)
-                    Repositorio.Conversion.VentasFuncConvertirActualizarCotizacioncontrol(Id, IdCotizacion);
-                else
-                    Repositorio.Conversion.VentasFuncConvertirActualizarCotizacioncontrol2(Id, IdCotizacion);
                 Repositorio.Conversion.VentasFuncConvertirActualizarCotizacion(IdCotizacion);
                 Repositorio.VentasMetConfirmar();
                 return AFactura ? "COT-" + Numero : Numero;

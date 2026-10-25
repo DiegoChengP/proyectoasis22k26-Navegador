@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B751AA56-FD8B-49F0-9F68-B61BE16A56C8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Ejecutable_Ventas</RootNamespace>
-    <AssemblyName>Ejecutable_Ventas</AssemblyName>
+    <RootNamespace>Ejecucion_Ventas</RootNamespace>
+    <AssemblyName>Ejecucion_Ventas</AssemblyName>
     <ApplicationIcon>..\..\..\..\..\recursos\modulos\ventas\iconoVentas.ico</ApplicationIcon>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -80,7 +80,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\Ventas y CxC\CapaVista_Ventas\CapaVista_Ventas.csproj">
+    <ProjectReference Include="..\..\VentasYCxC\CapaVista_Ventas\CapaVista_Ventas.csproj">
       <Project>{9496BD61-6249-436E-B168-BB5C8C6ABFB0}</Project>
       <Name>CapaVista_Ventas</Name>
     </ProjectReference>

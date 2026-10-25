@@ -28,7 +28,7 @@ namespace CapaVista_Pedidos
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager Resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPedidoVentas));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPedidoVentas));
             this.VentasTtpAcciones = new System.Windows.Forms.ToolTip(this.components);
             System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -164,7 +164,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnGuardar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnGuardar.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasBtnGuardar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnGuardar.BackgroundImage = ((System.Drawing.Image)(Resources.GetObject("Guardar")));
+            this.VentasBtnGuardar.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Guardar")));
             this.VentasBtnGuardar.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnGuardar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnGuardar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -195,7 +195,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnCancelar.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnCancelar.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasBtnCancelar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnCancelar.BackgroundImage = ((System.Drawing.Image)(Resources.GetObject("Cancelar")));
+            this.VentasBtnCancelar.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Cancelar")));
             this.VentasBtnCancelar.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnCancelar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnCancelar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -418,7 +418,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnEliminarProducto.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnEliminarProducto.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasBtnEliminarProducto.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnEliminarProducto.BackgroundImage = ((System.Drawing.Image)(Resources.GetObject("Eliminar")));
+            this.VentasBtnEliminarProducto.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Eliminar")));
             this.VentasBtnEliminarProducto.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnEliminarProducto.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnEliminarProducto.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -448,7 +448,7 @@ namespace CapaVista_Pedidos
             this.VentasBtnIngresarProducto.BackColor = System.Drawing.Color.FromArgb(123, 63, 147);
             this.VentasBtnIngresarProducto.ForeColor = System.Drawing.Color.FromArgb(248, 245, 249);
             this.VentasBtnIngresarProducto.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.VentasBtnIngresarProducto.BackgroundImage = ((System.Drawing.Image)(Resources.GetObject("Ingresar")));
+            this.VentasBtnIngresarProducto.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Ingresar")));
             this.VentasBtnIngresarProducto.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnIngresarProducto.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.VentasBtnIngresarProducto.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -750,7 +750,7 @@ namespace CapaVista_Pedidos
             this.Controls.Add(this.VentasPnlEncabezado);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(Resources.GetObject("IconoVentas")));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("IconoVentas")));
             this.MaximizeBox = false;
             this.Name = "FrmPedidoVentas";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

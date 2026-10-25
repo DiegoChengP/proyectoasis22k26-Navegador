@@ -81,7 +81,7 @@
     <Content Include="SqlServerTypes\x86\SqlServerSpatial140.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="Reportes\ReporteAntiguedad.rdlc" />
+    <EmbeddedResource Include="Reportes\RpReporteAntiguedad.rdlc" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

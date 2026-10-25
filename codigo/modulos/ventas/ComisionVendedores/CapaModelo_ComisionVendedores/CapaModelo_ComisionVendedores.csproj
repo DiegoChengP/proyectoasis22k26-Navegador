@@ -33,6 +33,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contratos\IRepositorioComision.cs" />
@@ -52,7 +54,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\Ventas y CxC\CapaModelo_Ventas\CapaModelo_Ventas.csproj">
+    <ProjectReference Include="..\..\VentasYCxC\CapaModelo_Ventas\CapaModelo_Ventas.csproj">
       <Project>{1CCD5DF0-9BE4-4A86-8A60-20600E4FF3DC}</Project>
       <Name>CapaModelo_Ventas</Name>
       <Private>True</Private>

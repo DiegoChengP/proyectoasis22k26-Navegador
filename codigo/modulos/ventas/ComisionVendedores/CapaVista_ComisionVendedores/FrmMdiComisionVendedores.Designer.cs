@@ -84,7 +84,7 @@
 
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager Resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMdiComisionVendedores));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMdiComisionVendedores));
             System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle DataGridViewCellStyle30 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -1103,11 +1103,11 @@
             this.Controls.Add(this.VentasPnlEncabezado);
             this.Font = new System.Drawing.Font("Tahoma", 9F);
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(29)))), ((int)(((byte)(74)))));
-            this.Icon = ((System.Drawing.Icon)(Resources.GetObject("$this.Icon")));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FrmMdiComisionVendedores";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "7008 – ComisionVendedores";
+            this.Text = "7013 – ComisionVendedores";
             this.VentasTbcPestanas.ResumeLayout(false);
             this.VentasTbpCalculo.ResumeLayout(false);
             this.VentasTbpCalculo.PerformLayout();

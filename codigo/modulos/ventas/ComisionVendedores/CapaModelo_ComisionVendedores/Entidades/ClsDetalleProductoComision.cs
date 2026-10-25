@@ -9,6 +9,7 @@ namespace CapaModelo_ComisionVendedores.Entidades
         public string Categoria { get; set; }
         public decimal Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; }
+        public decimal Descuento { get; set; }
         public decimal Porcentaje { get; set; }
     }
 }

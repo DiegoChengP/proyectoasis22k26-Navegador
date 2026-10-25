@@ -118,6 +118,9 @@
   <data name="IconoComisionesVendedoresVentas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\..\..\..\..\recursos\modulos\ventas\iconoComisionesVendedoresVentas.png;System.Drawing.Bitmap, System.Drawing</value>
   </data>
+  <data name="IconoMantenimientosVentas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\..\..\..\..\recursos\modulos\ventas\iconoMantenimientosVentas.png;System.Drawing.Bitmap, System.Drawing</value>
+  </data>
   <data name="IconoCierreMovimientosVentas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\..\..\..\..\recursos\modulos\ventas\iconoCierreMovimientosVentas.png;System.Drawing.Bitmap, System.Drawing</value>
   </data>

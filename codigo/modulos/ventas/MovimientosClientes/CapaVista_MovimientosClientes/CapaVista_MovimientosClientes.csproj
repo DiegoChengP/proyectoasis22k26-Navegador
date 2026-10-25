@@ -79,7 +79,7 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
-    <Compile Include="..\..\Ventas y CxC\CapaVista_Ventas\Presentacion\ClsHerramientasVentas.cs">
+    <Compile Include="..\..\VentasYCxC\CapaVista_Ventas\Presentacion\ClsHerramientasVentas.cs">
       <Link>Presentacion\ClsHerramientasVentas.cs</Link>
     </Compile>
   </ItemGroup>

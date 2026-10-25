@@ -31,7 +31,7 @@ set "VENTAS_ROJO="
 set "VENTAS_GRIS="
 set "VENTAS_RESET="
 if "%VENTAS_SINPAUSA%"=="1" goto COMPILAR
-title Ventas y CxC - Centro de compilacion
+title VentasYCxC - Centro de compilacion
 :: Habilitar ANSI solamente si existe una consola real, sin modificar el registro.
 for /f "usebackq delims=" %%E in (`powershell.exe -NoLogo -NoProfile -NonInteractive -Command "$ErrorActionPreference='Stop'; try { $q=[char]34; $d='[System.Runtime.InteropServices.DllImport('+$q+'kernel32.dll'+$q+')] public static extern System.IntPtr CreateFile(string n, uint a, uint s, System.IntPtr p, uint c, uint f, System.IntPtr t); [System.Runtime.InteropServices.DllImport('+$q+'kernel32.dll'+$q+')] public static extern bool GetConsoleMode(System.IntPtr h, out uint m); [System.Runtime.InteropServices.DllImport('+$q+'kernel32.dll'+$q+')] public static extern bool SetConsoleMode(System.IntPtr h, uint m); [System.Runtime.InteropServices.DllImport(' + $q + 'kernel32.dll' + $q + ')] public static extern bool CloseHandle(System.IntPtr h);'; $t=Add-Type -Namespace VentasBuild -Name ConsoleNative -MemberDefinition $d -PassThru; $h=$t::CreateFile('CONOUT$',3221225472,3,[IntPtr]::Zero,3,0,[IntPtr]::Zero); [uint32]$m=0; if($t::GetConsoleMode($h,[ref]$m)) { if($t::SetConsoleMode($h,($m -bor 4))) { [Console]::Write([char]27) } }; [void]$t::CloseHandle($h) } catch {}" 2^>nul`) do set "VENTAS_ESC=%%E"
 if not defined VENTAS_ESC goto COMPILAR

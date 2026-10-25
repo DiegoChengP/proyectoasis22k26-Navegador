@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -30,6 +30,12 @@ namespace CapaVista_ComisionVendedores
         public FrmMdiComisionVendedores(IControladorComision ControladorComision)
         {
             InitializeComponent();
+            var AreaTrabajo = Screen.FromControl(this).WorkingArea;
+            AutoScrollMinSize = ClientSize;
+            AutoScroll = true;
+            MinimumSize = System.Drawing.Size.Empty;
+            Size = new System.Drawing.Size(Math.Min(Width, Math.Max(1, AreaTrabajo.Width - 32)),
+                Math.Min(Height, Math.Max(1, AreaTrabajo.Height - 32)));
             _ControladorComision = ControladorComision ?? throw new ArgumentNullException("ControladorComision");
             _Resultados = new List<ClsComisionVendedorResultado>();
             _DetallesFactura = new List<ClsComisionFacturaDetalle>();
@@ -59,7 +65,7 @@ namespace CapaVista_ComisionVendedores
                     System.Drawing.Color.FromArgb(201, 162, 74));
                 VentasMetMostrarError(VentasLblEstado, Excepcion.Message,
                     VentasDtpFechaInicio, VentasDtpFechaFin, VentasCboMetodo);
-                MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Excepcion.Message, "7013 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -74,12 +80,12 @@ namespace CapaVista_ComisionVendedores
                 VentasLblEstado.Text = "Resultados guardados en ComisionCalculada.";
                 VentasMetActualizarBoton(VentasBtnGuardar, false,
                     System.Drawing.Color.FromArgb(201, 162, 74));
-                MessageBox.Show("Se guardaron " + Guardados + " resultados.", "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Se guardaron " + Guardados + " resultados.", "7013 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception Excepcion)
             {
                 VentasMetMostrarError(VentasLblEstado, Excepcion.Message);
-                MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Excepcion.Message, "7013 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -94,7 +100,7 @@ namespace CapaVista_ComisionVendedores
             catch (Exception Excepcion)
             {
                 VentasMetMostrarError(VentasLblMantenimientoEstado, Excepcion.Message, VentasCboAlcance);
-                MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Excepcion.Message, "7013 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -114,7 +120,7 @@ namespace CapaVista_ComisionVendedores
             {
                 VentasMetMostrarError(VentasLblEstadoFactura, Excepcion.Message,
                     VentasCboFactura, VentasCboVendedorFactura);
-                MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Excepcion.Message, "7013 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -159,7 +165,7 @@ namespace CapaVista_ComisionVendedores
             {
                 VentasMetMostrarError(VentasLblEstadoFactura, Excepcion.Message,
                     VentasCboFactura, VentasCboVendedorFactura, VentasCboMetodoFactura);
-                MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Excepcion.Message, "7013 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -199,7 +205,7 @@ namespace CapaVista_ComisionVendedores
             catch (Exception Excepcion)
             {
                 VentasMetMostrarError(VentasLblMantenimientoEstado, Excepcion.Message);
-                MessageBox.Show(Excepcion.Message, "7008 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Excepcion.Message, "7013 – ComisionVendedores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

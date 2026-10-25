@@ -23,10 +23,66 @@ namespace CapaVista_Ventas
         public FrmMdiVentas()
         {
             InitializeComponent();
+            VentasMetAjustarIconoMantenimientos();
+            VentasMetAjustarBotonMantenimientos();
             // El doble búfer reduce el parpadeo al redimensionar la ventana.
             DoubleBuffered = true;
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer |
                 ControlStyles.ResizeRedraw, true);
+            VentasPnlPrincipal.AutoScroll = true;
+            VentasPnlPrincipal.Resize += (Origen, Evento) => VentasMetAjustarContenido();
+            Shown += (Origen, Evento) => VentasMetAjustarContenido();
+        }
+
+        private void VentasMetAjustarIconoMantenimientos()
+        {
+            Image IconoOriginal = CapaVista_Ventas.Properties.Resources.ResourceManager
+                .GetObject("IconoMantenimientosVentas") as Image;
+            if (IconoOriginal == null)
+                throw new InvalidOperationException("No se encontró el icono de Mantenimientos de Ventas.");
+
+            // El recurso de herramientas tiene margen exterior; se recorta antes de igualar su marco.
+            var IconoMenu = new Bitmap(56, 42);
+            using (Graphics Dibujo = Graphics.FromImage(IconoMenu))
+            {
+                Dibujo.Clear(Color.Transparent);
+                Dibujo.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                int Margen = (int)(Math.Min(IconoOriginal.Width, IconoOriginal.Height) * 0.05);
+                var AreaOriginal = new Rectangle(Margen, Margen,
+                    IconoOriginal.Width - 2 * Margen, IconoOriginal.Height - 2 * Margen);
+                Dibujo.DrawImage(IconoOriginal, new Rectangle(0, 0, 42, 42),
+                    AreaOriginal, GraphicsUnit.Pixel);
+            }
+            VentasBtnMantenimientos.Image = IconoMenu;
+        }
+
+        private void VentasMetAjustarBotonMantenimientos()
+        {
+            VentasBtnMantenimientos.Text = VentasBtnMantenimientos.Text.TrimStart();
+            int Fila = VentasTlpMenu.GetRow(VentasBtnMantenimientos);
+            int FilaReferencia = VentasTlpMenu.GetRow(VentasBtnComisionesVendedores);
+            VentasTlpMenu.RowStyles[Fila].SizeType = VentasTlpMenu.RowStyles[FilaReferencia].SizeType;
+            VentasTlpMenu.RowStyles[Fila].Height = VentasTlpMenu.RowStyles[FilaReferencia].Height;
+        }
+
+        private void VentasMetAjustarContenido()
+        {
+            // Conserva el ancho original en pantallas grandes y permite desplazarlo en pantallas pequeñas.
+            int AnchoDisponible = VentasPnlPrincipal.ClientSize.Width - VentasTlpContenido.Left - 14;
+            VentasTlpContenido.Width = Math.Max(750, AnchoDisponible);
+        }
+
+        private void VentasMetAbrirFormulario(Form Formulario)
+        {
+            Rectangle Area = Screen.FromControl(this).WorkingArea;
+            int Ancho = Math.Max(1, Area.Width - 32);
+            int Alto = Math.Max(1, Area.Height - 32);
+            Formulario.AutoScrollMinSize = Formulario.ClientSize;
+            Formulario.AutoScroll = true;
+            Formulario.MinimumSize = Size.Empty;
+            Formulario.Size = new Size(Math.Min(Formulario.Width, Ancho), Math.Min(Formulario.Height, Alto));
+            Formulario.StartPosition = FormStartPosition.CenterParent;
+            Formulario.ShowDialog(this);
         }
 
         public FrmMdiVentas(string NombreUsuario, string RolUsuario) : this(NombreUsuario, RolUsuario, 0) { }
@@ -69,7 +125,7 @@ namespace CapaVista_Ventas
             {
                 VentasPnlNavegador.Width = Contraer ? 64 : 270;
                 VentasTlpContenido.Left = Contraer ? 200 : 300;
-                VentasTlpContenido.Width = VentasPnlPrincipal.ClientSize.Width - VentasTlpContenido.Left - 14;
+                VentasMetAjustarContenido();
                 VentasBtnBurger.AccessibleName = Contraer ? "Expandir menú" : "Contraer menú";
             }
             finally
@@ -109,14 +165,14 @@ namespace CapaVista_Ventas
         private void VentasMetBtnListadoPreciosClick(object Origen, EventArgs Evento)
         {
             using (var Formulario = new CapaVista_ListadoPrecios.FrmListadoPrecios())
-                Formulario.ShowDialog(this);
+                VentasMetAbrirFormulario(Formulario);
         }
 
         // Abre la opción de movimientos de clientes.
         private void VentasMetBtnMovimientosClientesClick(object Origen, EventArgs Evento)
         {
             using (var Formulario = new CapaVista_MovimientosClientes.FrmMovimientosClientesVentas() { VentasIdUsuario = _IdUsuario })
-                Formulario.ShowDialog(this);
+                VentasMetAbrirFormulario(Formulario);
         }
 
         // Abre la opción de recepción de pagos.
@@ -125,7 +181,7 @@ namespace CapaVista_Ventas
             using (var Formulario = new CapaVista_MovimientosClientes.FrmMovimientosClientesVentas() { VentasIdUsuario = _IdUsuario })
             {
                 Formulario.VentasMetMostrarRecepcionPagos();
-                Formulario.ShowDialog(this);
+                VentasMetAbrirFormulario(Formulario);
             }
         }
 
@@ -139,41 +195,42 @@ namespace CapaVista_Ventas
         private void VentasMetBtnCotizacionesClick(object Origen, EventArgs Evento)
         {
             using (var Formulario = new CapaVista_Cotizaciones.FrmCotizacionVentas() { VentasIdUsuario = _IdUsuario })
-                Formulario.ShowDialog(this);
+                VentasMetAbrirFormulario(Formulario);
         }
 
         // Abre el formulario independiente de pedidos.
         private void VentasMetBtnPedidosClick(object Origen, EventArgs Evento)
         {
             using (var Formulario = new CapaVista_Pedidos.FrmPedidoVentas())
-                Formulario.ShowDialog(this);
+                VentasMetAbrirFormulario(Formulario);
         }
 
         // Abre el formulario independiente de facturas.
         private void VentasMetBtnFacturasClick(object Origen, EventArgs Evento)
         {
-            new CapaVista_Facturas.FrmFacturas().Show(this);
+            using (var Formulario = new CapaVista_Facturas.FrmFacturas())
+                VentasMetAbrirFormulario(Formulario);
         }
 
         // Abre la opción de comisiones de vendedores.
         private void VentasMetBtnComisionesVendedoresClick(object Origen, EventArgs Evento)
         {
             using (var Formulario = new CapaVista_ComisionVendedores.FrmComisionesVendedoresVentas())
-                Formulario.ShowDialog(this);
+                VentasMetAbrirFormulario(Formulario);
         }
 
         // Abre la opción de mantenimientos del módulo.
         private void VentasMetBtnMantenimientosClick(object Origen, EventArgs Evento)
         {
             using (var Formulario = new CapaVista_Mantenimientos.FrmMantenimientosVentas())
-                Formulario.ShowDialog(this);
+                VentasMetAbrirFormulario(Formulario);
         }
 
         // Abre la opción de cierre de movimientos.
         private void VentasMetBtnCierreMovimientosClick(object Origen, EventArgs Evento)
         {
             using (var Formulario = new CapaVista_CierreMovimientos.FrmCierreMovimientosVentas() { VentasIdUsuario = _IdUsuario })
-                Formulario.ShowDialog(this);
+                VentasMetAbrirFormulario(Formulario);
         }
 
         // Confirma la salida del módulo y cierra su ventana principal.

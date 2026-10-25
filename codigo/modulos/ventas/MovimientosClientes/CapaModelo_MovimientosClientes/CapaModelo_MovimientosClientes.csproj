@@ -41,7 +41,7 @@
     <Compile Include="Repositorios\ClsRecibosMovimientos.cs" />
     <Compile Include="Repositorios\ClsConsultasMovimientos.cs" />
     <Compile Include="Repositorios\ClsMovimientosRepositorio.cs" />
-    <Compile Include="..\..\Ventas y CxC\CapaModelo_Ventas\Datos\ClsDatosVentas.cs">
+    <Compile Include="..\..\VentasYCxC\CapaModelo_Ventas\Datos\ClsDatosVentas.cs">
       <Link>Datos\ClsDatosVentas.cs</Link>
     </Compile>
   </ItemGroup>
@@ -49,7 +49,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Ventas y CxC\CapaModelo_Ventas\CapaModelo_Ventas.csproj">
+    <ProjectReference Include="..\..\VentasYCxC\CapaModelo_Ventas\CapaModelo_Ventas.csproj">
       <Project>{1CCD5DF0-9BE4-4A86-8A60-20600E4FF3DC}</Project>
       <Name>CapaModelo_Ventas</Name>
       <Private>True</Private>

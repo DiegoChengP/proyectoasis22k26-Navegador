@@ -47,6 +47,9 @@
     <Reference Include="CapaVista_Logistica">
       <HintPath>..\..\..\..\modulos\Logistica\Logistica\CapaVista_Logistica\bin\Debug\CapaVista_Logistica.dll</HintPath>
     </Reference>
+    <Reference Include="CapaVista_Ventas">
+      <HintPath>..\..\..\..\modulos\ventas\VentasYCxC\CapaVista_Ventas\bin\Debug\CapaVista_Ventas.dll</HintPath>
+    </Reference>
     <Reference Include="CapaVista_Navegador">
       <HintPath>..\..\..\navegador\Navegador\CapaVista_Navegador\bin\Debug\CapaVista_Navegador.dll</HintPath>
     </Reference>

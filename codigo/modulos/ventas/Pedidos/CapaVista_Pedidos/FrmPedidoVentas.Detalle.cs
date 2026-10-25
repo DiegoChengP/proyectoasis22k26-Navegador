@@ -18,7 +18,7 @@ namespace CapaVista_Pedidos
             VentasNudCantidadProducto.Name = "VentasNudCantidadProducto";
             VentasNudCantidadProducto.Location = new Point(655, 18);
             VentasNudCantidadProducto.Size = new Size(95, 25);
-            VentasNudCantidadProducto.DecimalPlaces = 0;
+            VentasNudCantidadProducto.DecimalPlaces = 4;
             VentasNudCantidadProducto.Minimum = 1m;
             VentasNudCantidadProducto.Maximum = 1000000m;
             VentasNudCantidadProducto.Value = 1m;
@@ -35,7 +35,7 @@ namespace CapaVista_Pedidos
             var Linea = new ClsLineaPedido {
                 ProductoId = Producto.ProductoId, Codigo = Producto.Codigo,
                 Descripcion = Producto.Descripcion, Tipo = Producto.Tipo,
-                Cantidad = Decimal.ToInt32(VentasNudCantidadProducto.Value), Precio = Producto.Precio,
+                Cantidad = VentasNudCantidadProducto.Value, Precio = Producto.Precio,
                 PorcentajeImpuesto = Producto.PorcentajeImpuesto
             };
             ClsPedidoControlador.VentasMetCalcular(Linea);
@@ -54,7 +54,7 @@ namespace CapaVista_Pedidos
         {
             VentasDgvDetalle.Rows.Clear();
             foreach (var Linea in _Lineas)
-                VentasDgvDetalle.Rows.Add(Linea.Codigo, Linea.Descripcion, string.Empty, Linea.Cantidad.ToString("N0", _Cultura),
+                VentasDgvDetalle.Rows.Add(Linea.Codigo, Linea.Descripcion, string.Empty, Linea.Cantidad.ToString("N4", _Cultura),
                     Linea.Precio.ToString("N4", _Cultura), Linea.Descuento.ToString("N2", _Cultura), Linea.Total.ToString("N2", _Cultura));
             decimal Subtotal = _Lineas.Sum(Linea => Math.Round(Linea.Cantidad * Linea.Precio, 2, MidpointRounding.AwayFromZero));
             VentasLblSubtotal.Text = "Subtotal    Q " + Subtotal.ToString("N2", _Cultura);

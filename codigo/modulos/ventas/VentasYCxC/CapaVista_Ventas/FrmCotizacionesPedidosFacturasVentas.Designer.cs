@@ -448,7 +448,7 @@ namespace CapaVista_Ventas
             this.Name = "FrmCotizacionesPedidosFacturasVentas";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "7007 – CotizacionesPedidosYFacturas";
+            this.Text = "7012 – CotizacionesPedidosYFacturas";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();

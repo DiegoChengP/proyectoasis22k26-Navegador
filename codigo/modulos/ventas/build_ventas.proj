@@ -42,9 +42,9 @@
     <BibliotecaVentas Include="Pedidos\CapaControlador_Pedidos\bin\$(Configuration)\CapaControlador_Pedidos.dll" />
     <BibliotecaVentas Include="Pedidos\CapaModelo_Pedidos\bin\$(Configuration)\CapaModelo_Pedidos.dll" />
     <BibliotecaVentas Include="Pedidos\CapaVista_Pedidos\bin\$(Configuration)\CapaVista_Pedidos.dll" />
-    <BibliotecaVentas Include="Ventas y CxC\CapaControlador_Ventas\bin\$(Configuration)\CapaControlador_Ventas.dll" />
-    <BibliotecaVentas Include="Ventas y CxC\CapaModelo_Ventas\bin\$(Configuration)\CapaModelo_Ventas.dll" />
-    <BibliotecaVentas Include="Ventas y CxC\CapaVista_Ventas\bin\$(Configuration)\CapaVista_Ventas.dll" />
+    <BibliotecaVentas Include="VentasYCxC\CapaControlador_Ventas\bin\$(Configuration)\CapaControlador_Ventas.dll" />
+    <BibliotecaVentas Include="VentasYCxC\CapaModelo_Ventas\bin\$(Configuration)\CapaModelo_Ventas.dll" />
+    <BibliotecaVentas Include="VentasYCxC\CapaVista_Ventas\bin\$(Configuration)\CapaVista_Ventas.dll" />
     <SimboloVentas Include="Facturas\CapaControlador_Facturas\bin\$(Configuration)\CapaControlador_Facturas.pdb" />
     <SimboloVentas Include="Facturas\CapaModelo_Facturas\bin\$(Configuration)\CapaModelo_Facturas.pdb" />
     <SimboloVentas Include="Facturas\CapaVista_Facturas\bin\$(Configuration)\CapaVista_Facturas.pdb" />
@@ -72,19 +72,19 @@
     <SimboloVentas Include="Pedidos\CapaControlador_Pedidos\bin\$(Configuration)\CapaControlador_Pedidos.pdb" />
     <SimboloVentas Include="Pedidos\CapaModelo_Pedidos\bin\$(Configuration)\CapaModelo_Pedidos.pdb" />
     <SimboloVentas Include="Pedidos\CapaVista_Pedidos\bin\$(Configuration)\CapaVista_Pedidos.pdb" />
-    <SimboloVentas Include="Ventas y CxC\CapaControlador_Ventas\bin\$(Configuration)\CapaControlador_Ventas.pdb" />
-    <SimboloVentas Include="Ventas y CxC\CapaModelo_Ventas\bin\$(Configuration)\CapaModelo_Ventas.pdb" />
-    <SimboloVentas Include="Ventas y CxC\CapaVista_Ventas\bin\$(Configuration)\CapaVista_Ventas.pdb" />
+    <SimboloVentas Include="VentasYCxC\CapaControlador_Ventas\bin\$(Configuration)\CapaControlador_Ventas.pdb" />
+    <SimboloVentas Include="VentasYCxC\CapaModelo_Ventas\bin\$(Configuration)\CapaModelo_Ventas.pdb" />
+    <SimboloVentas Include="VentasYCxC\CapaVista_Ventas\bin\$(Configuration)\CapaVista_Ventas.pdb" />
   </ItemGroup>
   <Import Project="build_componentes_ventas.proj" />
   <Target Name="Compilar" DependsOnTargets="ValidarConfiguracion;CompilarComponentesVentas">
     <Message Text="[8/8] Compilando soluciones MVC de Ventas en paralelo ($(Configuration))..." Importance="high" />
-    <MSBuild Projects="Ejecutable_Ventas\Ejecutable_Ventas\Ejecutable_Ventas.csproj;ComisionVendedores\Ejecucion_ComisionVendedores\ComisionVendedores.csproj" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />
+    <MSBuild Projects="Ejecutable_Ventas\Ejecutable_Ventas\Ejecucion_Ventas.csproj;ComisionVendedores\Ejecucion_ComisionVendedores\ComisionVendedores.csproj" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />
     <CallTarget Targets="ReunirBibliotecas" />
   </Target>
   <Target Name="CompilarFormulariosVentas">
     <Message Text="Compilando formularios MVC de Ventas antes de enlazar el MDI..." Importance="high" />
-    <MSBuild Projects="Ventas y CxC\CapaModelo_Ventas\CapaModelo_Ventas.csproj;Ventas y CxC\CapaControlador_Ventas\CapaControlador_Ventas.csproj" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="false" StopOnFirstFailure="true" />
+    <MSBuild Projects="VentasYCxC\CapaModelo_Ventas\CapaModelo_Ventas.csproj;VentasYCxC\CapaControlador_Ventas\CapaControlador_Ventas.csproj" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="false" StopOnFirstFailure="true" />
     <MSBuild Projects="@(SolucionVentas->'%(RelativeDir)CapaModelo_%(Filename)\CapaModelo_%(Filename).csproj')" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />
     <MSBuild Projects="@(SolucionVentas->'%(RelativeDir)CapaControlador_%(Filename)\CapaControlador_%(Filename).csproj')" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />
     <MSBuild Projects="@(SolucionVentas->'%(RelativeDir)CapaVista_%(Filename)\CapaVista_%(Filename).csproj')" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />

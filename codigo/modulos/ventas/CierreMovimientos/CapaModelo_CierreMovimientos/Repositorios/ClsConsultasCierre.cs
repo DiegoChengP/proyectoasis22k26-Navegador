@@ -17,51 +17,37 @@ namespace CapaModelo_CierreMovimientos
         // Saldos: consultas parametrizadas.
         public DataTable VentasFuncSaldosConsultarMovimientocxc(params object[] Parametros)
         {
-            const string Consulta = @"SELECT c.idCliente,c.codigoCliente Codigo,c.nombreCliente Nombre,SUM(CASE WHEN m.fechaMovimiento<? THEN m.cargo-m.abono ELSE 0 END) Anterior,SUM(CASE WHEN m.fechaMovimiento>=? THEN m.cargo ELSE 0 END) Cargos,SUM(CASE WHEN m.fechaMovimiento>=? THEN m.abono ELSE 0 END) Abonos,SUM(CASE WHEN m.fechaMovimiento>=? THEN m.cargo ELSE 0 END) CargosAcumulados,SUM(CASE WHEN m.fechaMovimiento>=? THEN m.abono ELSE 0 END) AbonosAcumulados,SUM(m.cargo-m.abono) Actual
-    FROM tblmovimientocxc m
-    JOIN tblfactura f ON f.idFactura=m.idFactura
-    JOIN tblcliente c ON c.idCliente=f.idCliente
-    WHERE f.idMoneda=?
-      AND m.fechaMovimiento<=?
-    GROUP BY c.idCliente,c.codigoCliente,c.nombreCliente
-    ORDER BY c.codigoCliente";
+            const string Consulta = @"SELECT c.Pk_Cliente idCliente,c.codigoCliente Codigo,c.nombreCliente Nombre,SUM(CASE WHEN m.fechaMovimientoCxC<? THEN m.cargoMovimientoCxC-m.abonoMovimientoCxC ELSE 0 END) Anterior,SUM(CASE WHEN m.fechaMovimientoCxC>=? THEN m.cargoMovimientoCxC ELSE 0 END) Cargos,SUM(CASE WHEN m.fechaMovimientoCxC>=? THEN m.abonoMovimientoCxC ELSE 0 END) Abonos,SUM(CASE WHEN m.fechaMovimientoCxC>=? THEN m.cargoMovimientoCxC ELSE 0 END) CargosAcumulados,SUM(CASE WHEN m.fechaMovimientoCxC>=? THEN m.abonoMovimientoCxC ELSE 0 END) AbonosAcumulados,SUM(m.cargoMovimientoCxC-m.abonoMovimientoCxC) Actual
+    FROM tblMovimientoCxC m JOIN tblFacturaEncabezado f ON f.Pk_FacturaEncabezado=m.Fk_FacturaEncabezado_Codigo JOIN tblClienteFacturaVersion cv ON cv.Pk_ClienteFacturaVersion=f.Fk_ClienteFacturaVersion_Codigo JOIN tblCliente c ON c.Pk_Cliente=cv.Fk_Cliente_Codigo
+    WHERE f.Fk_Moneda_Codigo=? AND m.fechaMovimientoCxC<=?
+    GROUP BY c.Pk_Cliente,c.codigoCliente,c.nombreCliente ORDER BY c.codigoCliente";
             return _Datos.VentasFuncTabla(Consulta, Parametros);
         }
 
         // Listar: consultas parametrizadas.
         public DataTable VentasFuncListarConsultarCierremovimientos(params object[] Parametros)
         {
-            const string Consulta = @"SELECT c.idCierre Id,c.idMoneda,c.numeroCierre Numero,m.codigoMoneda Moneda,c.tipoCierre Tipo,c.fechaDesde Desde,c.fechaHasta Hasta,c.estadoCierre Estado,COALESCE(c.observaciones,'') Observaciones
-    FROM tblcierremovimientos c
-    JOIN tblmonedaventas m ON m.idMoneda=c.idMoneda
-    WHERE (?=0 OR c.idMoneda=?)
-    ORDER BY c.fechaDesde DESC,c.idCierre DESC";
+            const string Consulta = @"SELECT c.Pk_CierreMovimientoCxCEncabezado Id,c.Fk_Moneda_Codigo idMoneda,c.numeroCierreMovimientoCxCEncabezado Numero,m.codigoMoneda Moneda,c.tipoCierreMovimientoCxCEncabezado Tipo,c.fechaDesdeCierreMovimientoCxCEncabezado Desde,c.fechaHastaCierreMovimientoCxCEncabezado Hasta,c.estadoCierreMovimientoCxCEncabezado Estado,COALESCE(c.observacionesCierreMovimientoCxCEncabezado,'') Observaciones
+    FROM tblCierreMovimientoCxCEncabezado c JOIN tblMoneda m ON m.Pk_Moneda=c.Fk_Moneda_Codigo
+    WHERE (?=0 OR c.Fk_Moneda_Codigo=?) ORDER BY c.fechaDesdeCierreMovimientoCxCEncabezado DESC,c.Pk_CierreMovimientoCxCEncabezado DESC";
             return _Datos.VentasFuncTabla(Consulta, Parametros);
         }
 
         // Historial: consultas parametrizadas.
         public DataTable VentasFuncHistorialConsultarCierremovimientos(params object[] Parametros)
         {
-            const string Consulta = @"SELECT h.idCierre,h.numeroCierre,CONCAT(h.tipoCierre,' ',DATE_FORMAT(h.fechaDesde,'%Y-%m')) Periodo,c.codigoCliente Codigo,c.nombreCliente Nombre,c.saldoAnterior Anterior,c.cargosPeriodo Cargos,c.abonosPeriodo Abonos,c.cargosAcumulados CargosAcumulados,c.abonosAcumulados AbonosAcumulados,c.saldoActual Actual,h.estadoCierre Estado
-    FROM tblcierremovimientos h
-    JOIN tblcierresaldocliente c ON c.idCierre=h.idCierre
-    WHERE h.idMoneda=?
-      AND (?=0 OR c.idCliente=?)
-      AND DATE_FORMAT(h.fechaDesde,'%Y-%m') LIKE CONCAT(?,'%')
-    ORDER BY h.fechaDesde DESC,h.idCierre,c.codigoCliente";
+            const string Consulta = @"SELECT h.Pk_CierreMovimientoCxCEncabezado idCierre,h.numeroCierreMovimientoCxCEncabezado numeroCierre,CONCAT(h.tipoCierreMovimientoCxCEncabezado,' ',DATE_FORMAT(h.fechaDesdeCierreMovimientoCxCEncabezado,'%Y-%m')) Periodo,c.codigoClienteCierreSaldoCliente Codigo,c.nombreClienteCierreSaldoCliente Nombre,c.saldoAnteriorCierreSaldoCliente Anterior,c.cargosPeriodoCierreSaldoCliente Cargos,c.abonosPeriodoCierreSaldoCliente Abonos,c.cargosAcumuladosCierreSaldoCliente CargosAcumulados,c.abonosAcumuladosCierreSaldoCliente AbonosAcumulados,c.saldoActualCierreSaldoCliente Actual,h.estadoCierreMovimientoCxCEncabezado Estado
+    FROM tblCierreMovimientoCxCEncabezado h JOIN tblCierreSaldoCliente c ON c.Fk_CierreMovimientoCxCEncabezado_Codigo=h.Pk_CierreMovimientoCxCEncabezado
+    WHERE h.Fk_Moneda_Codigo=? AND (?=0 OR c.Fk_Cliente_Codigo=?) AND DATE_FORMAT(h.fechaDesdeCierreMovimientoCxCEncabezado,'%Y-%m') LIKE CONCAT(?,'%')
+    ORDER BY h.fechaDesdeCierreMovimientoCxCEncabezado DESC,h.Pk_CierreMovimientoCxCEncabezado,c.codigoClienteCierreSaldoCliente";
             return _Datos.VentasFuncTabla(Consulta, Parametros);
         }
 
         // EstadoPeriodo: consultas parametrizadas.
         public DataTable VentasFuncEstadoPeriodoConsultarCierremovimientos(params object[] Parametros)
         {
-            const string Consulta = @"SELECT *
-    FROM tblcierremovimientos
-    WHERE idMoneda=?
-      AND tipoCierre=?
-      AND fechaDesde=?
-      AND fechaHasta=?
-      AND estadoCierre='CONFIRMADO'";
+            const string Consulta = @"SELECT Pk_CierreMovimientoCxCEncabezado idCierre,numeroCierreMovimientoCxCEncabezado numeroCierre,Fk_Moneda_Codigo idMoneda,estadoCierreMovimientoCxCEncabezado estadoCierre
+    FROM tblCierreMovimientoCxCEncabezado WHERE Fk_Moneda_Codigo=? AND tipoCierreMovimientoCxCEncabezado=? AND fechaDesdeCierreMovimientoCxCEncabezado=? AND fechaHastaCierreMovimientoCxCEncabezado=? AND estadoCierreMovimientoCxCEncabezado='CONFIRMADO'";
             return _Datos.VentasFuncTabla(Consulta, Parametros);
         }
     }

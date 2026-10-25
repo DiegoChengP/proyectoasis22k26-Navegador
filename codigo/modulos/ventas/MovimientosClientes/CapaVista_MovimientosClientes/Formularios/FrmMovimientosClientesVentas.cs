@@ -210,6 +210,8 @@ namespace CapaVista_MovimientosClientes
 
         public void VentasMetMostrarRecepcionPagos()
         {
+            this.Text = "7005 – RecepciónDePagos";
+            this.VentasLblCodigo.Text = "7005";
             this.VentasTbcMovimientos.SelectedTab = this.VentasTbpRecibos;
             VentasMetActualizarContexto();
         }

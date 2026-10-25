@@ -14,7 +14,7 @@ namespace CapaModelo_Ventas
             {
                 string Cadena = Environment.GetEnvironmentVariable("VENTAS_ODBC");
                 if (string.IsNullOrWhiteSpace(Cadena)) Cadena = ConfigurationManager.AppSettings["VentasConexion"];
-                return string.IsNullOrWhiteSpace(Cadena) ? "Dsn=Ventasbd;Connection Timeout=5" : Cadena;
+                return string.IsNullOrWhiteSpace(Cadena) ? "Dsn=EmbutidosS.A;Connection Timeout=5" : Cadena;
             }
         }
 

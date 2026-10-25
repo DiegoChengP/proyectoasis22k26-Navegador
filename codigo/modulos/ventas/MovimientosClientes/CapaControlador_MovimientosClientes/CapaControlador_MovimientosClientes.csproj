@@ -50,7 +50,7 @@
     <Compile Include="Validaciones\ClsReglasMovimientos.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Ventas y CxC\CapaControlador_Ventas\Validaciones\ClsValidacionesVentas.cs">
+    <Compile Include="..\..\VentasYCxC\CapaControlador_Ventas\Validaciones\ClsValidacionesVentas.cs">
       <Link>Validaciones\ClsValidacionesVentas.cs</Link>
     </Compile>
   </ItemGroup>

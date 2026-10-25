@@ -24,8 +24,6 @@ namespace CapaVista_Ventas
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager Resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMdiVentas));
-            this.VentasImlMantenimientos = new System.Windows.Forms.ImageList(this.components);
             this.VentasTtpAccionesOriginales = new System.Windows.Forms.ToolTip(this.components);
             this.VentasBtnAyuda = new System.Windows.Forms.Button();
             this.VentasLblBienvenido = new System.Windows.Forms.Label();
@@ -129,12 +127,6 @@ namespace CapaVista_Ventas
             this.VentasPnlInformacion.SuspendLayout();
             this.VentasTlpInformacion.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // VentasImlMantenimientos
-            // 
-            this.VentasImlMantenimientos.ImageStream = ((System.Windows.Forms.ImageListStreamer)(Resources.GetObject("VentasImlMantenimientos.ImageStream")));
-            this.VentasImlMantenimientos.TransparentColor = System.Drawing.Color.Transparent;
-            this.VentasImlMantenimientos.Images.SetKeyName(0, "Mantenimientos");
             // 
             // VentasBtnAyuda
             // 
@@ -855,8 +847,7 @@ namespace CapaVista_Ventas
             this.VentasBtnMantenimientos.Font = new System.Drawing.Font("Segoe UI", 10.5F);
             this.VentasBtnMantenimientos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.VentasBtnMantenimientos.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.VentasBtnMantenimientos.ImageKey = "Mantenimientos";
-            this.VentasBtnMantenimientos.ImageList = this.VentasImlMantenimientos;
+            this.VentasBtnMantenimientos.Image = global::CapaVista_Ventas.Properties.Resources.IconoVentasImagen;
             this.VentasBtnMantenimientos.Location = new System.Drawing.Point(0, 777);
             this.VentasBtnMantenimientos.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.VentasBtnMantenimientos.Name = "VentasBtnMantenimientos";
@@ -1475,7 +1466,6 @@ namespace CapaVista_Ventas
         private System.Windows.Forms.Panel VentasPnlInformacion;
         private System.Windows.Forms.TableLayoutPanel VentasTlpInformacion;
         private System.Windows.Forms.ToolTip VentasTtpMenu;
-        private System.Windows.Forms.ImageList VentasImlMantenimientos;
         private System.Windows.Forms.ToolTip VentasTtpAccionesOriginales;
     }
 }
