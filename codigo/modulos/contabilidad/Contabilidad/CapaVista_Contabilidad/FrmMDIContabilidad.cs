@@ -26,7 +26,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using CapaControlador_Contabilidad;
-using FrmPolizasLocales = CapaVista_PolizasCuentas_Contabilidad.FrmPolizasLocales;
+using CapaVista_Contabilidad.Properties;
 
 namespace CapaVista_Contabilidad
 {
