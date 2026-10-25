@@ -20,7 +20,6 @@ namespace CapaModelo_Contabilidad.Repositorios
 {
     public abstract class ClsRepositorioMaestroContabilidad : ClsRepositorioContabilidad
     {
-        // Ejecuta insert, update o delete y devuelve las filas afectadas.
         public int ContabilidadFuncEjecutarNonQuery(string ComandoTexto, List<OdbcParameter> Parametros, CommandType ComandoTipo)
         {
             using (OdbcConnection ConexionActiva = ContabilidadFuncObtenerConexion())
@@ -37,13 +36,11 @@ namespace CapaModelo_Contabilidad.Repositorios
             }
         }
 
-        // Consulta sin parámetros.
         public DataTable ContabilidadFuncEjecutarConsulta(string ComandoTexto, CommandType ComandoTipo)
         {
             return ContabilidadFuncEjecutarConsulta(ComandoTexto, ComandoTipo, new List<OdbcParameter>());
         }
 
-        // Consulta con parámetros que devuelve una tabla.
         public DataTable ContabilidadFuncEjecutarConsulta(string ComandoTexto, CommandType ComandoTipo, List<OdbcParameter> Parametros)
         {
             DataTable TablaDatos = new DataTable();

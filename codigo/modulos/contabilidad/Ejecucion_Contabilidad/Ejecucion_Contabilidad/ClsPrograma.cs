@@ -14,14 +14,9 @@ using System.Windows.Forms;
 
 namespace Ejecucion_Contabilidad
 {
-    // Punto de entrada del ejecutable.
     internal static class ClsPrograma
     {
-        /// <summary>
-        /// Inicia con el login de Seguridad (Login, pantalla de carga y MDI del módulo elegido).
-        /// </summary>
         [STAThread]
-        // Main conserva su nombre porque es el punto de entrada reconocido por C#.
         static void Main()
         {
             Application.EnableVisualStyles();

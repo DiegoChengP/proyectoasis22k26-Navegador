@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CapaVista_Logistica;
+using CapaVista_Contabilidad;
 
 /*
  * ============================================================
@@ -75,13 +77,13 @@ namespace CapaVista_Seguridad
                         principal = new FrmMDISeguridad();
                         break;
                     
-                    //case "Logistica":
-                        //var MDILogistica = new FrmMDILogistica();
-                        //MDILogistica.LogisticaMetActualizarInfoUsuario(
-                        //ClsSesionSeguridad.NombreEmpleado,
-                        //ClsSesionSeguridad.SeguridadMetRolesComoTexto());
-                        //principal = MDILogistica;
-                        //break;
+                    case "Logistica":
+                        var MDILogistica = new FrmMDILogistica();
+                        MDILogistica.LogisticaMetActualizarInfoUsuario(
+                        ClsSesionSeguridad.NombreEmpleado,
+                        ClsSesionSeguridad.SeguridadMetRolesComoTexto());
+                        principal = MDILogistica;
+                        break;
 
                     //case "Compras":
                         //var MDICompras = new FrmMDICompras();
@@ -108,7 +110,7 @@ namespace CapaVista_Seguridad
                         //break;
 
                     case "Contabilidad":
-                        var MDIContabilidad = new CapaVista_Contabilidad.FrmMDIContabilidad();
+                        var MDIContabilidad = new FrmMDIContabilidad();
                         MDIContabilidad.ContabilidadMetActualizarInfoUsuario(
                         ClsSesionSeguridad.NombreEmpleado,
                         ClsSesionSeguridad.SeguridadMetRolesComoTexto());

@@ -11,18 +11,13 @@ using System.Windows.Forms;
 
 namespace CapaVista_Contabilidad
 {
-    // Reglas de presentación comunes de las ventanas.
     internal static class ClsPresentacionContabilidad
     {
-        // Ícono del módulo.
         private static readonly Icon _IconoContabilidad = (Icon)new ComponentResourceManager(
             typeof(FrmMDIContabilidad)).GetObject("$this.Icon");
 
-        // Código de aplicación de cada ventana (EST-10: 10000 a 10999).
         private static readonly System.Collections.Generic.Dictionary<string, int> _Codigos = new System.Collections.Generic.Dictionary<string, int>
         {
-            { "FrmPolizasLocales", 10001 }, { "FrmPresupuestos", 10002 }, { "FrmActivosFijos", 10003 },
-            { "FrmCierreContable", 10004 }, { "FrmEstadosFinancieros", 10005 },
             { "FrmMantenimientoPais", 10011 },
             { "FrmMantenimientoModuloContable", 10012 },
             { "FrmMantenimientoVidaUtil", 10013 },
@@ -30,7 +25,6 @@ namespace CapaVista_Contabilidad
             { "FrmAsignacionCuentaModulo", 10015 }
         };
 
-        // Ventana hija de tamaño fijo, centrada sobre el MDI y con el ícono del módulo.
         internal static void ContabilidadMetPrepararVentana(Form Formulario, string Titulo, Size AreaCliente)
         {
             Formulario.AutoScaleMode = AutoScaleMode.None;
@@ -48,7 +42,6 @@ namespace CapaVista_Contabilidad
             ContabilidadMetAplicarTipografia(Formulario);
         }
 
-        // Aplica Tahoma a las etiquetas y Segoe UI a los campos.
         internal static void ContabilidadMetAplicarTipografia(Control Contenedor)
         {
             foreach (Control Elemento in Contenedor.Controls)

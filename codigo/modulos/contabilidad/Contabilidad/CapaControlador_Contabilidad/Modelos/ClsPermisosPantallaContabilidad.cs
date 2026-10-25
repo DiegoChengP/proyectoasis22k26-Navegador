@@ -13,7 +13,6 @@
 
 namespace CapaControlador_Contabilidad
 {
-    // Acciones que Seguridad permite asignar.
     public enum TipoPermisoContabilidad
     {
         Insertar,
@@ -24,28 +23,19 @@ namespace CapaControlador_Contabilidad
 
     public sealed class ClsPermisosPantallaContabilidad
     {
-        // Id del módulo en Seguridad (tblmodulo); 0 si no está registrado.
         public int IdModulo { get; set; }
-        // Id de la aplicación en Seguridad (tblaplicacion); 0 si no está registrada.
         public int IdAplicacion { get; set; }
-        // Puede abrir la pantalla.
         public bool TieneAcceso { get; set; }
-        // Puede insertar.
         public bool PuedeInsertar { get; set; }
-        // Puede editar.
         public bool PuedeEditar { get; set; }
-        // Puede eliminar.
         public bool PuedeEliminar { get; set; }
-        // Puede imprimir.
         public bool PuedeImprimir { get; set; }
 
-        // Sin ningún permiso (usuario sin sesión o sin asignación).
         public static ClsPermisosPantallaContabilidad Ninguno
         {
             get { return new ClsPermisosPantallaContabilidad(); }
         }
 
-        // Todos los permisos (pruebas y diseñador).
         public static ClsPermisosPantallaContabilidad Total
         {
             get
@@ -57,7 +47,6 @@ namespace CapaControlador_Contabilidad
             }
         }
 
-        // Indica si la acción está permitida.
         public bool ContabilidadFuncPermite(TipoPermisoContabilidad Tipo)
         {
             switch (Tipo)

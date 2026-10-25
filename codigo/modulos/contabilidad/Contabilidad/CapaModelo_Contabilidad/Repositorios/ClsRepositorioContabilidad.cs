@@ -18,22 +18,18 @@ namespace CapaModelo_Contabilidad.Repositorios
 {
     public abstract class ClsRepositorioContabilidad
     {
-        // Nombre del DSN configurado en ODBC.
         protected readonly string _CadenaConexion;
 
-        // Asigna el DSN estándar del proyecto.
         protected ClsRepositorioContabilidad()
         {
             _CadenaConexion = "Dsn=EmbutidosS.A";
         }
 
-        // Crea la conexión sin abrirla.
         protected OdbcConnection ContabilidadFuncObtenerConexion()
         {
             return new OdbcConnection(_CadenaConexion);
         }
 
-        // Cierra la conexión recibida.
         public void ContabilidadMetDesconexion(OdbcConnection ConexionOdbc)
         {
             try

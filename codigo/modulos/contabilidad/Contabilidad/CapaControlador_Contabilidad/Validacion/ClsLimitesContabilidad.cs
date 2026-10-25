@@ -18,7 +18,6 @@ namespace CapaControlador_Contabilidad
 {
     public static class ClsLimitesContabilidad
     {
-        // Máximo importe aceptado en cualquier pantalla.
         public const decimal MaximoMonetario = 99999999.99m;
     }
 }

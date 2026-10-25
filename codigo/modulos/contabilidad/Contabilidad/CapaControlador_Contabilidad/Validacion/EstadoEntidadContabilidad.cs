@@ -15,11 +15,8 @@ namespace CapaControlador_Contabilidad
 {
     public enum EstadoEntidadContabilidad
     {
-        // Registro nuevo.
         Agregar,
-        // Registro existente que se edita.
         Modificar,
-        // Registro que se elimina.
         Borrar
     }
 }

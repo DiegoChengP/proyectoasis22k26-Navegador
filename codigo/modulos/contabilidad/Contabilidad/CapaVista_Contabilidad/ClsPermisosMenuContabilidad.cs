@@ -15,15 +15,11 @@ using System.Windows.Forms;
 
 namespace CapaVista_Contabilidad
 {
-    // Habilita o deshabilita los botones del menú.
     public sealed class ClsPermisosMenuContabilidad : IDisposable
     {
-        // Imagen original de cada botón.
         private readonly Dictionary<Button, Image> _Originales = new Dictionary<Button, Image>();
-        // Imagen en gris de los botones sin acceso.
         private readonly Dictionary<Button, Image> _Grises = new Dictionary<Button, Image>();
 
-        // Aplica el acceso a un botón.
         public void ContabilidadMetAplicar(Button Boton, bool TieneAcceso)
         {
             if (!_Originales.ContainsKey(Boton)) _Originales.Add(Boton, Boton.BackgroundImage);
@@ -34,7 +30,6 @@ namespace CapaVista_Contabilidad
             Boton.Invalidate();
         }
 
-        // Deja deshabilitado el botón si el usuario no tiene el permiso, aunque el formulario lo vuelva a habilitar.
         public static void ContabilidadMetRestringir(Control Boton, bool Permitido)
         {
             if (Permitido) return;
@@ -42,7 +37,6 @@ namespace CapaVista_Contabilidad
             Boton.EnabledChanged += (Remitente, Evento) => { if (Boton.Enabled) Boton.Enabled = false; };
         }
 
-        // Convierte una imagen a escala de grises.
         private static Image ContabilidadFuncConvertirGris(Image Imagen)
         {
             Bitmap Gris = new Bitmap(Imagen.Width, Imagen.Height);
@@ -63,7 +57,6 @@ namespace CapaVista_Contabilidad
             return Gris;
         }
 
-        // Dispose conserva el nombre definido por IDisposable.
         public void Dispose()
         {
             foreach (KeyValuePair<Button, Image> Original in _Originales)

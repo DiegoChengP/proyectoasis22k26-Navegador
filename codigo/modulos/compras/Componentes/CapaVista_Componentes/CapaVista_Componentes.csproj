@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A1A6F895-0952-4A63-AE82-7BEAE843B681}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CapaVista_Componentes</RootNamespace>
+    <AssemblyName>CapaVista_Componentes</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CapaControlador_Componentes">
+      <HintPath>..\CapaControlador_Componentes\bin\$(Configuration)\CapaControlador_Componentes.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Componentes\UsrMDITabCompras.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Componentes\UsrMDITabCompras.Designer.cs">
+      <DependentUpon>UsrMDITabCompras.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Componentes\ClsTemaCompras.cs" />
+    <Compile Include="Componentes\ClsActualizacionDisenoCompras.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Componentes\ClsButtonCompras.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Componentes\ClsButtonCompras.Designer.cs">
+      <DependentUpon>ClsButtonCompras.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Componentes\ClsSelectorCompras.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Componentes\ClsSelectorCompras.Designer.cs">
+      <DependentUpon>ClsSelectorCompras.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Componentes\ClsGroupBoxCompras.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Componentes\ClsEtiquetaCompras.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Componentes\ClsGroupBoxCompras.Designer.cs">
+      <DependentUpon>ClsGroupBoxCompras.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Componentes\ClsPanelCompras.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Componentes\ClsRadioButtonCompras.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Componentes\ClsTableLayoutPanelCompras.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Componentes\UsrBaseCompras.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Componentes\UsrBaseCompras.Designer.cs">
+      <DependentUpon>UsrBaseCompras.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Componentes\UsrDataGridViewCompras.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Componentes\UsrDataGridViewCompras.Designer.cs">
+      <DependentUpon>UsrDataGridViewCompras.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Componentes\UsrLabelCompras.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Componentes\UsrLabelCompras.Designer.cs">
+      <DependentUpon>UsrLabelCompras.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Componentes\UsrTextBoxCompras.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Componentes\UsrComboBoxCompras.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Componentes\UsrComboBoxCompras.Designer.cs">
+      <DependentUpon>UsrComboBoxCompras.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Componentes\UsrMDITabCompras.resx">
+      <DependentUpon>UsrMDITabCompras.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Componentes\ClsSelectorCompras.resx">
+      <DependentUpon>ClsSelectorCompras.cs</DependentUpon>
+      <LogicalName>CapaVista_Componentes.Componentes.ClsSelectorCompras.resources</LogicalName>
+    </EmbeddedResource>
+    <Compile Include="Componentes\UsrTextBoxCompras.Designer.cs">
+      <DependentUpon>UsrTextBoxCompras.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Componentes\UsrComboBoxCompras.resx">
+      <DependentUpon>UsrComboBoxCompras.cs</DependentUpon>
+      <LogicalName>CapaVista_Componentes.Componentes.UsrComboBoxCompras.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Componentes\UsrBaseCompras.resx">
+      <DependentUpon>UsrBaseCompras.cs</DependentUpon>
+      <LogicalName>CapaVista_Componentes.Componentes.UsrBaseCompras.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Componentes\UsrDataGridViewCompras.resx">
+      <DependentUpon>UsrDataGridViewCompras.cs</DependentUpon>
+      <LogicalName>CapaVista_Componentes.Componentes.UsrDataGridViewCompras.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Componentes\UsrLabelCompras.resx">
+      <DependentUpon>UsrLabelCompras.cs</DependentUpon>
+      <LogicalName>CapaVista_Componentes.Componentes.UsrLabelCompras.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Componentes\UsrTextBoxCompras.resx">
+      <DependentUpon>UsrTextBoxCompras.cs</DependentUpon>
+      <LogicalName>CapaVista_Componentes.Componentes.UsrTextBoxCompras.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Componentes\ClsPresentacionCompras.cs" />
+    <Compile Include="Componentes\UsrDataGridViewCompras.Paginacion.cs">
+      <DependentUpon>UsrDataGridViewCompras.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Componentes\RecursosCompras.resx">
+      <LogicalName>CapaVista_Componentes.Componentes.RecursosCompras.resources</LogicalName>
+    </EmbeddedResource>
+    <Compile Include="Componentes\ClsPanelVerticalCompras.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

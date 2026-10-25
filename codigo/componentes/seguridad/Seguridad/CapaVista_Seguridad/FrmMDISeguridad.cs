@@ -87,6 +87,7 @@ namespace CapaVista_Seguridad
 
         private void SeguridadMetActualizarInfoUsuario()
         {
+
             SeguridadLblUsuario.Text = $"Usuario: {ClsSesionSeguridad.NombreEmpleado}";
             SeguridadLblUsuarioRol.Text = $"Rol: {ClsSesionSeguridad.SeguridadMetRolesComoTexto()}";
         }
@@ -313,6 +314,8 @@ namespace CapaVista_Seguridad
         {
             Help.ShowHelp(this, "C:/SeguridadAyudas/SeguridadAyudas.chm", "MDI_Seguridad.html");
         }
+
+      
     }
 }
 
