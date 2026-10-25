@@ -99,7 +99,7 @@ namespace CapaVista_EstadosFinancieros_Contabilidad
             this.ContabilidadBtnConsultar.Estilo = Componentes.EstiloBotonContabilidad.Acento;
             this.ContabilidadLblFiltro.Name = "ContabilidadLblFiltro";
             this.ContabilidadPnlFiltros.Controls.Add(this.ContabilidadLblFiltro);
-            this.ContabilidadLblFiltro.Text = "Solo pólizas aplicadas";
+            this.ContabilidadLblFiltro.Text = "Solo pólizas validadas y aplicadas";
             this.ContabilidadLblFiltro.Location = new System.Drawing.Point(820, 26);
             this.ContabilidadLblFiltro.Size = new System.Drawing.Size(290, 60);
             this.ContabilidadLblFiltro.ForeColor = System.Drawing.Color.FromArgb(35, 50, 61);

@@ -57,11 +57,6 @@ namespace CapaControlador_PolizasCuentas_Contabilidad
             return _Repositorio.ContabilidadFuncObtenerEstados();
         }
 
-        public string[] ContabilidadFuncObtenerOrigenes()
-        {
-            return _Repositorio.ContabilidadFuncObtenerOrigenes();
-        }
-
         public string ContabilidadFuncObtenerPeriodo(DateTime Fecha)
         {
             return Fecha.ToString("yyyy-MM");
@@ -95,7 +90,7 @@ namespace CapaControlador_PolizasCuentas_Contabilidad
                 .Select(Poliza => new ClsModeloPolizaContabilidad
                 {
                     IdPoliza = Poliza.IdPoliza, CodigoPoliza = Poliza.CodigoPoliza, Fecha = Poliza.Fecha,
-                    Periodo = Poliza.PeriodoContable, Estado = Poliza.Estado, Origen = Poliza.Origen, Descripcion = Poliza.Descripcion,
+                    Periodo = Poliza.PeriodoContable, Estado = Poliza.Estado, IdModulo = Poliza.IdModulo, Modulo = Poliza.Modulo, Descripcion = Poliza.Descripcion,
                     Lineas = Poliza.Detalle.Select(Detalle => new ClsLineaPolizaContabilidad
                         { IdCuenta = Detalle.IdCuenta, Cuenta = Detalle.Cuenta, Debe = Detalle.Debe, Haber = Detalle.Haber }).ToList()
                 })
@@ -114,15 +109,14 @@ namespace CapaControlador_PolizasCuentas_Contabilidad
             if (Mensaje != string.Empty) return false;
 
             string EstadoPoliza = string.IsNullOrWhiteSpace(Modelo.Estado) ? "BORRADOR" : Modelo.Estado.Trim().ToUpperInvariant();
-            string OrigenPoliza = string.IsNullOrWhiteSpace(Modelo.Origen) ? "MANUAL" : Modelo.Origen.Trim().ToUpperInvariant();
             if (!ContabilidadFuncObtenerEstados().Contains(EstadoPoliza))
             {
                 Mensaje = "El estado '" + Modelo.Estado + "' no es válido.";
                 return false;
             }
-            if (!ContabilidadFuncObtenerOrigenes().Contains(OrigenPoliza))
+            if (Modelo.IdModulo <= 0)
             {
-                Mensaje = "El origen '" + Modelo.Origen + "' no es válido.";
+                Mensaje = "La póliza debe indicar el módulo que la origina.";
                 return false;
             }
 
@@ -134,7 +128,7 @@ namespace CapaControlador_PolizasCuentas_Contabilidad
 
             ClsPolizaContabilidad Entidad = new ClsPolizaContabilidad
             {
-                IdPoliza = Modelo.IdPoliza, Fecha = Modelo.Fecha.Date, Estado = EstadoPoliza, Origen = OrigenPoliza,
+                IdPoliza = Modelo.IdPoliza, Fecha = Modelo.Fecha.Date, Estado = EstadoPoliza, IdModulo = Modelo.IdModulo,
                 PeriodoContable = ContabilidadFuncObtenerPeriodo(Modelo.Fecha), Descripcion = Modelo.Descripcion.Trim(),
                 Detalle = Modelo.Lineas.Select(Linea => new ClsPolizaDetalleContabilidad
                     { IdCuenta = Linea.IdCuenta, Cuenta = Linea.Cuenta, Debe = Linea.Debe, Haber = Linea.Haber }).ToList()
@@ -155,11 +149,19 @@ namespace CapaControlador_PolizasCuentas_Contabilidad
                         Mensaje = "Póliza " + Entidad.CodigoPoliza + " registrada correctamente.";
                         break;
                     case EstadoEntidadContabilidad.Modificar:
-                        _Repositorio.ContabilidadFuncEditar(Entidad);
+                        if (_Repositorio.ContabilidadFuncEditar(Entidad) <= 0)
+                        {
+                            Mensaje = "Solo se puede modificar una póliza en borrador.";
+                            return false;
+                        }
                         Mensaje = "Póliza actualizada correctamente.";
                         break;
                     case EstadoEntidadContabilidad.Borrar:
-                        _Repositorio.ContabilidadFuncEliminar(Entidad);
+                        if (_Repositorio.ContabilidadFuncEliminar(Entidad) <= 0)
+                        {
+                            Mensaje = "Una póliza aplicada no se puede anular.";
+                            return false;
+                        }
                         Mensaje = "Póliza eliminada correctamente.";
                         break;
                 }

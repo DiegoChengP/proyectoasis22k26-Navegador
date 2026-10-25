@@ -10,7 +10,7 @@
  *  lista de líneas de detalle.
  * Reglas especificas:
  *  Los campos CodigoPoliza y PeriodoContable los agregó Oskar
- *  Cermeño. El código lo genera la base con fnGenerarCodigoPoliza.
+ *  Cermeño. IdModulo es el módulo que origina la póliza.
  * ===================================================================
 */
 
@@ -28,7 +28,8 @@ namespace CapaModelo_PolizasCuentas_Contabilidad.Entidades
         public DateTime Fecha { get; set; }
         public string PeriodoContable { get; set; }
         public string Estado { get; set; } = "BORRADOR";
-        public string Origen { get; set; } = "MANUAL";
+        public int IdModulo { get; set; } = 1;
+        public string Modulo { get; set; }
         public string DocumentoOrigen { get; set; }
         public string Descripcion { get; set; }
         public List<ClsPolizaDetalleContabilidad> Detalle { get; set; } = new List<ClsPolizaDetalleContabilidad>();

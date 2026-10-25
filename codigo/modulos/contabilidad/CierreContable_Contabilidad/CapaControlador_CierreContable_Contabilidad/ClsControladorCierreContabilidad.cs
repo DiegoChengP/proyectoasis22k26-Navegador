@@ -55,22 +55,28 @@ namespace CapaControlador_CierreContable_Contabilidad
             if (Polizas.Rows.Count == 0) return "El período no tiene pólizas para revisar.";
             foreach (DataRow Fila in Polizas.Rows)
             {
-                if ((string)Fila["Estado"] == "BORRADOR") return "Hay pólizas en borrador. Revise y aplique o anule antes del cierre.";
-                if ((string)Fila["Estado"] == "APLICADA" && (decimal)Fila["Diferencia"] != 0m) return "Hay pólizas aplicadas descuadradas.";
+                if ((string)Fila["Estado"] == "BORRADOR") return "Hay pólizas en borrador. Revise y valide o anule antes del cierre.";
+                if (ContabilidadFuncEsFirme(Fila) && (decimal)Fila["Diferencia"] != 0m) return "Hay pólizas validadas descuadradas.";
             }
-            if (!Polizas.Rows.Cast<DataRow>().Any(Fila => (string)Fila["Estado"] == "APLICADA")) return "El período no tiene pólizas aplicadas.";
+            if (!Polizas.Rows.Cast<DataRow>().Any(ContabilidadFuncEsFirme)) return "El período no tiene pólizas validadas.";
             return string.Empty;
         }
 
         public ClsResumenCierreContabilidad ContabilidadFuncResumenCierre(DataTable Polizas)
         {
             var Filas = Polizas.Rows.Cast<DataRow>();
-            var Aplicadas = Filas.Where(Fila => (string)Fila["Estado"] == "APLICADA").ToList();
+            var Aplicadas = Filas.Where(ContabilidadFuncEsFirme).ToList();
             return new ClsResumenCierreContabilidad
             {
                 Aplicadas = Aplicadas.Count, Borradores = Filas.Count(Fila => (string)Fila["Estado"] == "BORRADOR"),
                 Debe = Aplicadas.Sum(Fila => (decimal)Fila["Debe"]), Haber = Aplicadas.Sum(Fila => (decimal)Fila["Haber"])
             };
+        }
+
+        private static bool ContabilidadFuncEsFirme(DataRow Fila)
+        {
+            string Estado = (string)Fila["Estado"];
+            return Estado == "VALIDADA" || Estado == "APLICADA";
         }
     }
 }

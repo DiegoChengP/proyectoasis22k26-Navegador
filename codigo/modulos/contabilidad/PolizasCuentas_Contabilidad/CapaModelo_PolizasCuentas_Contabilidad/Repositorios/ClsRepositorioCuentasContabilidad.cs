@@ -28,7 +28,7 @@ namespace CapaModelo_PolizasCuentas_Contabilidad.Repositorios
 {
     public class ClsRepositorioCuentasContabilidad : CapaModelo_Contabilidad.Repositorios.ClsRepositorioMaestroContabilidad, IRepositorioCuentasContabilidad
     {
-        private const string _Columnas = "c.Pk_Cuenta, c.codigoCuenta, c.nombreCuenta, c.tipoCuenta, c.Fk_Cuenta_Padre, c.is_active";
+        private const string _Columnas = "c.idCuenta, c.codigoCuenta, c.nombreCuenta, c.tipoCuenta, c.idCuentaPadre, c.is_active";
 
         private readonly string _SelectTodas;
         private readonly string _SelectPorModulo;
@@ -41,26 +41,26 @@ namespace CapaModelo_PolizasCuentas_Contabilidad.Repositorios
 
             _SelectPorModulo =
                 "SELECT DISTINCT " + _Columnas + " FROM tblModuloCuentaPais mc " +
-                "INNER JOIN tblModuloContable m ON m.Pk_Modulo = mc.Fk_Modulo " +
-                "INNER JOIN tblCuenta c ON c.Pk_Cuenta = mc.Fk_Cuenta " +
-                "WHERE mc.Fk_Modulo = ? AND mc.is_active = TRUE AND m.is_active = TRUE AND c.is_active = TRUE " +
+                "INNER JOIN tblModuloContable m ON m.idModuloContable = mc.idModuloContable " +
+                "INNER JOIN tblCuenta c ON c.idCuenta = mc.idCuenta " +
+                "WHERE mc.idModuloContable = ? AND mc.is_active = TRUE AND m.is_active = TRUE AND c.is_active = TRUE " +
                 "ORDER BY c.codigoCuenta";
 
             _SelectImputables =
                 "SELECT DISTINCT " + _Columnas + " FROM tblModuloCuentaPais mc " +
-                "INNER JOIN tblModuloContable m ON m.Pk_Modulo = mc.Fk_Modulo " +
-                "INNER JOIN tblCuenta c ON c.Pk_Cuenta = mc.Fk_Cuenta " +
-                "WHERE mc.Fk_Modulo = ? AND mc.is_active = TRUE AND m.is_active = TRUE AND c.is_active = TRUE " +
-                "AND NOT EXISTS (SELECT 1 FROM tblCuenta h WHERE h.Fk_Cuenta_Padre = c.Pk_Cuenta AND h.is_active = TRUE) " +
+                "INNER JOIN tblModuloContable m ON m.idModuloContable = mc.idModuloContable " +
+                "INNER JOIN tblCuenta c ON c.idCuenta = mc.idCuenta " +
+                "WHERE mc.idModuloContable = ? AND mc.is_active = TRUE AND m.is_active = TRUE AND c.is_active = TRUE " +
+                "AND NOT EXISTS (SELECT 1 FROM tblCuenta h WHERE h.idCuentaPadre = c.idCuenta AND h.is_active = TRUE) " +
                 "ORDER BY c.codigoCuenta";
 
             _SelectPadres =
                 "WITH RECURSIVE jerarquiaPadres AS (" +
-                "SELECT Pk_Cuenta, codigoCuenta, nombreCuenta, tipoCuenta, Fk_Cuenta_Padre, is_active FROM tblCuenta WHERE Pk_Cuenta = ? " +
+                "SELECT idCuenta, codigoCuenta, nombreCuenta, tipoCuenta, idCuentaPadre, is_active FROM tblCuenta WHERE idCuenta = ? " +
                 "UNION ALL " +
-                "SELECT c.Pk_Cuenta, c.codigoCuenta, c.nombreCuenta, c.tipoCuenta, c.Fk_Cuenta_Padre, c.is_active " +
-                "FROM tblCuenta c INNER JOIN jerarquiaPadres jp ON c.Pk_Cuenta = jp.Fk_Cuenta_Padre) " +
-                "SELECT Pk_Cuenta, codigoCuenta, nombreCuenta, tipoCuenta, Fk_Cuenta_Padre, is_active FROM jerarquiaPadres";
+                "SELECT c.idCuenta, c.codigoCuenta, c.nombreCuenta, c.tipoCuenta, c.idCuentaPadre, c.is_active " +
+                "FROM tblCuenta c INNER JOIN jerarquiaPadres jp ON c.idCuenta = jp.idCuentaPadre) " +
+                "SELECT idCuenta, codigoCuenta, nombreCuenta, tipoCuenta, idCuentaPadre, is_active FROM jerarquiaPadres";
         }
 
         public IEnumerable<ClsCuentaContabilidad> ContabilidadFuncObtenerTodos()

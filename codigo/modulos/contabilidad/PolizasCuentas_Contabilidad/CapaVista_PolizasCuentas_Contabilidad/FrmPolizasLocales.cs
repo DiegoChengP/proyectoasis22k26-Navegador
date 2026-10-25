@@ -91,7 +91,8 @@ namespace CapaVista_PolizasCuentas_Contabilidad
                 ClsDialogosContabilidad.ContabilidadMetError(this, "No se pudieron cargar las cuentas: " + Excepcion.Message);
             }
             ContabilidadCboEstado.DataSource = _Controlador.ContabilidadFuncObtenerEstados();
-            ContabilidadCboOrigen.DataSource = _Controlador.ContabilidadFuncObtenerOrigenes();
+            ContabilidadCboOrigen.DataSource = new[] { _Controlador.ContabilidadFuncObtenerNombreModulo(_IdModulo) };
+            ContabilidadCboOrigen.Enabled = false;
         }
 
         private void ContabilidadMetActualizarPeriodo(object Remitente, EventArgs Argumentos)
@@ -230,7 +231,6 @@ namespace CapaVista_PolizasCuentas_Contabilidad
             ContabilidadDtpFecha.Value = DateTime.Today;
             ContabilidadMetActualizarPeriodo(this, EventArgs.Empty);
             ContabilidadCboEstado.SelectedItem = "BORRADOR";
-            ContabilidadCboOrigen.SelectedItem = "MANUAL";
             ContabilidadTxtDescripcion.Clear();
             ContabilidadCboCuenta.SelectedIndex = -1;
             ContabilidadCboCuenta.Text = string.Empty;
@@ -254,19 +254,18 @@ namespace CapaVista_PolizasCuentas_Contabilidad
             }
 
             if (Aplicar && MessageBox.Show(this,
-                    "¿Desea aplicar la póliza? Una póliza aplicada ya no se podrá modificar.",
-                    "Aplicar póliza", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    "¿Desea validar la póliza? Una póliza validada ya no se podrá modificar.",
+                    "Validar póliza", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 return;
 
-            string Estado = Aplicar ? "APLICADA" : Convert.ToString(ContabilidadCboEstado.SelectedItem);
-            string Origen = Convert.ToString(ContabilidadCboOrigen.SelectedItem);
+            string Estado = Aplicar ? "VALIDADA" : Convert.ToString(ContabilidadCboEstado.SelectedItem);
 
             ClsModeloPolizaContabilidad Modelo = new ClsModeloPolizaContabilidad
             {
                 Descripcion = ContabilidadTxtDescripcion.Text.Trim(),
                 Fecha = ContabilidadDtpFecha.Value.Date,
                 Estado = Estado,
-                Origen = Origen,
+                IdModulo = _IdModulo,
                 Lineas = _Lineas.ToList()
             };
 

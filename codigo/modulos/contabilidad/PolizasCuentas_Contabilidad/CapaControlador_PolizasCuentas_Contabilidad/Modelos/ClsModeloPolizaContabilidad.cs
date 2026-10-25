@@ -41,7 +41,9 @@ namespace CapaControlador_PolizasCuentas_Contabilidad
 
         public string Estado { get; set; } = "BORRADOR";
 
-        public string Origen { get; set; } = "MANUAL";
+        public int IdModulo { get; set; } = 1;
+
+        public string Modulo { get; set; }
 
         public IList<ClsLineaPolizaContabilidad> Lineas { get; set; } = new List<ClsLineaPolizaContabilidad>();
 

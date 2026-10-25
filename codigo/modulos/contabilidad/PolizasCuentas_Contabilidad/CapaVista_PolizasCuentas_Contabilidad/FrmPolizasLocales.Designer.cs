@@ -128,7 +128,7 @@ namespace CapaVista_PolizasCuentas_Contabilidad
             this.ContabilidadLblOrigen.Name = "ContabilidadLblOrigen";
             this.ContabilidadLblOrigen.Size = new System.Drawing.Size(314, 22);
             this.ContabilidadLblOrigen.TabIndex = 0;
-            this.ContabilidadLblOrigen.Text = "Origen";
+            this.ContabilidadLblOrigen.Text = "Módulo";
             this.ContabilidadDtpFecha.CustomFormat = "dd/MM/yyyy";
             this.ContabilidadDtpFecha.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.ContabilidadDtpFecha.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
@@ -368,7 +368,7 @@ namespace CapaVista_PolizasCuentas_Contabilidad
             this.ContabilidadBtnAplicar.Name = "ContabilidadBtnAplicar";
             this.ContabilidadBtnAplicar.Size = new System.Drawing.Size(126, 42);
             this.ContabilidadBtnAplicar.TabIndex = 8;
-            this.ContabilidadBtnAplicar.Text = "Aplicar";
+            this.ContabilidadBtnAplicar.Text = "Validar";
             this.ContabilidadBtnAplicar.UseVisualStyleBackColor = false;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(247)))), ((int)(((byte)(248)))));

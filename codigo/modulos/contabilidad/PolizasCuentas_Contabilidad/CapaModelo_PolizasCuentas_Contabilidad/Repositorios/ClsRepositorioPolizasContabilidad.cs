@@ -11,10 +11,10 @@
  *  transacción, cambia su estado o descripción y la anula.
  * Reglas especificas:
  *  Insert y listado los creó Oskar Cermeño; se reescribieron para las
- *  tablas de EST-01. El código POL-AAAA-MM-#### lo genera la base con
- *  fnGenerarCodigoPoliza. La póliza se inserta en BORRADOR (los
- *  triggers solo aceptan líneas en ese estado) y después se le da su
- *  estado final. Eliminar es baja lógica: nunca se usa DELETE.
+ *  tablas de EST-01. El código POL-AAAA-MM-#### se genera aquí con el
+ *  correlativo del período, dentro de la transacción. Solo una póliza
+ *  en BORRADOR se modifica y una APLICADA no se anula. Eliminar es baja
+ *  lógica: nunca se usa DELETE.
  * ===================================================================
 */
 
@@ -31,29 +31,36 @@ namespace CapaModelo_PolizasCuentas_Contabilidad.Repositorios
     public class ClsRepositorioPolizasContabilidad : CapaModelo_Contabilidad.Repositorios.ClsRepositorioMaestroContabilidad, IRepositorioPolizasContabilidad
     {
         private const string _SelectTodos =
-            "SELECT pe.Pk_PolizaEncabezado, pe.codigoPoliza, pe.fechaPoliza, pe.periodoContablePoliza, pe.estadoPoliza, " +
-            "pe.origenPoliza, pe.documentoOrigenPoliza, pe.descripcionPoliza, " +
-            "pd.Pk_PolizaDetalle, pd.Fk_Cuenta, pd.lineaDetalle, pd.debeDetalle, pd.haberDetalle, pd.descripcionDetalle, " +
+            "SELECT pe.idPolizaEncabezado, pe.codigoPolizaEncabezado, pe.fechaPolizaEncabezado, pe.periodoContablePolizaEncabezado, " +
+            "pe.estadoPolizaEncabezado, pe.idModuloContable, m.nombreModuloContable, pe.documentoOrigenPolizaEncabezado, pe.descripcionPolizaEncabezado, " +
+            "pd.idPolizaDetalle, pd.idCuenta, pd.lineaPolizaDetalle, pd.debePolizaDetalle, pd.haberPolizaDetalle, pd.descripcionPolizaDetalle, " +
             "c.codigoCuenta, c.nombreCuenta " +
             "FROM tblPolizaEncabezado pe " +
-            "LEFT JOIN tblPolizaDetalle pd ON pd.Fk_PolizaEncabezado = pe.Pk_PolizaEncabezado AND pd.is_active = TRUE " +
-            "LEFT JOIN tblCuenta c ON c.Pk_Cuenta = pd.Fk_Cuenta " +
+            "INNER JOIN tblModuloContable m ON m.idModuloContable = pe.idModuloContable " +
+            "LEFT JOIN tblPolizaDetalle pd ON pd.idPolizaEncabezado = pe.idPolizaEncabezado AND pd.is_active = TRUE " +
+            "LEFT JOIN tblCuenta c ON c.idCuenta = pd.idCuenta " +
             "WHERE pe.is_active = TRUE " +
-            "ORDER BY pe.fechaPoliza DESC, pe.Pk_PolizaEncabezado DESC, pd.lineaDetalle";
+            "ORDER BY pe.fechaPolizaEncabezado DESC, pe.idPolizaEncabezado DESC, pd.lineaPolizaDetalle";
+
+        private const string _SiguienteCorrelativo =
+            "SELECT COALESCE(MAX(CAST(SUBSTRING(codigoPolizaEncabezado, 13) AS UNSIGNED)), 0) + 1 FROM tblPolizaEncabezado " +
+            "WHERE periodoContablePolizaEncabezado = ? AND codigoPolizaEncabezado LIKE 'POL-%' FOR UPDATE";
 
         private const string _InsertEncabezado =
-            "INSERT INTO tblPolizaEncabezado (codigoPoliza, fechaPoliza, periodoContablePoliza, estadoPoliza, origenPoliza, documentoOrigenPoliza, descripcionPoliza) " +
-            "VALUES (?, ?, ?, 'BORRADOR', ?, ?, ?)";
+            "INSERT INTO tblPolizaEncabezado (idModuloContable, codigoPolizaEncabezado, fechaPolizaEncabezado, periodoContablePolizaEncabezado, " +
+            "estadoPolizaEncabezado, documentoOrigenPolizaEncabezado, descripcionPolizaEncabezado) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         private const string _InsertDetalle =
-            "INSERT INTO tblPolizaDetalle (Fk_PolizaEncabezado, Fk_Cuenta, lineaDetalle, debeDetalle, haberDetalle, descripcionDetalle) " +
+            "INSERT INTO tblPolizaDetalle (idPolizaEncabezado, idCuenta, lineaPolizaDetalle, debePolizaDetalle, haberPolizaDetalle, descripcionPolizaDetalle) " +
             "VALUES (?, ?, ?, ?, ?, ?)";
 
         private const string _UpdateEncabezado =
-            "UPDATE tblPolizaEncabezado SET estadoPoliza = ?, descripcionPoliza = ? WHERE Pk_PolizaEncabezado = ?";
+            "UPDATE tblPolizaEncabezado SET estadoPolizaEncabezado = ?, descripcionPolizaEncabezado = ? " +
+            "WHERE idPolizaEncabezado = ? AND estadoPolizaEncabezado = 'BORRADOR'";
 
         private const string _Anular =
-            "UPDATE tblPolizaEncabezado SET estadoPoliza = 'ANULADA', is_active = FALSE WHERE Pk_PolizaEncabezado = ?";
+            "UPDATE tblPolizaEncabezado SET estadoPolizaEncabezado = 'ANULADA', is_active = FALSE " +
+            "WHERE idPolizaEncabezado = ? AND estadoPolizaEncabezado IN ('BORRADOR','VALIDADA')";
 
         public int ContabilidadFuncAgregar(ClsPolizaContabilidad Entidad)
         {
@@ -72,18 +79,19 @@ namespace CapaModelo_PolizasCuentas_Contabilidad.Repositorios
                     try
                     {
                         string Codigo;
-                        using (OdbcCommand Comando = new OdbcCommand("SELECT fnGenerarCodigoPoliza(?)", Conexion, Transaccion))
+                        using (OdbcCommand Comando = new OdbcCommand(_SiguienteCorrelativo, Conexion, Transaccion))
                         {
                             Comando.Parameters.AddWithValue("Periodo", Periodo);
-                            Codigo = Convert.ToString(Comando.ExecuteScalar());
+                            Codigo = "POL-" + Periodo + "-" + Convert.ToInt32(Comando.ExecuteScalar()).ToString("0000");
                         }
 
                         using (OdbcCommand Comando = new OdbcCommand(_InsertEncabezado, Conexion, Transaccion))
                         {
+                            Comando.Parameters.AddWithValue("Modulo", Entidad.IdModulo);
                             Comando.Parameters.AddWithValue("Codigo", Codigo);
                             Comando.Parameters.Add(new OdbcParameter("Fecha", OdbcType.Date) { Value = Entidad.Fecha.Date });
                             Comando.Parameters.AddWithValue("Periodo", Periodo);
-                            Comando.Parameters.AddWithValue("Origen", string.IsNullOrWhiteSpace(Entidad.Origen) ? "MANUAL" : Entidad.Origen);
+                            Comando.Parameters.AddWithValue("Estado", string.IsNullOrWhiteSpace(Entidad.Estado) ? "BORRADOR" : Entidad.Estado);
                             Comando.Parameters.AddWithValue("Documento", string.IsNullOrWhiteSpace(Entidad.DocumentoOrigen) ? (object)DBNull.Value : Entidad.DocumentoOrigen);
                             Comando.Parameters.AddWithValue("Descripcion", string.IsNullOrWhiteSpace(Entidad.Descripcion) ? (object)DBNull.Value : Entidad.Descripcion);
                             Comando.ExecuteNonQuery();
@@ -104,17 +112,6 @@ namespace CapaModelo_PolizasCuentas_Contabilidad.Repositorios
                                 Comando.Parameters.Add(new OdbcParameter("Debe", OdbcType.Decimal) { Precision = 12, Scale = 4, Value = Detalle.Debe });
                                 Comando.Parameters.Add(new OdbcParameter("Haber", OdbcType.Decimal) { Precision = 12, Scale = 4, Value = Detalle.Haber });
                                 Comando.Parameters.AddWithValue("DescripcionDetalle", string.IsNullOrWhiteSpace(Detalle.DescripcionDetalle) ? (object)DBNull.Value : Detalle.DescripcionDetalle);
-                                Comando.ExecuteNonQuery();
-                            }
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(Entidad.Estado) && Entidad.Estado != "BORRADOR")
-                        {
-                            using (OdbcCommand Comando = new OdbcCommand(_UpdateEncabezado, Conexion, Transaccion))
-                            {
-                                Comando.Parameters.AddWithValue("Estado", Entidad.Estado);
-                                Comando.Parameters.AddWithValue("Descripcion", string.IsNullOrWhiteSpace(Entidad.Descripcion) ? (object)DBNull.Value : Entidad.Descripcion);
-                                Comando.Parameters.AddWithValue("Poliza", IdPoliza);
                                 Comando.ExecuteNonQuery();
                             }
                         }
@@ -157,34 +154,35 @@ namespace CapaModelo_PolizasCuentas_Contabilidad.Repositorios
                 List<ClsPolizaContabilidad> Orden = new List<ClsPolizaContabilidad>();
                 foreach (DataRow Fila in Tabla.Rows)
                 {
-                    int IdPoliza = Convert.ToInt32(Fila["Pk_PolizaEncabezado"]);
+                    int IdPoliza = Convert.ToInt32(Fila["idPolizaEncabezado"]);
                     ClsPolizaContabilidad Poliza;
                     if (!Polizas.TryGetValue(IdPoliza, out Poliza))
                     {
                         Poliza = new ClsPolizaContabilidad
                         {
                             IdPoliza = IdPoliza,
-                            CodigoPoliza = Convert.ToString(Fila["codigoPoliza"]),
-                            Fecha = Convert.ToDateTime(Fila["fechaPoliza"]),
-                            PeriodoContable = Convert.ToString(Fila["periodoContablePoliza"]),
-                            Estado = Convert.ToString(Fila["estadoPoliza"]),
-                            Origen = Convert.ToString(Fila["origenPoliza"]),
-                            DocumentoOrigen = Fila["documentoOrigenPoliza"] == DBNull.Value ? null : Convert.ToString(Fila["documentoOrigenPoliza"]),
-                            Descripcion = Fila["descripcionPoliza"] == DBNull.Value ? null : Convert.ToString(Fila["descripcionPoliza"])
+                            CodigoPoliza = Convert.ToString(Fila["codigoPolizaEncabezado"]),
+                            Fecha = Convert.ToDateTime(Fila["fechaPolizaEncabezado"]),
+                            PeriodoContable = Convert.ToString(Fila["periodoContablePolizaEncabezado"]),
+                            Estado = Convert.ToString(Fila["estadoPolizaEncabezado"]),
+                            IdModulo = Convert.ToInt32(Fila["idModuloContable"]),
+                            Modulo = Convert.ToString(Fila["nombreModuloContable"]),
+                            DocumentoOrigen = Fila["documentoOrigenPolizaEncabezado"] == DBNull.Value ? null : Convert.ToString(Fila["documentoOrigenPolizaEncabezado"]),
+                            Descripcion = Fila["descripcionPolizaEncabezado"] == DBNull.Value ? null : Convert.ToString(Fila["descripcionPolizaEncabezado"])
                         };
                         Polizas.Add(IdPoliza, Poliza);
                         Orden.Add(Poliza);
                     }
-                    if (Fila["Pk_PolizaDetalle"] == DBNull.Value) continue;
+                    if (Fila["idPolizaDetalle"] == DBNull.Value) continue;
                     Poliza.Detalle.Add(new ClsPolizaDetalleContabilidad
                     {
-                        IdPolizaDetalle = Convert.ToInt32(Fila["Pk_PolizaDetalle"]),
+                        IdPolizaDetalle = Convert.ToInt32(Fila["idPolizaDetalle"]),
                         IdPoliza = IdPoliza,
-                        IdCuenta = Convert.ToInt32(Fila["Fk_Cuenta"]),
-                        Linea = Convert.ToInt32(Fila["lineaDetalle"]),
-                        Debe = Convert.ToDecimal(Fila["debeDetalle"]),
-                        Haber = Convert.ToDecimal(Fila["haberDetalle"]),
-                        DescripcionDetalle = Fila["descripcionDetalle"] == DBNull.Value ? null : Convert.ToString(Fila["descripcionDetalle"]),
+                        IdCuenta = Convert.ToInt32(Fila["idCuenta"]),
+                        Linea = Convert.ToInt32(Fila["lineaPolizaDetalle"]),
+                        Debe = Convert.ToDecimal(Fila["debePolizaDetalle"]),
+                        Haber = Convert.ToDecimal(Fila["haberPolizaDetalle"]),
+                        DescripcionDetalle = Fila["descripcionPolizaDetalle"] == DBNull.Value ? null : Convert.ToString(Fila["descripcionPolizaDetalle"]),
                         Codigo = Convert.ToString(Fila["codigoCuenta"]),
                         Cuenta = Convert.ToString(Fila["nombreCuenta"])
                     });
@@ -200,17 +198,12 @@ namespace CapaModelo_PolizasCuentas_Contabilidad.Repositorios
 
         public string[] ContabilidadFuncObtenerEstados()
         {
-            return new[] { "BORRADOR", "APLICADA", "ANULADA" };
-        }
-
-        public string[] ContabilidadFuncObtenerOrigenes()
-        {
-            return new[] { "MANUAL", "BANCOS", "ACTIVOS_FIJOS", "PRESUPUESTO", "NOMINA", "VENTAS", "COMPRAS" };
+            return new[] { "BORRADOR", "VALIDADA", "ANULADA" };
         }
 
         public string ContabilidadFuncObtenerNombreModulo(int IdModulo)
         {
-            using (DataTable Tabla = ContabilidadFuncEjecutarConsulta("SELECT nombreModulo FROM tblModuloContable WHERE Pk_Modulo = ? AND is_active = TRUE",
+            using (DataTable Tabla = ContabilidadFuncEjecutarConsulta("SELECT nombreModuloContable FROM tblModuloContable WHERE idModuloContable = ? AND is_active = TRUE",
                 CommandType.Text, new List<OdbcParameter> { new OdbcParameter("Modulo", IdModulo) }))
                 return Tabla.Rows.Count == 0 ? string.Empty : Convert.ToString(Tabla.Rows[0][0]);
         }

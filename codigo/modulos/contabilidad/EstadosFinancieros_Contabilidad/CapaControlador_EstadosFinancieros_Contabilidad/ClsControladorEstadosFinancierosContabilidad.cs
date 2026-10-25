@@ -6,7 +6,7 @@
  * Fecha : 17/10/2026
  * ==================================================================
  * Propósito :
- *  Reglas del estado de resultados: toma las pólizas aplicadas del
+ *  Reglas del estado de resultados: toma las pólizas validadas y aplicadas del
  *  rango, clasifica cada cuenta por su código y calcula los totales
  *  de ingresos, costos, gastos y el resultado neto.
  * Reglas especificas:
@@ -48,7 +48,7 @@ namespace CapaControlador_EstadosFinancieros_Contabilidad
             string[] Rubros = { "INGRESOS", "COSTOS", "GASTOS" };
 
             var Lineas = _Repositorio.ContabilidadFuncObtenerTodos()
-                .Where(Poliza => Poliza.Estado == "APLICADA" && Poliza.Fecha >= Desde.Date && Poliza.Fecha <= Hasta.Date)
+                .Where(Poliza => (Poliza.Estado == "VALIDADA" || Poliza.Estado == "APLICADA") && Poliza.Fecha >= Desde.Date && Poliza.Fecha <= Hasta.Date)
                 .SelectMany(Poliza => Poliza.Detalle)
                 .Where(Linea => Rubros.Contains(ClsCodigoCuentaContabilidad.ContabilidadFuncClase(Linea.Codigo)));
             var Grupos = Lineas.GroupBy(Linea => new { Rubro = ClsCodigoCuentaContabilidad.ContabilidadFuncClase(Linea.Codigo), Linea.Codigo, Linea.Cuenta });

@@ -23,8 +23,6 @@ namespace CapaModelo_PolizasCuentas_Contabilidad.Contratos
 
         string[] ContabilidadFuncObtenerEstados();
 
-        string[] ContabilidadFuncObtenerOrigenes();
-
         string ContabilidadFuncObtenerNombreModulo(int IdModulo);
     }
 }
