@@ -1,7 +1,7 @@
 ﻿using CapaControlador_Navegador;
 using CapaModelo_Navegador;
 using CapaVista_Consultas;
-using CapaVista_Reporteador;
+using CapaVista_Reporteador.Formas;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -441,11 +441,10 @@ namespace CapaVista_Navegador
         // IMPRIMIR
         public void NavegadorMetImprimir()
         {
-            using (FrmReportes FormularioReportes = new FrmReportes())
+            using (FrmVistaReportes FormularioReportes = new FrmVistaReportes(_Vista.NavegadorIdAplicacion,_Vista.NavegadorFuentesDeDatosReporteador))
             {
-                FormularioReportes.ReporteadorMetCargarReportes(
-                    _Vista.NavegadorIdAplicacion, _Vista.NavegadorFuentesDeDatosReporteador);
-                FormularioReportes.ShowDialog(_Vista.FindForm());
+        
+             FormularioReportes.ShowDialog(_Vista.FindForm());
             }
         }
     }
