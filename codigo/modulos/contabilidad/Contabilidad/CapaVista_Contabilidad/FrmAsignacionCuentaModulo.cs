@@ -35,6 +35,9 @@ namespace CapaVista_Contabilidad
             // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
             ContabilidadNavAsignacionCuentaModulo.NavegadorMetConfigurar("tblmodulocuentapais", Permisos.IdModulo, Permisos.IdAplicacion);
             // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            // Inicio de cambio: Gabriel André Guillén Pocón - 0901-23-1998 - 27/10/2026
+            ClsPresentacionContabilidad.ContabilidadMetAjustarCamposNavegador(ContabilidadNavAsignacionCuentaModulo);
+            // Fin de cambio: Gabriel André Guillén Pocón - 0901-23-1998 - 27/10/2026
         }
     }
 }

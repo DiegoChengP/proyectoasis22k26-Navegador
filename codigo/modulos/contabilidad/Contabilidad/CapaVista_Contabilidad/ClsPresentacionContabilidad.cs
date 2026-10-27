@@ -53,5 +53,29 @@ namespace CapaVista_Contabilidad
                 ContabilidadMetAplicarTipografia(Elemento);
             }
         }
+
+        // Inicio de cambio: Gabriel André Guillén Pocón - 0901-23-1998 - 27/10/2026
+        internal static void ContabilidadMetAjustarCamposNavegador(Control Navegador)
+        {
+            foreach (Control Elemento in Navegador.Controls)
+                Elemento.ControlAdded += (Remitente, Evento) => ContabilidadMetAcomodarCamposNavegador(Evento.Control);
+        }
+
+        private static void ContabilidadMetAcomodarCamposNavegador(Control Agregado)
+        {
+            Control[] Registros = Agregado.Controls.Find("NavegadorPnlRegistro", true);
+            if (Registros.Length == 0) return;
+            const int PosicionCampos = 190;
+            int FinEtiquetas = 0;
+            foreach (Control Elemento in Registros[0].Controls)
+                if (Elemento is Label && Elemento.Name != "NavegadorLblTitulo")
+                    FinEtiquetas = System.Math.Max(FinEtiquetas, Elemento.Left + Elemento.PreferredSize.Width);
+            int Desplazamiento = FinEtiquetas + 15 - PosicionCampos;
+            if (Desplazamiento <= 0) return;
+            foreach (Control Elemento in Registros[0].Controls)
+                if (!(Elemento is Label) && Elemento.Left >= PosicionCampos)
+                    Elemento.Left += Desplazamiento;
+        }
+        // Fin de cambio: Gabriel André Guillén Pocón - 0901-23-1998 - 27/10/2026
     }
 }
