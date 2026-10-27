@@ -18,13 +18,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CapaModelo_PolizasCuentas_Contabilidad.Contratos;
-using CapaModelo_PolizasCuentas_Contabilidad.Entidades;
-using CapaModelo_PolizasCuentas_Contabilidad.Repositorios;
-using EstadoEntidadContabilidad = CapaControlador_Contabilidad.EstadoEntidadContabilidad;
-using ClsValidacionDatosContabilidad = CapaControlador_Contabilidad.ClsValidacionDatosContabilidad;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using CapaModelo_Contabilidad.Contratos;
+using CapaModelo_Contabilidad.Entidades;
+using CapaModelo_Contabilidad.Repositorios;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
-namespace CapaControlador_PolizasCuentas_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaControlador_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public class ClsControladorPolizasContabilidad
     {
@@ -39,10 +41,14 @@ namespace CapaControlador_PolizasCuentas_Contabilidad
             _Repositorio = Repositorio ?? throw new ArgumentNullException(nameof(Repositorio));
         }
 
-        public List<ClsCuentaPolizaContabilidad> ContabilidadFuncObtenerCuentas(int IdModulo)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public List<ClsModeloCuentaPolizaContabilidad> ContabilidadFuncObtenerCuentas(int IdModulo)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             return new ClsModeloCuentaContabilidad().ContabilidadFuncObtenerImputables(IdModulo)
-                .Select(Cuenta => new ClsCuentaPolizaContabilidad { IdCuenta = Cuenta.IdCuenta, Codigo = Cuenta.Codigo, Nombre = Cuenta.Nombre })
+                // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+                .Select(Cuenta => new ClsModeloCuentaPolizaContabilidad { IdCuenta = Cuenta.IdCuenta, Codigo = Cuenta.Codigo, Nombre = Cuenta.Nombre })
+                // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
                 .ToList();
         }
 
@@ -62,23 +68,31 @@ namespace CapaControlador_PolizasCuentas_Contabilidad
             return Fecha.ToString("yyyy-MM");
         }
 
-        public decimal ContabilidadFuncTotalDebe(IEnumerable<ClsLineaPolizaContabilidad> Lineas)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public decimal ContabilidadFuncTotalDebe(IEnumerable<ClsModeloLineaPolizaContabilidad> Lineas)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             return Lineas.Sum(Linea => Linea.Debe);
         }
 
-        public decimal ContabilidadFuncTotalHaber(IEnumerable<ClsLineaPolizaContabilidad> Lineas)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public decimal ContabilidadFuncTotalHaber(IEnumerable<ClsModeloLineaPolizaContabilidad> Lineas)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             return Lineas.Sum(Linea => Linea.Haber);
         }
 
-        public bool ContabilidadFuncEstaCuadrada(IEnumerable<ClsLineaPolizaContabilidad> Lineas)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public bool ContabilidadFuncEstaCuadrada(IEnumerable<ClsModeloLineaPolizaContabilidad> Lineas)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             decimal Debe = ContabilidadFuncTotalDebe(Lineas);
             return Debe > 0 && Debe == ContabilidadFuncTotalHaber(Lineas);
         }
 
-        public string ContabilidadFuncValidar(string Descripcion, IList<ClsLineaPolizaContabilidad> Lineas)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public string ContabilidadFuncValidar(string Descripcion, IList<ClsModeloLineaPolizaContabilidad> Lineas)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             return ClsValidacionDatosContabilidad.ContabilidadFuncPrimerError(
                 new ClsModeloPolizaContabilidad { Descripcion = Descripcion, Lineas = Lineas });
@@ -91,7 +105,9 @@ namespace CapaControlador_PolizasCuentas_Contabilidad
                 {
                     IdPoliza = Poliza.IdPoliza, CodigoPoliza = Poliza.CodigoPoliza, Fecha = Poliza.Fecha,
                     Periodo = Poliza.PeriodoContable, Estado = Poliza.Estado, IdModulo = Poliza.IdModulo, Modulo = Poliza.Modulo, Descripcion = Poliza.Descripcion,
-                    Lineas = Poliza.Detalle.Select(Detalle => new ClsLineaPolizaContabilidad
+                    // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+                    Lineas = Poliza.Detalle.Select(Detalle => new ClsModeloLineaPolizaContabilidad
+                    // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
                         { IdCuenta = Detalle.IdCuenta, Cuenta = Detalle.Cuenta, Debe = Detalle.Debe, Haber = Detalle.Haber }).ToList()
                 })
                 .ToList();

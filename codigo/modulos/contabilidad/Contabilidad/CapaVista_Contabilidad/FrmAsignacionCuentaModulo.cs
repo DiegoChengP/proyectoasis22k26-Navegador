@@ -15,21 +15,26 @@
 using System.Drawing;
 using System.Windows.Forms;
 using CapaControlador_Contabilidad;
-using CapaVista_Contabilidad.Properties;
 
 namespace CapaVista_Contabilidad
 {
     public partial class FrmAsignacionCuentaModulo : Form
     {
-        public FrmAsignacionCuentaModulo() : this(ClsPermisosPantallaContabilidad.Total)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmAsignacionCuentaModulo() : this(ClsModeloPermisosPantallaContabilidad.Total)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
         }
 
-        public FrmAsignacionCuentaModulo(ClsPermisosPantallaContabilidad Permisos)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmAsignacionCuentaModulo(ClsModeloPermisosPantallaContabilidad Permisos)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             InitializeComponent();
             ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Asignación de cuentas por módulo", new Size(1180, 688));
-            ContabilidadUsrNavegador.NavegadorMetConfigurar("tblmodulocuentapais", Permisos.IdModulo, Permisos.IdAplicacion);
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ContabilidadNavAsignacionCuentaModulo.NavegadorMetConfigurar("tblmodulocuentapais", Permisos.IdModulo, Permisos.IdAplicacion);
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         }
     }
 }

@@ -12,11 +12,10 @@
 */
 
 
-using CapaModelo_Contabilidad.Contratos;
-using CapaModelo_Contabilidad.Repositorios;
-using CapaModelo_Presupuestos_Contabilidad.Entidades;
-using CapaModelo_Presupuestos_Contabilidad.Repositorios;
-namespace CapaModelo_Presupuestos_Contabilidad.Contratos
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using CapaModelo_Contabilidad.Entidades;
+namespace CapaModelo_Contabilidad.Contratos
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public interface IRepositorioPresupuestosContabilidad : IRepositorioGenericoContabilidad<ClsPresupuestoContabilidad>
     {

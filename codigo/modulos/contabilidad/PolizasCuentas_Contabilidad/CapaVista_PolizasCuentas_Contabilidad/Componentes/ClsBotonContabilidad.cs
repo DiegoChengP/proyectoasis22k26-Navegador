@@ -19,13 +19,14 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using CapaControlador_PolizasCuentas_Contabilidad;
-using CapaVista_PolizasCuentas_Contabilidad;
-using CapaVista_PolizasCuentas_Contabilidad.Properties;
 
-namespace CapaVista_PolizasCuentas_Contabilidad.Componentes
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaVista_Contabilidad.Componentes
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
-    public enum EstiloBotonContabilidad
+    // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+    internal enum EstiloBotonContabilidad
+    // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
     {
         Principal,
         Secundario,
@@ -33,7 +34,9 @@ namespace CapaVista_PolizasCuentas_Contabilidad.Componentes
         Dorado
     }
 
-    public class ClsBotonContabilidad : Button
+    // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+    internal class ClsBotonContabilidad : Button
+    // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
     {
         private EstiloBotonContabilidad _Estilo = EstiloBotonContabilidad.Principal;
         private Image _Icono;

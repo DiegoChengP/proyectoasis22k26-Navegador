@@ -18,15 +18,12 @@
 using System;
 using System.Data;
 using System.Linq;
-using CapaControlador_Contabilidad;
-using CapaControlador_PolizasCuentas_Contabilidad;
 using CapaModelo_Contabilidad.Contratos;
 using CapaModelo_Contabilidad.Repositorios;
-using CapaModelo_PolizasCuentas_Contabilidad.Contratos;
-using CapaModelo_PolizasCuentas_Contabilidad.Entidades;
-using CapaModelo_PolizasCuentas_Contabilidad.Repositorios;
 
-namespace CapaControlador_EstadosFinancieros_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaControlador_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public class ClsControladorEstadosFinancierosContabilidad
     {

@@ -1,12 +1,10 @@
 ﻿/* Área: Contabilidad. Autor: Donald Osorio. Carné: 0901-23-17982.
  * Fecha: 14/10/2026. Propósito: presentación del prototipo de Cierre contable (Donald). */
 using System.Windows.Forms;
-using CapaControlador_CierreContable_Contabilidad;
-using CapaControlador_Contabilidad;
-using CapaVista_CierreContable_Contabilidad.Componentes;
-using CapaVista_CierreContable_Contabilidad.Properties;
+using CapaVista_Contabilidad.Componentes;
+using CapaVista_Contabilidad.Properties;
 
-namespace CapaVista_CierreContable_Contabilidad
+namespace CapaVista_Contabilidad
 {
     partial class FrmCierreContable
     {
@@ -180,8 +178,12 @@ namespace CapaVista_CierreContable_Contabilidad
             this.ContabilidadBtnSimular.Location = new System.Drawing.Point(936, 626);
             this.ContabilidadBtnSimular.Size = new System.Drawing.Size(220, 42);
             this.ContabilidadBtnSimular.Estilo = Componentes.EstiloBotonContabilidad.Dorado;
-            this.ContabilidadBtnSimular.Icono = global::CapaVista_CierreContable_Contabilidad.Properties.Resources.ico_aplicar;
+            this.ContabilidadBtnSimular.Icono = global::CapaVista_Contabilidad.Properties.Resources.ico_aplicar;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = global::CapaVista_Contabilidad.Properties.Resources.Icono_Contabilidad;
+            this.MaximizeBox = false;
             this.Name = "FrmCierreContable";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1180, 688);
             this.BackColor = System.Drawing.Color.FromArgb(246, 247, 248);

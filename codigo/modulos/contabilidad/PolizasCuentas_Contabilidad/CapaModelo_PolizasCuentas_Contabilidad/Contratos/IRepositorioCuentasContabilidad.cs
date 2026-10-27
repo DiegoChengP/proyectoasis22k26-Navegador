@@ -15,10 +15,13 @@
 */
 
 using System.Collections.Generic;
-using CapaModelo_PolizasCuentas_Contabilidad.Entidades;
-using CapaModelo_PolizasCuentas_Contabilidad.Repositorios;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using CapaModelo_Contabilidad.Entidades;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
-namespace CapaModelo_PolizasCuentas_Contabilidad.Contratos
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaModelo_Contabilidad.Contratos
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public interface IRepositorioCuentasContabilidad
     {

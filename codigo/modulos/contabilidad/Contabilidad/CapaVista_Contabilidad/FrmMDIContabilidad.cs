@@ -26,7 +26,6 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using CapaControlador_Contabilidad;
-using CapaVista_Contabilidad.Properties;
 
 namespace CapaVista_Contabilidad
 {
@@ -74,7 +73,6 @@ namespace CapaVista_Contabilidad
             _PermisosMenu.ContabilidadMetAplicar(ContabilidadBtnCatalogos, false);
             Disposed += (Remitente, Evento) => _PermisosMenu.Dispose();
             ContabilidadPnlPrincipal.Resize += (Remitente, Evento) => ContabilidadMetAcomodarEncabezado();
-            this.WindowState = FormWindowState.Maximized;
 
             ContabilidadMetDobleBuffer(ContabilidadPnlFondo);
             ContabilidadMetDobleBuffer(ContabilidadPnlPrincipal);
@@ -289,27 +287,37 @@ namespace CapaVista_Contabilidad
 
         private void ContabilidadMetAbrirPolizasLocales(object Remitente, EventArgs Evento)
         {
-            ContabilidadMetAbrirPantalla(10001, (Button)Remitente, Permisos => new CapaVista_PolizasCuentas_Contabilidad.FrmPolizasLocales(Permisos, _IdModulo));
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ContabilidadMetAbrirPantalla(10001, (Button)Remitente, Permisos => new FrmPolizasLocales(Permisos, _IdModulo));
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         }
 
         private void ContabilidadMetAbrirPresupuestos(object Remitente, EventArgs Evento)
         {
-            ContabilidadMetAbrirPantalla(10002, (Button)Remitente, Permisos => new CapaVista_Presupuestos_Contabilidad.FrmPresupuestos(Permisos));
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ContabilidadMetAbrirPantalla(10002, (Button)Remitente, Permisos => new FrmPresupuestos(Permisos));
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         }
 
         private void ContabilidadMetAbrirActivosFijos(object Remitente, EventArgs Evento)
         {
-            ContabilidadMetAbrirPantalla(10003, (Button)Remitente, Permisos => new CapaVista_ActivosFijos_Contabilidad.FrmActivosFijos(Permisos));
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ContabilidadMetAbrirPantalla(10003, (Button)Remitente, Permisos => new FrmActivosFijos(Permisos));
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         }
 
         private void ContabilidadMetAbrirCierreContable(object Remitente, EventArgs Evento)
         {
-            ContabilidadMetAbrirPantalla(10004, (Button)Remitente, Permisos => new CapaVista_CierreContable_Contabilidad.FrmCierreContable(Permisos));
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ContabilidadMetAbrirPantalla(10004, (Button)Remitente, Permisos => new FrmCierreContable(Permisos));
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         }
 
         private void ContabilidadMetAbrirEstadosFinancieros(object Remitente, EventArgs Evento)
         {
-            ContabilidadMetAbrirPantalla(10005, (Button)Remitente, Permisos => new CapaVista_EstadosFinancieros_Contabilidad.FrmEstadosFinancieros(Permisos));
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ContabilidadMetAbrirPantalla(10005, (Button)Remitente, Permisos => new FrmEstadosFinancieros(Permisos));
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         }
 
         private void ContabilidadMetConfigurarEstadosMenu()
@@ -373,7 +381,9 @@ namespace CapaVista_Contabilidad
             }
         }
 
-        private void ContabilidadMetAbrirPantalla(int Codigo, Button Boton, Func<ClsPermisosPantallaContabilidad, Form> Crear)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        private void ContabilidadMetAbrirPantalla(int Codigo, Button Boton, Func<ClsModeloPermisosPantallaContabilidad, Form> Crear)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             ContabilidadMetActualizarSeguridad(true);
             if (!_Estado.Permisos[Codigo].TieneAcceso) return;

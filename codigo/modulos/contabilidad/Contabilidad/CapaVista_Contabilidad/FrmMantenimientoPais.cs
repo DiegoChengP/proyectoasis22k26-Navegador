@@ -15,21 +15,26 @@
 using System.Drawing;
 using System.Windows.Forms;
 using CapaControlador_Contabilidad;
-using CapaVista_Contabilidad.Properties;
 
 namespace CapaVista_Contabilidad
 {
     public partial class FrmMantenimientoPais : Form
     {
-        public FrmMantenimientoPais() : this(ClsPermisosPantallaContabilidad.Total)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmMantenimientoPais() : this(ClsModeloPermisosPantallaContabilidad.Total)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
         }
 
-        public FrmMantenimientoPais(ClsPermisosPantallaContabilidad Permisos)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmMantenimientoPais(ClsModeloPermisosPantallaContabilidad Permisos)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             InitializeComponent();
             ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Mantenimiento de países", new Size(1180, 688));
-            ContabilidadUsrNavegador.NavegadorMetConfigurar("tblpais", Permisos.IdModulo, Permisos.IdAplicacion);
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ContabilidadNavPais.NavegadorMetConfigurar("tblpais", Permisos.IdModulo, Permisos.IdAplicacion);
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         }
     }
 }

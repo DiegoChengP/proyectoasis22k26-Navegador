@@ -8,12 +8,13 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using CapaControlador_CierreContable_Contabilidad;
-using CapaControlador_Contabilidad;
-using CapaVista_CierreContable_Contabilidad.Componentes;
-using CapaVista_CierreContable_Contabilidad.Properties;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using CapaVista_Contabilidad.Properties;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
-namespace CapaVista_CierreContable_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaVista_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     internal static class ClsPresentacionContabilidad
     {

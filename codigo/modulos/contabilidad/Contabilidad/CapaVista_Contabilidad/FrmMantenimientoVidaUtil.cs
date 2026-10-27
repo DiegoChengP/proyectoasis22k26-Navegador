@@ -15,21 +15,26 @@
 using System.Drawing;
 using System.Windows.Forms;
 using CapaControlador_Contabilidad;
-using CapaVista_Contabilidad.Properties;
 
 namespace CapaVista_Contabilidad
 {
     public partial class FrmMantenimientoVidaUtil : Form
     {
-        public FrmMantenimientoVidaUtil() : this(ClsPermisosPantallaContabilidad.Total)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmMantenimientoVidaUtil() : this(ClsModeloPermisosPantallaContabilidad.Total)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
         }
 
-        public FrmMantenimientoVidaUtil(ClsPermisosPantallaContabilidad Permisos)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmMantenimientoVidaUtil(ClsModeloPermisosPantallaContabilidad Permisos)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             InitializeComponent();
             ClsPresentacionContabilidad.ContabilidadMetPrepararVentana(this, "Mantenimiento de vida útil", new Size(1180, 688));
-            ContabilidadUsrNavegador.NavegadorMetConfigurar("tblmaestrovidautil", Permisos.IdModulo, Permisos.IdAplicacion);
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ContabilidadNavVidaUtil.NavegadorMetConfigurar("tblmaestrovidautil", Permisos.IdModulo, Permisos.IdAplicacion);
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         }
     }
 }

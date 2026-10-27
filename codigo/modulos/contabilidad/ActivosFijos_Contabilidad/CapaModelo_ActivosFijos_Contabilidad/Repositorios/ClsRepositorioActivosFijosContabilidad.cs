@@ -14,12 +14,14 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using CapaModelo_ActivosFijos_Contabilidad.Contratos;
-using CapaModelo_ActivosFijos_Contabilidad.Entidades;
 using CapaModelo_Contabilidad.Contratos;
-using CapaModelo_Contabilidad.Repositorios;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using CapaModelo_Contabilidad.Entidades;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
-namespace CapaModelo_ActivosFijos_Contabilidad.Repositorios
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaModelo_Contabilidad.Repositorios
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public class ClsRepositorioActivosFijosContabilidad : IRepositorioActivosFijosContabilidad
     {

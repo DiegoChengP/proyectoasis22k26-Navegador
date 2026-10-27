@@ -3,12 +3,10 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CapaControlador_Contabilidad;
-using CapaControlador_EstadosFinancieros_Contabilidad;
-using CapaVista_EstadosFinancieros_Contabilidad;
-using CapaVista_EstadosFinancieros_Contabilidad.Properties;
 
-namespace CapaVista_EstadosFinancieros_Contabilidad.Componentes
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaVista_Contabilidad.Componentes
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     internal static class ClsDialogosContabilidad
     {

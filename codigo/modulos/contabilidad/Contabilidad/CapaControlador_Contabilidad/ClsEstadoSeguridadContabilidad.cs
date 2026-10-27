@@ -21,16 +21,20 @@ namespace CapaControlador_Contabilidad
         public string NombreUsuario { get; internal set; }
         public string Roles { get; internal set; }
         public string Mensaje { get; internal set; }
-        public Dictionary<int, ClsPermisosPantallaContabilidad> Permisos { get; } = new Dictionary<int, ClsPermisosPantallaContabilidad>
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public Dictionary<int, ClsModeloPermisosPantallaContabilidad> Permisos { get; } = new Dictionary<int, ClsModeloPermisosPantallaContabilidad>
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
-            { 10001, ClsPermisosPantallaContabilidad.Ninguno }, { 10002, ClsPermisosPantallaContabilidad.Ninguno },
-            { 10003, ClsPermisosPantallaContabilidad.Ninguno }, { 10004, ClsPermisosPantallaContabilidad.Ninguno },
-            { 10005, ClsPermisosPantallaContabilidad.Ninguno },
-            { 10011, ClsPermisosPantallaContabilidad.Ninguno },
-            { 10012, ClsPermisosPantallaContabilidad.Ninguno },
-            { 10013, ClsPermisosPantallaContabilidad.Ninguno },
-            { 10015, ClsPermisosPantallaContabilidad.Ninguno },
-            { 10014, ClsPermisosPantallaContabilidad.Ninguno }
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            { 10001, ClsModeloPermisosPantallaContabilidad.Ninguno }, { 10002, ClsModeloPermisosPantallaContabilidad.Ninguno },
+            { 10003, ClsModeloPermisosPantallaContabilidad.Ninguno }, { 10004, ClsModeloPermisosPantallaContabilidad.Ninguno },
+            { 10005, ClsModeloPermisosPantallaContabilidad.Ninguno },
+            { 10011, ClsModeloPermisosPantallaContabilidad.Ninguno },
+            { 10012, ClsModeloPermisosPantallaContabilidad.Ninguno },
+            { 10013, ClsModeloPermisosPantallaContabilidad.Ninguno },
+            { 10015, ClsModeloPermisosPantallaContabilidad.Ninguno },
+            { 10014, ClsModeloPermisosPantallaContabilidad.Ninguno }
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         };
     }
 }
