@@ -28,7 +28,6 @@ namespace CapaVista_Contabilidad
 
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager Recursos = new System.ComponentModel.ComponentResourceManager(typeof(FrmMDIContabilidad));
             this.ContabilidadPnlFondo = new System.Windows.Forms.Panel();
             this.ContabilidadPnlPrincipal = new System.Windows.Forms.Panel();
             this.ContabilidadPnlLateral = new System.Windows.Forms.Panel();
@@ -662,11 +661,12 @@ namespace CapaVista_Contabilidad
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1538, 1022);
             this.Controls.Add(this.ContabilidadPnlFondo);
-            this.Icon = ((System.Drawing.Icon)(Recursos.GetObject("$this.Icon")));
+            this.Icon = global::CapaVista_Contabilidad.Properties.Resources.Icono_Contabilidad;
             this.MinimumSize = new System.Drawing.Size(1000, 800);
             this.Name = "FrmMDIContabilidad";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "10000 - PrincipalContabilidad";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.ContabilidadPnlFondo.ResumeLayout(false);
             this.ContabilidadPnlPrincipal.ResumeLayout(false);
             this.ContabilidadPnlLateral.ResumeLayout(false);

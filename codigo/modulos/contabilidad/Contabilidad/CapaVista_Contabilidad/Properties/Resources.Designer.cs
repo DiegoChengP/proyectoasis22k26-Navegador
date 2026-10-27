@@ -188,6 +188,13 @@
             }
         }
 
+        internal static System.Drawing.Icon Icono_Contabilidad {
+            get {
+                object obj = ResourceManager.GetObject("Icono_Contabilidad", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+
         internal static System.Drawing.Bitmap burguer {
             get {
                 object obj = ResourceManager.GetObject("burguer", resourceCulture);

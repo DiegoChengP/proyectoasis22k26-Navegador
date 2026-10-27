@@ -4,13 +4,17 @@ using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using Diseno = CapaVista_CierreContable_Contabilidad.Componentes.ClsDisenoContabilidad;
-using CapaControlador_CierreContable_Contabilidad;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using Diseno = CapaVista_Contabilidad.Componentes.ClsDisenoContabilidad;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 using CapaControlador_Contabilidad;
-using CapaVista_CierreContable_Contabilidad.Componentes;
-using CapaVista_CierreContable_Contabilidad.Properties;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using CapaVista_Contabilidad.Componentes;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
-namespace CapaVista_CierreContable_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaVista_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public partial class FrmCierreContable : Form
     {
@@ -18,11 +22,15 @@ namespace CapaVista_CierreContable_Contabilidad
         private DataTable _Polizas;
         private readonly ClsPaginacionContabilidad _Paginacion;
 
-        public FrmCierreContable() : this(ClsPermisosPantallaContabilidad.Total)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmCierreContable() : this(ClsModeloPermisosPantallaContabilidad.Total)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
         }
 
-        public FrmCierreContable(ClsPermisosPantallaContabilidad Permisos)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmCierreContable(ClsModeloPermisosPantallaContabilidad Permisos)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             InitializeComponent();
             ContabilidadMetAplicarPermisos(Permisos);
@@ -42,7 +50,9 @@ namespace CapaVista_CierreContable_Contabilidad
             ContabilidadMetRevisar();
         }
 
-        private void ContabilidadMetAplicarPermisos(ClsPermisosPantallaContabilidad Permisos)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        private void ContabilidadMetAplicarPermisos(ClsModeloPermisosPantallaContabilidad Permisos)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnSimular, Permisos.PuedeEditar);
         }
@@ -67,7 +77,9 @@ namespace CapaVista_CierreContable_Contabilidad
                 : "Cierre pendiente: " + Error;
             ContabilidadLblValidacion.ForeColor = string.IsNullOrEmpty(Error) ? Color.FromArgb(70, 104, 125) : Color.FromArgb(197, 143, 62);
             ContabilidadBtnSimular.Enabled = string.IsNullOrEmpty(Error);
-            ClsResumenCierreContabilidad Resumen = _Controlador.ContabilidadFuncResumenCierre(_Polizas);
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ClsModeloResumenCierreContabilidad Resumen = _Controlador.ContabilidadFuncResumenCierre(_Polizas);
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
             ContabilidadLblResumen.Text = "Aplicadas: " + Resumen.Aplicadas + "     Borradores: " + Resumen.Borradores
                 + "     Debe aplicado: " + Diseno.ContabilidadFuncMoneda(Resumen.Debe) + "     Haber aplicado: " + Diseno.ContabilidadFuncMoneda(Resumen.Haber);
         }

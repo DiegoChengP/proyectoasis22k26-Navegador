@@ -7,7 +7,9 @@
     <ProjectGuid>{BCB0EDFF-C46E-4979-9E2C-66B44081F0DF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CapaVista_ActivosFijos_Contabilidad</RootNamespace>
+    <!-- Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026 -->
+    <RootNamespace>CapaVista_Contabilidad</RootNamespace>
+    <!-- Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026 -->
     <AssemblyName>CapaVista_ActivosFijos_Contabilidad</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

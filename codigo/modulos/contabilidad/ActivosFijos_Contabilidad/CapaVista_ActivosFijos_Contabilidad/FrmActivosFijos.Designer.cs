@@ -1,12 +1,10 @@
 ﻿/* Área: Contabilidad. Autor: Dylan Hernández. Carné: 0901-23-519.
  * Fecha: 14/10/2026. Propósito: presentación del prototipo de Activos fijos (Dylan). */
 using System.Windows.Forms;
-using CapaControlador_ActivosFijos_Contabilidad;
-using CapaControlador_Contabilidad;
-using CapaVista_ActivosFijos_Contabilidad.Componentes;
-using CapaVista_ActivosFijos_Contabilidad.Properties;
+using CapaVista_Contabilidad.Componentes;
+using CapaVista_Contabilidad.Properties;
 
-namespace CapaVista_ActivosFijos_Contabilidad
+namespace CapaVista_Contabilidad
 {
     partial class FrmActivosFijos
     {
@@ -284,8 +282,12 @@ namespace CapaVista_ActivosFijos_Contabilidad
             this.ContabilidadBtnGuardar.Location = new System.Drawing.Point(936, 626);
             this.ContabilidadBtnGuardar.Size = new System.Drawing.Size(220, 42);
             this.ContabilidadBtnGuardar.Estilo = Componentes.EstiloBotonContabilidad.Principal;
-            this.ContabilidadBtnGuardar.Icono = global::CapaVista_ActivosFijos_Contabilidad.Properties.Resources.ico_guardar;
+            this.ContabilidadBtnGuardar.Icono = global::CapaVista_Contabilidad.Properties.Resources.ico_guardar;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = global::CapaVista_Contabilidad.Properties.Resources.Icono_Contabilidad;
+            this.MaximizeBox = false;
             this.Name = "FrmActivosFijos";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1180, 688);
             this.BackColor = System.Drawing.Color.FromArgb(246, 247, 248);

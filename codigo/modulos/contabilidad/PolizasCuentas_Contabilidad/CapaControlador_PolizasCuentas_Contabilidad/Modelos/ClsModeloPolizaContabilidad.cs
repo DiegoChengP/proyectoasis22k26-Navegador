@@ -18,11 +18,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using CapaModelo_PolizasCuentas_Contabilidad.Contratos;
-using CapaModelo_PolizasCuentas_Contabilidad.Entidades;
-using CapaModelo_PolizasCuentas_Contabilidad.Repositorios;
 
-namespace CapaControlador_PolizasCuentas_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaControlador_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public class ClsModeloPolizaContabilidad : IValidatableObject
     {
@@ -45,7 +44,9 @@ namespace CapaControlador_PolizasCuentas_Contabilidad
 
         public string Modulo { get; set; }
 
-        public IList<ClsLineaPolizaContabilidad> Lineas { get; set; } = new List<ClsLineaPolizaContabilidad>();
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public IList<ClsModeloLineaPolizaContabilidad> Lineas { get; set; } = new List<ClsModeloLineaPolizaContabilidad>();
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
         public IEnumerable<ValidationResult> Validate(ValidationContext Contexto)
         {
@@ -54,7 +55,9 @@ namespace CapaControlador_PolizasCuentas_Contabilidad
                 yield return new ValidationResult("La póliza necesita al menos dos cuentas.", new[] { "Lineas" });
                 yield break;
             }
-            foreach (ClsLineaPolizaContabilidad Linea in Lineas)
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            foreach (ClsModeloLineaPolizaContabilidad Linea in Lineas)
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
             {
                 if (Linea.IdCuenta <= 0)
                 {

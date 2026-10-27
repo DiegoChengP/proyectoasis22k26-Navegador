@@ -6,12 +6,10 @@ using System;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
-using CapaControlador_ActivosFijos_Contabilidad;
-using CapaControlador_Contabilidad;
-using CapaVista_ActivosFijos_Contabilidad;
-using CapaVista_ActivosFijos_Contabilidad.Properties;
 
-namespace CapaVista_ActivosFijos_Contabilidad.Componentes
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaVista_Contabilidad.Componentes
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     internal static class ClsDisenoContabilidad
     {

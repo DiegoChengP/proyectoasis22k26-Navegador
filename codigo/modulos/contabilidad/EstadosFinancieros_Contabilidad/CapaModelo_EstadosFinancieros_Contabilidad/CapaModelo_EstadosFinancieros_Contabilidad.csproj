@@ -7,7 +7,9 @@
     <ProjectGuid>{6E3CF954-4F93-4239-9AB6-12E705827BD4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CapaModelo_EstadosFinancieros_Contabilidad</RootNamespace>
+    <!-- Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026 -->
+    <RootNamespace>CapaModelo_Contabilidad</RootNamespace>
+    <!-- Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026 -->
     <AssemblyName>CapaModelo_EstadosFinancieros_Contabilidad</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

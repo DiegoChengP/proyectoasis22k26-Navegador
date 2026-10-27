@@ -23,10 +23,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
 using System.Linq;
-using CapaModelo_PolizasCuentas_Contabilidad.Contratos;
-using CapaModelo_PolizasCuentas_Contabilidad.Entidades;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using CapaModelo_Contabilidad.Contratos;
+using CapaModelo_Contabilidad.Entidades;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
-namespace CapaModelo_PolizasCuentas_Contabilidad.Repositorios
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaModelo_Contabilidad.Repositorios
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public class ClsRepositorioPolizasContabilidad : CapaModelo_Contabilidad.Repositorios.ClsRepositorioMaestroContabilidad, IRepositorioPolizasContabilidad
     {

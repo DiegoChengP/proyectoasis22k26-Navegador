@@ -17,15 +17,15 @@
 using System;
 using System.Data;
 using System.Linq;
-using CapaControlador_Contabilidad;
-using CapaControlador_PolizasCuentas_Contabilidad;
 using CapaModelo_Contabilidad.Contratos;
 using CapaModelo_Contabilidad.Repositorios;
-using CapaModelo_PolizasCuentas_Contabilidad.Contratos;
-using CapaModelo_PolizasCuentas_Contabilidad.Entidades;
-using CapaModelo_PolizasCuentas_Contabilidad.Repositorios;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using CapaModelo_Contabilidad.Entidades;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
-namespace CapaControlador_CierreContable_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaControlador_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public class ClsControladorCierreContabilidad
     {
@@ -62,11 +62,15 @@ namespace CapaControlador_CierreContable_Contabilidad
             return string.Empty;
         }
 
-        public ClsResumenCierreContabilidad ContabilidadFuncResumenCierre(DataTable Polizas)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public ClsModeloResumenCierreContabilidad ContabilidadFuncResumenCierre(DataTable Polizas)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             var Filas = Polizas.Rows.Cast<DataRow>();
             var Aplicadas = Filas.Where(ContabilidadFuncEsFirme).ToList();
-            return new ClsResumenCierreContabilidad
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            return new ClsModeloResumenCierreContabilidad
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
             {
                 Aplicadas = Aplicadas.Count, Borradores = Filas.Count(Fila => (string)Fila["Estado"] == "BORRADOR"),
                 Debe = Aplicadas.Sum(Fila => (decimal)Fila["Debe"]), Haber = Aplicadas.Sum(Fila => (decimal)Fila["Haber"])

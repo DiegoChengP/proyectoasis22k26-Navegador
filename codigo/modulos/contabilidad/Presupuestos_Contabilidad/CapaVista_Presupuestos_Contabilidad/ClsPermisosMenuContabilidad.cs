@@ -12,14 +12,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using CapaControlador_Contabilidad;
-using CapaControlador_Presupuestos_Contabilidad;
-using CapaVista_Presupuestos_Contabilidad.Componentes;
-using CapaVista_Presupuestos_Contabilidad.Properties;
 
-namespace CapaVista_Presupuestos_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaVista_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
-    public sealed class ClsPermisosMenuContabilidad : IDisposable
+    // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+    internal sealed class ClsPermisosMenuContabilidad : IDisposable
+    // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
     {
         private readonly Dictionary<Button, Image> _Originales = new Dictionary<Button, Image>();
         private readonly Dictionary<Button, Image> _Grises = new Dictionary<Button, Image>();

@@ -14,14 +14,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using CapaControlador_Contabilidad;
-using CapaModelo_Contabilidad.Contratos;
-using CapaModelo_Contabilidad.Repositorios;
-using CapaModelo_Presupuestos_Contabilidad.Contratos;
-using CapaModelo_Presupuestos_Contabilidad.Entidades;
-using CapaModelo_Presupuestos_Contabilidad.Repositorios;
 
-namespace CapaControlador_Presupuestos_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaControlador_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public class ClsModeloPartidaPresupuestoContabilidad : IValidatableObject
     {

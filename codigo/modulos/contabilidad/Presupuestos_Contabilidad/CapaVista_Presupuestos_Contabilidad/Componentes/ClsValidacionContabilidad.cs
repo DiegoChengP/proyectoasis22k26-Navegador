@@ -5,12 +5,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CapaControlador_Contabilidad;
-using CapaControlador_Presupuestos_Contabilidad;
-using CapaVista_Presupuestos_Contabilidad;
-using CapaVista_Presupuestos_Contabilidad.Properties;
 
-namespace CapaVista_Presupuestos_Contabilidad.Componentes
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaVista_Contabilidad.Componentes
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     internal sealed class ClsValidacionContabilidad : IDisposable
     {

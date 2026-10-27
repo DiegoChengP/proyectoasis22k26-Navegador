@@ -78,7 +78,9 @@ namespace CapaControlador_Contabilidad
 
                     Encontradas++;
                     ClsPermisoAplicacion Permiso = Permisos.SeguridadMetObtenerPermisosSesion(Coincidencias[0].IdModulo, Coincidencias[0].IdAplicacion);
-                    Estado.Permisos[Aplicacion.Key] = new ClsPermisosPantallaContabilidad
+                    // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+                    Estado.Permisos[Aplicacion.Key] = new ClsModeloPermisosPantallaContabilidad
+                    // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
                     {
                         IdModulo = Coincidencias[0].IdModulo, IdAplicacion = Coincidencias[0].IdAplicacion,
                         TieneAcceso = Permiso.TieneAcceso, PuedeInsertar = Permiso.PuedeInsertar,
@@ -92,16 +94,22 @@ namespace CapaControlador_Contabilidad
             }
             catch (Exception Excepcion)
             {
-                foreach (int Codigo in _Aplicaciones.Keys) Estado.Permisos[Codigo] = ClsPermisosPantallaContabilidad.Ninguno;
+                // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+                foreach (int Codigo in _Aplicaciones.Keys) Estado.Permisos[Codigo] = ClsModeloPermisosPantallaContabilidad.Ninguno;
+                // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
                 Estado.Mensaje = "No se pudieron consultar los permisos de Contabilidad. " + Excepcion.Message;
             }
             return Estado;
         }
 
-        public ClsPermisosPantallaContabilidad ContabilidadFuncObtenerPermisos(int CodigoVentana)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public ClsModeloPermisosPantallaContabilidad ContabilidadFuncObtenerPermisos(int CodigoVentana)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
-            ClsPermisosPantallaContabilidad Permisos;
-            return ContabilidadFuncObtenerEstado().Permisos.TryGetValue(CodigoVentana, out Permisos) ? Permisos : ClsPermisosPantallaContabilidad.Ninguno;
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ClsModeloPermisosPantallaContabilidad Permisos;
+            return ContabilidadFuncObtenerEstado().Permisos.TryGetValue(CodigoVentana, out Permisos) ? Permisos : ClsModeloPermisosPantallaContabilidad.Ninguno;
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         }
 
         private static string ContabilidadFuncNormalizarNombre(string Nombre)

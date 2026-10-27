@@ -7,7 +7,9 @@
     <ProjectGuid>{2676C937-C0E2-469E-B0E4-BE165DD1F08B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CapaControlador_Presupuestos_Contabilidad</RootNamespace>
+    <!-- Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026 -->
+    <RootNamespace>CapaControlador_Contabilidad</RootNamespace>
+    <!-- Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026 -->
     <AssemblyName>CapaControlador_Presupuestos_Contabilidad</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

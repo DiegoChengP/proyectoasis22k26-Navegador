@@ -14,9 +14,9 @@
  * ===================================================================
 */
 
-using CapaModelo_PolizasCuentas_Contabilidad.Contratos;
-using CapaModelo_PolizasCuentas_Contabilidad.Repositorios;
-namespace CapaModelo_PolizasCuentas_Contabilidad.Entidades
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaModelo_Contabilidad.Entidades
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public class ClsCuentaContabilidad
     {

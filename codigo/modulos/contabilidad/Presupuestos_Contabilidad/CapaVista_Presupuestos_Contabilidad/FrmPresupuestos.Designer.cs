@@ -1,12 +1,10 @@
 ﻿/* Área: Contabilidad. Autor: Mario Taracena. Carné: 0901-23-9335.
  * Fecha: 14/10/2026. Propósito: presentación del prototipo de Presupuestos (Mario). */
 using System.Windows.Forms;
-using CapaControlador_Contabilidad;
-using CapaControlador_Presupuestos_Contabilidad;
-using CapaVista_Presupuestos_Contabilidad.Componentes;
-using CapaVista_Presupuestos_Contabilidad.Properties;
+using CapaVista_Contabilidad.Componentes;
+using CapaVista_Contabilidad.Properties;
 
-namespace CapaVista_Presupuestos_Contabilidad
+namespace CapaVista_Contabilidad
 {
     partial class FrmPresupuestos
     {
@@ -178,7 +176,7 @@ namespace CapaVista_Presupuestos_Contabilidad
             this.ContabilidadBtnAgregar.Location = new System.Drawing.Point(907, 34);
             this.ContabilidadBtnAgregar.Size = new System.Drawing.Size(184, 42);
             this.ContabilidadBtnAgregar.Estilo = Componentes.EstiloBotonContabilidad.Acento;
-            this.ContabilidadBtnAgregar.Icono = global::CapaVista_Presupuestos_Contabilidad.Properties.Resources.ico_mas;
+            this.ContabilidadBtnAgregar.Icono = global::CapaVista_Contabilidad.Properties.Resources.ico_mas;
             this.ContabilidadDgvDetalle.Name = "ContabilidadDgvDetalle";
             this.ContabilidadPnlDetalle.Controls.Add(this.ContabilidadDgvDetalle);
             this.ContabilidadDgvDetalle.Location = new System.Drawing.Point(20, 92);
@@ -235,8 +233,12 @@ namespace CapaVista_Presupuestos_Contabilidad
             this.ContabilidadBtnGuardar.Location = new System.Drawing.Point(916, 626);
             this.ContabilidadBtnGuardar.Size = new System.Drawing.Size(240, 42);
             this.ContabilidadBtnGuardar.Estilo = Componentes.EstiloBotonContabilidad.Principal;
-            this.ContabilidadBtnGuardar.Icono = global::CapaVista_Presupuestos_Contabilidad.Properties.Resources.ico_guardar;
+            this.ContabilidadBtnGuardar.Icono = global::CapaVista_Contabilidad.Properties.Resources.ico_guardar;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = global::CapaVista_Contabilidad.Properties.Resources.Icono_Contabilidad;
+            this.MaximizeBox = false;
             this.Name = "FrmPresupuestos";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1180, 688);
             this.BackColor = System.Drawing.Color.FromArgb(246, 247, 248);

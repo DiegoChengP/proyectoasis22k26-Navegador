@@ -185,4 +185,9 @@
   <data name="ico_quitar_oscuro" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ico_quitar_oscuro.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <!-- Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026 -->
+  <data name="Icono_Contabilidad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icono-Contabilidad.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <!-- Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026 -->
 </root>

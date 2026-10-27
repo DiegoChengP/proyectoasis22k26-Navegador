@@ -1,12 +1,10 @@
 ﻿/* Área: Contabilidad. Autor: Gabriel André Guillén Pocón. Carné: 0901-23-1998.
  * Fecha: 14/10/2026. Propósito: presentación de estado de resultados de ejemplo. */
 using System.Windows.Forms;
-using CapaControlador_Contabilidad;
-using CapaControlador_EstadosFinancieros_Contabilidad;
-using CapaVista_EstadosFinancieros_Contabilidad.Componentes;
-using CapaVista_EstadosFinancieros_Contabilidad.Properties;
+using CapaVista_Contabilidad.Componentes;
+using CapaVista_Contabilidad.Properties;
 
-namespace CapaVista_EstadosFinancieros_Contabilidad
+namespace CapaVista_Contabilidad
 {
     partial class FrmEstadosFinancieros
     {
@@ -165,7 +163,11 @@ namespace CapaVista_EstadosFinancieros_Contabilidad
             this.ContabilidadLblResumen.ForeColor = System.Drawing.Color.FromArgb(35, 50, 61);
             this.ContabilidadLblResumen.BackColor = System.Drawing.Color.Transparent;
             this.ContabilidadLblResumen.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = global::CapaVista_Contabilidad.Properties.Resources.Icono_Contabilidad;
+            this.MaximizeBox = false;
             this.Name = "FrmEstadosFinancieros";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1180, 688);
             this.BackColor = System.Drawing.Color.FromArgb(246, 247, 248);

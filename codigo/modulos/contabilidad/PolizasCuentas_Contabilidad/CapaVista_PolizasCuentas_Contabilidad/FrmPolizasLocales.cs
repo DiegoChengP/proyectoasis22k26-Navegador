@@ -12,33 +12,43 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using CapaControlador_PolizasCuentas_Contabilidad;
-using CapaVista_PolizasCuentas_Contabilidad.Componentes;
-using CapaVista_PolizasCuentas_Contabilidad.Properties;
-using EstadoEntidadContabilidad = CapaControlador_Contabilidad.EstadoEntidadContabilidad;
-using ClsLimitesContabilidad = CapaControlador_Contabilidad.ClsLimitesContabilidad;
-using ClsPermisosPantallaContabilidad = CapaControlador_Contabilidad.ClsPermisosPantallaContabilidad;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using CapaControlador_Contabilidad;
+using CapaVista_Contabilidad.Componentes;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
-namespace CapaVista_PolizasCuentas_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaVista_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public partial class FrmPolizasLocales : Form
     {
         private readonly int _IdModulo;
-        private ClsPermisosPantallaContabilidad _Permisos;
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        private ClsModeloPermisosPantallaContabilidad _Permisos;
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         private readonly ClsControladorPolizasContabilidad _Controlador = new ClsControladorPolizasContabilidad();
-        private readonly BindingList<ClsLineaPolizaContabilidad> _Lineas = new BindingList<ClsLineaPolizaContabilidad>();
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        private readonly BindingList<ClsModeloLineaPolizaContabilidad> _Lineas = new BindingList<ClsModeloLineaPolizaContabilidad>();
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         private readonly CultureInfo _Cultura = CultureInfo.GetCultureInfo("es-GT");
         private readonly ClsValidacionContabilidad _Validacion = new ClsValidacionContabilidad();
 
-        public FrmPolizasLocales() : this(ClsPermisosPantallaContabilidad.Total, 1)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmPolizasLocales() : this(ClsModeloPermisosPantallaContabilidad.Total, 1)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
         }
 
-        public FrmPolizasLocales(ClsPermisosPantallaContabilidad Permisos) : this(Permisos, 1)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmPolizasLocales(ClsModeloPermisosPantallaContabilidad Permisos) : this(Permisos, 1)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
         }
 
-        public FrmPolizasLocales(ClsPermisosPantallaContabilidad Permisos, int IdModulo)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmPolizasLocales(ClsModeloPermisosPantallaContabilidad Permisos, int IdModulo)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             _IdModulo = IdModulo;
             InitializeComponent();
@@ -69,7 +79,9 @@ namespace CapaVista_PolizasCuentas_Contabilidad
             ContabilidadMetNueva(this, EventArgs.Empty);
         }
 
-        private void ContabilidadMetAplicarPermisos(ClsPermisosPantallaContabilidad Permisos)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        private void ContabilidadMetAplicarPermisos(ClsModeloPermisosPantallaContabilidad Permisos)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnNueva, Permisos.PuedeInsertar);
             ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnAgregar, Permisos.PuedeInsertar);
@@ -104,7 +116,9 @@ namespace CapaVista_PolizasCuentas_Contabilidad
         {
             ContabilidadDgvDetalle.EndEdit();
             string Nombre = ContabilidadCboCuenta.Text.Trim();
-            ClsCuentaPolizaContabilidad Cuenta = ContabilidadCboCuenta.Items.Cast<ClsCuentaPolizaContabilidad>().FirstOrDefault(Elemento =>
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ClsModeloCuentaPolizaContabilidad Cuenta = ContabilidadCboCuenta.Items.Cast<ClsModeloCuentaPolizaContabilidad>().FirstOrDefault(Elemento =>
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
                 string.Equals(Elemento.Descripcion, Nombre, StringComparison.CurrentCultureIgnoreCase));
             if (Cuenta == null)
             {
@@ -118,7 +132,9 @@ namespace CapaVista_PolizasCuentas_Contabilidad
                 _Validacion.ContabilidadFuncValidar(ContabilidadCboCuenta, "La cuenta ya está agregada al detalle.");
                 return;
             }
-            _Lineas.Add(new ClsLineaPolizaContabilidad
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            _Lineas.Add(new ClsModeloLineaPolizaContabilidad
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
             {
                 IdCuenta = IdCuenta, Cuenta = Cuenta.Descripcion, Debe = 0m, Haber = 0m
             });
@@ -135,7 +151,9 @@ namespace CapaVista_PolizasCuentas_Contabilidad
             if (Argumentos.RowIndex < 0 || Argumentos.ColumnIndex != ContabilidadColQuitar.Index) return;
             if (!_Permisos.PuedeEliminar) return;
             ContabilidadDgvDetalle.EndEdit();
-            ClsLineaPolizaContabilidad Linea = ContabilidadDgvDetalle.Rows[Argumentos.RowIndex].DataBoundItem as ClsLineaPolizaContabilidad;
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ClsModeloLineaPolizaContabilidad Linea = ContabilidadDgvDetalle.Rows[Argumentos.RowIndex].DataBoundItem as ClsModeloLineaPolizaContabilidad;
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
             if (Linea != null) _Lineas.Remove(Linea);
         }
 
@@ -162,7 +180,9 @@ namespace CapaVista_PolizasCuentas_Contabilidad
             if (Argumentos.RowIndex < 0 ||
                 (Argumentos.ColumnIndex != ContabilidadColDebe.Index && Argumentos.ColumnIndex != ContabilidadColHaber.Index)) return;
             ContabilidadDgvDetalle.CancelEdit();
-            ClsLineaPolizaContabilidad Linea = ContabilidadDgvDetalle.Rows[Argumentos.RowIndex].DataBoundItem as ClsLineaPolizaContabilidad;
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            ClsModeloLineaPolizaContabilidad Linea = ContabilidadDgvDetalle.Rows[Argumentos.RowIndex].DataBoundItem as ClsModeloLineaPolizaContabilidad;
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
             if (Linea != null)
             {
                 if (Argumentos.ColumnIndex == ContabilidadColDebe.Index) Linea.Debe = 0m;
@@ -253,9 +273,10 @@ namespace CapaVista_PolizasCuentas_Contabilidad
                 return;
             }
 
-            if (Aplicar && MessageBox.Show(this,
-                    "¿Desea validar la póliza? Una póliza validada ya no se podrá modificar.",
-                    "Validar póliza", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+            if (Aplicar && !ClsDialogosContabilidad.ContabilidadFuncConfirmar(this,
+                    "¿Desea validar la póliza? Una póliza validada ya no se podrá modificar.", "Validar"))
+            // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
                 return;
 
             string Estado = Aplicar ? "VALIDADA" : Convert.ToString(ContabilidadCboEstado.SelectedItem);

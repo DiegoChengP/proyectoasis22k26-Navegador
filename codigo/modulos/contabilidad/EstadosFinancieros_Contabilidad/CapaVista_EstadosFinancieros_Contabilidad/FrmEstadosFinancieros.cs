@@ -4,13 +4,17 @@ using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using Diseno = CapaVista_EstadosFinancieros_Contabilidad.Componentes.ClsDisenoContabilidad;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using Diseno = CapaVista_Contabilidad.Componentes.ClsDisenoContabilidad;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 using CapaControlador_Contabilidad;
-using CapaControlador_EstadosFinancieros_Contabilidad;
-using CapaVista_EstadosFinancieros_Contabilidad.Componentes;
-using CapaVista_EstadosFinancieros_Contabilidad.Properties;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using CapaVista_Contabilidad.Componentes;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
-namespace CapaVista_EstadosFinancieros_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaVista_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public partial class FrmEstadosFinancieros : Form
     {
@@ -19,11 +23,15 @@ namespace CapaVista_EstadosFinancieros_Contabilidad
         private readonly ClsPaginacionContabilidad _Paginacion;
         private readonly ClsValidacionContabilidad _Validacion = new ClsValidacionContabilidad();
 
-        public FrmEstadosFinancieros() : this(ClsPermisosPantallaContabilidad.Total)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmEstadosFinancieros() : this(ClsModeloPermisosPantallaContabilidad.Total)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
         }
 
-        public FrmEstadosFinancieros(ClsPermisosPantallaContabilidad Permisos)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmEstadosFinancieros(ClsModeloPermisosPantallaContabilidad Permisos)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             InitializeComponent();
             ContabilidadMetAplicarPermisos(Permisos);
@@ -40,7 +48,9 @@ namespace CapaVista_EstadosFinancieros_Contabilidad
             ContabilidadMetConsultar();
         }
 
-        private void ContabilidadMetAplicarPermisos(ClsPermisosPantallaContabilidad Permisos)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        private void ContabilidadMetAplicarPermisos(ClsModeloPermisosPantallaContabilidad Permisos)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
         }
 

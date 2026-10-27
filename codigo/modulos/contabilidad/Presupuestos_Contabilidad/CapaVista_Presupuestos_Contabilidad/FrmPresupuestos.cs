@@ -4,13 +4,17 @@ using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using Diseno = CapaVista_Presupuestos_Contabilidad.Componentes.ClsDisenoContabilidad;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using Diseno = CapaVista_Contabilidad.Componentes.ClsDisenoContabilidad;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 using CapaControlador_Contabilidad;
-using CapaControlador_Presupuestos_Contabilidad;
-using CapaVista_Presupuestos_Contabilidad.Componentes;
-using CapaVista_Presupuestos_Contabilidad.Properties;
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+using CapaVista_Contabilidad.Componentes;
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
-namespace CapaVista_Presupuestos_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaVista_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public partial class FrmPresupuestos : Form
     {
@@ -21,11 +25,15 @@ namespace CapaVista_Presupuestos_Contabilidad
         private bool _CargandoDatos;
         private bool _HayCambios;
 
-        public FrmPresupuestos() : this(ClsPermisosPantallaContabilidad.Total)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmPresupuestos() : this(ClsModeloPermisosPantallaContabilidad.Total)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
         }
 
-        public FrmPresupuestos(ClsPermisosPantallaContabilidad Permisos)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        public FrmPresupuestos(ClsModeloPermisosPantallaContabilidad Permisos)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             InitializeComponent();
             ContabilidadMetAplicarPermisos(Permisos);
@@ -62,7 +70,9 @@ namespace CapaVista_Presupuestos_Contabilidad
             ContabilidadMetCargar(true);
         }
 
-        private void ContabilidadMetAplicarPermisos(ClsPermisosPantallaContabilidad Permisos)
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        private void ContabilidadMetAplicarPermisos(ClsModeloPermisosPantallaContabilidad Permisos)
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
         {
             ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnNueva, Permisos.PuedeInsertar);
             ClsPermisosMenuContabilidad.ContabilidadMetRestringir(ContabilidadBtnEjemplo, Permisos.PuedeInsertar);

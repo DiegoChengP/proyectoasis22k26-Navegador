@@ -2,11 +2,10 @@
  * Fecha: 14/10/2026. Propósito: formato y clase contable de EST-10 V1.1, Parte III. */
 using System;
 using System.Text.RegularExpressions;
-using CapaModelo_PolizasCuentas_Contabilidad.Contratos;
-using CapaModelo_PolizasCuentas_Contabilidad.Entidades;
-using CapaModelo_PolizasCuentas_Contabilidad.Repositorios;
 
-namespace CapaControlador_PolizasCuentas_Contabilidad
+// Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+namespace CapaControlador_Contabilidad
+// Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 {
     public static class ClsCodigoCuentaContabilidad
     {

@@ -5,7 +5,6 @@
  * Propósito: reglas de presentación comunes de las ventanas del módulo (EST-10 V1.1).
  * Esta clase pertenece a la Vista; no contiene operaciones de negocio ni datos.
  */
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -13,8 +12,9 @@ namespace CapaVista_Contabilidad
 {
     internal static class ClsPresentacionContabilidad
     {
-        private static readonly Icon _IconoContabilidad = (Icon)new ComponentResourceManager(
-            typeof(FrmMDIContabilidad)).GetObject("$this.Icon");
+        // Inicio de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
+        private static readonly Icon _IconoContabilidad = Properties.Resources.Icono_Contabilidad;
+        // Fin de cambio: Mario Taracena - 0901-23-9335 - 27/10/2026
 
         private static readonly System.Collections.Generic.Dictionary<string, int> _Codigos = new System.Collections.Generic.Dictionary<string, int>
         {

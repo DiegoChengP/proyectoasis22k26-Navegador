@@ -29,20 +29,24 @@ namespace CapaVista_Contabilidad
 
         private void InitializeComponent()
         {
-            this.ContabilidadUsrNavegador = new CapaVista_Navegador.Navegador();
+            this.ContabilidadNavVidaUtil = new CapaVista_Navegador.Navegador();
             this.SuspendLayout();
-            this.ContabilidadUsrNavegador.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.ContabilidadNavVidaUtil.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ContabilidadUsrNavegador.Location = new System.Drawing.Point(11, 11);
-            this.ContabilidadUsrNavegador.Margin = new System.Windows.Forms.Padding(2);
-            this.ContabilidadUsrNavegador.Name = "ContabilidadUsrNavegador";
-            this.ContabilidadUsrNavegador.Size = new System.Drawing.Size(1158, 90);
-            this.ContabilidadUsrNavegador.TabIndex = 0;
+            this.ContabilidadNavVidaUtil.Location = new System.Drawing.Point(11, 11);
+            this.ContabilidadNavVidaUtil.Margin = new System.Windows.Forms.Padding(2);
+            this.ContabilidadNavVidaUtil.Name = "ContabilidadNavVidaUtil";
+            this.ContabilidadNavVidaUtil.Size = new System.Drawing.Size(1158, 90);
+            this.ContabilidadNavVidaUtil.TabIndex = 0;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1180, 688);
-            this.Controls.Add(this.ContabilidadUsrNavegador);
+            this.Controls.Add(this.ContabilidadNavVidaUtil);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = global::CapaVista_Contabilidad.Properties.Resources.Icono_Contabilidad;
+            this.MaximizeBox = false;
             this.Name = "FrmMantenimientoVidaUtil";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "10013 - MantenimientoVidaUtil";
             this.ResumeLayout(false);
 
@@ -50,6 +54,6 @@ namespace CapaVista_Contabilidad
 
         #endregion
 
-        private CapaVista_Navegador.Navegador ContabilidadUsrNavegador;
+        private CapaVista_Navegador.Navegador ContabilidadNavVidaUtil;
     }
 }
