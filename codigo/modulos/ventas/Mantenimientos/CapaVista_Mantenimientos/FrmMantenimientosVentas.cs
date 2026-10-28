@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using CapaVista_Navegador;
+using System.Windows.Forms;
 
 namespace CapaVista_Mantenimientos
 {
@@ -13,6 +14,7 @@ namespace CapaVista_Mantenimientos
             MinimumSize = System.Drawing.Size.Empty;
             Size = new System.Drawing.Size(System.Math.Min(Width, System.Math.Max(1, AreaTrabajo.Width - 32)),
                 System.Math.Min(Height, System.Math.Max(1, AreaTrabajo.Height - 32)));
+            VentasUsrNavegador.NavegadorMetConfigurar("tblaplicacion", 4, 4);
         }
     }
 }
