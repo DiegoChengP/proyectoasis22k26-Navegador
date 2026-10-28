@@ -12,7 +12,7 @@ namespace CapaModelo_Ventas
         {
             get
             {
-                string Cadena = Environment.GetEnvironmentVariable("VENTAS_ODBC");
+                string Cadena = Environment.GetEnvironmentVariable("EmbutidosS.A");
                 if (string.IsNullOrWhiteSpace(Cadena)) Cadena = ConfigurationManager.AppSettings["VentasConexion"];
                 return string.IsNullOrWhiteSpace(Cadena) ? "Dsn=EmbutidosS.A;Connection Timeout=5" : Cadena;
             }
