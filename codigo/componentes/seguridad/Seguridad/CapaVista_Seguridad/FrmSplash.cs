@@ -93,12 +93,12 @@ namespace CapaVista_Seguridad
                         //principal = MDICompras;
                         //break;
 
-//                    case "Ventas":
-//                        var mdiVentas = new CapaVista_Ventas.FrmMdiVentas(
-//                           ClsSesionSeguridad.NombreEmpleado,
-//                            ClsSesionSeguridad.SeguridadMetRolesComoTexto(), ClsSesionSeguridad.IdUsuario);
-//                           principal = mdiVentas;
-//                        break;
+                 // case "Ventas":
+                   //  var mdiVentas = new CapaVista_Ventas.FrmMdiVentas(
+                     //     ClsSesionSeguridad.NombreEmpleado,
+                       //     ClsSesionSeguridad.SeguridadMetRolesComoTexto(), ClsSesionSeguridad.IdUsuario);
+                      //     principal = mdiVentas;
+                       // break;
 
                     //case "Bancos":
                         //var MdiBancos = new FrmMDIBancos();
