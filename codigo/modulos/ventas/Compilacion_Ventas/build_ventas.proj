@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <SalidaVentas>$(MSBuildThisFileDirectory)..\Ejecutable_Ventas\Ejecutable_Ventas\bin\$(Configuration)\</SalidaVentas>
-    <OpcionesReferenciasVentas>PlatformTarget=AnyCPU;BuildProjectReferences=false;CustomBeforeMicrosoftCommonTargets=$(MSBuildThisFileDirectory)build_componentes_ventas.targets</OpcionesReferenciasVentas>
+    <OpcionesReferenciasVentas>PlatformTarget=AnyCPU;BuildProjectReferences=false;VentasDependenciasPreparadas=true;CustomBeforeMicrosoftCommonTargets=$(MSBuildThisFileDirectory)build_componentes_ventas.targets</OpcionesReferenciasVentas>
   </PropertyGroup>
   <ItemGroup>
     <SolucionVentas Include="..\Ventas Y CxC\Facturas\Facturas.sln" />
@@ -77,7 +77,8 @@
     <SimboloVentas Include="..\Ventas Y CxC\VentasYCxC\CapaVista_Ventas\bin\$(Configuration)\CapaVista_Ventas.pdb" />
   </ItemGroup>
   <Import Project="build_componentes_ventas.proj" />
-  <Target Name="Compilar" DependsOnTargets="ValidarConfiguracion;CompilarComponentesVentas">
+  <Target Name="PrepararDependenciasVentas" DependsOnTargets="ValidarConfiguracion;CompilarComponentesVentas" />
+  <Target Name="Compilar" DependsOnTargets="PrepararDependenciasVentas">
     <Message Text="[8/8] Compilando soluciones MVC de Ventas en paralelo ($(Configuration))..." Importance="high" />
     <MSBuild Projects="..\Ejecutable_Ventas\Ejecutable_Ventas\Ejecucion_Ventas.csproj;..\Ventas Y CxC\ComisionVendedores\Ejecucion_ComisionVendedores\ComisionVendedores.csproj" Targets="Build" Properties="Configuration=$(Configuration);Platform=AnyCPU;$(OpcionesReferenciasVentas)" BuildInParallel="true" StopOnFirstFailure="true" />
     <CallTarget Targets="ReunirBibliotecas" />

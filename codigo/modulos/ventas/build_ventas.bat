@@ -71,7 +71,7 @@ if not exist "%VENTAS_BUILD%logs" goto SIN_LOGS
 echo         MSBuild disponible.
 echo   %VENTAS_MORADO%[2/2]%VENTAS_RESET% Compilando soluciones y reuniendo las DLL...
 echo         %VENTAS_GRIS%Solo se recompilan los proyectos que cambiaron.%VENTAS_RESET%
-echo         %VENTAS_GRIS%Paquetes incluidos en el repositorio. Sin descargas de NuGet.%VENTAS_RESET%
+echo         %VENTAS_GRIS%Paquetes versionados del repositorio; sin depender de instalaciones locales.%VENTAS_RESET%
 echo.
 set "VENTAS_INICIO=%TIME: =0%"
 pushd "%VENTAS_BUILD%"
