@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapaVista_Nomina", "CapaVis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapaControlador_Nomina", "CapaControlador_Nomina\CapaControlador_Nomina.csproj", "{52FA472A-4A1D-4CE8-8614-D376007A9E96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapaModelo_Nominas", "CapaModelo_Nominas\CapaModelo_Nominas.csproj", "{4DCFDDDC-3AC9-4AB8-AC6B-447143F948EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapaModelo_Nomina", "CapaModelo_Nomina\CapaModelo_Nomina.csproj", "{4DCFDDDC-3AC9-4AB8-AC6B-447143F948EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

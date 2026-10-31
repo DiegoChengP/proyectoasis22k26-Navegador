@@ -21,15 +21,16 @@
  * ===================================================================
 */
 
+using CapaVista_CierreNominas.Formularios;
+using CapaVista_Empleado.Formularios;
+using CapaVista_EvaluacionDesempeño.Formularios;
+using CapaVista_Nomina.Formularios;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using CapaVista_CierreNominas.Fomularios;
-using CapaVista_Nomina.Formularios;
-using CapaVista_Empleado.Formularios;
 
 namespace CapaVista_Rrhh.Formularios
 {
@@ -43,6 +44,7 @@ namespace CapaVista_Rrhh.Formularios
         private Bitmap _FondoNavegadorEscalado;
 
         private bool _MedidasListas;
+        // float porque Scale(), SizeF y Font de WinForms solo trabajan con float
         private float _Zoom = 1f;
         private int _Margen, _Separacion, _AnchoKpiBase, _AltoKpiBase, _TopResumen, _OffsetKpi, _OffsetInfo;
         private int _AltoHeroMin, _MascotaAbajo, _AltoInfoBase, _InfoPad, _DxIcono, _DxNota;
@@ -553,10 +555,9 @@ namespace CapaVista_Rrhh.Formularios
 
         private void RrhhBtnEvaluacionDesempeno_Click(object sender, EventArgs e)
         {
-            using (var Evaluacion = new CapaVista_EvaluacionDesempeño.Formularios.FrmEvaluacionDesempeño())
-            {
-                Evaluacion.ShowDialog(this);
-            }
+            FrmEvaluacionDesempeño Evaluacion = new FrmEvaluacionDesempeño();
+            Evaluacion.ShowDialog(this);
+            
         }
 
         private void RrhhBtnLiquidacion_Click(object sender, EventArgs e)

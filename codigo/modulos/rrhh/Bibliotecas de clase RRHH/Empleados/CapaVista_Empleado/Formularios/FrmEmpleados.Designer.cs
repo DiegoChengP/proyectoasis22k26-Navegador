@@ -150,6 +150,7 @@
             this.RrhhBtnAsigP.TabIndex = 4;
             this.RrhhBtnAsigP.Text = "Abrir";
             this.RrhhBtnAsigP.UseVisualStyleBackColor = false;
+            this.RrhhBtnAsigP.Click += new System.EventHandler(this.RrhhBtnAsigP_Click);
             // 
             // RrhhLblSubAsigP
             // 
@@ -210,6 +211,7 @@
             this.RrhhBtnTipP.TabIndex = 5;
             this.RrhhBtnTipP.Text = "Abrir";
             this.RrhhBtnTipP.UseVisualStyleBackColor = false;
+            this.RrhhBtnTipP.Click += new System.EventHandler(this.RrhhBtnTipP_Click);
             // 
             // RrhhLblSubTipP
             // 
@@ -271,6 +273,7 @@
             this.RrhhBtnPuestos.TabIndex = 4;
             this.RrhhBtnPuestos.Text = "Abrir";
             this.RrhhBtnPuestos.UseVisualStyleBackColor = false;
+            this.RrhhBtnPuestos.Click += new System.EventHandler(this.RrhhBtnPuestos_Click);
             // 
             // RrhhLblSubPuesto
             // 
@@ -331,6 +334,7 @@
             this.RrhhBtnDepartamentos.TabIndex = 4;
             this.RrhhBtnDepartamentos.Text = "Abrir";
             this.RrhhBtnDepartamentos.UseVisualStyleBackColor = false;
+            this.RrhhBtnDepartamentos.Click += new System.EventHandler(this.RrhhBtnDepartamentos_Click);
             // 
             // RrhhLblSubDepartamento
             // 
@@ -391,6 +395,7 @@
             this.RrhhBtnJornadas.TabIndex = 5;
             this.RrhhBtnJornadas.Text = "Abrir";
             this.RrhhBtnJornadas.UseVisualStyleBackColor = false;
+            this.RrhhBtnJornadas.Click += new System.EventHandler(this.RrhhBtnJornadas_Click);
             // 
             // RrhhLblSubJornada
             // 
@@ -518,7 +523,7 @@
             this.MaximizeBox = false;
             this.Name = "FrmEmpleados";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "9001 - Empleados";
+            this.Text = "9001 – Empleados";
             this.RrhhPnlAsigP.ResumeLayout(false);
             this.RrhhPnlAsigP.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RrhhPbAsigP)).EndInit();

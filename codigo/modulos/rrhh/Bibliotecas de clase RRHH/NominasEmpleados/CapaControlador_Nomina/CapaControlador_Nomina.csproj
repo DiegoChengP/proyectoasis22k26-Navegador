@@ -31,10 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CapaModelo_Nominas">
-      <HintPath>..\CapaModelo_Nominas\bin\Debug\CapaModelo_Nominas.dll</HintPath>
+    <Reference Include="CapaModelo_Nomina">
+      <HintPath>..\CapaModelo_Nomina\bin\Debug\CapaModelo_Nomina.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -44,11 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modelos de controladores\ClsModeloPercepcionDeduccion.cs" />
+    <Compile Include="ObjetosdeValor\ClsEstadoEntidad.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Modelo de Controladores\" />
-    <Folder Include="Objetos de Valor\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-</Project>
+</Project>

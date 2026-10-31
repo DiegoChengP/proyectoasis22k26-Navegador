@@ -16,12 +16,8 @@ using System.Windows.Forms;
  * Fecha : 12/10/2026
  * ==================================================================
  * Propósito :
- *  Prototipo NO funcional de la ventana 9301 - PermisosVacaciones.
- *  Una sola ventana con dos secciones (Permisos y Vacaciones) que se
- *  eligen con botones tipo pestaña. Solo contiene el diseño de la
- *  pantalla (sin datos de ejemplo, eventos, validaciones ni acceso a
- *  datos). La lógica se conectará después a
- *  CapaControlador_PermisosVacaciones.
+ *  Ventana 9201 - Permisos y Vacaciones. Menú de mantenimientos
+ *  relacionados: desde aquí se abre FrmPermisos o FrmVacaciones.
  * ===================================================================
 */
 
@@ -34,14 +30,16 @@ namespace CapaVista_PermisosVacaciones.Formularios
             InitializeComponent();
         }
 
-        private void RrhhBtnPestañaVacaciones_Click(object sender, EventArgs e)
+        private void RrhhBtnAbrirPermisos_Click(object sender, EventArgs e)
         {
-            RrhhTabPermisosVacaciones.SelectedTab = RrhhTabPagVacaciones;
+            FrmPermisos RrhhFrmPermisos = new FrmPermisos();
+            RrhhFrmPermisos.ShowDialog(this);
         }
 
-        private void RrhhBtnPestañaPermisos_Click(object sender, EventArgs e)
+        private void RrhhBtnAbrirVacaciones_Click(object sender, EventArgs e)
         {
-            RrhhTabPermisosVacaciones.SelectedTab = RrhhTabPagPermisos;
+            FrmVacaciones RrhhFrmVacaciones = new FrmVacaciones();
+            RrhhFrmVacaciones.ShowDialog(this);
         }
     }
 }

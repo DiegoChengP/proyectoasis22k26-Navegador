@@ -93,6 +93,16 @@ namespace CapaVista_Empleado.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap btn_ayuda {
+            get {
+                object obj = ResourceManager.GetObject("btn_ayuda", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap btn_capacitaciones {
             get {
                 object obj = ResourceManager.GetObject("btn_capacitaciones", resourceCulture);
@@ -106,6 +116,16 @@ namespace CapaVista_Empleado.Properties {
         internal static System.Drawing.Bitmap btn_empleados {
             get {
                 object obj = ResourceManager.GetObject("btn_empleados", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap btn_reporte {
+            get {
+                object obj = ResourceManager.GetObject("btn_reporte", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

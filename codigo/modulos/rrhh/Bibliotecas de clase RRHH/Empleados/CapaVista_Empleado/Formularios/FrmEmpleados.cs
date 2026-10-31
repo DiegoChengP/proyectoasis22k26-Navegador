@@ -16,5 +16,30 @@ namespace CapaVista_Empleado.Formularios
         {
             InitializeComponent();
         }
+
+        private void RrhhBtnDepartamentos_Click(object sender, EventArgs e)
+        {
+            new FrmDepartamentosNavegador().ShowDialog(this);
+        }
+
+        private void RrhhBtnTipP_Click(object sender, EventArgs e)
+        {
+            new FrmTipoPuestosNavegador().ShowDialog(this);
+        }
+
+        private void RrhhBtnPuestos_Click(object sender, EventArgs e)
+        {
+            new FrmPuestosNavegador().ShowDialog(this);
+        }
+
+        private void RrhhBtnJornadas_Click(object sender, EventArgs e)
+        {
+            new FrmJornadasNavegador().ShowDialog(this);
+        }
+
+        private void RrhhBtnAsigP_Click(object sender, EventArgs e)
+        {
+            new FrmAsigPuestosNavegador().ShowDialog(this);
+        }
     }
 }

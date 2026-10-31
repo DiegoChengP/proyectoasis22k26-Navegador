@@ -173,9 +173,39 @@ namespace CapaVista_EvaluacionDesempeño.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap btn_cancelar {
+            get {
+                object obj = ResourceManager.GetObject("btn_cancelar", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap btn_nuevo {
             get {
                 object obj = ResourceManager.GetObject("btn_nuevo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap btn_plan {
+            get {
+                object obj = ResourceManager.GetObject("btn_plan", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap btn_realizarEvaluacion {
+            get {
+                object obj = ResourceManager.GetObject("btn_realizarEvaluacion", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -196,6 +226,16 @@ namespace CapaVista_EvaluacionDesempeño.Properties {
         internal static System.Drawing.Bitmap btn_reporte {
             get {
                 object obj = ResourceManager.GetObject("btn_reporte", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap btn_resultados {
+            get {
+                object obj = ResourceManager.GetObject("btn_resultados", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

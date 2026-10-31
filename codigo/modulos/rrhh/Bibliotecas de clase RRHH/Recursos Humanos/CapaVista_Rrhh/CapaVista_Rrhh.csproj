@@ -34,9 +34,6 @@
     <Reference Include="CapaControlador_Rrhh">
       <HintPath>..\CapaControlador_Rrhh\bin\Debug\CapaControlador_Rrhh.dll</HintPath>
     </Reference>
-    <Reference Include="CapaControlador_Seguridad">
-      <HintPath>..\..\..\..\componentes\seguridad\Seguridad\CapaVista_Seguridad\bin\Debug\CapaControlador_Seguridad.dll</HintPath>
-    </Reference>
     <Reference Include="CapaVista_Asistencia">
       <HintPath>..\..\Asistencia\CapaVista_Asistencia\bin\Debug\CapaVista_Asistencia.dll</HintPath>
     </Reference>
@@ -128,4 +125,4 @@
     <Folder Include="Ayudas\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-</Project>
+</Project>

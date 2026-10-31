@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CapaContolador_CierreNominas">
-      <HintPath>..\CapaContolador_CierreNominas\bin\Debug\CapaContolador_CierreNominas.dll</HintPath>
+    <Reference Include="CapaControlador_CierreNominas">
+      <HintPath>..\CapaControlador_CierreNominas\bin\Debug\CapaControlador_CierreNominas.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -46,10 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fomularios\FrmCierreNominas.cs">
+    <Compile Include="Formularios\FrmCierreNominas.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Fomularios\FrmCierreNominas.Designer.cs">
+    <Compile Include="Formularios\FrmCierreNominas.Designer.cs">
       <DependentUpon>FrmCierreNominas.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,9 +61,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Ayudas\" />
+    <Folder Include="frmReportes\" />
+    <Folder Include="Reportes\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Fomularios\FrmCierreNominas.resx">
+    <EmbeddedResource Include="Formularios\FrmCierreNominas.resx">
       <DependentUpon>FrmCierreNominas.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
