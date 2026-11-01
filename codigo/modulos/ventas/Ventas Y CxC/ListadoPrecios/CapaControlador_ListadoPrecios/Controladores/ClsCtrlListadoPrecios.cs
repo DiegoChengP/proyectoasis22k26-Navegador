@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CapaControlador_ListadoPrecios.Contratos.CapaControlador_ListadoPrecios;
 using CapaModelo_ListadoPrecios;
-using CapaControlador_ListadoPrecios.Contratos;
+using CapaModelo_ListadoPrecios.Entidades;
 
 namespace CapaControlador_ListadoPrecios
 {
@@ -13,33 +14,68 @@ namespace CapaControlador_ListadoPrecios
         public string MensajeEstado { get { return _Modelo.MensajeEstado; } }
         public bool UsaBaseDeDatos { get { return _Modelo.UsaBaseDeDatos; } }
 
-        public ClsCtrlListadoPrecios() { _Modelo = new ClsModeloListadoPrecios(); }
-
-        public List<ClsPrecioCliente> VentasFuncConsultarListado()
+        public ClsCtrlListadoPrecios()
         {
-            return _Modelo.VentasFuncObtenerListado().OrderBy(Elemento => Elemento.TipoCliente).ThenBy(Elemento => Elemento.TipoProducto).Select(Elemento => new ClsPrecioCliente { TipoCliente = Elemento.TipoCliente, TipoProducto = Elemento.TipoProducto, PorcentajeDescuento = Elemento.PorcentajeDescuento, PrecioBase = Elemento.PrecioBase, PrecioFinal = Elemento.PrecioFinal }).ToList();
+            _Modelo = new ClsModeloListadoPrecios();
         }
 
-        public decimal VentasFuncCalcularPrecioFinal(decimal PrecioBase, decimal Descuento)
+        public List<ClsPrecioCliente> VentasFuncConsultarListado(string tipoCliente, string marca, string linea, string categoria, string proveedor, string producto)
         {
-            if (PrecioBase < 0) throw new ArgumentOutOfRangeException("precioBase", "El precio base no puede ser negativo.");
-            if (Descuento < 0 || Descuento > 100) throw new ArgumentOutOfRangeException("descuento", "El descuento debe estar entre 0 y 100 %.");
-            return ClsModeloListadoPrecios.VentasFuncCalcularPrecioFinal(PrecioBase, Descuento);
+            return _Modelo.VentasFuncObtenerListado()
+                .OrderBy(x => x.TipoCliente)
+                .ThenBy(x => x.Producto)
+                .ToList();
         }
 
-        public bool VentasFuncGuardar(string TipoCliente, string TipoProducto, decimal Porcentaje, decimal PrecioBase, out string Mensaje)
+        public decimal VentasFuncCalcularPrecioFinal(decimal precioBase, decimal valor, string tipoModificacion)
         {
-            if (string.IsNullOrWhiteSpace(TipoCliente)) { Mensaje = "Seleccione un tipo de cliente."; return false; }
-            if (string.IsNullOrWhiteSpace(TipoProducto)) { Mensaje = "Seleccione un tipo de producto."; return false; }
-            if (PrecioBase < 0) { Mensaje = "El precio base no puede ser negativo."; return false; }
-            if (Porcentaje < 0 || Porcentaje > 100) { Mensaje = "El descuento debe estar entre 0 y 100 %."; return false; }
-            CapaModelo_ListadoPrecios.Entidades.ClsPrecioCliente Registro = new CapaModelo_ListadoPrecios.Entidades.ClsPrecioCliente
+            return ClsModeloListadoPrecios.VentasFuncCalcularPrecioFinal(precioBase, valor, tipoModificacion);
+        }
+
+        // Mantiene la firma existente para no romper otras llamadas del proyecto.
+        public bool VentasFuncGuardar(string tipoCliente, string producto, decimal porcentaje, decimal precioBase, string tipoModificacion, decimal valor, string alcance, out string mensaje)
+        {
+            ClsPrecioCliente existente = _Modelo.VentasFuncObtenerListado()
+                .FirstOrDefault(x => x.TipoCliente == tipoCliente && x.Producto == producto);
+            if (existente == null)
             {
-                TipoCliente = TipoCliente.Trim(), TipoProducto = TipoProducto.Trim(),
-                PorcentajeDescuento = Porcentaje, PrecioBase = PrecioBase,
-                PrecioFinal = VentasFuncCalcularPrecioFinal(PrecioBase, Porcentaje)
-            };
-            return _Modelo.VentasFuncGuardar(Registro, out Mensaje);
+                mensaje = "No se encontró la lista de precios y el producto seleccionados.";
+                return false;
+            }
+
+            existente.PrecioFinal = VentasFuncCalcularPrecioFinal(precioBase, valor, tipoModificacion);
+            existente.PrecioBase = precioBase;
+            existente.TipoModificacion = tipoModificacion;
+            existente.Valor = valor;
+            existente.AlcanceModificacion = alcance;
+            existente.PorcentajeDescuento = tipoModificacion == "Descuento" ? valor : 0m;
+            return VentasFuncGuardarVarios(new List<ClsPrecioCliente> { existente }, out mensaje);
+        }
+
+        // Recibe las filas reales seleccionadas en el formulario y las guarda juntas.
+        public bool VentasFuncGuardarVarios(IList<ClsPrecioCliente> registros, out string mensaje)
+        {
+            if (registros == null || registros.Count == 0)
+            {
+                mensaje = "No hay productos seleccionados para guardar.";
+                return false;
+            }
+
+            foreach (ClsPrecioCliente registro in registros)
+            {
+                if (registro == null || registro.IdProducto <= 0)
+                {
+                    mensaje = "Una de las filas no contiene un identificador de producto válido.";
+                    return false;
+                }
+                if (registro.PrecioFinal < 0m)
+                {
+                    mensaje = "El precio final no puede ser negativo.";
+                    return false;
+                }
+            }
+
+            return _Modelo.VentasFuncGuardarVarios(registros, out mensaje);
         }
     }
 }

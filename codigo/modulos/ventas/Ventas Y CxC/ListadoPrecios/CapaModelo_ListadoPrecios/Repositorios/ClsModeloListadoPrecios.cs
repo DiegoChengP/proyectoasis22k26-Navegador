@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Odbc;
 using System.Globalization;
 using CapaModelo_ListadoPrecios.Contratos;
@@ -7,9 +8,10 @@ using CapaModelo_ListadoPrecios.Entidades;
 
 namespace CapaModelo_ListadoPrecios
 {
-    // El listado usa las listas y productos del esquema de Embutidos.
+    // El listado utiliza las tablas reales de dbsistemaembutidos.
     public class ClsModeloListadoPrecios : IRepositorioListadoPrecios
     {
+        // Se reutiliza la conexión central del proyecto de Ventas.
         private static string CadenaConexion { get { return CapaModelo_Ventas.ClsConexion.CadenaConexion; } }
 
         public bool UsaBaseDeDatos { get; private set; }
@@ -22,114 +24,212 @@ namespace CapaModelo_ListadoPrecios
 
         public List<ClsPrecioCliente> VentasFuncObtenerListado()
         {
-            var Resultado = new List<ClsPrecioCliente>();
-            const string Sql = @"SELECT CONCAT(l.codigoListaPrecioEncabezado,' - ',l.nombreListaPrecioEncabezado) Lista,
-    CONCAT(p.skuProducto,' - ',p.nombreProducto) Producto,
-    p.precioVentaProducto BasePrecio,COALESCE(d.precioUnitarioListaPrecioDetalle,p.precioVentaProducto) PrecioFinal
-    FROM tblListaPrecioEncabezado l
-    CROSS JOIN tblProductoVenta pv
-    JOIN tblProducto p ON p.Pk_Producto=pv.Pk_ProductoVenta
-    LEFT JOIN tblListaPrecioDetalle d ON d.Fk_ListaPrecioEncabezado_Codigo=l.Pk_ListaPrecioEncabezado
-      AND d.Fk_Producto_Codigo=p.Pk_Producto AND d.activoListaPrecioDetalle=1
-    WHERE l.activoListaPrecioEncabezado=1 AND pv.activoProductoVenta=1
-    ORDER BY l.codigoListaPrecioEncabezado,p.skuProducto";
+            var resultado = new List<ClsPrecioCliente>();
+
+            // LEFT JOIN con listas vigentes: si aún no hay listas, se muestra el precio de venta del producto.
+            const string sql = @"
+                SELECT
+                    COALESCE(l.Pk_ListaPrecioEncabezado, 0) AS IdLista,
+                    CASE WHEN l.Pk_ListaPrecioEncabezado IS NULL
+                         THEN 'Precio de venta'
+                         ELSE CONCAT(l.codigoListaPrecioEncabezado, ' - ', l.nombreListaPrecioEncabezado)
+                    END AS ListaPrecio,
+                    p.idProducto,
+                    p.nombreProducto,
+                    COALESCE(m.nombreMarca, 'Sin marca') AS Marca,
+                    COALESCE(li.nombreLinea, 'Sin línea') AS Linea,
+                    COALESCE(c.nombreCategoria, 'Sin categoría') AS Categoria,
+                    'No disponible en BD' AS Proveedor,
+                    p.precioVentaProducto AS PrecioBase,
+                    COALESCE(d.precioUnitarioListaPrecioDetalle, p.precioVentaProducto) AS PrecioFinal
+                FROM tblproducto p
+                LEFT JOIN tblmarca m ON m.idMarca = p.fkMarcaIdMarca
+                LEFT JOIN tbllinea li ON li.idLinea = p.fkLineaIdLinea
+                LEFT JOIN tblcategoria c ON c.idCategoria = p.fkCategoriaIdCategoria
+                LEFT JOIN (
+                    SELECT Pk_ListaPrecioEncabezado, codigoListaPrecioEncabezado,
+                           nombreListaPrecioEncabezado
+                    FROM tbllistaprecioencabezado
+                    WHERE activoListaPrecioEncabezado = 1
+                      AND vigenteDesdeListaPrecioEncabezado <= CURDATE()
+                      AND (vigenteHastaListaPrecioEncabezado IS NULL
+                           OR vigenteHastaListaPrecioEncabezado >= CURDATE())
+                ) l ON 1 = 1
+                LEFT JOIN tbllistapreciodetalle d
+                    ON d.Fk_ListaPrecioEncabezado_Codigo = l.Pk_ListaPrecioEncabezado
+                   AND d.Fk_Producto_Codigo = p.idProducto
+                   AND d.activoListaPrecioDetalle = 1
+                WHERE p.estadoProducto = 1
+                ORDER BY ListaPrecio, p.nombreProducto;";
+
             try
             {
-                using (var Conexion = new OdbcConnection(CadenaConexion))
+                using (var conexion = new OdbcConnection(CadenaConexion))
                 {
-                    Conexion.Open();
-                    using (var Comando = new OdbcCommand(Sql, Conexion))
-                    using (var Lector = Comando.ExecuteReader())
-                        while (Lector.Read())
+                    conexion.Open();
+                    using (var comando = new OdbcCommand(sql, conexion))
+                    using (var lector = comando.ExecuteReader())
+                    {
+                        while (lector.Read())
                         {
-                            decimal Base = Convert.ToDecimal(Lector[2], CultureInfo.InvariantCulture);
-                            decimal Final = Convert.ToDecimal(Lector[3], CultureInfo.InvariantCulture);
-                            Resultado.Add(new ClsPrecioCliente
+                            decimal precioBase = Convert.ToDecimal(lector["PrecioBase"], CultureInfo.InvariantCulture);
+                            decimal precioFinal = Convert.ToDecimal(lector["PrecioFinal"], CultureInfo.InvariantCulture);
+
+                            resultado.Add(new ClsPrecioCliente
                             {
-                                TipoCliente = Convert.ToString(Lector[0], CultureInfo.InvariantCulture),
-                                TipoProducto = Convert.ToString(Lector[1], CultureInfo.InvariantCulture),
-                                PrecioBase = Base,
-                                PrecioFinal = Final,
-                                PorcentajeDescuento = Base > 0 ? Math.Round((1m - Final / Base) * 100m, 2) : 0m
+                                IdListaPrecio = Convert.ToInt32(lector["IdLista"], CultureInfo.InvariantCulture),
+                                IdProducto = Convert.ToInt32(lector["idProducto"], CultureInfo.InvariantCulture),
+                                TipoCliente = Convert.ToString(lector["ListaPrecio"], CultureInfo.InvariantCulture),
+                                Producto = Convert.ToString(lector["nombreProducto"], CultureInfo.InvariantCulture),
+                                Marca = Convert.ToString(lector["Marca"], CultureInfo.InvariantCulture),
+                                Linea = Convert.ToString(lector["Linea"], CultureInfo.InvariantCulture),
+                                Categoria = Convert.ToString(lector["Categoria"], CultureInfo.InvariantCulture),
+                                Proveedor = Convert.ToString(lector["Proveedor"], CultureInfo.InvariantCulture),
+                                PrecioBase = precioBase,
+                                PrecioFinal = precioFinal,
+                                PorcentajeDescuento = precioBase > 0m
+                                    ? Math.Round((precioBase - precioFinal) / precioBase * 100m, 2)
+                                    : 0m
                             });
                         }
+                    }
                 }
+
                 UsaBaseDeDatos = true;
-                MensajeEstado = "Listado cargado desde Embutidos.";
+                MensajeEstado = resultado.Count == 0
+                    ? "La conexión funciona, pero no hay productos activos en tblproducto."
+                    : "Datos cargados desde dbsistemaembutidos.";
+                return resultado;
             }
-            catch (OdbcException Error)
+            catch (Exception error)
             {
                 UsaBaseDeDatos = false;
-                MensajeEstado = "No se pudo consultar Embutidos: " + Error.Message;
+                MensajeEstado = "Error al consultar dbsistemaembutidos: " + error.Message;
                 throw;
             }
-            return Resultado;
         }
 
-        public bool VentasFuncGuardar(ClsPrecioCliente Registro, out string Mensaje)
+        public bool VentasFuncGuardar(ClsPrecioCliente registro, out string mensaje)
         {
-            if (Registro == null || string.IsNullOrWhiteSpace(Registro.TipoCliente) ||
-                string.IsNullOrWhiteSpace(Registro.TipoProducto) || Registro.PorcentajeDescuento < 0 ||
-                Registro.PorcentajeDescuento > 100)
+            var registros = new List<ClsPrecioCliente>();
+            if (registro != null) registros.Add(registro);
+            return VentasFuncGuardarVarios(registros, out mensaje);
+        }
+
+        // Guarda el conjunto completo en una sola transacción: todos se aplican o ninguno.
+        public bool VentasFuncGuardarVarios(IList<ClsPrecioCliente> registros, out string mensaje)
+        {
+            if (registros == null || registros.Count == 0)
             {
-                Mensaje = "Seleccione una lista y un producto válidos.";
+                mensaje = "No hay registros para guardar.";
                 return false;
             }
 
-            const string Buscar = @"SELECT l.Pk_ListaPrecioEncabezado,p.Pk_Producto,p.precioVentaProducto
-    FROM tblListaPrecioEncabezado l CROSS JOIN tblProducto p
-    WHERE CONCAT(l.codigoListaPrecioEncabezado,' - ',l.nombreListaPrecioEncabezado)=?
-      AND CONCAT(p.skuProducto,' - ',p.nombreProducto)=?
-      AND l.activoListaPrecioEncabezado=1";
-            const string Guardar = @"INSERT INTO tblListaPrecioDetalle(Fk_ListaPrecioEncabezado_Codigo,Fk_Producto_Codigo,precioUnitarioListaPrecioDetalle,activoListaPrecioDetalle)
-    VALUES (?,?,?,1) ON DUPLICATE KEY UPDATE precioUnitarioListaPrecioDetalle=VALUES(precioUnitarioListaPrecioDetalle),activoListaPrecioDetalle=1";
+            foreach (ClsPrecioCliente registro in registros)
+            {
+                if (registro == null || registro.IdProducto <= 0 || registro.PrecioFinal < 0m)
+                {
+                    mensaje = "Hay un registro sin identificador de producto válido o con precio negativo.";
+                    return false;
+                }
+                if (registro.IdListaPrecio < 0)
+                {
+                    mensaje = "El identificador de lista de precios no es válido.";
+                    return false;
+                }
+            }
+
+            const string guardarDetalle = @"
+                INSERT INTO tbllistapreciodetalle
+                    (Fk_ListaPrecioEncabezado_Codigo, Fk_Producto_Codigo,
+                     precioUnitarioListaPrecioDetalle, activoListaPrecioDetalle)
+                VALUES (?, ?, ?, 1)
+                ON DUPLICATE KEY UPDATE
+                    precioUnitarioListaPrecioDetalle = VALUES(precioUnitarioListaPrecioDetalle),
+                    activoListaPrecioDetalle = 1;";
+            const string actualizarProducto = @"
+                UPDATE tblproducto
+                SET precioVentaProducto = ?
+                WHERE idProducto = ? AND estadoProducto = 1;";
+
             try
             {
-                using (var Conexion = new OdbcConnection(CadenaConexion))
+                using (var conexion = new OdbcConnection(CadenaConexion))
                 {
-                    Conexion.Open();
-                    int Lista, Producto;
-                    decimal Base;
-                    using (var Comando = new OdbcCommand(Buscar, Conexion))
+                    conexion.Open();
+                    using (OdbcTransaction transaccion = conexion.BeginTransaction())
                     {
-                        Comando.Parameters.Add("lista", OdbcType.VarChar, 200).Value = Registro.TipoCliente;
-                        Comando.Parameters.Add("producto", OdbcType.VarChar, 200).Value = Registro.TipoProducto;
-                        using (var Lector = Comando.ExecuteReader())
+                        try
                         {
-                            if (!Lector.Read())
+                            foreach (ClsPrecioCliente registro in registros)
                             {
-                                Mensaje = "La lista o el producto no existe en Embutidos.";
-                                return false;
+                                bool esAumentoBase = string.Equals(registro.TipoModificacion, "AumentoBase", StringComparison.OrdinalIgnoreCase);
+
+                                // El aumento por base modifica el precio de venta del producto, no el porcentaje.
+                                if (esAumentoBase)
+                                {
+                                    using (var comando = new OdbcCommand(actualizarProducto, conexion, transaccion))
+                                    {
+                                        comando.Parameters.Add("precio", OdbcType.Decimal).Value = registro.PrecioBase;
+                                        comando.Parameters.Add("producto", OdbcType.Int).Value = registro.IdProducto;
+                                        if (comando.ExecuteNonQuery() == 0)
+                                            throw new InvalidOperationException("No se pudo actualizar el precio base del producto " + registro.Producto + ". Puede que ya no esté activo.");
+                                    }
+                                }
+
+                                if (registro.IdListaPrecio > 0)
+                                {
+                                    using (var comando = new OdbcCommand(guardarDetalle, conexion, transaccion))
+                                    {
+                                        comando.Parameters.Add("lista", OdbcType.Int).Value = registro.IdListaPrecio;
+                                        comando.Parameters.Add("producto", OdbcType.Int).Value = registro.IdProducto;
+                                        comando.Parameters.Add("precio", OdbcType.Decimal).Value = registro.PrecioFinal;
+                                        comando.ExecuteNonQuery();
+                                    }
+                                }
+                                else if (!esAumentoBase)
+                                {
+                                    throw new InvalidOperationException("No hay una lista de precios activa para guardar el descuento o aumento porcentual. El precio base no se modificó.");
+                                }
                             }
-                            Lista = Convert.ToInt32(Lector[0], CultureInfo.InvariantCulture);
-                            Producto = Convert.ToInt32(Lector[1], CultureInfo.InvariantCulture);
-                            Base = Convert.ToDecimal(Lector[2], CultureInfo.InvariantCulture);
+                            transaccion.Commit();
+                        }
+                        catch
+                        {
+                            transaccion.Rollback();
+                            throw;
                         }
                     }
-                    decimal Precio = VentasFuncCalcularPrecioFinal(Base, Registro.PorcentajeDescuento);
-                    using (var Comando = new OdbcCommand(Guardar, Conexion))
-                    {
-                        Comando.Parameters.Add("lista", OdbcType.Int).Value = Lista;
-                        Comando.Parameters.Add("producto", OdbcType.Int).Value = Producto;
-                        Comando.Parameters.Add("precio", OdbcType.VarChar, 64).Value = Precio.ToString(CultureInfo.InvariantCulture);
-                        Comando.ExecuteNonQuery();
-                    }
                 }
+
                 UsaBaseDeDatos = true;
-                MensajeEstado = Mensaje = "Precio guardado en Embutidos.";
+                mensaje = "Se guardaron correctamente " + registros.Count + " registro(s) en dbsistemaembutidos.";
                 return true;
             }
-            catch (OdbcException Error)
+            catch (Exception error)
             {
                 UsaBaseDeDatos = false;
-                MensajeEstado = Mensaje = "No se pudo guardar en Embutidos: " + Error.Message;
+                mensaje = "No se guardaron los cambios. La transacción fue cancelada: " + error.Message;
                 return false;
             }
         }
 
-        public static decimal VentasFuncCalcularPrecioFinal(decimal PrecioBase, decimal Descuento)
+        public static decimal VentasFuncCalcularPrecioFinal(decimal precioBase, decimal valorModificacion, string tipoModificacion)
         {
-            return Math.Round(PrecioBase * (1m - Descuento / 100m), 2, MidpointRounding.AwayFromZero);
+            if (precioBase < 0m) throw new ArgumentOutOfRangeException("precioBase", "El precio base no puede ser negativo.");
+            if (valorModificacion < 0m) throw new ArgumentOutOfRangeException("valorModificacion", "El valor no puede ser negativo.");
+
+            decimal precioFinal = precioBase;
+            if (tipoModificacion == "Descuento" || tipoModificacion == "Descuento (%)")
+                precioFinal = precioBase - (precioBase * (valorModificacion / 100m));
+            else if (tipoModificacion == "AumentoPorcentaje" || tipoModificacion == "Aumento por porcentaje (%)")
+                precioFinal = precioBase + (precioBase * (valorModificacion / 100m));
+            else if (tipoModificacion == "AumentoBase" || tipoModificacion == "Aumento por base")
+                precioFinal = precioBase + valorModificacion;
+            else
+                throw new ArgumentException("Tipo de modificación no reconocido.", "tipoModificacion");
+
+            return Math.Round(precioFinal, 2, MidpointRounding.AwayFromZero);
         }
     }
 }
